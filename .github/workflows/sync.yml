@@ -2,7 +2,7 @@ name: Auto Sync Fork with Releases
 
 on:
   schedule:
-    - cron: '0 17 * * *'  # 每天 UTC 4 点自动运行
+    - cron: '0 17 * * *'  # 每天 UTC 17 点自动运行
   workflow_dispatch:      # 允许手动触发
 
 permissions:
