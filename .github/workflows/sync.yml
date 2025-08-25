@@ -79,7 +79,7 @@ jobs:
       - name: Sync branches with workflow preservation
         run: |
           # 获取默认分支名称
-          default_branch=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5 || echo "master")
+          default_branch=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5 || echo "main")
           echo "Default branch: $default_branch"
           
           # 获取上游所有分支
@@ -312,13 +312,13 @@ jobs:
                     --notes "$release_notes" \
                     $prerelease_flag \
                     $draft_flag \
-                    --target master || echo "Release $tag_name may already exist"
+                    --target main || echo "Release $tag_name may already exist"
                 else
                   gh release create --repo ${{ github.repository }} "$tag_name" \
                     --notes "$release_notes" \
                     $prerelease_flag \
                     $draft_flag \
-                    --target master || echo "Release $tag_name may already exist"
+                    --target main || echo "Release $tag_name may already exist"
                 fi
                 
                 # 上传每个资产文件 - 关键修改：添加 --repo 参数
