@@ -1,0 +1,23 @@
+name: Check Runner Disk Usage
+
+on:
+  workflow_dispatch:   # 手动触发
+
+jobs:
+  check-disk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check overall disk space
+        run: df -h
+
+      - name: Show block devices
+        run: lsblk
+
+      - name: Check workspace size
+        run: du -sh $GITHUB_WORKSPACE || true
+
+      - name: Check runner cache size
+        run: du -sh /home/runner/* || true
+
+      - name: Show top 20 biggest directories
+        run: du -ah /home/runner | sort -rh | head -20
