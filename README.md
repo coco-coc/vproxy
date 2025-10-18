@@ -2,7 +2,7 @@
 
 <img src="assets/logo.png" alt="Vproxy Icon" width="50"/>
 
-[Vproxy](https://vproxy.5vnetwork.com) 是一款免费的多平台代理客户端.
+[Vproxy](https://vproxy.5vnetwork.com) 是一款核心功能免费的全平台代理客户端.
 
 
 ## 订阅说明
