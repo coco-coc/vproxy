@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
+	"errors"
 	"io"
 	"strconv"
 	"time"
@@ -14,6 +15,7 @@ import (
 	"github.com/5vnetwork/x/common/platform"
 	"github.com/5vnetwork/x/common/serial/address_parser"
 	"github.com/5vnetwork/x/common/session"
+	"github.com/rs/zerolog/log"
 
 	"lukechampine.com/blake3"
 )
@@ -42,9 +44,10 @@ func GetGlobalID(ctx context.Context) (globalID [8]byte) {
 	// if cone := ctx.Value("cone"); cone == nil || !cone.(bool) { // cone is nil only in some unit tests
 	// 	return
 	// }
-	if info := session.InfoFromContext(ctx); info != nil && info.Source.Network == net.Network_UDP &&
-		(info.InboundProtocol == "dokodemo-door" || info.InboundProtocol == "socks" || info.InboundProtocol == "shadowsocks" ||
-			info.InboundTag == "wfp" || info.InboundTag == "tun" || info.InboundTag == "gvisor") {
+	// info.Source.Network == net.Network_UDP &&
+	// 	(info.InboundProtocol == "dokodemo-door" || info.InboundProtocol == "socks" || info.InboundProtocol == "shadowsocks" ||
+	// 		info.InboundTag == "wfp" || info.InboundTag == "tun" || info.InboundTag == "gvisor")
+	if info := session.InfoFromContext(ctx); info != nil {
 		h := blake3.New(8, BaseKey)
 		h.Write([]byte(info.Source.String()))
 		copy(globalID[:], h.Sum(nil))
@@ -131,7 +134,7 @@ func (w *PacketWriter) WritePacket(p *udp.Packet) error {
 		eb.WriteByte(1) // New
 		eb.WriteByte(1) // Opt
 		eb.WriteByte(2) // UDP
-		AddrParser.WriteAddressPort(eb, w.Dest.Address, w.Dest.Port)
+		AddrParser.WriteAddressPort(eb, p.Target.Address, p.Target.Port)
 		// make sure it's user's proxy request
 		eb.Write(w.GlobalID[:]) // no need to check whether it's empty
 		w.Dest.Network = net.Network_Unknown
@@ -139,7 +142,7 @@ func (w *PacketWriter) WritePacket(p *udp.Packet) error {
 		eb.WriteByte(2) // Keep
 		eb.WriteByte(1) // Opt
 		eb.WriteByte(2) // UDP
-		AddrParser.WriteAddressPort(eb, w.Dest.Address, w.Dest.Port)
+		AddrParser.WriteAddressPort(eb, p.Target.Address, p.Target.Port)
 	}
 	l := eb.Len() - 2
 	eb.SetByte(0, byte(l>>8))
@@ -242,6 +245,11 @@ func (r *PacketReader) ReadPacket() (*udp.Packet, error) {
 				if err != nil {
 					b.Release()
 					return nil, err
+				}
+				if addr == nil {
+					b.Release()
+					log.Warn().Msg("addr is nil")
+					return nil, errors.New("addr is nil")
 				}
 				src = net.Destination{
 					Network: net.Network_UDP,

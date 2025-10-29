@@ -22,7 +22,9 @@ import (
 	"github.com/5vnetwork/x/common/errors"
 	"github.com/5vnetwork/x/common/net"
 	"github.com/5vnetwork/x/common/signal"
+	"github.com/5vnetwork/x/transport/security/reality"
 	"github.com/5vnetwork/x/transport/security/tls"
+
 	"github.com/pires/go-proxyproto"
 )
 
@@ -241,6 +243,7 @@ func ReshapeMultiBuffer(ctx context.Context, buffer buf.MultiBuffer) buf.MultiBu
 		buffer[i] = nil
 	}
 	buffer = buffer[:0]
+	// log.Debug().Msg("ReshapeMultiBuffer " + toPrint)
 	return mb2
 }
 
@@ -279,6 +282,7 @@ func XtlsPadding(b *buf.Buffer, command byte, userUUID *[]byte, longPadding bool
 		b = nil
 	}
 	newbuffer.Extend(paddingLen)
+	// log.Debug().Int32("content", contentLen).Uint32("padding", uint32(paddingLen)).Uint8("command", command).Msg("XtlsPadding")
 	return newbuffer
 }
 
@@ -310,6 +314,8 @@ func XtlsUnpadding(b *buf.Buffer, s *TrafficState, ctx context.Context) *buf.Buf
 				s.RemainingPadding = int32(data) << 8
 			case 1:
 				s.RemainingPadding = s.RemainingPadding | int32(data)
+				// log.Ctx(ctx).Debug().Int32("content", s.RemainingContent).Int32("padding", s.RemainingPadding).
+				// 	Int("command", s.CurrentCommand).Msg("Xtls Unpadding")
 			}
 			s.RemainingCommand--
 		} else if s.RemainingContent > 0 {
@@ -367,9 +373,12 @@ func XtlsFilterTls(buffer buf.MultiBuffer, trafficState *TrafficState, ctx conte
 					sessionIdLen := int32(b.Byte(43))
 					cipherSuite := b.BytesRange(43+sessionIdLen+1, 43+sessionIdLen+3)
 					trafficState.Cipher = uint16(cipherSuite[0])<<8 | uint16(cipherSuite[1])
+				} else {
+					// log.Ctx(ctx).Debug().Msg("XtlsFilterTls short server hello, tls 1.2 or older? " + strconv.Itoa(int(b.Len())) + " " + strconv.Itoa(int(trafficState.RemainingServerHello)))
 				}
 			} else if bytes.Equal(TlsClientHandShakeStart, startsBytes[:2]) && startsBytes[5] == TlsHandshakeTypeClientHello {
 				trafficState.IsTLS = true
+				// log.Ctx(ctx).Debug().Msg("XtlsFilterTls found tls client hello! " + strconv.Itoa(int(b.Len())))
 			}
 		}
 		if trafficState.RemainingServerHello > 0 {
@@ -385,12 +394,18 @@ func XtlsFilterTls(buffer buf.MultiBuffer, trafficState *TrafficState, ctx conte
 				} else if v != "TLS_AES_128_CCM_8_SHA256" {
 					trafficState.EnableXtls = true
 				}
+				// log.Ctx(ctx).Debug().Msg("XtlsFilterTls found tls 1.3! " + strconv.Itoa(int(b.Len())) + " " + v)
 				trafficState.NumberOfPacketToFilter = 0
 				return
 			} else if trafficState.RemainingServerHello <= 0 {
+				// log.Ctx(ctx).Debug().Msg("XtlsFilterTls inconclusive server hello! " + strconv.Itoa(int(b.Len())) + " " + strconv.Itoa(int(trafficState.RemainingServerHello)))
 				trafficState.NumberOfPacketToFilter = 0
 				return
 			}
+			// log.Ctx(ctx).Debug().Msg("XtlsFilterTls inconclusive server hello! " + strconv.Itoa(int(b.Len())) + " " + strconv.Itoa(int(trafficState.RemainingServerHello)))
+		}
+		if trafficState.NumberOfPacketToFilter <= 0 {
+			// log.Ctx(ctx).Debug().Msg("XtlsFilterTls stop filtering! " + strconv.Itoa(int(b.Len())))
 		}
 	}
 }
@@ -399,17 +414,23 @@ func XtlsFilterTls(buffer buf.MultiBuffer, trafficState *TrafficState, ctx conte
 func UnwrapRawConn(conn net.Conn) (net.Conn, *atomic.Uint64, *atomic.Uint64) {
 	var readCounter, writerCounter *atomic.Uint64
 	if conn != nil {
+		// statConn, ok := conn.(*stat.CounterConnection)
+		// if ok {
+		// 	conn = statConn.Connection
+		// 	readCounter = statConn.ReadCounter
+		// 	writerCounter = statConn.WriteCounter
+		// }
 		if xc, ok := conn.(*tls.Conn); ok {
 			conn = xc.NetConn()
 		} else if goTlsConn, ok := conn.(*gotls.Conn); ok {
 			conn = goTlsConn.NetConn()
 		} else if utlsConn, ok := conn.(*tls.UConn); ok {
 			conn = utlsConn.NetConn()
+		} else if realityUConn, ok := conn.(*reality.UConn); ok {
+			conn = realityUConn.NetConn()
 		}
 		// else if realityConn, ok := conn.(*reality.Conn); ok {
 		// 	conn = realityConn.NetConn()
-		// } else if realityUConn, ok := conn.(*reality.UConn); ok {
-		// 	conn = realityUConn.NetConn()
 		// }
 		if pc, ok := conn.(*proxyproto.Conn); ok {
 			conn = pc.Raw()
@@ -457,6 +478,7 @@ func CopyRawConnIfExist(ctx context.Context, readerConn net.Conn, writerConn net
 			}
 		}
 		if splice {
+			// log.Debug().Msg("CopyRawConn splice")
 			//runtime.Gosched() // necessary
 			time.Sleep(time.Millisecond)    // without this, there will be a rare ssl error for freedom splice
 			timer.SetTimeout(8 * time.Hour) // prevent leak, just in case
@@ -495,6 +517,7 @@ func CopyRawConnIfExist(ctx context.Context, readerConn net.Conn, writerConn net
 }
 
 func readV(ctx context.Context, reader buf.Reader, writer buf.Writer, timer *signal.ActivityChecker, readCounter *atomic.Uint64) error {
+	// log.Ctx(ctx).Debug().Msg("CopyRawConn readV")
 	if err := buf.Copy(reader, writer, buf.UpdateActivityCopyOption(timer), buf.AddToStatCounter(readCounter)); err != nil {
 		return fmt.Errorf("failed to copy, %w", err)
 	}

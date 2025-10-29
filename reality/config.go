@@ -13,13 +13,11 @@ import (
 func (c *RealityConfig) GetREALITYConfig() *reality.Config {
 	var dialer net.Dialer
 	config := &reality.Config{
-		DialContext: dialer.DialContext,
-
-		// Show: c.Show,
-		// Type: c.Type,
-		Dest: c.Dest,
-		Xver: byte(c.Xver),
-
+		DialContext:  dialer.DialContext,
+		Type:         "tcp",
+		Show:         c.Show,
+		Dest:         c.Dest,
+		Xver:         byte(c.Xver),
 		PrivateKey:   c.PrivateKey,
 		MinClientVer: c.MinClientVer,
 		MaxClientVer: c.MaxClientVer,

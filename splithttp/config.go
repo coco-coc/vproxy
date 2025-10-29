@@ -8,6 +8,30 @@ import (
 	"github.com/5vnetwork/x/common/crypto"
 )
 
+func (m *XmuxConfig) Init() {
+	if m.MaxConcurrency == nil {
+		m.MaxConcurrency = &RangeConfig{}
+	}
+	if m.HMaxRequestTimes == nil {
+		m.HMaxRequestTimes = &RangeConfig{}
+	}
+	if m.HMaxReusableSecs == nil {
+		m.HMaxReusableSecs = &RangeConfig{}
+	}
+	if m.MaxConcurrency.From == 0 && m.MaxConcurrency.To == 0 {
+		m.MaxConcurrency.From = 16
+		m.MaxConcurrency.To = 32
+	}
+	if m.HMaxRequestTimes.From == 0 && m.HMaxRequestTimes.To == 0 {
+		m.HMaxRequestTimes.From = 600
+		m.HMaxRequestTimes.To = 900
+	}
+	if m.HMaxReusableSecs.From == 0 && m.HMaxReusableSecs.To == 0 {
+		m.HMaxReusableSecs.From = 1800
+		m.HMaxReusableSecs.To = 3000
+	}
+}
+
 func (c *SplitHttpConfig) GetNormalizedPath() string {
 	pathAndQuery := strings.SplitN(c.Path, "?", 2)
 	path := pathAndQuery[0]

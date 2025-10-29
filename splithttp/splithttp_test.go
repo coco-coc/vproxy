@@ -16,6 +16,7 @@ import (
 	"github.com/5vnetwork/x/common/protocol/tls/cert"
 	"github.com/5vnetwork/x/test/servers/tcp"
 	"github.com/5vnetwork/x/test/servers/udp"
+	"github.com/5vnetwork/x/transport/dlhelper"
 	. "github.com/5vnetwork/x/transport/protocols/splithttp"
 	"github.com/5vnetwork/x/transport/security/tls"
 	"github.com/google/go-cmp/cmp"
@@ -42,7 +43,7 @@ func Test_ListenXHAndDial(t *testing.T) {
 	common.Must(err)
 	ctx := context.Background()
 
-	dialer, err := NewXhttpDialer(&SplitHttpConfig{Path: "sh"}, nil, nil)
+	dialer, err := NewXhttpDialer(&SplitHttpConfig{Path: "sh"}, nil, &dlhelper.SocketSetting{}, nil)
 	common.Must(err)
 
 	conn, err := dialer.Dial(ctx, net.TCPDestination(net.DomainAddress("localhost"), listenPort))
@@ -96,7 +97,9 @@ func TestDialWithRemoteAddr(t *testing.T) {
 	})
 	common.Must(err)
 
-	dialer, err := NewXhttpDialer(&SplitHttpConfig{Path: "sh", Headers: map[string]string{"X-Forwarded-For": "1.1.1.1"}}, nil, nil)
+	dialer, err := NewXhttpDialer(&SplitHttpConfig{Path: "sh",
+		Headers: map[string]string{"X-Forwarded-For": "1.1.1.1"}},
+		nil, &dlhelper.SocketSetting{}, nil)
 	common.Must(err)
 
 	conn, err := dialer.Dial(context.Background(), net.TCPDestination(net.DomainAddress("localhost"), listenPort))
@@ -120,7 +123,6 @@ func Test_ListenXHAndDial_TLS(t *testing.T) {
 	}
 
 	listenPort := tcp.PickPort()
-
 	start := time.Now()
 
 	config := &SplitHttpConfig{
@@ -130,7 +132,9 @@ func Test_ListenXHAndDial_TLS(t *testing.T) {
 		AllowInsecure: true,
 		Certificates:  []*tls.Certificate{tls.ParseCertificate(cert.MustGenerate(nil, cert.CommonName("localhost")))},
 	}
-	listen, err := ListenXH(context.Background(), net.LocalHostIP, listenPort, config, &tls.Engine{Config: tlsConfig}, nil, func(conn net.Conn) {
+	e, err := tls.NewEngine(tls.EngineConfig{Config: tlsConfig, DnsServer: nil})
+	common.Must(err)
+	listen, err := ListenXH(context.Background(), net.LocalHostIP, listenPort, config, e, nil, func(conn net.Conn) {
 		go func() {
 			defer conn.Close()
 
@@ -147,7 +151,7 @@ func Test_ListenXHAndDial_TLS(t *testing.T) {
 	common.Must(err)
 	defer listen.Close()
 
-	dialer, err := NewXhttpDialer(config, &tls.Engine{Config: tlsConfig}, nil)
+	dialer, err := NewXhttpDialer(config, e, &dlhelper.SocketSetting{}, nil)
 	common.Must(err)
 
 	conn, err := dialer.Dial(context.Background(), net.TCPDestination(net.DomainAddress("localhost"), listenPort))
@@ -212,7 +216,7 @@ func Test_ListenXHAndDial_QUIC(t *testing.T) {
 	}
 
 	listenPort := udp.PickPort()
-
+	fmt.Println("listenPort: ", listenPort)
 	start := time.Now()
 
 	config := &SplitHttpConfig{
@@ -223,9 +227,10 @@ func Test_ListenXHAndDial_QUIC(t *testing.T) {
 		Certificates:  []*tls.Certificate{tls.ParseCertificate(cert.MustGenerate(nil, cert.CommonName("localhost")))},
 		NextProtocol:  []string{"h3"},
 	}
-
+	e, err := tls.NewEngine(tls.EngineConfig{Config: tlsConfig, DnsServer: nil})
+	common.Must(err)
 	serverClosed := false
-	listen, err := ListenXH(context.Background(), net.LocalHostIP, listenPort, config, &tls.Engine{Config: tlsConfig}, nil, func(conn net.Conn) {
+	listen, err := ListenXH(context.Background(), net.LocalHostIP, listenPort, config, e, nil, func(conn net.Conn) {
 		go func() {
 			defer conn.Close()
 
@@ -248,7 +253,7 @@ func Test_ListenXHAndDial_QUIC(t *testing.T) {
 
 	time.Sleep(time.Second)
 
-	dialer, err := NewXhttpDialer(config, &tls.Engine{Config: tlsConfig}, nil)
+	dialer, err := NewXhttpDialer(config, e, &dlhelper.SocketSetting{}, nil)
 	common.Must(err)
 
 	conn, err := dialer.Dial(context.Background(), net.UDPDestination(net.DomainAddress("localhost"), listenPort))
@@ -313,7 +318,7 @@ func Test_ListenXHAndDial_Unix(t *testing.T) {
 		Host: "example.com",
 		Path: "sh",
 	}
-	dialer, err := NewXhttpDialer(config, nil, nil)
+	dialer, err := NewXhttpDialer(config, nil, &dlhelper.SocketSetting{}, nil)
 	common.Must(err)
 	conn, err := dialer.Dial(ctx, net.UnixDestination(net.DomainAddress(tempSocket)))
 
@@ -367,7 +372,7 @@ func Test_queryString(t *testing.T) {
 	common.Must(err)
 	ctx := context.Background()
 
-	dialer, err := NewXhttpDialer(&SplitHttpConfig{Path: "sh?ed=2048"}, nil, nil)
+	dialer, err := NewXhttpDialer(&SplitHttpConfig{Path: "sh?ed=2048"}, nil, &dlhelper.SocketSetting{}, nil)
 	conn, err := dialer.Dial(ctx, net.TCPDestination(net.DomainAddress("localhost"), listenPort))
 
 	common.Must(err)
@@ -415,7 +420,7 @@ func Test_maxUpload(t *testing.T) {
 	common.Must(err)
 	ctx := context.Background()
 
-	dialer, err := NewXhttpDialer(&SplitHttpConfig{Path: "sh"}, nil, nil)
+	dialer, err := NewXhttpDialer(&SplitHttpConfig{Path: "sh"}, nil, &dlhelper.SocketSetting{}, nil)
 	conn, err := dialer.Dial(ctx, net.TCPDestination(net.DomainAddress("localhost"), listenPort))
 
 	// send a slightly too large upload
