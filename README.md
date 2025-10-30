@@ -26,5 +26,5 @@ Vproxy支持用深度链接快捷导入订阅到客户端。深度链接的schem
 
 ## License Compliance
 
-The code contains in "vless", "reality" and "splithttp" folder is modified from [Xray-core](https://github.com/XTLS/Xray-core). It 
+The code contains in "vless", "reality", "splithttp", "util", "api", "tls" folder is modified from [Xray-core](https://github.com/XTLS/Xray-core). It 
 is distributed under the same licence(Mozilla Public License 2.0) as the original project.

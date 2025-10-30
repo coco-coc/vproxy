@@ -26,6 +26,7 @@ import (
 	"github.com/5vnetwork/x/proxy/vless/encoding"
 	"github.com/5vnetwork/x/proxy/vless/xudp"
 
+	"github.com/5vnetwork/x/transport/security/reality"
 	"github.com/5vnetwork/x/transport/security/tls"
 
 	utls "github.com/refraction-networking/utls"
@@ -34,7 +35,9 @@ import (
 
 // Handler is an outbound connection handler for VLess protocol.
 type Handler struct {
-	serverPicker   protocol.ServerPicker
+	address        net.Address
+	serverPicker   i.PortSelector
+	account        *vless.MemoryAccount
 	timeoutSetting i.TimeoutSetting
 }
 
@@ -44,7 +47,17 @@ func New() *Handler {
 	return handler
 }
 
-func (h *Handler) WithServerPicker(p protocol.ServerPicker) *Handler {
+func (h *Handler) WithAccount(account *vless.MemoryAccount) *Handler {
+	h.account = account
+	return h
+}
+
+func (h *Handler) WithAddress(address net.Address) *Handler {
+	h.address = address
+	return h
+}
+
+func (h *Handler) WithServerPicker(p i.PortSelector) *Handler {
 	h.serverPicker = p
 	return h
 }
@@ -58,8 +71,12 @@ func (h *Handler) HandleFlow(ctx context.Context, info *session.Info, rw buf.Rea
 }
 
 func (h *Handler) HandlePacketConn(ctx context.Context, info *session.Info, p udp.PacketConn, dialer i.Dialer) error {
-	sp := h.serverPicker.PickServer()
-	account := sp.GetProtocolSetting().(*vless.MemoryAccount)
+	port, err := h.serverPicker.SelectPort()
+	if err != nil {
+		return err
+	}
+	dest := net.TCPDestination(h.address, net.Port(port))
+	account := h.account
 	requestAddons := &encoding.Addons{
 		Flow: account.Flow,
 	}
@@ -75,9 +92,9 @@ func (h *Handler) HandlePacketConn(ctx context.Context, info *session.Info, p ud
 	if requestAddons.Flow == vless.XRV ||
 		(info.Target.Port != 53 && info.Target.Port != 443) {
 		var conn net.Conn
-		conn, err := dialer.Dial(ctx, sp.Destination())
+		conn, err := dialer.Dial(ctx, dest)
 		if err != nil {
-			return fmt.Errorf("failed to find an available destination, %w", err)
+			return fmt.Errorf("failed to dial, %w", err)
 		}
 		defer conn.Close()
 		log.Ctx(ctx).Debug().Str("laddr", conn.LocalAddr().String()).Msg("vless dial ok")
@@ -175,7 +192,7 @@ func (h *Handler) HandlePacketConn(ctx context.Context, info *session.Info, p ud
 			ProxyClient: h,
 		}, func(packet *udp.Packet) {
 			p.WritePacket(packet)
-		})
+		}, dispatcher.WithRequestTimeout(time.Second*5))
 		defer d.Close()
 		for {
 			packet, err := p.ReadPacket()
@@ -189,6 +206,7 @@ func (h *Handler) HandlePacketConn(ctx context.Context, info *session.Info, p ud
 
 var ErrRejectQuic = errors.New("XTLS rejected QUIC traffic")
 
+// Process implements proxy.Outbound.Process().
 func (h *Handler) handle(ctx context.Context, info *session.Info, rw buf.ReaderWriter, dialer i.Dialer) error {
 	ob := &vless.OutboundInfo{
 		Target:        info.Target,
@@ -206,15 +224,23 @@ func (h *Handler) handle(ctx context.Context, info *session.Info, rw buf.ReaderW
 
 	var conn net.Conn
 	var account *vless.MemoryAccount
-	sp := h.serverPicker.PickServer()
-	account = sp.GetProtocolSetting().(*vless.MemoryAccount)
-	conn, err := dialer.Dial(ctx, sp.Destination())
+	port, err := h.serverPicker.SelectPort()
+	if err != nil {
+		return err
+	}
+	dest := net.TCPDestination(h.address, net.Port(port))
+	account = h.account
+	conn, err = dialer.Dial(ctx, dest)
 	if err != nil {
 		return fmt.Errorf("failed to find an available destination, %w", err)
 	}
 	defer conn.Close()
 
-	log.Ctx(ctx).Debug().Str("laddr", conn.LocalAddr().String()).Msg("vless dial ok")
+	if conn.LocalAddr() != nil {
+		log.Ctx(ctx).Debug().Str("laddr", conn.LocalAddr().String()).Msg("vless dial ok")
+	} else {
+		log.Ctx(ctx).Warn().Msg("vless dial ok, but local addr is nil")
+	}
 
 	target := ob.Target
 
@@ -264,13 +290,12 @@ func (h *Handler) handle(ctx context.Context, info *session.Info, rw buf.ReaderW
 			} else if utlsConn, ok := conn.(*tls.UConn); ok {
 				t = reflect.TypeOf(utlsConn.Conn).Elem()
 				p = uintptr(unsafe.Pointer(utlsConn.Conn))
+			} else if realityConn, ok := conn.(*reality.UConn); ok {
+				t = reflect.TypeOf(realityConn.Conn).Elem()
+				p = uintptr(unsafe.Pointer(realityConn.Conn))
 			} else {
 				return errors.New("XTLS only supports TLS and REALITY directly for now.")
 			}
-			// else if realityConn, ok := conn.(*reality.UConn); ok {
-			// 	t = reflect.TypeOf(realityConn.Conn).Elem()
-			// 	p = uintptr(unsafe.Pointer(realityConn.Conn))
-			// }
 
 			i, _ := t.FieldByName("input")
 			r, _ := t.FieldByName("rawInput")
@@ -331,6 +356,8 @@ func (h *Handler) handle(ctx context.Context, info *session.Info, rw buf.ReaderW
 					return err // ...
 				}
 			}
+		} else {
+			// log.Ctx(ctx).Debug().Msg("Reader is not timeout reader, will send out vless header separately from first payload")
 		}
 		// Flush; bufferWriter.WriteMultiBuffer now is bufferWriter.writer.WriteMultiBuffer
 		if err := bufferWriter.SetBuffered(false); err != nil {
@@ -357,6 +384,7 @@ func (h *Handler) handle(ctx context.Context, info *session.Info, rw buf.ReaderW
 		if err != nil {
 			return errors.New("failed to transfer request payload").Base(err)
 		}
+		// log.Ctx(ctx).Debug().Msg("vless request done")
 
 		// Indicates the end of request payload.
 		switch requestAddons.Flow {
@@ -395,6 +423,7 @@ func (h *Handler) handle(ctx context.Context, info *session.Info, rw buf.ReaderW
 		if err != nil {
 			return fmt.Errorf("failed to transfer response payload: %w", err)
 		}
+		// log.Ctx(ctx).Debug().Msg("vless response done")
 		clientWriter.CloseWrite()
 		return nil
 	}
@@ -406,5 +435,6 @@ func (h *Handler) handle(ctx context.Context, info *session.Info, rw buf.ReaderW
 	if err := task.Run(ctx, postRequest, getResponse); err != nil {
 		return fmt.Errorf("connection ends: %w", err)
 	}
+	// log.Ctx(ctx).Debug().Msg("vless connection ends")
 	return nil
 }

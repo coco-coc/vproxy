@@ -27,10 +27,13 @@ message SplitHttpConfig {
   map<string, string> headers = 4;
   RangeConfig xPaddingBytes = 5;
   bool noGRPCHeader = 6;
+  // server only
   bool noSSEHeader = 7;
   RangeConfig scMaxEachPostBytes = 8;
   RangeConfig scMinPostsIntervalMs = 9;
+  // server only
   int64 scMaxBufferedPosts = 10;
+  // server only
   RangeConfig scStreamUpServerSecs = 11;
   XmuxConfig xmux = 12;
   DownConfig downloadSettings = 13;

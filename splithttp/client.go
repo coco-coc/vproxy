@@ -66,6 +66,7 @@ func (c *DefaultDialerClient) OpenStream(ctx context.Context, url string, body i
 		req.Header.Set("Content-Type", "application/grpc")
 	}
 
+	log.Ctx(ctx).Debug().Str("url", url).Msgf("OpenStream")
 	wrc = &WaitReadCloser{Wait: make(chan struct{})}
 	go func() {
 		resp, err := c.client.Do(req)
