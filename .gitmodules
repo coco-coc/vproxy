@@ -1,0 +1,3 @@
+[submodule "vx-core"]
+	path = vx-core
+	url = https://github.com/5VNetwork/vx-core

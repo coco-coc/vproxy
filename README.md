@@ -1,30 +1,71 @@
-# Vproxy
+# VX Proxy Client
+
+<div>
+
+[![English](https://img.shields.io/badge/Language-English-blue)](README.md) [![中文](https://img.shields.io/badge/语言-中文-red)](README_CN.md)
+
+</div>
 
 <img src="assets/logo.png" alt="Vproxy Icon" width="50"/>
 
-[Vproxy](https://vproxy.5vnetwork.com) 是一款核心功能免费的全平台代理客户端.
+## Overview
+
+VX (formerly known as Vproxy) is a cross-platform proxy client built on top of [vx-core](https://github.com/5vnetwork/vx-core), which originated from [v2ray-core](https://www.v2fly.org/). 
+
+## Features
+
+- **Multi-Protocol Support**
+- **Easy-to-Use**
+- **Powerful Routing Policy**
+- **Realtime Logging**
+- **No DNS Leaking in TUN mode**
+- **Subscription Management**
+- **Automaticly Select Node**
+- **VPS Monitor**
+- **VX-core Panel**
+- **Chain Proxy**
+- **As HTTP/SOCKS Server**
+- **SYNC and Backup**
+- **DNS Policy**
+- **Traffic Statistics**
+- **Free Trial**
+- **Customer Support**
+
+> **Note**: Most features are free, but some are available to paid users only.
 
 
-## 订阅说明
-Vproxy获取订阅的方式与其他代理客户端一样：从订阅链接Get到内容（如果内容是base64编码，先解码），对每一行进行解析，获取节点。 目前支持：hysteria2, ss, trojan, vless, vmess
+## Deep Linking (For airport owners)
 
-内容的第一行可以是一句自定义的说明，比如“剩余流量：10GB，5月31日到期”。该内容将显示给用户。
+### Format 1: Base64 Encoded Subscription URL
 
-## 深度链接说明
-Vproxy支持用深度链接快捷导入订阅到客户端。深度链接的scheme为"vproxy"。目前支持两种格式：
+```
+vx://add/sub://<base64_encoded_url>?remarks=<subscription_name>
+```
 
-1. vproxy://add/sub://<ins>aHR0cHM6Ly9leGFtcGxlLmNvbS9hYmNk</ins>?remarks=%E6%9C%BA%E5%9C%BA%0A
+**Example:**
+```
+vx://add/sub://aHR0cHM6Ly9leGFtcGxlLmNvbS9hYmNk?remarks=%E6%9C%BA%E5%9C%BA%0A
+```
 
-   下划线为base64编码的订阅地址，解码后为"https://example.com/abcd"  
-   "remarks"：订阅的名称。  
+### Format 2: Direct URL with Parameters
 
-2. vproxy://install-config?url=https%3A%2F%2Fexample.com%2Fabcd&name=%E6%9C%BA%E5%9C%BA%0A
-   
-   "name"：订阅的名称   
+```
+vx://install-config?url=<subscription_url>&name=<subscription_name>
+```
 
-两个链接都会为用户添加一个名称为“机场”的订阅
+**Example:**
+```
+vx://install-config?url=https%3A%2F%2Fexample.com%2Fabcd&name=%E6%9C%BA%E5%9C%BA%0A
+```
 
-## License Compliance
+- `url`: The subscription URL (URL-encoded)
+- `name`: The name of the subscription (URL-encoded)
 
-The code contains in "vless", "reality", "splithttp", "util", "api", "tls" folder is modified from [Xray-core](https://github.com/XTLS/Xray-core). It 
-is distributed under the same licence(Mozilla Public License 2.0) as the original project.
+Both formats will add a subscription named "My Proxy" to the client.
+
+## Installation
+
+### From Official Website
+
+Visit [vx.5vnetwork.com](https://vx.5vnetwork.com) to download the latest version for your platform.
+
