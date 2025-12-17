@@ -1,0 +1,176 @@
+{
+    "log": {
+        "loglevel": "warning"
+    },
+    "routing": {
+        "domainStrategy": "IPIfNonMatch",
+        "rules": [
+            {
+                "type": "field",
+                "ip": [
+                    "geoip:cn"
+                ],
+                "outboundTag": "block"
+            },
+            {
+                "inboundTag": [
+                    "dokodemo-in"
+                ],
+                "domain": [
+                    "__SERVER_NAME__",
+                    "__SERVER_NAME1__"
+                ],
+                "outboundTag": "direct"
+            },
+            {
+                "inboundTag": [
+                    "dokodemo-in"
+                ],
+                "outboundTag": "block"
+            }
+        ]
+    },
+    "inbounds": [
+        {
+            "tag": "dokodemo-in",
+            "port": "__PORT__",
+            "protocol": "dokodemo-door",
+            "settings": {
+                "address": "127.0.0.1",
+                "port": 4431,
+                "network": "tcp"
+            },
+            "sniffing": {
+                "enabled": true,
+                "destOverride": [
+                    "tls"
+                ],
+                "routeOnly": true
+            }
+        },
+        {
+            "tag": "reality",
+            "listen": "127.0.0.1",
+            "port": 4431,
+            "protocol": "vless",
+            "settings": {
+                "clients": [
+                    {
+                        "id": "__UUID__",
+                        "flow": "xtls-rprx-vision"
+                    }
+                ],
+                "decryption": "none",
+                "fallbacks": [
+                    {
+                        "name": "__SERVER_NAME__",
+                        "dest": "4432"
+                    },
+                    {
+                        "dest": "__XHTTP_PORT_CDN__"
+                    }
+                ]
+            },
+            "streamSettings": {
+                "security": "reality",
+                "realitySettings": {
+                    "dest": "__DEST__",
+                    "serverNames": [
+                        "__SERVER_NAME__",
+                        "__SERVER_NAME1__"
+                    ],
+                    "privateKey": "__PRIVATE_KEY__",
+                    "shortIds": [
+                        ""
+                    ]
+                }
+            },
+            "sniffing": {
+                "enabled": true,
+                "destOverride": [
+                    "http",
+                    "tls",
+                    "quic"
+                ],
+                "routeOnly": true
+            }
+        },
+        {
+            "tag": "xhttp",
+            "listen": "127.0.0.1",
+            "port": "4432",
+            "protocol": "vless",
+            "settings": {
+                "clients": [
+                    {
+                        "id": "__UUID__"
+                    }
+                ],
+                "decryption": "none"
+            },
+            "streamSettings": {
+                "network": "xhttp",
+                "xhttpSettings": {
+                    "mode": "auto",
+                    "path": "__XHTTP_PATH__"
+                }
+            },
+            "sniffing": {
+                "enabled": true,
+                "destOverride": [
+                    "http",
+                    "tls",
+                    "quic"
+                ],
+                "routeOnly": true
+            }
+        },
+        {
+            "tag": "xhttp-cdn",
+            "listen": "0.0.0.0",
+            "port": "__XHTTP_PORT_CDN__",
+            "protocol": "vmess",
+            "settings": {
+                "clients": [
+                    {
+                        "id": "__UUID__"
+                    }
+                ]
+            },
+            "streamSettings": {
+                "network": "xhttp",
+                "xhttpSettings": {
+                    "mode": "auto",
+                    "path": "__XHTTP_PATH_CDN__"
+                }
+            },
+            "sniffing": {
+                "enabled": true,
+                "destOverride": [
+                    "http",
+                    "tls",
+                    "quic"
+                ],
+                "routeOnly": true
+            }
+        }
+    ],
+    "outbounds": [
+        {
+            "protocol": "freedom",
+            "tag": "direct"
+        },
+        {
+            "protocol": "blackhole",
+            "tag": "block"
+        }
+    ],
+    "policy": {
+        "levels": {
+            "0": {
+                "handshake": 2,
+                "connIdle": 120
+            }
+        }
+    }
+}

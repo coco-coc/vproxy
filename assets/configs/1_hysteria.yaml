@@ -1,0 +1,8 @@
+# listen: :443
+auth:
+  type: password
+  password: __UUID__
+
+tls:
+  cert: __CERTIFICATE_PATH__
+  key:  __KEY_PATH__

@@ -1,0 +1,85 @@
+# Simple Dockerfile for ARM64 Linux build
+FROM --platform=linux/arm64 ubuntu:22.04
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
+# Install all build dependencies in one layer
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    clang \
+    cmake \
+    ninja-build \
+    pkg-config \
+    curl \
+    git \
+    unzip \
+    xz-utils \
+    zip \
+    libgtk-3-dev \
+    libglib2.0-dev \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libgdk-pixbuf2.0-dev \
+    libatk1.0-dev \
+    libx11-dev \
+    libxcomposite-dev \
+    libxcursor-dev \
+    libxdamage-dev \
+    libxext-dev \
+    libxfixes-dev \
+    libxi-dev \
+    libxrandr-dev \
+    libxrender-dev \
+    libxss-dev \
+    libxtst-dev \
+    libasound2-dev \
+    libatspi2.0-dev \
+    libdrm-dev \
+    libxkbcommon-dev \
+    libxkbcommon-x11-dev \
+    libsecret-1-dev \
+    libjsoncpp-dev \
+    libayatana-appindicator3-dev \
+    rpm \
+    patchelf \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Flutter
+RUN git clone https://github.com/flutter/flutter.git -b stable /opt/flutter
+ENV PATH="/opt/flutter/bin:${PATH}"
+
+# Enable Linux desktop
+# RUN flutter config --enable-linux-desktop
+
+# Install fastforge (do this before copying project files for better caching)
+RUN dart pub global activate fastforge
+
+# Add Dart global bin to PATH
+ENV PATH="/root/.pub-cache/bin:${PATH}"
+
+# Set up the project
+WORKDIR /app
+
+# # Copy only dependency files first (for better caching)
+# COPY pubspec.yaml pubspec.lock ./
+
+# # Get dependencies (cached if pubspec files unchanged)
+# RUN flutter pub get
+
+# Copy the rest of the project
+COPY . .
+
+# copy packages into parent directory
+RUN mv packages/* ../
+
+# Build for ARM64 (native build on ARM64 container)
+# RUN flutter build linux --release
+# The built app will be in /app/build/linux/arm64/release/bundle/
+
+# Allow customizing package targets via build argument
+ARG PACKAGE_TARGETS=deb
+ARG DART_DEFINE=""
+# run fastforge package --platform linux --targets deb
+RUN fastforge package --platform linux ${DART_DEFINE} --targets ${PACKAGE_TARGETS}

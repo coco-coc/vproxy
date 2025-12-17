@@ -1,1 +1,102 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
 .DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+.env
+objectbox.dll
+ios/build/
+macos/build/
+*.exe
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+macos/dmg/VX.app
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies   
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+/android/app/.cxx
+
+# Gradle
+.gradle/
+
+/temp
+/packages/test
+
+# files end with .dat
+*.dat
+
+# dll
+*.dll
+
+/assets/google_fonts/*
+*.ttf
+*.zip
+*.dmg
+/vx
+
+*.pwd
+
+releases/
+.crashlytics/dump_syms.bin
+
+dist/
+x_database.sqlite.bak
+
+packages/
+android/fastlane/metadata/
+macos/tm.xcframework/
+VX.pkg
+unsigned.pkg
+s
+lib/app/routing/app.dart
+dev_assets/flutter_arb_translator_config.json
+test.pfx
+.claude
+.vscode
+Makefile
+tools/
+symbols/
+legacy/
+dev_assets/
+assets/ads/
+macos/dmg/Vproxy.app
+Vproxy.pkg
+ios/fastlane/Fastfile
+*.p8
+inno/install.iss
+.crashlytics/

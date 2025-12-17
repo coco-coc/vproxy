@@ -1,0 +1,1528 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
+import 'package:drift/remote.dart';
+import 'package:fixnum/fixnum.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' hide Table, Column, RouterConfig;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:path/path.dart';
+import 'package:protobuf/protobuf.dart';
+import 'package:tm/protos/common/net/net.pb.dart';
+import 'package:tm/protos/protos/geo.pb.dart';
+import 'package:tm/protos/protos/outbound.pb.dart';
+import 'package:tm/protos/protos/proxy/hysteria.pb.dart';
+import 'package:tm/protos/protos/transport.pb.dart';
+import 'package:vx/app/outbound/outbounds_bloc.dart';
+import 'package:vx/app/routing/default.dart';
+import 'package:vx/app/routing/routing_page.dart';
+import 'package:vx/app/routing/mode_widget.dart';
+import 'package:vx/app/server/add_server.dart';
+import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
+import 'package:vx/common/common.dart';
+import 'package:vx/common/config.dart';
+import 'package:vx/common/net.dart';
+import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
+import 'package:sqlite3/sqlite3.dart';
+import 'package:vector_graphics/vector_graphics.dart';
+import 'package:drift_dev/api/migrations_native.dart';
+import 'package:tm/protos/protos/router.pb.dart';
+import 'package:tm/protos/common/geo/geo.pb.dart';
+import 'package:tm/protos/protos/dns.pb.dart' as dns;
+import 'package:vx/data/database.steps.dart';
+import 'package:vx/data/database_log.dart';
+import 'package:vx/data/sync.dart';
+import 'package:vx/data/sync.pb.dart';
+import 'package:vx/l10n/app_localizations.dart';
+import 'package:vx/main.dart';
+import 'package:vx/utils/logger.dart';
+import 'package:vx/utils/path.dart';
+import 'package:vx/utils/random.dart';
+import 'package:vx/xconfig_helper.dart';
+import 'package:json_annotation/json_annotation.dart' as ja;
+// import 'database.steps.dart';
+
+part 'database.g.dart';
+part 'custom_row_class.dart';
+
+@DriftDatabase(tables: [
+  OutboundHandlers,
+  Subscriptions,
+  OutboundHandlerGroups,
+  OutboundHandlerGroupRelations,
+  DnsRecords,
+  GeoDomains,
+  AtomicDomainSets,
+  GreatDomainSets,
+  AtomicIpSets,
+  GreatIpSets,
+  Apps,
+  AppSets,
+  Cidrs,
+  SshServers,
+  CommonSshKeys,
+  CustomRouteModes,
+  HandlerSelectors,
+  SelectorHandlerRelations,
+  SelectorHandlerGroupRelations,
+  SelectorSubscriptionRelations,
+  DnsServers,
+])
+class AppDatabase extends _$AppDatabase {
+  AppDatabase({QueryExecutor? executor, QueryInterceptor? interceptor})
+      : super(executor ?? _openConnection(interceptor));
+
+  @override
+  int get schemaVersion => 8;
+
+  static QueryExecutor _openConnection(QueryInterceptor? interceptor) {
+    // the LazyDatabase util lets us find the right location for the file async.
+    return LazyDatabase(() async {
+      // put the database file, called db.sqlite here, into the documents folder
+      // for your app.
+      final file = File(await getDbPath());
+
+      // Also work around limitations on old Android versions
+      if (Platform.isAndroid) {
+        await applyWorkaroundToOpenSqlite3OnOldAndroidVersions();
+      }
+
+      try {
+        // Make sqlite3 pick a more suitable location for temporary files - the
+        // one from the system may be inaccessible due to sandboxing.
+        final cachebase = (await getCacheDir());
+        // We can't access /tmp on Android, which sqlite3 would try by default.
+        // Explicitly tell it about the correct temporary directory.
+        sqlite3.tempDirectory = cachebase;
+      } catch (e) {
+        logger.e("Error setting sqlite3 temp directory", error: e);
+        reportError("Error setting sqlite3 temp directory", e);
+      }
+
+      try {
+        if (interceptor != null) {
+          return NativeDatabase.createInBackground(file)
+              .interceptWith(interceptor);
+        }
+        return NativeDatabase.createInBackground(file);
+      } catch (e) {
+        logger.e("Error creating database", error: e);
+        reportError("Error creating database", e);
+        rethrow;
+      }
+    });
+  }
+
+  Future<void> _insertDefault() async {
+    // if default group not exists, create it
+    await into(outboundHandlerGroups).insert(
+        const OutboundHandlerGroupsCompanion(name: Value(defaultGroupName)),
+        mode: InsertMode.insertOrIgnore);
+    // add sets
+    // domain
+    // await into(atomicDomainSets).insert(
+    //     const AtomicDomainSetsCompanion(name: Value(customDirect)),
+    //     mode: InsertMode.insertOrIgnore);
+    // await into(atomicDomainSets).insert(
+    //     const AtomicDomainSetsCompanion(name: Value(customProxy)),
+    //     mode: InsertMode.insertOrIgnore);
+    // await into(atomicDomainSets).insert(
+    //     AtomicDomainSetsCompanion(
+    //       name: const Value(gfw),
+    //       geositeConfig: Value(GeositeConfig(codes: ['gfw'])),
+    //     ),
+    //     mode: InsertMode.insertOrIgnore);
+    // await into(atomicDomainSets).insert(
+    //     AtomicDomainSetsCompanion(
+    //       name: const Value(cn),
+    //       useBloomFilter:
+    //           Platform.isIOS ? const Value(true) : const Value.absent(),
+    //       geositeConfig:
+    //           Value(GeositeConfig(codes: ['cn', 'apple-cn', 'tld-cn'])),
+    //     ),
+    //     mode: InsertMode.insertOrReplace);
+    // await into(atomicDomainSets).insert(
+    //     AtomicDomainSetsCompanion(
+    //       name: const Value(cnGames),
+    //       geositeConfig: Value(
+    //           GeositeConfig(codes: ['category-games'], attributes: ['cn'])),
+    //     ),
+    //     mode: InsertMode.insertOrReplace);
+    // await into(atomicDomainSets).insertOnConflictUpdate(
+    //   AtomicDomainSetsCompanion(
+    //     name: const Value(private),
+    //     geositeConfig: Value(GeositeConfig(codes: ['private'])),
+    //   ),
+    // );
+    // // ip
+    // await into(atomicIpSets).insert(
+    //     const AtomicIpSetsCompanion(name: Value(customDirect)),
+    //     mode: InsertMode.insertOrReplace);
+    // await into(atomicIpSets).insert(
+    //     const AtomicIpSetsCompanion(name: Value(customProxy)),
+    //     mode: InsertMode.insertOrReplace);
+    // await into(atomicIpSets).insert(
+    //     AtomicIpSetsCompanion(
+    //       name: const Value(gfw),
+    //       geoIpConfig: Value(GeoIPConfig(
+    //         codes: ['telegram', 'google', 'facebook', 'twitter', "tor"],
+    //       )),
+    //     ),
+    //     mode: InsertMode.insertOrReplace);
+    // await into(atomicIpSets).insert(
+    //     AtomicIpSetsCompanion(
+    //       name: const Value(cn),
+    //       geoIpConfig: Value(GeoIPConfig(codes: ['cn'])),
+    //     ),
+    //     mode: InsertMode.insertOrReplace);
+    // await into(atomicIpSets).insert(
+    //     AtomicIpSetsCompanion(
+    //       name: const Value(private),
+    //       geoIpConfig: Value(GeoIPConfig(codes: ['private'])),
+    //     ),
+    //     mode: InsertMode.insertOrReplace);
+    // // great domain sets
+    // await into(greatDomainSets).insert(
+    //     GreatDomainSetsCompanion(
+    //       name: const Value(blackListProxy),
+    //       oppositeName: const Value(blackListDirect),
+    //       set: Value(GreatDomainSetConfig(
+    //         name: blackListProxy,
+    //         oppositeName: blackListDirect,
+    //         inNames: [gfw, customProxy],
+    //         exNames: [customDirect],
+    //       )),
+    //     ),
+    //     mode: InsertMode.insertOrReplace);
+    // await into(greatDomainSets).insert(
+    //     GreatDomainSetsCompanion(
+    //       name: const Value(whiteListDirect),
+    //       oppositeName: const Value(whiteListProxy),
+    //       set: Value(GreatDomainSetConfig(
+    //         name: whiteListDirect,
+    //         oppositeName: whiteListProxy,
+    //         inNames: [private, cn, cnGames, customDirect],
+    //         exNames: [customProxy, if (Platform.isIOS) gfwWithoutCustomDirect],
+    //       )),
+    //     ),
+    //     mode: InsertMode.insertOrReplace);
+    // if (Platform.isIOS) {
+    //   await into(greatDomainSets).insert(
+    //       GreatDomainSetsCompanion(
+    //         name: const Value(gfwWithoutCustomDirect),
+    //         set: Value(GreatDomainSetConfig(
+    //           name: gfwWithoutCustomDirect,
+    //           inNames: [
+    //             gfw,
+    //           ],
+    //           exNames: [customDirect],
+    //         )),
+    //       ),
+    //       mode: InsertMode.insertOrReplace);
+    // }
+    // await into(greatDomainSets).insert(
+    //     GreatDomainSetsCompanion(
+    //       name: const Value(proxyAllDirect),
+    //       oppositeName: const Value(proxyAllProxy),
+    //       set: Value(GreatDomainSetConfig(
+    //         name: proxyAllDirect,
+    //         oppositeName: proxyAllProxy,
+    //         inNames: [private, customDirect],
+    //         exNames: [customProxy],
+    //       )),
+    //     ),
+    //     mode: InsertMode.insertOrReplace);
+    // // great ip sets
+    // await into(greatIpSets).insert(
+    //     GreatIpSetsCompanion(
+    //       name: const Value(blackListProxy),
+    //       greatIpSetConfig: Value(GreatIPSetConfig(
+    //         name: blackListProxy,
+    //         inNames: [gfw, customProxy],
+    //         exNames: [customDirect],
+    //       )),
+    //     ),
+    //     mode: InsertMode.insertOrReplace);
+    // await into(greatIpSets).insert(
+    //     GreatIpSetsCompanion(
+    //       name: const Value(whiteListDirect),
+    //       greatIpSetConfig: Value(GreatIPSetConfig(
+    //         name: whiteListDirect,
+    //         // oppositeName: internalProxySetName,
+    //         inNames: [cn, private, customDirect],
+    //         exNames: [customProxy],
+    //       )),
+    //     ),
+    //     mode: InsertMode.insertOrReplace);
+    // await into(greatIpSets).insert(
+    //     GreatIpSetsCompanion(
+    //       name: const Value(proxyAllDirect),
+    //       greatIpSetConfig: Value(GreatIPSetConfig(
+    //         name: proxyAllDirect,
+    //         // oppositeName: internalProxySetName,
+    //         inNames: [private, customDirect],
+    //         exNames: [customProxy],
+    //       )),
+    //     ),
+    //     mode: InsertMode.insertOrReplace);
+    // // app sets
+    // await into(appSets).insert(
+    //     const AppSetsCompanion(
+    //       name: Value(proxy),
+    //     ),
+    //     mode: InsertMode.insertOrReplace);
+    // await into(appSets).insert(
+    //     const AppSetsCompanion(
+    //       name: Value(directAppSetName),
+    //     ),
+    //     mode: InsertMode.insertOrReplace);
+    // persistentStateRepo.setDatabaseInitialized(true);
+    // }
+    // proxy selector
+    await into(handlerSelectors).insert(
+        HandlerSelectorsCompanion(
+          name: const Value(proxy),
+          config: Value(SelectorConfig(
+              strategy: SelectorConfig_SelectingStrategy.LEAST_PING,
+              balanceStrategy: SelectorConfig_BalanceStrategy.MEMORY,
+              filter: SelectorConfig_Filter(
+                all: true,
+              ))),
+        ),
+        mode: InsertMode.insertOrIgnore);
+  }
+
+// Database Open
+//     ↓
+// Is this a NEW database?
+//     ↓ YES → onCreate() → beforeOpen() → Database Ready
+//     ↓ NO
+// Is schema version different?
+//     ↓ YES → onUpgrade() → beforeOpen() → Database Ready
+//     ↓ NO
+// beforeOpen() → Database Ready
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      // Executes when the database is opened for the first time.
+      onCreate: (Migrator m) async {
+        //  SqliteException(5898): while executing, disk I/O error, disk I/O error (code 5898)
+        for (int i = 0; i < 3; i++) {
+          try {
+            await m.createAll();
+            // Create triggers after tables are created
+            await _createUpdateTriggers();
+            break;
+          } catch (e) {
+            logger.e("onCreate createAll", error: e);
+            if (i == 2) {
+              reportError("onCreate createAll", e);
+              snack(rootLocalizations()
+                  ?.failedToCreateAllFirstLaunch(e.toString()));
+            }
+            // sleep 100ms
+            await Future.delayed(Duration(milliseconds: 100 * i));
+          }
+        }
+      },
+      // runs after migration
+      beforeOpen: (details) async {
+        try {
+          await customStatement('PRAGMA busy_timeout = 1000');
+        } catch (e) {
+          reportError("beforeOpen busy_timeout", e);
+        }
+
+        for (int i = 0; i < 5; i++) {
+          try {
+            await _insertDefault();
+            break;
+          } catch (e) {
+            logger.e('Error inserting default (attempt ${i + 1}/5)', error: e);
+            if (i == 4) {
+              reportError("insertDefault", e);
+              snack(
+                  rootLocalizations()?.failedToInsertDefaultData(e.toString()));
+              return;
+            }
+            // Check if it's a database lock error
+            if (e.toString().contains('database is locked') ||
+                e.toString().contains('SQLITE_BUSY')) {
+              // Wait with exponential backoff
+              final delay = Duration(milliseconds: 200); // 200ms
+              logger.d(
+                  'Database locked, waiting ${delay.inMilliseconds}ms before retry');
+              await Future.delayed(delay);
+              continue;
+            }
+          }
+        }
+
+        try {
+          await customStatement('PRAGMA foreign_keys = ON');
+        } catch (e) {
+          reportError("beforeOpen enable foreign keys", e);
+        }
+
+        if (kDebugMode) {
+          // This check pulls in a fair amount of code that's not needed
+          // anywhere else, so we recommend only doing it in debug builds.
+          // await validateDatabaseSchema();
+        }
+
+        // Ensure triggers exist (in case of upgrade from old version)
+        await _createUpdateTriggers();
+      },
+      onUpgrade: (m, from, to) async {
+        try {
+          //TODO: make sure the database is not used by golang part
+          // Run migration steps without foreign keys and re-enable them later
+          // (https://drift.simonbinder.eu/docs/advanced-features/migrations/#tips)
+          await customStatement('PRAGMA foreign_keys = OFF');
+
+          await transaction(() async {
+            await m.runMigrationSteps(
+              from: from,
+              to: to,
+              steps: migrationSteps(from7To8: (m, schema) async {
+                m.addColumn(
+                    schema.atomicDomainSets, schema.atomicDomainSets.geoUrl);
+                m.addColumn(schema.atomicIpSets, schema.atomicIpSets.geoUrl);
+              }, from6To7: (m, schema) async {
+                // outboundHandlers id column no longer auto increment
+                await m.alterTable(TableMigration(schema.outboundHandlers,
+                    newColumns: [schema.outboundHandlers.updatedAt]));
+                // outboundHandlerGroups
+                await m.addColumn(schema.outboundHandlerGroups,
+                    schema.outboundHandlerGroups.updatedAt);
+                // subscriptions. id column no longer auto increment
+                await m.alterTable(TableMigration(schema.subscriptions,
+                    newColumns: [schema.subscriptions.updatedAt]));
+                // atomicDomainSets
+                await m.addColumn(
+                    schema.atomicDomainSets, schema.atomicDomainSets.updatedAt);
+                // greatDomainSets
+                await m.addColumn(
+                    schema.greatDomainSets, schema.greatDomainSets.updatedAt);
+                // appSets
+                await m.addColumn(schema.appSets, schema.appSets.updatedAt);
+                // atomicIpSets
+                await m.addColumn(
+                    schema.atomicIpSets, schema.atomicIpSets.updatedAt);
+                // greatIpSets
+                await m.addColumn(
+                    schema.greatIpSets, schema.greatIpSets.updatedAt);
+                // dnsServers
+                await m.alterTable(
+                    TableMigration(schema.dnsServers, columnTransformer: {
+                  schema.dnsServers.id: const CustomExpression(
+                      '(abs(random()) % 9223372036854775807)')
+                }, newColumns: [
+                  schema.dnsServers.updatedAt
+                ]));
+                // sshServers
+                await m.addColumn(
+                    schema.sshServers, schema.sshServers.updatedAt);
+                // customRouteModes
+                await m.alterTable(
+                  TableMigration(schema.customRouteModes,
+                      newColumns: [schema.customRouteModes.updatedAt]),
+                );
+                // handlerSelectors
+                await m.addColumn(
+                    schema.handlerSelectors, schema.handlerSelectors.updatedAt);
+                // selectorHandlerRelations
+                await m.alterTable(TableMigration(
+                    schema.selectorHandlerRelations,
+                    columnTransformer: {
+                      schema.selectorHandlerRelations.id:
+                          const CustomExpression(
+                              '(abs(random()) % 9223372036854775807)')
+                    }));
+                // selectorSubscriptionRelations
+                await m.alterTable(TableMigration(
+                    schema.selectorSubscriptionRelations,
+                    columnTransformer: {
+                      schema.selectorSubscriptionRelations.id:
+                          const CustomExpression(
+                              '(abs(random()) % 9223372036854775807)')
+                    }));
+                // selectorHandlerGroupRelations
+                await m.alterTable(TableMigration(
+                    schema.selectorHandlerGroupRelations,
+                    columnTransformer: {
+                      schema.selectorHandlerGroupRelations.id:
+                          const CustomExpression(
+                              '(abs(random()) % 9223372036854775807)')
+                    }));
+              }, from1To2: (m, schema) async {
+                await m.addColumn(schema.apps, schema.apps.icon);
+                await m.createTable(schema.commonSshKeys);
+                await m.dropColumn(schema.sshServers, 'port');
+                await m.dropColumn(schema.sshServers, 'user');
+                await m.dropColumn(schema.sshServers, 'password');
+                await m.dropColumn(schema.sshServers, 'passphrase');
+                await m.dropColumn(schema.sshServers, 'pub_key');
+              }, from2To3: (m, schema) async {
+                const customDirect = '自定义直连';
+                const customProxy = '自定义代理';
+
+                // create tables
+                await m.createTable(schema.outboundHandlerGroups);
+                await m.createTable(schema.outboundHandlerGroupRelations);
+                await m.createTable(schema.atomicDomainSets);
+                await m.createTable(schema.greatDomainSets);
+                await m.createTable(schema.atomicIpSets);
+                await m.createTable(schema.greatIpSets);
+                await m.createTable(schema.appSets);
+                await m.createTable(schema.customRouteModes);
+                await m.createTable(schema.handlerSelectors);
+                // Save existing data before table recreation
+                try {
+                  // outboundHandlers
+                  final oldData =
+                      await customSelect('SELECT * FROM outbound_handlers')
+                          .get();
+                  logger.d(
+                      'Saving ${oldData.length} outbound handlers before migration');
+                  await m.deleteTable(schema.outboundHandlers.actualTableName);
+                  await m.createTable(schema.outboundHandlers);
+                  // Restore outboundHandlers data with schema transformation
+                  for (final row in oldData) {
+                    // Create new companion with transformed data
+                    final newCompanion = OutboundHandlersCompanion(
+                      id: Value(row.data['id'] as int),
+                      config: Value(HandlerConfig(
+                          outbound: OutboundHandlerConfig.fromBuffer(
+                              row.data['config'] as Uint8List))),
+                      subId: Value(row.data['sub_id'] as int?),
+                      // New columns get default values
+                    );
+                    await into(outboundHandlers).insert(newCompanion);
+                  }
+                } catch (e) {
+                  logger.e('Error migrating outboundHandlers', error: e);
+                  rethrow;
+                }
+
+                // subscriptions
+                await m.alterTable(TableMigration(schema.subscriptions));
+
+                try {
+                  // geoDomains
+                  final oldData =
+                      await customSelect('SELECT * FROM geo_domains').get();
+                  logger.d(
+                      'Saving ${oldData.length} geo domains before migration');
+                  await m.deleteTable(schema.geoDomains.actualTableName);
+                  await m.createTable(schema.geoDomains);
+                  // Restore geoDomains data
+                  for (final row in oldData) {
+                    await into(geoDomains).insert(GeoDomainsCompanion(
+                      domainSetName: Value((row.data['go_proxy'] as int) == 1
+                          ? customProxy
+                          : customDirect),
+                      geoDomain:
+                          Value(Domain.fromBuffer(row.data['geo_domain'])),
+                    ));
+                  }
+                  logger.d('Restored ${oldData.length} geo domains');
+                } catch (e) {
+                  logger.e('Error migrating geoDomains', error: e);
+                  rethrow;
+                }
+
+                try {
+                  // apps
+                  final oldData =
+                      await customSelect('SELECT * FROM apps').get();
+                  logger.d('Saving ${oldData.length} apps before migration');
+                  await m.deleteTable(schema.apps.actualTableName);
+                  await m.createTable(schema.apps);
+                  // Restore apps data
+                  for (final row in oldData) {
+                    await into(apps).insert(AppsCompanion(
+                      appSetName: Value((row.data['proxy'] as int) == 1
+                          ? proxy
+                          : directAppSetName),
+                      appId: Value(AppId.fromBuffer(row.data['app_id'])),
+                    ));
+                  }
+                  logger.d('Restored ${oldData.length} apps');
+                } catch (e) {
+                  logger.e('Error migrating apps', error: e);
+                  rethrow;
+                }
+
+                try {
+                  // cidrs
+                  final oldData =
+                      await customSelect('SELECT * FROM cidrs').get();
+                  logger.d('Saving ${oldData.length} cidrs before migration');
+                  await m.deleteTable(schema.cidrs.actualTableName);
+                  await m.createTable(schema.cidrs);
+                  // Restore cidrs data
+                  for (final row in oldData) {
+                    await into(cidrs).insert(CidrsCompanion(
+                      cidr: Value(CIDR.fromBuffer(row.data['cidr'])),
+                      ipSetName: Value((row.data['proxy'] as int) == 1
+                          ? customProxy
+                          : customDirect),
+                    ));
+                  }
+                  logger.d('Restored ${oldData.length} cidrs');
+                } catch (e) {
+                  logger.e('Error migrating cidrs', error: e);
+                  rethrow;
+                }
+              }, from3To4: (m, schema) async {
+                await m.createTable(schema.selectorHandlerGroupRelations);
+                await m.createTable(schema.selectorHandlerRelations);
+                await m.createTable(schema.selectorSubscriptionRelations);
+              }, from4To5: (m, schema) async {
+                const dnsServerProxy = 'Proxy DNS Server';
+                const dnsServerDirect = 'Direct DNS Server';
+                await m.addColumn(schema.greatDomainSets,
+                    schema.greatDomainSets.oppositeName);
+                // select all greatDomainSets and populate oppositeName column
+                final gds = await select(greatDomainSets).get();
+                for (final row in gds) {
+                  await (update(greatDomainSets)
+                        ..where((e) => e.name.equals(row.name)))
+                      .write(GreatDomainSetsCompanion(
+                          oppositeName: Value(row.set.oppositeName)));
+                }
+                // select all rows in customRouteModes
+                final oldData =
+                    await customSelect('SELECT * FROM custom_route_modes')
+                        .get();
+                await m.dropColumn(
+                    schema.customRouteModes, 'domain_sets_proxy_dns');
+                await m.addColumn(
+                    schema.customRouteModes, schema.customRouteModes.dnsRules);
+                for (final row in oldData) {
+                  final domainSetsProxyDns =
+                      row.data['domain_sets_proxy_dns'] as String;
+                  final domainTags =
+                      jsonDecode(domainSetsProxyDns) as List<dynamic>;
+                  final domainTagsString =
+                      domainTags.map((e) => e.toString()).toList();
+                  if (domainTagsString.isNotEmpty) {
+                    await (update(customRouteModes)
+                          ..where((e) => e.id.equals(row.data['id'])))
+                        .write(CustomRouteModesCompanion(
+                            dnsRules: Value(dns.DnsRules(rules: [
+                      dns.DnsRuleConfig(
+                          ruleName: '代理域名(proxy domains) A/AAAA',
+                          dnsServerName: dnsServerFake,
+                          includedTypes: [
+                            dns.DnsType.DnsType_A,
+                            dns.DnsType.DnsType_AAAA
+                          ],
+                          domainTags: domainTagsString),
+                      dns.DnsRuleConfig(
+                          ruleName: '代理域名(proxy domains)',
+                          dnsServerName: dnsServerProxy,
+                          domainTags: domainTagsString),
+                      dns.DnsRuleConfig(
+                        ruleName: '直连域名(direct domains)',
+                        dnsServerName: dnsServerDirect,
+                      )
+                    ]))));
+                  }
+                }
+                await m.createTable(schema.dnsServers);
+              }, from5To6: (m, schema) async {
+                await m.addColumn(schema.outboundHandlerGroups,
+                    schema.outboundHandlerGroups.placeOnTop);
+                await m.addColumn(
+                    schema.subscriptions, schema.subscriptions.placeOnTop);
+                await m.addColumn(schema.atomicDomainSets,
+                    schema.atomicDomainSets.clashRuleUrls);
+                await m.addColumn(schema.appSets, schema.appSets.clashRuleUrls);
+                await m.addColumn(
+                    schema.atomicIpSets, schema.atomicIpSets.clashRuleUrls);
+              }),
+            );
+          });
+
+          // Assert that the schema is valid after migrations
+          if (kDebugMode) {
+            final wrongForeignKeys =
+                await customSelect('PRAGMA foreign_key_check').get();
+            assert(wrongForeignKeys.isEmpty,
+                '${wrongForeignKeys.map((e) => e.data)}');
+          }
+        } catch (e) {
+          reportError("onUpgrade: $from -> $to", e);
+        }
+      },
+    );
+  }
+
+  Future<void> deleteEverything() async {
+    await customStatement('PRAGMA foreign_keys = OFF');
+    try {
+      await transaction(() async {
+        for (final table in allTables) {
+          await delete(table).go();
+        }
+      });
+    } finally {
+      await customStatement('PRAGMA foreign_keys = OFF');
+    }
+  }
+
+  Future<void> _createUpdateTriggers() async {
+    final idTables = [
+      'subscriptions',
+      'outbound_handlers',
+      'outbound_handler_groups',
+      // 'dns_records',
+      'atomic_domain_sets',
+      'great_domain_sets',
+      'atomic_ip_sets',
+      'great_ip_sets',
+      'app_sets',
+      'ssh_servers',
+      'common_ssh_keys',
+      'custom_route_modes',
+      'handler_selectors',
+      'dns_servers',
+    ];
+
+    for (final table in idTables) {
+      // Prevent updates when old updated_at is later than new updated_at
+      // This protects against stale data overwriting newer records (useful for sync)
+      await customStatement('''
+        CREATE TRIGGER IF NOT EXISTS prevent_stale_update_$table
+        BEFORE UPDATE ON $table
+        FOR EACH ROW
+        WHEN NEW.updated_at IS NOT NULL 
+             AND OLD.updated_at IS NOT NULL 
+             AND OLD.updated_at > NEW.updated_at
+        BEGIN
+          SELECT RAISE(IGNORE);
+        END;
+      ''');
+    }
+  }
+
+  Future<SelectorConfig> selectorToConfig(HandlerSelector selector) async {
+    final config = SelectorConfig(
+      tag: selector.name,
+      strategy: selector.config.strategy,
+      balanceStrategy: selector.config.balanceStrategy,
+      landHandlers: selector.config.landHandlers,
+      filter: selector.config.filter.all
+          ? SelectorConfig_Filter(all: true)
+          : SelectorConfig_Filter(
+              handlerIds: (await (select(selectorHandlerRelations)
+                        ..where((s) => s.selectorName.equals(selector.name)))
+                      .get())
+                  .map((e) => Int64(e.handlerId))
+                  .toList(),
+              groupTags: (await (select(selectorHandlerGroupRelations)
+                        ..where((s) => s.selectorName.equals(selector.name)))
+                      .get())
+                  .map((e) => e.groupName)
+                  .toList(),
+              subIds: (await (select(selectorSubscriptionRelations)
+                        ..where((s) => s.selectorName.equals(selector.name)))
+                      .get())
+                  .map((e) => Int64(e.subscriptionId))
+                  .toList(),
+            ),
+    );
+    return config;
+  }
+
+  Future<SelectorConfig?> getSelectorConfig(String name) async {
+    final selector = await (select(handlerSelectors)
+          ..where((s) => s.name.equals(name)))
+        .getSingleOrNull();
+    if (selector != null) {
+      return selectorToConfig(selector);
+    }
+    return null;
+  }
+
+  TableInfo<Table, Object?>? getTableByName(String tableName) {
+    for (final table in database.allTables) {
+      if (table.actualTableName == tableName) {
+        return table;
+      }
+    }
+    return null;
+  }
+}
+
+@UseRowClass(OutboundHandler)
+class OutboundHandlers extends Table with TableMixin {
+  IntColumn get id => integer()();
+  BoolColumn get selected => boolean().clientDefault(() => false)();
+  TextColumn get countryCode => text().clientDefault(() => '')();
+  TextColumn get sni => text().clientDefault(() => '')();
+  // speed in Mbps
+  RealColumn get speed => real().withDefault(const Constant(0))();
+  IntColumn get speedTestTime => integer().withDefault(const Constant(0))();
+  // ping in ms
+  IntColumn get ping => integer().withDefault(const Constant(0))();
+  IntColumn get pingTestTime => integer().withDefault(const Constant(0))();
+  // 0: dont know. This value is the result of the latest test.
+  IntColumn get ok => integer().withDefault(const Constant(0))();
+  TextColumn get serverIp => text().clientDefault(() => '')();
+  BlobColumn get config => blob().map(const OutboundConverter())();
+  IntColumn get support6 => integer().withDefault(const Constant(0))();
+  IntColumn get support6TestTime => integer().withDefault(const Constant(0))();
+  IntColumn get subId => integer()
+      .references(Subscriptions, #id, onDelete: KeyAction.cascade)
+      .nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class OutboundConverter extends TypeConverter<HandlerConfig, Uint8List> {
+  const OutboundConverter();
+
+  @override
+  HandlerConfig fromSql(Uint8List fromSql) => HandlerConfig.fromBuffer(fromSql);
+
+  @override
+  Uint8List toSql(HandlerConfig fromDart) => fromDart.writeToBuffer();
+}
+
+class PortListConverter extends TypeConverter<PortList, Uint8List> {
+  const PortListConverter();
+
+  @override
+  PortList fromSql(Uint8List fromSql) => PortList.fromBuffer(fromSql);
+
+  @override
+  Uint8List toSql(PortList fromDart) => fromDart.writeToBuffer();
+}
+
+@UseRowClass(OutboundHandlerGroup)
+class OutboundHandlerGroups extends Table with TableMixin {
+  TextColumn get name => text()();
+  BoolColumn get placeOnTop => boolean().withDefault(const Constant(false))();
+  @override
+  Set<Column<Object>> get primaryKey => {name};
+}
+
+class OutboundHandlerGroupRelations extends Table {
+  TextColumn get groupName => text()
+      .references(OutboundHandlerGroups, #name, onDelete: KeyAction.cascade)();
+  IntColumn get handlerId => integer()
+      .references(OutboundHandlers, #id, onDelete: KeyAction.cascade)();
+  @override
+  Set<Column<Object>> get primaryKey => {groupName, handlerId};
+}
+
+class Subscriptions extends Table with TableMixin {
+  IntColumn get id => integer()();
+  TextColumn get name => text()();
+  TextColumn get link => text().unique()();
+  // GB
+  RealColumn get remainingData => real().nullable()();
+  // miliseconds
+  IntColumn get endTime => integer().nullable()();
+  TextColumn get website => text().withDefault(const Constant(''))();
+  TextColumn get description => text().withDefault(const Constant(''))();
+  // miliseconds
+  IntColumn get lastUpdate => integer()();
+  // miliseconds
+  IntColumn get lastSuccessUpdate => integer()();
+  BoolColumn get placeOnTop => boolean().withDefault(const Constant(false))();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class DnsRecords extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  BlobColumn get dnsRecord => blob().map(const DnsRecordConverter())();
+}
+
+class DnsRecordConverter extends TypeConverter<dns.Record, Uint8List> {
+  const DnsRecordConverter();
+
+  @override
+  dns.Record fromSql(Uint8List fromSql) => dns.Record.fromBuffer(fromSql);
+
+  @override
+  Uint8List toSql(dns.Record fromDart) => fromDart.writeToBuffer();
+}
+
+@UseRowClass(AtomicDomainSet)
+class AtomicDomainSets extends Table with TableMixin {
+  TextColumn get name => text()();
+  BlobColumn get geositeConfig =>
+      blob().nullable().map(const GeositeConfigConverter())();
+  BoolColumn get useBloomFilter =>
+      boolean().withDefault(const Constant(false))();
+  TextColumn get clashRuleUrls =>
+      text().nullable().map(const StringListConverter())();
+  TextColumn get geoUrl => text().nullable()();
+  @override
+  Set<Column<Object>> get primaryKey => {name};
+}
+
+@UseRowClass(GreatDomainSet)
+class GreatDomainSets extends Table with TableMixin {
+  TextColumn get name => text()();
+  TextColumn get oppositeName => text().nullable()();
+  BlobColumn get set => blob().map(const GreatDomainSetConverter())();
+
+  @override
+  Set<Column<Object>> get primaryKey => {name};
+}
+
+class GreatDomainSetConverter
+    extends TypeConverter<GreatDomainSetConfig, Uint8List> {
+  const GreatDomainSetConverter();
+
+  @override
+  GreatDomainSetConfig fromSql(Uint8List fromSql) =>
+      GreatDomainSetConfig.fromBuffer(fromSql);
+
+  @override
+  Uint8List toSql(GreatDomainSetConfig fromDart) => fromDart.writeToBuffer();
+}
+
+class GeositeConfigConverter extends TypeConverter<GeositeConfig, Uint8List> {
+  const GeositeConfigConverter();
+
+  @override
+  GeositeConfig fromSql(Uint8List fromSql) => GeositeConfig.fromBuffer(fromSql);
+
+  @override
+  Uint8List toSql(GeositeConfig fromDart) => fromDart.writeToBuffer();
+}
+
+@UseRowClass(GeoDomain)
+class GeoDomains extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  // BoolColumn get goProxy => boolean()();
+  BlobColumn get geoDomain => blob().map(const GeoDomainConverter())();
+  TextColumn get domainSetName => text().references(AtomicDomainSets, #name,
+      onUpdate: KeyAction.cascade, onDelete: KeyAction.cascade)();
+  @override
+  List<Set<Column<Object>>>? get uniqueKeys => [
+        {geoDomain, domainSetName}
+      ];
+}
+
+class GeoDomainConverter extends TypeConverter<Domain, Uint8List> {
+  const GeoDomainConverter();
+
+  @override
+  Domain fromSql(Uint8List fromSql) => Domain.fromBuffer(fromSql);
+
+  @override
+  Uint8List toSql(Domain fromDart) => fromDart.writeToBuffer();
+}
+
+@UseRowClass(App)
+class Apps extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get appSetName => text().references(AppSets, #name,
+      onUpdate: KeyAction.cascade, onDelete: KeyAction.cascade)();
+  BlobColumn get appId => blob().map(const AppIdConverter())();
+  BlobColumn get icon => blob().nullable()();
+
+  @override
+  List<Set<Column<Object>>>? get uniqueKeys => [
+        {appId, appSetName}
+      ];
+}
+
+@UseRowClass(AppSet)
+class AppSets extends Table with TableMixin {
+  TextColumn get name => text()();
+  TextColumn get clashRuleUrls =>
+      text().nullable().map(const StringListConverter())();
+  @override
+  Set<Column<Object>> get primaryKey => {name};
+}
+
+class AppIdConverter extends TypeConverter<AppId, Uint8List> {
+  const AppIdConverter();
+
+  @override
+  AppId fromSql(Uint8List fromSql) => AppId.fromBuffer(fromSql);
+
+  @override
+  Uint8List toSql(AppId fromDart) => fromDart.writeToBuffer();
+}
+
+@UseRowClass(Cidr)
+class Cidrs extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get ipSetName => text().references(AtomicIpSets, #name,
+      onUpdate: KeyAction.cascade, onDelete: KeyAction.cascade)();
+  BlobColumn get cidr => blob().map(const CidrConverter())();
+
+  @override
+  List<Set<Column<Object>>>? get uniqueKeys => [
+        {cidr, ipSetName}
+      ];
+}
+
+@UseRowClass(AtomicIpSet)
+class AtomicIpSets extends Table with TableMixin {
+  TextColumn get name => text()();
+  BoolColumn get inverse => boolean().withDefault(const Constant(false))();
+  BlobColumn get geoIpConfig =>
+      blob().nullable().map(const GeoIpConfigConverter())();
+  TextColumn get clashRuleUrls =>
+      text().nullable().map(const StringListConverter())();
+  TextColumn get geoUrl => text().nullable()();
+  @override
+  Set<Column<Object>> get primaryKey => {name};
+}
+
+@UseRowClass(GreatIpSet)
+class GreatIpSets extends Table with TableMixin {
+  TextColumn get name => text()();
+  BlobColumn get greatIpSetConfig => blob().map(const GreatIpSetConverter())();
+
+  @override
+  Set<Column<Object>> get primaryKey => {name};
+}
+
+class GreatIpSetConverter extends TypeConverter<GreatIPSetConfig, Uint8List> {
+  const GreatIpSetConverter();
+
+  @override
+  GreatIPSetConfig fromSql(Uint8List fromSql) =>
+      GreatIPSetConfig.fromBuffer(fromSql);
+
+  @override
+  Uint8List toSql(GreatIPSetConfig fromDart) => fromDart.writeToBuffer();
+}
+
+class GeoIpConfigConverter extends TypeConverter<GeoIPConfig, Uint8List> {
+  const GeoIpConfigConverter();
+
+  @override
+  GeoIPConfig fromSql(Uint8List fromSql) => GeoIPConfig.fromBuffer(fromSql);
+
+  @override
+  Uint8List toSql(GeoIPConfig fromDart) => fromDart.writeToBuffer();
+}
+
+class CidrConverter extends TypeConverter<CIDR, Uint8List> {
+  const CidrConverter();
+
+  @override
+  CIDR fromSql(Uint8List fromSql) => CIDR.fromBuffer(fromSql);
+
+  @override
+  Uint8List toSql(CIDR fromDart) => fromDart.writeToBuffer();
+}
+
+class SshServers extends Table with TableMixin {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+  TextColumn get address => text()();
+  TextColumn get storageKey => text()();
+  TextColumn get country => text().nullable()();
+  IntColumn get authMethod => intEnum<AuthMethod>()();
+}
+
+class CommonSshKeys extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text().unique()();
+  TextColumn get remark => text().nullable()();
+}
+
+@UseRowClass(CustomRouteMode)
+class CustomRouteModes extends Table with TableMixin {
+  IntColumn get id => integer()();
+  TextColumn get name => text().unique()();
+  BlobColumn get routerConfig => blob().map(const RouterConfigConverter())();
+  // TextColumn get domainSetsProxyDns =>
+  //     text().map(const StringListConverter())();
+  BlobColumn get dnsRules => blob()
+      .withDefault(Constant(dns.DnsRules().writeToBuffer()))
+      .map(const DnsRulesConverter())();
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class DnsRulesConverter extends TypeConverter<dns.DnsRules, Uint8List> {
+  const DnsRulesConverter();
+
+  @override
+  dns.DnsRules fromSql(Uint8List fromSql) => dns.DnsRules.fromBuffer(fromSql);
+
+  @override
+  Uint8List toSql(dns.DnsRules fromDart) => fromDart.writeToBuffer();
+}
+
+class CustomRouteMode {
+  CustomRouteMode({
+    this.id = 0,
+    required this.name,
+    required this.routerConfig,
+    required this.dnsRules,
+  });
+  int id;
+  final String name;
+  final RouterConfig routerConfig;
+  final dns.DnsRules dnsRules;
+
+  bool get hasDefaultProxySelector {
+    for (var rule in routerConfig.rules) {
+      if (rule.selectorTag == defaultProxySelectorTag) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  List<String> getSelectorTags() {
+    final ret = <String>[];
+    for (var rule in routerConfig.rules) {
+      if (rule.selectorTag.isNotEmpty) {
+        ret.add(rule.selectorTag);
+      }
+    }
+    return ret;
+  }
+
+  CustomRouteModesCompanion toCompanion(bool nullToAbsent) =>
+      CustomRouteModesCompanion(
+        id: Value(id),
+        name: Value(name),
+        routerConfig: Value(routerConfig),
+        dnsRules: Value(dnsRules),
+      );
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'routerConfig': routerConfig.writeToJson(),
+      'dnsRules': dnsRules.writeToJson(),
+    };
+  }
+
+  factory CustomRouteMode.fromJson(Map<String, dynamic> json) {
+    return CustomRouteMode(
+      id: json['id'],
+      name: json['name'],
+      routerConfig: RouterConfig.fromJson(json['routerConfig']),
+      dnsRules: dns.DnsRules.fromJson(json['dnsRules']),
+    );
+  }
+}
+
+class StringListConverter extends TypeConverter<List<String>, String> {
+  const StringListConverter();
+  @override
+  List<String> fromSql(String fromSql) {
+    final ret = jsonDecode(fromSql) as List<dynamic>;
+    return ret.map((e) => e.toString()).toList();
+  }
+
+  @override
+  String toSql(List<String> fromDart) => jsonEncode(fromDart);
+}
+
+class RouterConfigConverter extends TypeConverter<RouterConfig, Uint8List> {
+  const RouterConfigConverter();
+
+  @override
+  RouterConfig fromSql(Uint8List fromSql) => RouterConfig.fromBuffer(fromSql);
+
+  @override
+  Uint8List toSql(RouterConfig fromDart) => fromDart.writeToBuffer();
+}
+
+@UseRowClass(HandlerSelector)
+class HandlerSelectors extends Table with TableMixin {
+  TextColumn get name => text()();
+  BlobColumn get config => blob().map(const SelectorConfigConverter())();
+
+  @override
+  Set<Column<Object>> get primaryKey => {name};
+}
+
+class SelectorConfigConverter extends TypeConverter<SelectorConfig, Uint8List> {
+  const SelectorConfigConverter();
+
+  @override
+  SelectorConfig fromSql(Uint8List fromSql) =>
+      SelectorConfig.fromBuffer(fromSql);
+  @override
+  Uint8List toSql(SelectorConfig fromDart) => fromDart.writeToBuffer();
+}
+
+class SelectorHandlerRelations extends Table {
+  IntColumn get id => integer()();
+  TextColumn get selectorName =>
+      text().references(HandlerSelectors, #name, onDelete: KeyAction.cascade)();
+  IntColumn get handlerId => integer()
+      .references(OutboundHandlers, #id, onDelete: KeyAction.cascade)();
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+  @override
+  List<Set<Column<Object>>>? get uniqueKeys => [
+        {selectorName, handlerId}
+      ];
+}
+
+class SelectorHandlerGroupRelations extends Table {
+  IntColumn get id => integer()();
+  TextColumn get selectorName =>
+      text().references(HandlerSelectors, #name, onDelete: KeyAction.cascade)();
+  TextColumn get groupName => text()
+      .references(OutboundHandlerGroups, #name, onDelete: KeyAction.cascade)();
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+  @override
+  List<Set<Column<Object>>>? get uniqueKeys => [
+        {selectorName, groupName}
+      ];
+}
+
+class SelectorSubscriptionRelations extends Table {
+  IntColumn get id => integer()();
+  TextColumn get selectorName =>
+      text().references(HandlerSelectors, #name, onDelete: KeyAction.cascade)();
+  IntColumn get subscriptionId =>
+      integer().references(Subscriptions, #id, onDelete: KeyAction.cascade)();
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+  @override
+  List<Set<Column<Object>>>? get uniqueKeys => [
+        {selectorName, subscriptionId}
+      ];
+}
+
+@UseRowClass(DnsServer)
+class DnsServers extends Table with TableMixin {
+  IntColumn get id => integer()();
+  TextColumn get name => text().unique()();
+  BlobColumn get dnsServer => blob().map(const DnsServerConverter())();
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class DnsServerConverter extends TypeConverter<dns.DnsServerConfig, Uint8List> {
+  const DnsServerConverter();
+
+  @override
+  dns.DnsServerConfig fromSql(Uint8List fromSql) =>
+      dns.DnsServerConfig.fromBuffer(fromSql);
+
+  @override
+  Uint8List toSql(dns.DnsServerConfig fromDart) => fromDart.writeToBuffer();
+}
+
+extension SyncExtension on DatabaseConnectionUser {
+  Future<Row> syncUpdateId<T extends TableInfo<Table, Row>, Row>(
+      T table, int id, Insertable<Row> data) async {
+    final columnsByName = table.columnsByName;
+    final stmt = update(table)
+      ..where((tbl) {
+        final idColumn = columnsByName['id'];
+
+        if (idColumn == null) {
+          throw ArgumentError.value(
+              this, 'this', 'Must be a table with an id column');
+        }
+
+        if (idColumn.type != DriftSqlType.int) {
+          throw ArgumentError('Column `id` is not an integer');
+        }
+
+        return idColumn.equals(id);
+      });
+
+    if (columnsByName.containsKey('updated_at') &&
+        table.actualTableName != 'outbound_handlers') {
+      data = (data as dynamic).copyWith(updatedAt: Value(DateTime.now()));
+    }
+    final rows = await stmt.writeReturning(data);
+    if (syncService.enable) {
+      syncService.sqlOperation(SqlOperation(
+        type: SQLType.UPDATE,
+        table: table.actualTableName,
+        rows: [jsonEncode((rows.single as dynamic).toJson())],
+      ));
+    }
+    return rows.single;
+  }
+
+  Future<Row> syncUpdateName<T extends TableInfo<Table, Row>, Row>(
+      T table, String name, Insertable<Row> data) async {
+    final columnsByName = table.columnsByName;
+    final stmt = update(table)
+      ..where((tbl) {
+        final idColumn = columnsByName['name'];
+
+        if (idColumn == null) {
+          throw ArgumentError.value(
+              this, 'this', 'Must be a table with an name column');
+        }
+
+        if (idColumn.type != DriftSqlType.string) {
+          throw ArgumentError('Column `name` is not a string');
+        }
+
+        return idColumn.equals(name);
+      });
+    if (columnsByName.containsKey('updated_at')) {
+      data = (data as dynamic).copyWith(updatedAt: Value(DateTime.now()));
+    }
+    final rows = await stmt.writeReturning(data);
+    if (syncService.enable) {
+      syncService.sqlOperation(SqlOperation(
+        type: SQLType.UPDATE,
+        table: table.actualTableName,
+        rows: [jsonEncode((rows.single as dynamic).toJson())],
+      ));
+    }
+    return rows.single;
+  }
+
+  Future<void> transactionInsertSync<T extends TableInfo<Table, Row>, Row>(
+    T table,
+    List<Insertable<Row>> datas,
+  ) async {
+    final rows = <Row>[];
+    await database.transaction(() async {
+      for (var data in datas) {
+        final row = await database.into(table).insertReturning(data);
+        rows.add(row);
+      }
+    });
+    if (syncService.enable) {
+      syncService.sqlOperation(SqlOperation(
+        type: SQLType.INSERT,
+        table: table.actualTableName,
+        rows: rows.map((e) => jsonEncode((e as dynamic).toJson())).toList(),
+      ));
+    }
+  }
+
+  Future<Row> syncInsertReturning<T extends TableInfo<Table, Row>, Row>(
+    T table,
+    Insertable<Row> data, {
+    InsertMode? mode,
+  }) async {
+    final stmt = into(table);
+    final row = await stmt.insertReturning(data, mode: mode);
+    if (syncService.enable) {
+      syncService.sqlOperation(SqlOperation(
+        type: SQLType.INSERT,
+        table: table.actualTableName,
+        rows: [jsonEncode((row as dynamic).toJson())],
+      ));
+    }
+    return row;
+  }
+
+  Future<void> syncDeleteId<T extends TableInfo<Table, Row>, Row>(
+      T table, List<int> ids) async {
+    final columnsByName = table.columnsByName;
+    for (var id in ids) {
+      final stmt = delete(table)
+        ..where((tbl) {
+          final idColumn = columnsByName['id'];
+          if (idColumn == null) {
+            throw ArgumentError.value(
+                this, 'this', 'Must be a table with an id column');
+          }
+          if (idColumn.type != DriftSqlType.int) {
+            throw ArgumentError('Column `id` is not an integer');
+          }
+          return idColumn.equals(id);
+        });
+      await stmt.go();
+    }
+    if (syncService.enable) {
+      syncService.sqlOperation(SqlOperation(
+        type: SQLType.DELETE,
+        table: table.actualTableName,
+        ids: ids.map((e) => Int64(e)).toList(),
+      ));
+    }
+  }
+
+  Future<void> syncDeleteName<T extends TableInfo<Table, Row>, Row>(
+      T table, String name) async {
+    final columnsByName = table.columnsByName;
+    final stmt = delete(table)
+      ..where((tbl) {
+        final idColumn = columnsByName['name'];
+        if (idColumn == null) {
+          throw ArgumentError.value(
+              this, 'this', 'Must be a table with an name column');
+        }
+        if (idColumn.type != DriftSqlType.string) {
+          throw ArgumentError('Column `name` is not a string');
+        }
+        return idColumn.equals(name);
+      });
+    await stmt.go();
+    if (syncService.enable) {
+      syncService.sqlOperation(SqlOperation(
+        type: SQLType.DELETE,
+        table: table.actualTableName,
+        names: [name],
+      ));
+    }
+  }
+}
+
+abstract class ToJson {
+  Map<String, dynamic> toJson({ValueSerializer? serializer});
+}
+
+mixin TableMixin on Table {
+  // Column for created at timestamp
+  late final updatedAt =
+      dateTime().nullable().clientDefault(() => DateTime.now())();
+}
+
+Future<void> insertDefault(BuildContext context) async {
+  final al = AppLocalizations.of(context)!;
+  final xbloc = context.read<ProxySelectorBloc>();
+
+  try {
+    if (!persistentStateRepo.databaseInitialized) {
+      final country = getUserCountryFromLocale();
+      final defaultModes = <DefaultRouteMode>[];
+      if (country == 'CN') {
+        defaultModes.addAll([
+          DefaultRouteMode.black,
+          DefaultRouteMode.white,
+        ]);
+      } else if (country == 'RU') {
+        defaultModes.addAll([
+          DefaultRouteMode.ruBlocked,
+          DefaultRouteMode.ruBlockedAll,
+        ]);
+      }
+      defaultModes.add(DefaultRouteMode.proxyAll);
+      for (var mode in defaultModes) {
+        await insertDefaultRouteMode(al, mode);
+      }
+      if (persistentStateRepo.routingMode == null) {
+        persistentStateRepo.setRoutingMode(al.proxyAll);
+        final mode = await ((database.select(database.customRouteModes))
+              ..where((tbl) => tbl.name.equals(al.proxyAll)))
+            .getSingle();
+        xbloc.add(RoutingModeSelectionChangeEvent(mode));
+      }
+      persistentStateRepo.setDatabaseInitialized(true);
+    }
+    // check if custom direct, custom proxy set, direct app set and proxy app set exists
+    final customDirect = await (database.select(database.atomicDomainSets)
+          ..where((tbl) => tbl.name.equals(al.customDirect)))
+        .getSingleOrNull();
+    if (customDirect == null) {
+      await database.into(database.atomicDomainSets).insert(
+          AtomicDomainSetsCompanion(name: Value(al.customDirect)),
+          mode: InsertMode.insertOrIgnore);
+    }
+    final customProxy = await (database.select(database.atomicDomainSets)
+          ..where((tbl) => tbl.name.equals(al.customProxy)))
+        .getSingleOrNull();
+    if (customProxy == null) {
+      await database.into(database.atomicDomainSets).insert(
+          AtomicDomainSetsCompanion(name: Value(al.customProxy)),
+          mode: InsertMode.insertOrIgnore);
+    }
+    final directAppSet = await (database.select(database.appSets)
+          ..where((tbl) => tbl.name.equals(al.direct)))
+        .getSingleOrNull();
+    if (directAppSet == null) {
+      await database.into(database.appSets).insert(
+          AppSetsCompanion(name: Value(al.direct)),
+          mode: InsertMode.insertOrIgnore);
+    }
+    final proxyAppSet = await (database.select(database.appSets)
+          ..where((tbl) => tbl.name.equals(al.proxy)))
+        .getSingleOrNull();
+    if (proxyAppSet == null) {
+      await database.into(database.appSets).insert(
+          AppSetsCompanion(name: Value(al.proxy)),
+          mode: InsertMode.insertOrIgnore);
+    }
+  } catch (e, stackTrace) {
+    logger.e("Error inserting default data", error: e, stackTrace: stackTrace);
+    dialog(al.insertDefaultError(e.toString()));
+  }
+}
+
+Future<void> insertDefaultRouteMode(AppLocalizations al, DefaultRouteMode mode,
+    {bool setsOnly = false}) async {
+  await database.transaction(() async {
+    if (!setsOnly) {
+      // router config
+      await database.into(database.customRouteModes).insert(
+          CustomRouteModesCompanion(
+            name: Value(mode.toLocalString(al)),
+            routerConfig:
+                Value(RouterConfig(rules: mode.displayRouterRules(al: al))),
+            dnsRules: Value(dns.DnsRules(rules: mode.dnsRules(al: al))),
+          ),
+          mode: InsertMode.insertOrReplace);
+      // dns servers
+      for (var server in mode.getDnsServerConfigs(al: al)) {
+        await database.into(database.dnsServers).insert(
+            DnsServersCompanion(
+              name: Value(server.name),
+              dnsServer: Value(server),
+            ),
+            mode: InsertMode.insertOrIgnore);
+      }
+    }
+    // small domain sets
+    for (var set in mode.getAtomicDomainSets(al: al)) {
+      await database
+          .into(database.atomicDomainSets)
+          .insert(set.toCompanion(true), mode: InsertMode.insertOrIgnore);
+    }
+    // small ip sets
+    for (var set in mode.getAtomicIpSets(al: al)) {
+      await database
+          .into(database.atomicIpSets)
+          .insert(set.toCompanion(true), mode: InsertMode.insertOrIgnore);
+    }
+    // great domain sets
+    for (var set in mode.getGreatDomainSets(al: al)) {
+      await database
+          .into(database.greatDomainSets)
+          .insert(set.toCompanion(true), mode: InsertMode.insertOrIgnore);
+    }
+    // great ip sets
+    for (var set in mode.getGreatIpSets(al: al)) {
+      await database
+          .into(database.greatIpSets)
+          .insert(set.toCompanion(true), mode: InsertMode.insertOrIgnore);
+    }
+    await database.into(database.atomicDomainSets).insert(
+        AtomicDomainSetsCompanion(name: Value(al.customDirect)),
+        mode: InsertMode.insertOrIgnore);
+    await database.into(database.atomicDomainSets).insert(
+        AtomicDomainSetsCompanion(name: Value(al.customProxy)),
+        mode: InsertMode.insertOrIgnore);
+    await database.into(database.appSets).insert(
+        AppSetsCompanion(name: Value(al.direct)),
+        mode: InsertMode.insertOrIgnore);
+    await database.into(database.appSets).insert(
+        AppSetsCompanion(name: Value(al.proxy)),
+        mode: InsertMode.insertOrIgnore);
+  });
+}

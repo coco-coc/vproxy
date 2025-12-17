@@ -1,0 +1,145 @@
+syntax = "proto3";
+package vx;
+
+message SyncOperation {
+    uint64 time = 1;
+    oneof type {
+        SqlQuery sql_query = 10;
+        AddHandler add_handler = 11;
+        SqlOperation sql_operation = 12;
+        ServerOperation server_operation = 13;
+        CommonSshKeyOperation common_ssh_key_operation = 14;
+    }
+}
+
+message SyncOperations {
+    repeated SyncOperation operations = 1;
+}
+
+message AddHandler {
+    // a list of HandlerConfig
+    repeated bytes handlers = 1;
+    string group = 2;
+}
+message UpdateHandler {
+    bytes new_handler = 1;
+    bytes old_handler = 2;
+}
+message DeleteHandler {
+    bytes handler = 1;
+}
+
+message AddSubscription {
+    string name = 1;
+    string url = 2;
+}
+message UpdateSubscription {
+    string name = 1;
+    string url = 2;
+    bool name_changed = 3;
+    bool url_changed = 4;
+}
+message DeleteSubscription {
+    string url = 1;
+}
+
+message ServerOperation {
+    enum Type {
+        ADD = 0;
+        UPDATE = 1;
+        DELETE = 2; 
+    }
+    Type type = 1;
+    string row = 2;
+    string storage_key = 3;
+    string secure_storage = 4;
+    // delete only
+    int64 id = 5;
+}
+
+message CommonSshKeyOperation {
+    enum Type {
+        ADD = 0;
+        DELETE = 1;
+    }
+    Type type = 1;
+    string row = 2;
+    string storage_key = 3;
+    string secure_storage = 4;
+    // delete only
+    int64 id = 5;
+}
+
+// message AddGeoDomain {
+//     string domain_set_name = 1;
+//     repeated bytes domains = 2;
+// }
+// message DeleteGeoDomain {
+//     string domain_set_name = 1;
+//     repeated bytes domains = 2;
+// }
+// message AddAtomicDomainSet {
+//     string name = 1;
+//     bytes geosite_config = 2;
+//     repeated string clash_rule_urls = 3;
+//     bool use_bloom_filter = 4;
+// }
+// message DeleteAtomicDomainSet {
+//     string name = 1;
+// }
+// message UpdateAtomicDomainSet {
+//     string name = 1;
+//     optional string new_name = 2;
+//     optional bytes geosite_config = 3;
+//     optional repeated string clash_rule_urls = 4;
+//     optional bool use_bloom_filter = 5;
+// }
+// message AddGreatDomainSet {
+//     string name = 1;
+//     bytes great_domain_set = 2;
+// }
+// message DeleteGreatDomainSet {
+//     string name = 1;
+// }
+// message UpdateGreatDomainSet {
+//     string name = 1;
+//     optional bytes great_domain_set = 2;
+//     optional string new_name = 4;
+// }
+
+message SqlOperation {
+    SQLType type = 1;
+    string table = 2;
+    repeated string rows = 3;
+    // delete only
+    repeated int64 ids = 4;
+    // delete only
+    repeated string names = 5;
+}
+
+
+enum SQLType {
+    INSERT = 0;
+    UPDATE = 1;
+    DELETE = 2;
+    CUSTOM = 3; 
+    BATCH = 4;
+}
+
+message SqlQuery {
+    SQLType type = 1;
+    string statement = 10;
+    repeated SqlArgument arguments = 11;
+}
+
+message SqlArgument {
+    oneof type {
+        string string = 1;
+        int64 int64 = 2;
+        int32 int32 = 3;    
+        bool bool = 4;
+        bytes bytes = 5;
+        float double = 6;
+    }
+    bool is_null = 10;
+}
