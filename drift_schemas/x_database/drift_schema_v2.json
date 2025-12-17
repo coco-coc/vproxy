@@ -1,0 +1,728 @@
+{
+    "_meta": {
+        "description": "This file contains a serialized version of schema entities for drift.",
+        "version": "1.2.0"
+    },
+    "options": {
+        "store_date_time_values_as_text": false
+    },
+    "entities": [
+        {
+            "id": 0,
+            "references": [],
+            "type": "table",
+            "data": {
+                "name": "subscriptions",
+                "was_declared_in_moor": false,
+                "columns": [
+                    {
+                        "name": "id",
+                        "getter_name": "id",
+                        "moor_type": "int",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "PRIMARY KEY AUTOINCREMENT",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "PRIMARY KEY AUTOINCREMENT"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [
+                            "auto-increment"
+                        ]
+                    },
+                    {
+                        "name": "name",
+                        "getter_name": "name",
+                        "moor_type": "string",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "link",
+                        "getter_name": "link",
+                        "moor_type": "string",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "UNIQUE",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "UNIQUE"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [
+                            "unique"
+                        ]
+                    },
+                    {
+                        "name": "remaining_data",
+                        "getter_name": "remainingData",
+                        "moor_type": "double",
+                        "nullable": true,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "end_time",
+                        "getter_name": "endTime",
+                        "moor_type": "int",
+                        "nullable": true,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "website",
+                        "getter_name": "website",
+                        "moor_type": "string",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": "const CustomExpression('\\'\\'')",
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "description",
+                        "getter_name": "description",
+                        "moor_type": "string",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": "const CustomExpression('\\'\\'')",
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "last_update",
+                        "getter_name": "lastUpdate",
+                        "moor_type": "int",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "last_success_update",
+                        "getter_name": "lastSuccessUpdate",
+                        "moor_type": "int",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "enabled",
+                        "getter_name": "enabled",
+                        "moor_type": "bool",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "CHECK (\"enabled\" IN (0, 1))",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "CHECK (\"enabled\" IN (0, 1))"
+                        },
+                        "default_dart": "const CustomExpression('1')",
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    }
+                ],
+                "is_virtual": false,
+                "without_rowid": false,
+                "constraints": []
+            }
+        },
+        {
+            "id": 1,
+            "references": [
+                0
+            ],
+            "type": "table",
+            "data": {
+                "name": "outbound_handlers",
+                "was_declared_in_moor": false,
+                "columns": [
+                    {
+                        "name": "id",
+                        "getter_name": "id",
+                        "moor_type": "int",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "PRIMARY KEY AUTOINCREMENT",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "PRIMARY KEY AUTOINCREMENT"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [
+                            "auto-increment"
+                        ]
+                    },
+                    {
+                        "name": "selected",
+                        "getter_name": "selected",
+                        "moor_type": "bool",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "CHECK (\"selected\" IN (0, 1))",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "CHECK (\"selected\" IN (0, 1))"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": "() => false",
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "enabled",
+                        "getter_name": "enabled",
+                        "moor_type": "bool",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "CHECK (\"enabled\" IN (0, 1))",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "CHECK (\"enabled\" IN (0, 1))"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": "() => true",
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "country_code",
+                        "getter_name": "countryCode",
+                        "moor_type": "string",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": "() => ''",
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "sni",
+                        "getter_name": "sni",
+                        "moor_type": "string",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": "() => ''",
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "speed",
+                        "getter_name": "speed",
+                        "moor_type": "double",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": "const CustomExpression('0.0')",
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "ping",
+                        "getter_name": "ping",
+                        "moor_type": "int",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": "const CustomExpression('0')",
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "speed1",
+                        "getter_name": "speed1",
+                        "moor_type": "double",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": "const CustomExpression('0.0')",
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "dspeed",
+                        "getter_name": "dspeed",
+                        "moor_type": "double",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": "const CustomExpression('0.0')",
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "ok",
+                        "getter_name": "ok",
+                        "moor_type": "int",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": "const CustomExpression('0')",
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "tcp_o_k",
+                        "getter_name": "tcpOK",
+                        "moor_type": "int",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": "const CustomExpression('0')",
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "db_cdn",
+                        "getter_name": "dbCdn",
+                        "moor_type": "int",
+                        "nullable": true,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [],
+                        "type_converter": {
+                            "dart_expr": "const EnumIndexConverter<CDN>(CDN.values)",
+                            "dart_type_name": "CDN"
+                        }
+                    },
+                    {
+                        "name": "server_ip",
+                        "getter_name": "serverIp",
+                        "moor_type": "string",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": "() => ''",
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "config",
+                        "getter_name": "config",
+                        "moor_type": "blob",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [],
+                        "type_converter": {
+                            "dart_expr": "const OutboundHandlerConverter()",
+                            "dart_type_name": "OutboundHandlerConfig"
+                        }
+                    },
+                    {
+                        "name": "sub_id",
+                        "getter_name": "subId",
+                        "moor_type": "int",
+                        "nullable": true,
+                        "customConstraints": null,
+                        "defaultConstraints": "REFERENCES subscriptions (id) ON DELETE CASCADE",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "REFERENCES subscriptions (id) ON DELETE CASCADE"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [
+                            {
+                                "foreign_key": {
+                                    "to": {
+                                        "table": "subscriptions",
+                                        "column": "id"
+                                    },
+                                    "initially_deferred": false,
+                                    "on_update": null,
+                                    "on_delete": "cascade"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "is_virtual": false,
+                "without_rowid": false,
+                "constraints": []
+            }
+        },
+        {
+            "id": 2,
+            "references": [],
+            "type": "table",
+            "data": {
+                "name": "dns_records",
+                "was_declared_in_moor": false,
+                "columns": [
+                    {
+                        "name": "id",
+                        "getter_name": "id",
+                        "moor_type": "int",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "PRIMARY KEY AUTOINCREMENT",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "PRIMARY KEY AUTOINCREMENT"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [
+                            "auto-increment"
+                        ]
+                    },
+                    {
+                        "name": "dns_record",
+                        "getter_name": "dnsRecord",
+                        "moor_type": "blob",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [],
+                        "type_converter": {
+                            "dart_expr": "const DnsRecordConverter()",
+                            "dart_type_name": "Record"
+                        }
+                    }
+                ],
+                "is_virtual": false,
+                "without_rowid": false,
+                "constraints": []
+            }
+        },
+        {
+            "id": 3,
+            "references": [],
+            "type": "table",
+            "data": {
+                "name": "geo_domains",
+                "was_declared_in_moor": false,
+                "columns": [
+                    {
+                        "name": "id",
+                        "getter_name": "id",
+                        "moor_type": "int",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "PRIMARY KEY AUTOINCREMENT",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "PRIMARY KEY AUTOINCREMENT"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [
+                            "auto-increment"
+                        ]
+                    },
+                    {
+                        "name": "go_proxy",
+                        "getter_name": "goProxy",
+                        "moor_type": "bool",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "CHECK (\"go_proxy\" IN (0, 1))",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "CHECK (\"go_proxy\" IN (0, 1))"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "geo_domain",
+                        "getter_name": "geoDomain",
+                        "moor_type": "blob",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [],
+                        "type_converter": {
+                            "dart_expr": "const GeoDomainConverter()",
+                            "dart_type_name": "Domain"
+                        }
+                    }
+                ],
+                "is_virtual": false,
+                "without_rowid": false,
+                "constraints": [],
+                "unique_keys": [
+                    [
+                        "geo_domain"
+                    ]
+                ]
+            }
+        },
+        {
+            "id": 4,
+            "references": [],
+            "type": "table",
+            "data": {
+                "name": "apps",
+                "was_declared_in_moor": false,
+                "columns": [
+                    {
+                        "name": "id",
+                        "getter_name": "id",
+                        "moor_type": "int",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "PRIMARY KEY AUTOINCREMENT",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "PRIMARY KEY AUTOINCREMENT"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [
+                            "auto-increment"
+                        ]
+                    },
+                    {
+                        "name": "proxy",
+                        "getter_name": "proxy",
+                        "moor_type": "bool",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "CHECK (\"proxy\" IN (0, 1))",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "CHECK (\"proxy\" IN (0, 1))"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "app_id",
+                        "getter_name": "appId",
+                        "moor_type": "blob",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [],
+                        "type_converter": {
+                            "dart_expr": "const AppIdConverter()",
+                            "dart_type_name": "AppId"
+                        }
+                    },
+                    {
+                        "name": "icon",
+                        "getter_name": "icon",
+                        "moor_type": "blob",
+                        "nullable": true,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    }
+                ],
+                "is_virtual": false,
+                "without_rowid": false,
+                "constraints": [],
+                "unique_keys": [
+                    [
+                        "app_id"
+                    ]
+                ]
+            }
+        },
+        {
+            "id": 5,
+            "references": [],
+            "type": "table",
+            "data": {
+                "name": "cidrs",
+                "was_declared_in_moor": false,
+                "columns": [
+                    {
+                        "name": "id",
+                        "getter_name": "id",
+                        "moor_type": "int",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "PRIMARY KEY AUTOINCREMENT",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "PRIMARY KEY AUTOINCREMENT"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [
+                            "auto-increment"
+                        ]
+                    },
+                    {
+                        "name": "proxy",
+                        "getter_name": "proxy",
+                        "moor_type": "bool",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "CHECK (\"proxy\" IN (0, 1))",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "CHECK (\"proxy\" IN (0, 1))"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "cidr",
+                        "getter_name": "cidr",
+                        "moor_type": "blob",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [],
+                        "type_converter": {
+                            "dart_expr": "const CidrConverter()",
+                            "dart_type_name": "CIDR"
+                        }
+                    }
+                ],
+                "is_virtual": false,
+                "without_rowid": false,
+                "constraints": [],
+                "unique_keys": [
+                    [
+                        "cidr"
+                    ]
+                ]
+            }
+        },
+        {
+            "id": 6,
+            "references": [],
+            "type": "table",
+            "data": {
+                "name": "ssh_servers",
+                "was_declared_in_moor": false,
+                "columns": [
+                    {
+                        "name": "id",
+                        "getter_name": "id",
+                        "moor_type": "int",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "PRIMARY KEY AUTOINCREMENT",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "PRIMARY KEY AUTOINCREMENT"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [
+                            "auto-increment"
+                        ]
+                    },
+                    {
+                        "name": "name",
+                        "getter_name": "name",
+                        "moor_type": "string",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "address",
+                        "getter_name": "address",
+                        "moor_type": "string",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "storage_key",
+                        "getter_name": "storageKey",
+                        "moor_type": "string",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "country",
+                        "getter_name": "country",
+                        "moor_type": "string",
+                        "nullable": true,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    },
+                    {
+                        "name": "auth_method",
+                        "getter_name": "authMethod",
+                        "moor_type": "int",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [],
+                        "type_converter": {
+                            "dart_expr": "const EnumIndexConverter<AuthMethod>(AuthMethod.values)",
+                            "dart_type_name": "AuthMethod"
+                        }
+                    }
+                ],
+                "is_virtual": false,
+                "without_rowid": false,
+                "constraints": []
+            }
+        },
+        {
+            "id": 7,
+            "references": [],
+            "type": "table",
+            "data": {
+                "name": "common_ssh_keys",
+                "was_declared_in_moor": false,
+                "columns": [
+                    {
+                        "name": "id",
+                        "getter_name": "id",
+                        "moor_type": "int",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "PRIMARY KEY AUTOINCREMENT",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "PRIMARY KEY AUTOINCREMENT"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [
+                            "auto-increment"
+                        ]
+                    },
+                    {
+                        "name": "name",
+                        "getter_name": "name",
+                        "moor_type": "string",
+                        "nullable": false,
+                        "customConstraints": null,
+                        "defaultConstraints": "UNIQUE",
+                        "dialectAwareDefaultConstraints": {
+                            "sqlite": "UNIQUE"
+                        },
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": [
+                            "unique"
+                        ]
+                    },
+                    {
+                        "name": "remark",
+                        "getter_name": "remark",
+                        "moor_type": "string",
+                        "nullable": true,
+                        "customConstraints": null,
+                        "default_dart": null,
+                        "default_client_dart": null,
+                        "dsl_features": []
+                    }
+                ],
+                "is_virtual": false,
+                "without_rowid": false,
+                "constraints": []
+            }
+        }
+    ]
+}

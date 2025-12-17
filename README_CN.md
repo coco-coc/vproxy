@@ -6,7 +6,7 @@
 
 </div>
 
-<img src="assets/logo.png" alt="Vproxy Icon" width="50"/>
+<img src="assets/dev/icon.png" alt="Vproxy Icon" width="50"/>
 
 ## 概览
 

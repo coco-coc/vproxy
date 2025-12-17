@@ -1,0 +1,39 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "vproxy-1407e",
+                    "appId": "1:479311300497:android:7daf8b25965b3c1489bc30",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "ios": {
+                "default": {
+                    "projectId": "vproxy-1407e",
+                    "appId": "1:479311300497:ios:24983b421f94721d89bc30",
+                    "uploadDebugSymbols": false,
+                    "fileOutput": "ios/Runner/GoogleService-Info.plist"
+                }
+            },
+            "macos": {
+                "default": {
+                    "projectId": "vproxy-1407e",
+                    "appId": "1:479311300497:ios:24983b421f94721d89bc30",
+                    "uploadDebugSymbols": false,
+                    "fileOutput": "macos/Runner/GoogleService-Info.plist"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "vproxy-1407e",
+                    "configurations": {
+                        "android": "1:479311300497:android:7daf8b25965b3c1489bc30",
+                        "ios": "1:479311300497:ios:24983b421f94721d89bc30",
+                        "macos": "1:479311300497:ios:24983b421f94721d89bc30"
+                    }
+                }
+            }
+        }
+    }
+}

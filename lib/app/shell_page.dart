@@ -1,0 +1,333 @@
+import 'dart:io';
+
+import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pasteboard/pasteboard.dart';
+import 'package:path/path.dart' hide context;
+import 'package:vx/widgets/ad.dart';
+import 'package:vx/app/control.dart';
+
+import 'package:vx/app/start_close_button.dart';
+import 'package:vx/app/top_bar.dart';
+import 'package:vx/auth/auth_bloc.dart';
+import 'package:vx/common/extension.dart';
+import 'package:vx/app/navigation.dart';
+import 'package:vx/data/sync.dart';
+import 'package:vx/l10n/app_localizations.dart';
+import 'package:vx/main.dart';
+import 'package:vx/utils/debug.dart';
+import 'package:vx/utils/logger.dart';
+import 'package:vx/utils/path.dart';
+import 'package:vx/widgets/divider.dart';
+import 'package:vx/widgets/no_node.dart';
+
+class ShellPage extends StatefulWidget {
+  const ShellPage({super.key, required this.child, required this.state});
+
+  final Widget child;
+  final GoRouterState state;
+
+  @override
+  State<ShellPage> createState() => _ShellPageState();
+}
+
+class _ShellPageState extends State<ShellPage> {
+  NaviDestination? naviDestination;
+  Widget? cache;
+
+  @override
+  void initState() {
+    super.initState();
+    if (!persistentStateRepo.welcomeShown) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        if (Platform.isWindows) {
+          //[C:\\Users\\YOUR USER NAME\\AppData\\Roaming\\com.5vnetwork\\vproxy]
+          showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                    content: SizedBox(
+                      width: 500,
+                      child: Text(
+                        AppLocalizations.of(context)!.windowsUpdateNotice(
+                            join(resourceDirectory.parent.path, 'vproxy'),
+                            resourceDirectory.path),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Pasteboard.writeText(resourceDirectory.parent.path);
+                        },
+                        child: Text(AppLocalizations.of(context)!.copyPath),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(AppLocalizations.of(context)!.close),
+                      ),
+                    ],
+                  ));
+        }
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Center(
+                      child: Text(
+                    AppLocalizations.of(context)!.welcome,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  )),
+                  content: const Welcome(),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(AppLocalizations.of(context)!.close),
+                    ),
+                  ],
+                ));
+        persistentStateRepo.setWelcomeShown(true);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final newNaviDestination = NaviDestination.fromPath(widget.state.fullPath);
+    if (cache != null && newNaviDestination == naviDestination) {
+      return cache!;
+    }
+    naviDestination = newNaviDestination;
+    cache = LayoutBuilder(builder: (ctx, c) {
+      final isPro = ctx.watch<AuthBloc>().state.pro;
+      if (c.isSuperLarge) {
+        Widget body = Row(
+          children: [
+            Container(
+              color: Theme.of(context).colorScheme.surface,
+              child: MyNavigationDrawer(
+                naviDestination: naviDestination,
+                showButton: true,
+              ),
+            ),
+            Expanded(
+                child: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: widget.child,
+            )),
+            const ControlDrawer(),
+          ],
+        );
+        if (Platform.isWindows || Platform.isLinux) {
+          body = Row(
+            children: [
+              Container(
+                color: Theme.of(context).colorScheme.surface,
+                child: MyNavigationDrawer(
+                  naviDestination: naviDestination,
+                  showButton: true,
+                ),
+              ),
+              verticalDivider,
+              Expanded(
+                  child: Column(
+                children: [
+                  SizedBox(
+                    height: 48,
+                    child: MoveWindow(
+                      child: const Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 10),
+                          child: WindowButtons(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  divider,
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: widget.child,
+                        )),
+                        verticalDivider,
+                        const ControlDrawer(),
+                      ],
+                    ),
+                  ),
+                ],
+              )),
+            ],
+          );
+        }
+        return Scaffold(
+          body: body,
+        );
+      } else if (c.isMedium || c.isExpanded || c.isLarge) {
+        if (Platform.isAndroid) {
+          return Scaffold(
+            endDrawer: const ControlDrawer(),
+            appBar: AppBar(
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 24.0),
+                child: GlobalQuicActionMenuAnchor(
+                  child: Center(
+                    child: Image.asset(
+                      'assets/icons/V.png',
+                      width: 24,
+                      height: 24,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+              // title: (isPro || !isAdPlatforms)
+              //     ? null
+              //     : LayoutBuilder(builder: (ctx, c) {
+              //         return MyBannderAdWidget(
+              //             adSize:
+              //                 AdSize(width: c.maxWidth.toInt(), height: 50));
+              //       }),
+              actions: [
+                Builder(builder: (context) {
+                  return IconButton(
+                      onPressed: () {
+                        Scaffold.of(context).openEndDrawer();
+                      },
+                      icon: const Icon(Icons.tune_rounded));
+                }),
+              ],
+            ),
+            body: Row(
+              children: [
+                MyNavigationRail(
+                  naviDestination: naviDestination,
+                ),
+                // VerticalDivider(),
+                Expanded(
+                  child: widget.child,
+                )
+              ],
+            ),
+          );
+        }
+        return Scaffold(
+          endDrawer: const ControlDrawer(),
+          body: SafeArea(
+            child: Column(
+              children: [
+                const TopBar(),
+                Expanded(
+                  child: Row(
+                    children: [
+                      MyNavigationRail(
+                        naviDestination: naviDestination,
+                      ),
+                      // VerticalDivider(),
+                      Expanded(
+                        child: widget.child,
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      } else {
+        // compact
+        // Widget? title;
+        // bool showingAd = false;
+        // if (!isPro && (Platform.isAndroid || Platform.isIOS)) {
+        //   showingAd = true;
+        //   title = MyBannderAdWidget(adSize: AdSize.banner);
+        // }
+        Widget? leading;
+        if (Platform.isWindows || (isPro && !Platform.isMacOS)) {
+          leading = GlobalQuicActionMenuAnchor(
+            child: Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: Image.asset(
+                  'assets/icons/V.png',
+                  width: 20,
+                  height: 20,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+          );
+        }
+
+        return Scaffold(
+          // drawer: MyNavigationDrawer(naviDestination: naviDestination),
+          endDrawer: const ControlDrawer(),
+          appBar: Platform.isWindows
+              ? null
+              : AppBar(
+                  forceMaterialTransparency: true,
+                  leading: leading,
+                  actions: [
+                    IconButton(
+                        onPressed: () {
+                          context.push('/setting');
+                        },
+                        icon: Icon(Icons.settings_rounded)),
+                    if (Platform.isMacOS) const SyncButton(),
+                    Builder(builder: (context) {
+                      return IconButton(
+                        onPressed: () {
+                          Scaffold.of(context).openEndDrawer();
+                        },
+                        icon: const Icon(Icons.tune_rounded),
+                      );
+                    }),
+                  ],
+                ),
+
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: naviDestination?.index ?? 0,
+            onDestinationSelected: (index) {
+              context.go(destination[index].path);
+            },
+            destinations: destination
+                .sublist(0, destination.length - 1)
+                .map((e) => NavigationDestination(
+                      icon: e.outlinedIcon,
+                      selectedIcon: e.filledIcon,
+                      label: e.label(context),
+                    ))
+                .toList(),
+          ),
+          floatingActionButton: const StartCloseButton(
+            size: StartCloseButtonSize.middle,
+            floating: true,
+          ),
+          body: Platform.isWindows
+              ? Column(
+                  children: [
+                    const TopBar(),
+                    Expanded(child: widget.child),
+                  ],
+                )
+              : widget.child,
+        );
+      }
+    });
+    return cache!;
+  }
+}
