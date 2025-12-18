@@ -51,10 +51,8 @@ platform :ios do
   end
 
   lane :release do
-    # Setup CI environment to disable interactive prompts
     setup_ci if ENV["IS_CI"]
     
-    # Set up App Store Connect API key authentication BEFORE any match operations
     api_key = app_store_connect_api_key(
       key_id: ENV["FASTLANE_IOS_KEY_ID"],
       issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
@@ -76,7 +74,8 @@ platform :ios do
       skip_build_archive: true,
       archive_path: "../build/ios/archive/Runner.xcarchive",
       scheme: "Runner")
-    upload_to_app_store                  # upload your app to App Store Connect
+      # upload_to_app_store # upload your app to App Store Connect
+      upload_to_testflight(skip_waiting_for_build_processing: true)
     slack(message: "Successfully uploaded a new App Store build")
   end
 end
