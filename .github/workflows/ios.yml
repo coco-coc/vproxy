@@ -1,0 +1,122 @@
+name: Release iOS
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+  repository_dispatch:
+    types: [trigger-vx-release]
+
+jobs:
+  release-ios:
+    runs-on: macos-latest
+    environment: ios
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+
+    - name: Checkout dependencies
+      env:
+        GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+      run: |
+        cd ..
+        git clone https://${GH_TOKEN}@github.com/5VNetwork/tm-plugin.git tm-plugin
+
+    - name: create files 
+      run: |
+        touch ../tm-plugin/tm_windows/assets/x.dll
+        touch ../tm-plugin/tm_linux/assets/x.so
+        touch ../tm-plugin/tm_linux/assets/x
+        mkdir -p assets/google_fonts
+
+    - name: Cache geo files
+      id: cache-geo
+      uses: actions/cache@v4
+      with:
+        path: |
+          assets/geo/simplified_geoip.dat
+          assets/geo/simplified_geosite.dat
+        key: geo-files-${{ runner.os }}
+        restore-keys: |
+          geo-files-
+
+    - name: Download geo
+      if: steps.cache-geo.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p assets/geo
+        curl -O "https://download.5vnetwork.com/simplified_geoip.dat" 
+        mv simplified_geoip.dat assets/geo/simplified_geoip.dat
+        curl -O "https://download.5vnetwork.com/simplified_geosite.dat" 
+        mv simplified_geosite.dat assets/geo/simplified_geosite.dat
+
+
+    - name: Download library from release
+      env:
+        GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+      run: |
+        gh release download build \
+          -R 5VNetwork/vx-core \
+          -p "tm-ios.xcframework.zip"
+        unzip tm-ios.xcframework.zip 
+        mv tm.xcframework ios/tm.xcframework
+        ls -la ios/tm.xcframework
+        
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+        cache: true
+        
+    - name: Flutter version
+      run: flutter --version
+
+    - name: Cache pub dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.pub-cache
+          ${{ github.workspace }}/.dart_tool
+        key: pub-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+        restore-keys: |
+          pub-${{ runner.os }}-
+
+    - name: Cache CocoaPods
+      uses: actions/cache@v4
+      with:
+        path: ios/Pods
+        key: pods-${{ runner.os }}-${{ hashFiles('**/Podfile.lock') }}
+        restore-keys: |
+          pods-${{ runner.os }}-
+
+    - name: Get dependencies
+      run: flutter pub get
+
+    - name: Pod
+      run: |
+        cd ios && pod install
+
+    - name: Build 
+      run: 
+        flutter build ipa --flavor production --release --obfuscate --split-debug-info=symbols/darwin
+
+    - name: Set version
+      id: get_version
+      run: |
+        BUILD_NUMBER=$(grep '^version:' pubspec.yaml | sed 's/version: .*+\(.*\)/\1/')
+        VERSION_NAME=$(grep '^version:' pubspec.yaml | sed 's/version: \(.*\)+.*/\1/')
+        echo "version=$VERSION_NAME" >> $GITHUB_OUTPUT
+        echo "Extracted version: $VERSION_NAME"
+        echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+        echo "Extracted build number: $BUILD_NUMBER"
+
+    - name: Fastlane release
+      env:
+        BUILD_NUMBER: ${{ steps.get_version.outputs.build_number }}
+        APPLE_ID: ${{ secrets.APPLE_ID }}
+        MATCH_FILE_GITHUB_URL: ${{ secrets.MATCH_FILE_GITHUB_URL }}
+      run: |
+        cd ios && fastlane release
+
+
+        

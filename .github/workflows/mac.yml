@@ -226,7 +226,6 @@ jobs:
     - name: Build 
       run: make mac_pkg
 
-    #TODO: bug here
     - name: Set version
       run: |
         BUILD_NUMBER=$(grep '^version:' pubspec.yaml | sed 's/version: .*+\(.*\)/\1/')

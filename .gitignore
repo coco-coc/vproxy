@@ -95,7 +95,8 @@ dev_assets/
 assets/ads/
 macos/dmg/Vproxy.app
 Vproxy.pkg
-ios/fastlane/Fastfile
 *.p8
 inno/install.iss
 .crashlytics/
+ios/tm.xcframework/
+ios/Runner.ipa
