@@ -527,7 +527,7 @@ class Interface: NSObject, X_darwinInterfaceProtocol {
         }
         let services = services4 + services6
         
-        NSLog("services: \(services)")
+        nsLog("services: \(services)")
         
         var serviceOfInterest = ""
         for service in services {
