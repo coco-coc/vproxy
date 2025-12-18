@@ -104,7 +104,6 @@ jobs:
 
     - name: fetch match files
       env:
-        FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
         APPLE_ID: ${{ secrets.APPLE_ID }}
         FASTLANE_IOS_KEY_ID: ${{ secrets.FASTLANE_IOS_KEY_ID }}
         APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
