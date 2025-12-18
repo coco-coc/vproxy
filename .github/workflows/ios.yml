@@ -111,7 +111,7 @@ jobs:
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
         IS_CI: true
       run: |
-        cd ios && fastlane match
+        cd ios && fastlane fetch_match_files
 
     - name: Build 
       env:
