@@ -99,6 +99,7 @@ jobs:
     - name: fetch match files
       env:
         FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+        FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
         APPLE_ID: ${{ secrets.APPLE_ID }}
         MATCH_FILE_GITHUB_URL: ${{ secrets.MATCH_FILE_GITHUB_URL }}
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
