@@ -854,8 +854,9 @@
   "vxNotInstalled": "VX-core未安装",
   "howToUseVX": "关于VX的使用方法，请查看我们的YouTube频道",
   "welcome": "欢迎使用VX",
-  "sourceCodeAvailable": "VX是一个全平台代理客户端，使用开源的vx-core作为核心",
-  "sourceCode": "内核源代码",
+  "sourceCodeAvailable": "VX客户端的源代码已公开于Github，并且它由Github Actions自动构建与发布",
+  "vxSourceCode": "VX客户端源代码",
+  "vxCoreSourceCode": "VX内核源代码",
   "windowsUpdateNotice": "如果您从2.x.x版本更新到此应用，为了保留您的数据库和偏好设置，请关闭应用，重命名文件夹 {source} 为 {dest} 然后启动应用。我们对此带来的不便表示歉意。",
   "@windowsUpdateNotice": {
     "placeholders": {

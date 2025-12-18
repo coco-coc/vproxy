@@ -418,10 +418,6 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     });
   }
 
-  void rebuild() {
-    setState(() {});
-  }
-
   Key _refreshKey = GlobalKey();
   void rebuildAllChildren() {
     _refreshKey = GlobalKey();

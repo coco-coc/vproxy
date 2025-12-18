@@ -2041,10 +2041,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get welcome => '欢迎使用VX';
 
   @override
-  String get sourceCodeAvailable => 'VX是一个全平台代理客户端，使用开源的vx-core作为核心';
+  String get sourceCodeAvailable => 'VX客户端的源代码已公开于Github，并且它由Github Actions自动构建与发布';
 
   @override
-  String get sourceCode => '内核源代码';
+  String get vxSourceCode => 'VX客户端源代码';
+
+  @override
+  String get vxCoreSourceCode => 'VX内核源代码';
 
   @override
   String windowsUpdateNotice(String source, String dest) {

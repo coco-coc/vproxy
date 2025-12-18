@@ -3964,14 +3964,20 @@ abstract class AppLocalizations {
   /// No description provided for @sourceCodeAvailable.
   ///
   /// In en, this message translates to:
-  /// **'VX is a multi-platform proxy client powered by open-source vx-core which originated from v2ray-core.'**
+  /// **'VX is a source-available proxy client powered by open-source vx-core.'**
   String get sourceCodeAvailable;
 
-  /// No description provided for @sourceCode.
+  /// No description provided for @vxSourceCode.
   ///
   /// In en, this message translates to:
-  /// **'VX-Core Source Code'**
-  String get sourceCode;
+  /// **'Source Code of VX'**
+  String get vxSourceCode;
+
+  /// No description provided for @vxCoreSourceCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Source Code of VX-Core'**
+  String get vxCoreSourceCode;
 
   /// No description provided for @windowsUpdateNotice.
   ///
