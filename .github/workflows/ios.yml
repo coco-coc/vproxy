@@ -62,10 +62,6 @@ jobs:
         mv tm.xcframework ios/tm.xcframework
         ls -la ios/tm.xcframework
         
-    - name: Install Fastlane
-      run: |
-        brew install fastlane
-
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
