@@ -83,7 +83,6 @@ macos/tm.xcframework/
 VX.pkg
 unsigned.pkg
 s
-lib/app/routing/app.dart
 dev_assets/flutter_arb_translator_config.json
 test.pfx
 .claude
