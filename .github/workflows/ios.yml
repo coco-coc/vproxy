@@ -96,11 +96,18 @@ jobs:
       run: |
         cd ios && pod install
 
+    - name: Save keys
+      env:
+        FASTLANE_IOS_KEY_BASE64: ${{ secrets.FASTLANE_IOS_KEY }}
+      run: |
+        echo -n "$FASTLANE_IOS_KEY_BASE64" | base64 --decode -o ios/auth_key.p8
+
     - name: fetch match files
       env:
         FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
-        FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
         APPLE_ID: ${{ secrets.APPLE_ID }}
+        FASTLANE_IOS_KEY_ID: ${{ secrets.FASTLANE_IOS_KEY_ID }}
+        APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         MATCH_FILE_GITHUB_URL: ${{ secrets.MATCH_FILE_GITHUB_URL }}
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       run: |
