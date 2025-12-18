@@ -109,6 +109,7 @@ jobs:
         APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         MATCH_FILE_GITHUB_URL: ${{ secrets.MATCH_FILE_GITHUB_URL }}
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        IS_CI: true
       run: |
         cd ios && fastlane match
 
@@ -130,6 +131,11 @@ jobs:
 
     - name: Fastlane release
       env:
+        APPLE_ID: ${{ secrets.APPLE_ID }}
+        FASTLANE_IOS_KEY_ID: ${{ secrets.FASTLANE_IOS_KEY_ID }}
+        APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        MATCH_FILE_GITHUB_URL: ${{ secrets.MATCH_FILE_GITHUB_URL }}
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
         BUILD_NUMBER: ${{ steps.get_version.outputs.build_number }}
         IS_CI: true
       run: |
