@@ -32,6 +32,7 @@ jobs:
           touch ../tm-plugin/tm_linux/assets/x.so
           touch ../tm-plugin/tm_linux/assets/x
           mkdir -p assets/google_fonts
+          mkdir -p assets/ads
 
       - name: Cache geo files
         id: cache-geo
@@ -143,6 +144,10 @@ jobs:
           rm -f unsigned.pkg
 
       - name: Upload to App Store
+        env:
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_KEY_IDENTIFIER: ${{ secrets.APP_STORE_CONNECT_KEY_IDENTIFIER }}
+          APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
         run: |
           app-store-connect publish --path "$PACKAGE_NAME"
 
