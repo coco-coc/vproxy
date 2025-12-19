@@ -35,12 +35,13 @@ jobs:
           cd ..
           git clone https://x-access-token:${GH_TOKEN}@github.com/5VNetwork/tm-plugin.git tm-plugin
 
-      - name: create files in tm_plugin
+      - name: create files in tm_plugin and folders
         run: |
           touch ../tm-plugin/tm_linux/assets/x.so
           touch ../tm-plugin/tm_linux/assets/x
           mkdir -p assets/google_fonts
           mkdir -p assets/geo
+          mkdir -p assets/ads
 
       - name: Cache geo files
         id: cache-geo
