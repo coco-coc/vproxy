@@ -91,7 +91,7 @@ class _Config extends StatelessWidget {
         );
       }
 
-      // return _Inbounds(config: state.config!);
+      return _Inbounds(config: state.config!);
       return DefaultTabController(
         length: 5,
         child: Column(

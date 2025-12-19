@@ -25,19 +25,38 @@ class Welcome extends StatelessWidget {
               ),
         ),
         const Gap(10),
-        OutlinedButton.icon(
-            onPressed: () {
-              launchUrl(Uri.parse('https://github.com/5vnetwork/vx'));
-            },
-            icon: SvgPicture.asset(
-                Theme.of(context).brightness == Brightness.dark
-                    ? 'assets/icons/github-mark-white.svg'
-                    : 'assets/icons/github-mark.svg',
-                width: 18,
-                height: 18),
-            label: Text(
-              AppLocalizations.of(context)!.sourceCode,
-            )),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            OutlinedButton.icon(
+                onPressed: () {
+                  launchUrl(Uri.parse('https://github.com/5vnetwork/vx'));
+                },
+                icon: SvgPicture.asset(
+                    Theme.of(context).brightness == Brightness.dark
+                        ? 'assets/icons/github-mark-white.svg'
+                        : 'assets/icons/github-mark.svg',
+                    width: 18,
+                    height: 18),
+                label: Text(
+                  AppLocalizations.of(context)!.vxSourceCode,
+                )),
+            const Gap(10),
+            OutlinedButton.icon(
+                onPressed: () {
+                  launchUrl(Uri.parse('https://github.com/5vnetwork/vx-core'));
+                },
+                icon: SvgPicture.asset(
+                    Theme.of(context).brightness == Brightness.dark
+                        ? 'assets/icons/github-mark-white.svg'
+                        : 'assets/icons/github-mark.svg',
+                    width: 18,
+                    height: 18),
+                label: Text(
+                  AppLocalizations.of(context)!.vxCoreSourceCode,
+                )),
+          ],
+        ),
         const Gap(10),
         Text(
           AppLocalizations.of(context)!.howToUseVX,
@@ -74,7 +93,7 @@ class Welcome extends StatelessWidget {
                   launchUrl(Uri.parse('https://x.com/vproxy5vnetwork'));
                 },
                 icon: Image.asset(
-                  MediaQuery.of(context).platformBrightness == Brightness.dark
+                  MediaQuery.of(context).platformBrightness == Brightness.light
                       ? 'assets/icons/x_logo_white.png'
                       : 'assets/icons/x_logo_black.png',
                   width: 16,

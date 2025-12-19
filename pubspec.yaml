@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archßive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 3.0.2+2011
+version: 3.0.3+2011
 
 environment:
   sdk: ">=3.3.4 <4.0.0"
@@ -197,7 +197,7 @@ msix_config:
   display_name: VX
   publisher_display_name: 5V Network
   identity_name: 5VNetwork.XProxy
-  msix_version: 3.0.2.0
+  msix_version: 3.0.3.0
   logo_path: windows/runner/resources/app_icon.ico
   capabilities: internetClient
   publisher: CN=ABB09CD5-F7BA-4835-BDF5-8CB6DDDCC432

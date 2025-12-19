@@ -468,7 +468,7 @@ class Version extends StatelessWidget {
                   });
                   if (count >= 10) {
                     demo = true;
-                    App.of(context)?.rebuild();
+                    App.of(context)?.rebuildAllChildren();
                     if (Platform.isMacOS) {
                       await windowManager.setSize(Size(1280, 800));
                     }

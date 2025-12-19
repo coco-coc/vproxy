@@ -96,9 +96,28 @@ jobs:
       run: |
         cd ios && pod install
 
+    - name: Save keys
+      env:
+        FASTLANE_IOS_KEY_BASE64: ${{ secrets.FASTLANE_IOS_KEY }}
+      run: |
+        echo -n "$FASTLANE_IOS_KEY_BASE64" | base64 --decode -o ios/auth_key.p8
+
+    - name: fetch match files
+      env:
+        APPLE_ID: ${{ secrets.APPLE_ID }}
+        FASTLANE_IOS_KEY_ID: ${{ secrets.FASTLANE_IOS_KEY_ID }}
+        APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        MATCH_FILE_GITHUB_URL: ${{ secrets.MATCH_FILE_GITHUB_URL }}
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        IS_CI: true
+      run: |
+        cd ios && fastlane fetch_match_files
+
     - name: Build 
+      env:
+        LOG_KEY: ${{ secrets.LOG_KEY }}
       run: 
-        flutter build ipa --flavor production --release --obfuscate --split-debug-info=symbols/darwin
+        flutter build ipa --flavor production --dart-define=LOG_KEY=$LOG_KEY --release --obfuscate --split-debug-info=symbols/darwin
 
     - name: Set version
       id: get_version
@@ -112,9 +131,13 @@ jobs:
 
     - name: Fastlane release
       env:
-        BUILD_NUMBER: ${{ steps.get_version.outputs.build_number }}
         APPLE_ID: ${{ secrets.APPLE_ID }}
+        FASTLANE_IOS_KEY_ID: ${{ secrets.FASTLANE_IOS_KEY_ID }}
+        APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         MATCH_FILE_GITHUB_URL: ${{ secrets.MATCH_FILE_GITHUB_URL }}
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        BUILD_NUMBER: ${{ steps.get_version.outputs.build_number }}
+        IS_CI: true
       run: |
         cd ios && fastlane release
 

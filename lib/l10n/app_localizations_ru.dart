@@ -2091,10 +2091,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get welcome => 'Welcome to VX';
 
   @override
-  String get sourceCodeAvailable => 'VX is a multi-platform proxy client powered by open-source vx-core which originated from v2ray-core.';
+  String get sourceCodeAvailable => 'VX is a source-available proxy client powered by open-source vx-core.';
 
   @override
-  String get sourceCode => 'VX-Core Source Code';
+  String get vxSourceCode => 'Source Code of VX';
+
+  @override
+  String get vxCoreSourceCode => 'Source Code of VX-Core';
 
   @override
   String windowsUpdateNotice(String source, String dest) {

@@ -373,8 +373,8 @@ class _SpeedDisplay extends StatelessWidget {
         Consumer<RealtimeSpeedNotifier>(
           builder: (ctx, speedProvider, child) {
             final speed = isUpload
-                ? speedProvider.uploadSpeed
-                : speedProvider.downloadSpeed;
+                ? (demo ? 100000 : speedProvider.uploadSpeed)
+                : (demo ? 10000000 : speedProvider.downloadSpeed);
             final speedText = speed != null ? bytesToReadable(speed) : '--';
             return Row(
               crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -769,7 +769,7 @@ class _MemoryDisplay extends StatelessWidget {
           ],
         ),
         Consumer<RealtimeSpeedNotifier>(builder: (ctx, speedProvider, child) {
-          final memory = speedProvider.memory;
+          final memory = demo ? 10000000 : speedProvider.memory;
           final memoryText = memory != null ? bytesToReadable(memory) : '--';
           return Text(
             memoryText,
@@ -1064,9 +1064,9 @@ class _ConnectionsDisplay extends StatelessWidget {
           ],
         ),
         Consumer<RealtimeSpeedNotifier>(builder: (ctx, speedProvider, child) {
-          final connections = speedProvider.connections != null
+          final connections = demo ? '37' : (speedProvider.connections != null
               ? speedProvider.connections.toString()
-              : '--';
+              : '--');
           return Text(
             connections,
             style: Theme.of(context).textTheme.titleLarge!.copyWith(
