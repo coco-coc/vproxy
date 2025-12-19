@@ -45,8 +45,6 @@ VX (之前叫Vproxy) 是一个全平台代理客户端，使用[vx-core](https:/
 2. Publish this software or its derivative works on any app store, package
    registry, or hosting platform.
 
-PR will not be accpeted. If you need any feature or find any bugs, please tell us directly.
-
 
 ## 面向机场主的深度链接说明
 
