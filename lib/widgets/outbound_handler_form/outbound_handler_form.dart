@@ -183,6 +183,7 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
       address: _serverAddress.text,
       // port: int.tryParse(_port.text),
       ports: tryParsePorts(_port.text),
+      domainStrategy: _domainStrategy,
       enableMux: _enableMux,
       uot: _enableUdpOverTcp,
       transport: _transportInputGlobalKey.currentState?.transportConfig,
