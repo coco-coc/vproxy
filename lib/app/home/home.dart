@@ -113,31 +113,35 @@ class HomePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                      child: ListView(
-                    children: [
-                      const _Route(),
-                      const Gap(10),
-                      const ProxySelector(home: true),
-                      if (desktopPlatforms)
+                      child: ScrollConfiguration(
+                    behavior: ScrollConfiguration.of(context)
+                        .copyWith(scrollbars: false),
+                    child: ListView(
+                      children: [
+                        const _Route(),
+                        const Gap(10),
+                        const ProxySelector(home: true),
+                        if (desktopPlatforms)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: const _Inbound(),
+                          ),
                         Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: const _Inbound(),
+                          padding: const EdgeInsets.only(top: 10),
+                          child: const _Subscription(),
                         ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: const _Subscription(),
-                      ),
-                      BlocBuilder<AuthBloc, AuthState>(
-                          builder: (context, state) {
-                        if (state.pro) {
-                          return const SizedBox.shrink();
-                        }
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: Promotion(),
-                        );
-                      })
-                    ],
+                        BlocBuilder<AuthBloc, AuthState>(
+                            builder: (context, state) {
+                          if (state.pro) {
+                            return const SizedBox.shrink();
+                          }
+                          return const Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child: Promotion(),
+                          );
+                        })
+                      ],
+                    ),
                   )),
                   const Gap(10),
                   const Expanded(child: Nodes())
