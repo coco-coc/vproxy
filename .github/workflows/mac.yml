@@ -11,7 +11,7 @@ on:
 jobs:
   build-mac-store:
     runs-on: macos-latest
-    environment: first
+    environment: mac
     steps:
     - name: Checkout code
       uses: actions/checkout@v5
@@ -59,8 +59,8 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.PAT_TOKEN }}
       run: |
-        gh release download latest \
-          -R 5VNetwork/x \
+        gh release download build \
+          -R 5VNetwork/vx-core \
           -p "tm-macos.xcframework.zip"
         unzip tm-macos.xcframework.zip 
         mv tm.xcframework macos/tm.xcframework
@@ -117,7 +117,9 @@ jobs:
         cd macos && pod install
 
     - name: Build 
-      run: make mac_production
+      env:
+        LOG_KEY: ${{ secrets.LOG_KEY }}
+      run: flutter build macos --dart-define=LOG_KEY=$LOG_KEY --flavor production --release --obfuscate --split-debug-info=symbols/darwin
 
     - name: Set version
       run: |
@@ -153,7 +155,7 @@ jobs:
 
   build-mac-dmg:
     runs-on: macos-latest
-    environment: first
+    environment: mac
     
     steps:
     - name: Checkout code
@@ -224,7 +226,9 @@ jobs:
         cd macos && pod install
 
     - name: Build 
-      run: make mac_pkg
+      env:
+        LOG_KEY: ${{ secrets.LOG_KEY }}
+      run: flutter build macos --dart-define=LOG_KEY=$LOG_KEY --flavor pkg --release --obfuscate --split-debug-info=symbols/darwin 
 
     - name: Set version
       run: |

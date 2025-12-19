@@ -127,8 +127,10 @@ jobs:
           Copy-Item -Path "inno/Chinese.isl" -Destination "C:\Program Files (x86)\Inno Setup 6\Languages\Chinese.isl" -Force
       # x64
       - name: Build Windows
+        env:
+          LOG_KEY: ${{ secrets.LOG_KEY }}
         run:
-          flutter build windows --release --obfuscate --split-debug-info=symbols
+          flutter build windows --dart-define=LOG_KEY=$LOG_KEY --release --obfuscate --split-debug-info=symbols
           
       - name: Compile .ISS to .EXE Installer
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
@@ -200,7 +202,10 @@ jobs:
         run: msstore reconfigure --tenantId $env:TENANT_ID --clientId $env:CLIENT_ID --clientSecret $env:CLIENT_SECRET --sellerId $env:SELLER_ID
 
       - name: Create MSIX package
-        run: msstore package .
+        env:
+          LOG_KEY: ${{ secrets.LOG_KEY }}
+        run: |
+          dart run msix:create --store --windows-build-args "--obfuscate --split-debug-info=symbols --dart-define=STORE=true --dart-define=LOG_KEY=$LOG_KEY" -n store
 
       - name: Publish MSIX to the Microsoft Store
         run: msstore publish -v
