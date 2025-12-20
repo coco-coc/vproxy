@@ -149,7 +149,7 @@ jobs:
           APP_STORE_CONNECT_KEY_IDENTIFIER: ${{ secrets.APP_STORE_CONNECT_KEY_IDENTIFIER }}
           APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
         run: |
-          app-store-connect publish --path "$PACKAGE_NAME"
+          app-store-connect publish --path VX.pkg
 
       - name: Reset keychain
         if: always()
