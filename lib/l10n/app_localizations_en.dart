@@ -1287,6 +1287,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dependsOnDefaultNicDesc => 'If the default physical NIC supports IPv6, then the TUN NIC will also support IPv6, otherwise IPv6 is not supported';
 
   @override
+  String get tunIpv4Desc => 'oOn Windows/Linux, if your physical NIC supports IPv6, IPv6 traffic will not be handled by VX TUN, they will be handled by your physical NIC; on Android/iOS, IPv6 traffic will be blocked anyway.';
+
+  @override
   String failedToCreateAllFirstLaunch(String value) {
     return 'Failed to create database tables: $value';
   }
