@@ -2401,6 +2401,12 @@ abstract class AppLocalizations {
   /// **'If the default physical NIC supports IPv6, then the TUN NIC will also support IPv6, otherwise IPv6 is not supported'**
   String get dependsOnDefaultNicDesc;
 
+  /// No description provided for @tunIpv4Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'oOn Windows/Linux, if your physical NIC supports IPv6, IPv6 traffic will not be handled by VX TUN, they will be handled by your physical NIC; on Android/iOS, IPv6 traffic will be blocked anyway.'**
+  String get tunIpv4Desc;
+
   /// No description provided for @failedToCreateAllFirstLaunch.
   ///
   /// In en, this message translates to:

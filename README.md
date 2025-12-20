@@ -44,8 +44,6 @@ We retain all rights to our source code and no one may reproduce, distribute, or
 2. Publish this software or its derivative works on any app store, package
    registry, or hosting platform.
 
-PR will not be accpeted. If you need any feature or find any bugs, please tell us directly.
-
 ## Deep Linking (For airport owners)
 
 ### Format 1: Base64 Encoded Subscription URL

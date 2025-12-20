@@ -1287,6 +1287,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dependsOnDefaultNicDesc => 'Если физическая сетевая карта по умолчанию поддерживает IPv6, то сетевая карта TUN также будет поддерживать IPv6, в противном случае IPv6 не поддерживается.';
 
   @override
+  String get tunIpv4Desc => 'oOn Windows/Linux, if your physical NIC supports IPv6, IPv6 traffic will not be handled by VX TUN, they will be handled by your physical NIC; on Android/iOS, IPv6 traffic will be blocked anyway.';
+
+  @override
   String failedToCreateAllFirstLaunch(String value) {
     return 'Не удалось создать таблицы базы данных: $value';
   }

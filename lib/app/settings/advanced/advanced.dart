@@ -249,6 +249,11 @@ class _TunIpv6SettingsState extends State<TunIpv6Settings> {
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ))
+        else if (_tun46Setting == TunConfig_TUN46Setting.FOUR_ONLY)
+          Text(AppLocalizations.of(context)!.tunIpv4Desc,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ))
       ],
     );
   }

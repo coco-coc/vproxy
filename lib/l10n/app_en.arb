@@ -518,6 +518,7 @@
   "alwaysEnableIpv6": "Always Enable IPv6",
   "dependsOnDefaultNic": "Depends on Default Physical NIC",
   "dependsOnDefaultNicDesc": "If the default physical NIC supports IPv6, then the TUN NIC will also support IPv6, otherwise IPv6 is not supported",
+  "tunIpv4Desc": "On Windows/Linux, if your physical NIC supports IPv6, IPv6 traffic will not be handled by VX TUN, they will be handled by your physical NIC; on Android/iOS/macOS, IPv6 traffic will be blocked anyway.",
   "failedToCreateAllFirstLaunch": "Failed to create database tables: {value}",
   "@failedToCreateAllFirstLaunch": {
     "placeholders": {

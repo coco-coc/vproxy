@@ -1237,6 +1237,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dependsOnDefaultNicDesc => '如果默认物理网卡支持IPv6，TUN网卡也支持IPv6';
 
   @override
+  String get tunIpv4Desc => '此设置下，在Windows/Linux上，如果物理网卡支持IPv6，IPv6流量将不会被VX TUN处理，而是会被物理网卡处理，也就是说它们会由物理网卡直接发出；在Android/iOS上，IPv6流量将被阻止。';
+
+  @override
   String failedToCreateAllFirstLaunch(String value) {
     return '初始化数据库失败: $value';
   }

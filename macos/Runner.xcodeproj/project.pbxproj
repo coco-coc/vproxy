@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -423,7 +423,6 @@
 				15EEE8062D63115100642457 /* darwin */,
 				15F0A1EB2D1EFA2700E9C182 /* libresolv.tbd */,
 				15F0A1DB2D1EF8E100E9C182 /* NetworkExtension.framework */,
-				15F0A2122D215C6800E9C182 /* x.dylib */,
 				B898BDEF18C5298E74EF415E /* Pods_Runner.framework */,
 				4857077B6D67CB44DB824391 /* Pods_RunnerTests.framework */,
 				6773EEBEAAAEBE34B7E98AA7 /* Pods_ImageNotification.framework */,
@@ -1364,7 +1363,7 @@
 				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.5vnetwork.x;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "VProxy Mac";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Vproxy mac_app_store 1766162729";
 				SWIFT_VERSION = 5.0;
 			};
 			name = "Release-production";
@@ -1503,7 +1502,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.5vnetwork.x.PacketTunnel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Vproxy Mac PacketTunnel";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "XC com 5vnetwork x PacketTunnel mac_app_store 1766162737";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
