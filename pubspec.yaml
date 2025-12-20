@@ -197,7 +197,7 @@ msix_config:
   display_name: VX
   publisher_display_name: 5V Network
   identity_name: 5VNetwork.XProxy
-  msix_version: 3.0.3.0
+  msix_version: 3.0.4.0
   logo_path: windows/runner/resources/app_icon.ico
   capabilities: internetClient
   publisher: CN=ABB09CD5-F7BA-4835-BDF5-8CB6DDDCC432
