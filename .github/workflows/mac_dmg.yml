@@ -168,20 +168,18 @@ jobs:
 
       - name: Save Sparkle private key
         env:
-          SPARKLE_PRIVATE_KEY_BASE64: ${{ secrets.SPARKLE_PRIVATE_KEY }}
+          SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: |
-          # Decode Sparkle private key and save to file
-          echo -n "$SPARKLE_PRIVATE_KEY_BASE64" | base64 --decode > $RUNNER_TEMP/sparkle_private_key.pem
+          # Save Sparkle private key to file
+          echo -n "$SPARKLE_PRIVATE_KEY" > $RUNNER_TEMP/sparkle_private_key.pem
           chmod 600 $RUNNER_TEMP/sparkle_private_key.pem
 
       - name: DMG
-        env:
-          SPARKLE_PRIVATE_KEY_FILE: ${{ runner.temp }}/sparkle_private_key.pem
         run: |
           mv macos/VX.app macos/dmg/VX.app
           mkdir -p releases
           appdmg macos/dmg/dmg.json "releases/VX.dmg"
-          macos/Pods/Sparkle/bin/generate_appcast --ed-key-file "$SPARKLE_PRIVATE_KEY_FILE" releases/
+          macos/Pods/Sparkle/bin/generate_appcast --ed-key-file "$RUNNER_TEMP/sparkle_private_key.pem" releases/
 
       - name: Extract version from pubspec.yaml
         id: get_version
