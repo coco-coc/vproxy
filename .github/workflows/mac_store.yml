@@ -115,10 +115,23 @@ jobs:
         run: |
           cd macos && pod install
 
+      - name: Set version
+        id: get_version
+        run: |
+          BUILD_NUMBER=$(grep '^version:' pubspec.yaml | sed 's/version: .*+\(.*\)/\1/')
+          VERSION_NAME=$(grep '^version:' pubspec.yaml | sed 's/version: \(.*\)+.*/\1/')
+          echo "version=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION_NAME"
+          echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+          echo "Extracted build number: $BUILD_NUMBER"
+
       - name: Build
         env:
           LOG_KEY: ${{ secrets.LOG_KEY }}
-        run: flutter build macos --dart-define=LOG_KEY=$LOG_KEY --flavor production --release --obfuscate --split-debug-info=symbols/darwin
+        run: |
+          flutter build macos --dart-define=LOG_KEY=$LOG_KEY --flavor production --release --obfuscate \
+          --split-debug-info=symbols/darwin --build-name ${{ steps.get_version.outputs.version }} \
+          --build-number ${{ steps.get_version.outputs.build_number }}
 
       # - name: Set version
       #   run: |
