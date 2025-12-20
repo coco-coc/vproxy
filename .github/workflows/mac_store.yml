@@ -133,14 +133,14 @@ jobs:
           --split-debug-info=symbols/darwin --build-name ${{ steps.get_version.outputs.version }} \
           --build-number ${{ steps.get_version.outputs.build_number }}
 
-      # - name: Set version
-      #   run: |
-      #     BUILD_NUMBER=$(grep '^version:' pubspec.yaml | sed 's/version: .*+\(.*\)/\1/')
-      #     VERSION_NAME=$(grep '^version:' pubspec.yaml | sed 's/version: \(.*\)+.*/\1/')
-      #     /usr/libexec/PlistBuddy -c  "Set :CFBundleShortVersionString $VERSION_NAME" \
-      #     "build/macos/Build/Products/Release-production/VX.app/Contents/PlugIns/PacketTunnel.appex/Contents/Info.plist"
-      #     /usr/libexec/PlistBuddy -c  "Set :CFBundleVersion $BUILD_NUMBER" \
-      #     "build/macos/Build/Products/Release-production/VX.app/Contents/PlugIns/PacketTunnel.appex/Contents/Info.plist"
+      - name: Set version
+        run: |
+          BUILD_NUMBER=$(grep '^version:' pubspec.yaml | sed 's/version: .*+\(.*\)/\1/')
+          VERSION_NAME=$(grep '^version:' pubspec.yaml | sed 's/version: \(.*\)+.*/\1/')
+          /usr/libexec/PlistBuddy -c  "Set :CFBundleShortVersionString $VERSION_NAME" \
+          "build/macos/Build/Products/Release-production/VX.app/Contents/PlugIns/PacketTunnel.appex/Contents/Info.plist"
+          /usr/libexec/PlistBuddy -c  "Set :CFBundleVersion $BUILD_NUMBER" \
+          "build/macos/Build/Products/Release-production/VX.app/Contents/PlugIns/PacketTunnel.appex/Contents/Info.plist"
 
       - name: Package
         run: |
