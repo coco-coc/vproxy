@@ -1287,7 +1287,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dependsOnDefaultNicDesc => 'If the default physical NIC supports IPv6, then the TUN NIC will also support IPv6, otherwise IPv6 is not supported';
 
   @override
-  String get tunIpv4Desc => 'oOn Windows/Linux, if your physical NIC supports IPv6, IPv6 traffic will not be handled by VX TUN, they will be handled by your physical NIC; on Android/iOS, IPv6 traffic will be blocked anyway.';
+  String get tunIpv4Desc => 'On Windows/Linux, if your physical NIC supports IPv6, IPv6 traffic will not be handled by VX TUN, they will be handled by your physical NIC; on Android/iOS/macOS, IPv6 traffic will be blocked anyway.';
 
   @override
   String failedToCreateAllFirstLaunch(String value) {
@@ -2112,4 +2112,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invalidFields => 'Form contains invalid fields, please correct them first';
+
+  @override
+  String get lruSizeDesc => 'The number of fake DNS records to cache for each cidr. ';
 }

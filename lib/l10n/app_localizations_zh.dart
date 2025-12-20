@@ -1237,7 +1237,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dependsOnDefaultNicDesc => '如果默认物理网卡支持IPv6，TUN网卡也支持IPv6';
 
   @override
-  String get tunIpv4Desc => '此设置下，在Windows/Linux上，如果物理网卡支持IPv6，IPv6流量将不会被VX TUN处理，而是会被物理网卡处理，也就是说它们会由物理网卡直接发出；在Android/iOS上，IPv6流量将被阻止。';
+  String get tunIpv4Desc => '此设置下，在Windows/Linux上，如果物理网卡支持IPv6，IPv6流量将不会被VX TUN处理，而是会被物理网卡处理，也就是说它们会由物理网卡直接发出；在Android/iOS/macOS上，IPv6流量将被阻止。';
 
   @override
   String failedToCreateAllFirstLaunch(String value) {
@@ -2062,4 +2062,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get invalidFields => '表格包含无效的输入，请修改后重试';
+
+  @override
+  String get lruSizeDesc => '每个CIDR的Fake DNS记录缓存数量。';
 }
