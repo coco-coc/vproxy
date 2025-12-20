@@ -14,7 +14,7 @@ const darwinBundleId = 'com.5vnetwork.x';
 const dartBackendUrl = false
     ? 'http://127.0.0.1:8080/verifypurchase'
     : 'https://iap.5vnetwork.com/verifypurchase';
-const logKey = kDebugMode ? '1234567890' : String.fromEnvironment('LOG_KEY');
+const logKey = String.fromEnvironment('LOG_KEY', defaultValue: '1234567890');
 
 List<int> generateUniqueNumbers(int count, {int min = 1, int max = 100}) {
   final random = Random();
