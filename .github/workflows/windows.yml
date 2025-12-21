@@ -122,6 +122,19 @@ jobs:
           echo "version=v$VERSION" >> $GITHUB_OUTPUT
           echo "Extracted version: v$VERSION"
 
+      - name: Set version in inno/install_github_action.iss
+        shell: pwsh
+        run: |
+          $version = "${{ steps.get_version.outputs.version }}" -replace '^v', ''
+          (Get-Content inno/install_github_action.iss -Raw) -replace '__REPLACE_WITH_NEW_VERSION__', $version | Set-Content inno/install_github_action.iss -NoNewline
+
+      - name: Set version in pubspec.yaml
+        shell: pwsh
+        run: |
+          $version = "${{ steps.get_version.outputs.version }}" -replace '^v', ''
+          $msixVersion = "$version.0"
+          (Get-Content pubspec.yaml -Raw) -replace 'msix_version: [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+', "msix_version: $msixVersion" | Set-Content pubspec.yaml -NoNewline
+
       - name: Copy files to inno compiler
         shell: pwsh
         run: |
@@ -130,9 +143,8 @@ jobs:
       - name: Build Windows
         env:
           LOG_KEY: ${{ secrets.LOG_KEY }}
-        run:
-          flutter build windows --dart-define=LOG_KEY=$env:LOG_KEY --release --obfuscate --split-debug-info=symbols
-          
+        run: flutter build windows --dart-define=LOG_KEY=$env:LOG_KEY --release --obfuscate --split-debug-info=symbols
+
       - name: Compile .ISS to .EXE Installer
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
         with:
