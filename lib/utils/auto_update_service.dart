@@ -18,7 +18,6 @@ import 'package:vx/utils/os.dart';
 import 'package:vx/utils/path.dart';
 import 'package:window_manager/window_manager.dart';
 
-
 class AutoUpdateService extends ChangeNotifier {
   final PrefHelper _prefHelper;
   final String _currentVersion;
@@ -60,43 +59,32 @@ class AutoUpdateService extends ChangeNotifier {
 
   String? downloadingVersion;
   // version and apk file path
-  (String, String)? get hasLocalInstallerToInstall {
-    final localApkPath = _prefHelper.downloadedInstallerPath;
-    if (localApkPath == null) {
+  DownloadedInstaller? get hasLocalInstallerToInstall {
+    final installer = _prefHelper.downloadedInstaller;
+    if (installer == null) {
       return null;
     }
-    final localApkVersion = _getLocalInstallerVersion(localApkPath);
+    final localApkVersion = installer.version;
     if (localApkVersion == _currentVersion ||
         !versionNewerThan(localApkVersion, _currentVersion)) {
       _deleteLocalApk();
       return null;
     }
-    return (localApkVersion, localApkPath);
-  }
-
-  String _getLocalInstallerVersion(String installerPath) {
-    if (Platform.isWindows) {
-      return installerPath
-          .split('\\')
-          .last
-          .replaceAll(_installerSuffix(), "")
-          .replaceAll('VXInstaller_', '');
-    }
-    return installerPath.split('/').last.replaceAll(_installerSuffix(), "");
+    return installer;
   }
 
   // a function that checks for whether [currentVersion] is the newest version.
   // if so, return the newest version and the download url.
   // if not, return null.
-  final Future<(String, String)?> Function(
-      String currentVersion, String assetName) _checkForUpdate;
-  // Auto-update checks are performed daily (every 24 hours) when enabled
+  final Future<GitHubRelease?> Function(String currentVersion, String assetName)
+      _checkForUpdate;
 
+  // Auto-update checks are performed daily (every 24 hours) when enabled
   AutoUpdateService({
     required PrefHelper prefHelper,
     required String currentVersion,
     required Downloader downloader,
-    required Future<(String, String)?> Function(
+    required Future<GitHubRelease?> Function(
             String currentVersion, String assetName)
         checkForUpdate,
   })  : _prefHelper = prefHelper,
@@ -108,7 +96,7 @@ class AutoUpdateService extends ChangeNotifier {
 
   /// Check if enough time has passed since the last update check
   bool _shouldCheckAndUpdate() {
-    if (_prefHelper.downloadedInstallerPath != null) {
+    if (_prefHelper.downloadedInstaller != null) {
       return true;
     }
 
@@ -201,22 +189,21 @@ class AutoUpdateService extends ChangeNotifier {
     try {
       // _prefHelper.setDownloadedApkPath(join(await getCacheDir(), '2.0.12.apk'));
       // check if there is a previously downloaded apk
-      final localApkPath = _prefHelper.downloadedInstallerPath;
+      final localInstaller = _prefHelper.downloadedInstaller;
       // get newest version
-      final versionAndUrl =
-          await _checkForUpdate(_currentVersion, await assetName());
-      if (versionAndUrl != null) {
-        final newestVersion = versionAndUrl.$1;
+      final release = await _checkForUpdate(_currentVersion, await assetName());
+      if (release != null) {
+        final newestVersion = release.version;
         // if local apk exist
-        if (localApkPath != null) {
-          final localVersion = _getLocalInstallerVersion(localApkPath);
+        if (localInstaller != null) {
+          final localVersion = localInstaller.version;
           // if it is older than the newest version, delete it
           if (localVersion != newestVersion) {
-            logger.d('local apk not newest, delete it $localApkPath');
+            logger.d('local apk not newest, delete it $localInstaller');
             await _deleteLocalApk();
           } else {
             if (_prefHelper.skipVersion == newestVersion) {
-              logger.d('skip this version, delete local apk $localApkPath');
+              logger.d('skip this version, delete local apk $localInstaller');
               await _deleteLocalApk();
             } else {
               logger.d('local apk is newest, notify listeners');
@@ -234,7 +221,7 @@ class AutoUpdateService extends ChangeNotifier {
         downloadingVersion = newestVersion;
         notifyListeners();
 
-        await _downloadToLocal(newestVersion).catchError((error) {
+        await _downloadToLocal(release).catchError((error) {
           logger.e('Error downloading update', error: error);
         });
 
@@ -247,12 +234,13 @@ class AutoUpdateService extends ChangeNotifier {
     }
   }
 
-  Future<void> _downloadToLocal(String newestVersion) async {
+  Future<void> _downloadToLocal(GitHubRelease release) async {
     final cacheDir = await getCacheDir();
-    final newestDownloadUrl = 'https://download.5vnetwork.com/${await assetName()}';
+    final newestDownloadUrl =
+        'https://download.5vnetwork.com/${await assetName()}';
 
     if (Platform.isAndroid) {
-      final zipPath = join(cacheDir, '$newestVersion.apk.zip');
+      final zipPath = join(cacheDir, '${release.version}.apk.zip');
       logger.d('downloading new apk zip $zipPath');
       await _downloader
           .download(newestDownloadUrl, zipPath)
@@ -265,29 +253,43 @@ class AutoUpdateService extends ChangeNotifier {
         // move the apk out of the folder and delete the folder
         final apkFile = File(join(apkFolder, "vx-arm64-v8a.apk"));
         final newApkFile = apkFile
-            .renameSync(join(await getCacheDir(), "${newestVersion}.apk"));
+            .renameSync(join(await getCacheDir(), "${release.version}.apk"));
         Directory(apkFolder).deleteSync(recursive: true);
 
-        _prefHelper.setDownloadedInstallerPath(newApkFile.path);
+        _prefHelper.setDownloadedInstallerPath(DownloadedInstaller(
+          version: release.version,
+          path: newApkFile.path,
+          newFeatures: release.body,
+        ));
       });
     } else if (Platform.isWindows) {
       final downloadDest =
-          join(cacheDir, 'VXInstaller_$newestVersion$_installerSuffix');
+          join(cacheDir, 'VXInstaller_${release.version}${_installerSuffix()}');
       await _downloader.download(newestDownloadUrl, downloadDest);
-      _prefHelper.setDownloadedInstallerPath(downloadDest);
+      _prefHelper.setDownloadedInstallerPath(DownloadedInstaller(
+        version: release.version,
+        path: downloadDest,
+        newFeatures: release.body,
+      ));
     } else if (Platform.isLinux) {
-      logger.d('Downloading installer for Linux $newestDownloadUrl', );
+      logger.d(
+        'Downloading installer for Linux $newestDownloadUrl',
+      );
       final downloadDest =
-          join(cacheDir, '$newestVersion${_installerSuffix()}');
+          join(cacheDir, '${release.version}${_installerSuffix()}');
       await _downloader.download(newestDownloadUrl, downloadDest);
-      _prefHelper.setDownloadedInstallerPath(downloadDest);
+      _prefHelper.setDownloadedInstallerPath(DownloadedInstaller(
+        version: release.version,
+        path: downloadDest,
+        newFeatures: release.body,
+      ));
     }
   }
 
   _deleteLocalApk() {
-    final localApkPath = _prefHelper.downloadedInstallerPath;
-    if (localApkPath != null) {
-      final apkFile = File(localApkPath);
+    final localInstaller = _prefHelper.downloadedInstaller;
+    if (localInstaller != null) {
+      final apkFile = File(localInstaller.path);
       if (apkFile.existsSync()) {
         apkFile.deleteSync();
       }
@@ -302,14 +304,14 @@ class AutoUpdateService extends ChangeNotifier {
   }
 
   Future<void> installLocalInstaller() async {
-    final installerPath = _prefHelper.downloadedInstallerPath;
-    if (installerPath == null) {
+    final installer = _prefHelper.downloadedInstaller;
+    if (installer == null) {
       throw Exception('No installer found');
     }
     if (Platform.isAndroid) {
-      if (File(installerPath).existsSync()) {
+      if (File(installer.path).existsSync()) {
         int? statusCode = await AndroidPackageInstaller.installApk(
-            apkFilePath: installerPath);
+            apkFilePath: installer.path);
         if (statusCode != null) {
           PackageInstallerStatus installationStatus =
               PackageInstallerStatus.byCode(statusCode);
@@ -327,14 +329,14 @@ class AutoUpdateService extends ChangeNotifier {
           // runInShell: true,
           // mode: ProcessStartMode.detached,
           'powershell.exe',
-          ['-Command', 'Start-Process', installerPath]);
+          ['-Command', 'Start-Process', installer.path]);
       await exitCurrentApp();
     } else {
       await Process.run('gnome-terminal', [
         '--',
         'bash',
         '-c',
-        'echo "Running the following command to update VX:"; echo "sudo ${isRpm() ? 'dnf install' : 'dpkg -i'} ${installerPath}"; bash'
+        'echo "Running the following command to update VX:"; echo "sudo ${isRpm() ? 'dnf install' : 'dpkg -i'} ${installer}"; bash'
       ]);
       // await exitCurrentApp();
     }
@@ -344,5 +346,33 @@ class AutoUpdateService extends ChangeNotifier {
   void dispose() {
     stopAutoUpdate();
     super.dispose();
+  }
+}
+
+class DownloadedInstaller {
+  final String version;
+  final String path;
+  final String newFeatures;
+
+  DownloadedInstaller({
+    required this.version,
+    required this.path,
+    required this.newFeatures,
+  });
+
+  factory DownloadedInstaller.fromJson(Map<String, dynamic> json) {
+    return DownloadedInstaller(
+      version: json['version'],
+      path: json['path'],
+      newFeatures: json['newFeatures'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'version': version,
+      'path': path,
+      'newFeatures': newFeatures,
+    };
   }
 }

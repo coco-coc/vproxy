@@ -474,14 +474,15 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       if (rootNavigationKey.currentContext == null) {
         return;
       }
-      final apkFileToInstall = autoUpdateService!.hasLocalInstallerToInstall;
-      if (apkFileToInstall != null) {
-        final version = apkFileToInstall.$1;
+      final localInstaller = autoUpdateService!.hasLocalInstallerToInstall;
+      if (localInstaller != null) {
+        final version = localInstaller.version;
         showDialog(
           context: rootNavigationKey.currentContext!,
           builder: (context) => AlertDialog(
             title:
                 Text(rootLocalizations()!.newVersionDownloadedDialog(version)),
+            content: Text(localInstaller.newFeatures),
             actions: [
               OutlinedButton(
                   onPressed: () async {

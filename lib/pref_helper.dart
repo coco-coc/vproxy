@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
@@ -17,6 +18,7 @@ import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/data/database.dart';
+import 'package:vx/utils/auto_update_service.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/xconfig_helper.dart';
 
@@ -313,15 +315,17 @@ class PrefHelper {
     _pref.setInt('lastUpdateCheckTime', timestamp);
   }
 
-  String? get downloadedInstallerPath {
-    return _pref.getString('downloadedInstallerPath');
+  DownloadedInstaller? get downloadedInstaller {
+    final json = _pref.getString('downloadedInstaller');
+    if (json == null) return null;
+    return DownloadedInstaller.fromJson(jsonDecode(json));
   }
 
-  void setDownloadedInstallerPath(String? path) {
-    if (path == null) {
-      _pref.remove('downloadedInstallerPath');
+  void setDownloadedInstallerPath(DownloadedInstaller? installer) {
+    if (installer == null) {
+      _pref.remove('downloadedInstaller');
     } else {
-      _pref.setString('downloadedInstallerPath', path);
+      _pref.setString('downloadedInstaller', jsonEncode(installer.toJson()));
     }
   }
 
