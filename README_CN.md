@@ -37,14 +37,7 @@ VX (之前叫Vproxy) 是一个全平台代理客户端，使用[vx-core](https:/
 
 ## About LICENCE 
 
- We retain all rights to our source code and no one may reproduce, distribute, or create derivative works from our work. In other words, you are NOT permitted to:
-
-1. Distribute this software or its derivative works in any form, such as
-   compiled binaries or source code.
-
-2. Publish this software or its derivative works on any app store, package
-   registry, or hosting platform.
-
+ We retain all rights to our source code and no one may reproduce, distribute, or create derivative works from our work. 
 
 ## 面向机场主的深度链接说明
 

@@ -36,13 +36,7 @@ VX (formerly known as Vproxy) is a cross-platform proxy client built on top of [
 
 ## About LICENCE 
 
-We retain all rights to our source code and no one may reproduce, distribute, or create derivative works from our work. In other words, you are NOT permitted to:
-
-1. Distribute this software or its derivative works in any form, such as
-   compiled binaries or source code.
-
-2. Publish this software or its derivative works on any app store, package
-   registry, or hosting platform.
+We retain all rights to our source code and no one may reproduce, distribute, or create derivative works from our work. 
 
 ## Deep Linking (For airport owners)
 
