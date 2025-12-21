@@ -740,9 +740,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get loginBeforeRestore => 'Пожалуйста, войдите в систему перед восстановлением покупки.';
 
   @override
-  String get alternativePurchase => 'Если покупка не удалась, попробуйте другие платформы или официальный сайт.';
-
-  @override
   String get upgradeToPermanentPro => 'Обновление до Pro';
 
   @override
@@ -2115,4 +2112,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get lruSizeDesc => 'The number of fake DNS records to cache for each cidr. ';
+
+  @override
+  String get cacheDuration => 'Cache Duration';
+
+  @override
+  String get cacheDurationDesc => 'How long to cache DNS record. If empty or 0, DNS records will cached until they expire';
 }

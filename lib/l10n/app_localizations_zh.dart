@@ -726,9 +726,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get loginBeforeRestore => '恢复购买购买前请先登录';
 
   @override
-  String get alternativePurchase => '如购买失败，请通过其他平台或者官网购买。';
-
-  @override
   String get upgradeToPermanentPro => '升级为永久Pro';
 
   @override
@@ -2065,4 +2062,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get lruSizeDesc => '每个CIDR的Fake DNS记录缓存数量。';
+
+  @override
+  String get cacheDuration => '缓存时长';
+
+  @override
+  String get cacheDurationDesc => '缓存DNS记录的时长。如果为空或0，DNS记录将缓存直到它们过期';
 }

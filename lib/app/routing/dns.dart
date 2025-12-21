@@ -378,6 +378,7 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
   final _lruSizeController = TextEditingController(text: '6666');
   final _dnsServerAddressController = TextEditingController();
   final _clientIpController = TextEditingController();
+  final _cacheDurationController = TextEditingController();
   bool _useDefaultDns = false;
   DnsServerType? _type = DnsServerType.plain;
 
@@ -402,6 +403,7 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
     if (_type == DnsServerType.plain) {
       return DnsServerConfig(
           name: _nameController.text,
+          cacheDuration: int.tryParse(_cacheDurationController.text),
           clientIp: _clientIpController.text,
           plainDnsServer: PlainDnsServer(
               useDefaultDns: _useDefaultDns,
@@ -410,6 +412,7 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
     if (_type == DnsServerType.tls) {
       return DnsServerConfig(
           name: _nameController.text,
+          cacheDuration: int.tryParse(_cacheDurationController.text),
           clientIp: _clientIpController.text,
           tlsDnsServer: TlsDnsServer(
               addresses: _dnsServerAddressController.text.split(',').toList()));
@@ -418,12 +421,14 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
       return DnsServerConfig(
           name: _nameController.text,
           clientIp: _clientIpController.text,
+          cacheDuration: int.tryParse(_cacheDurationController.text),
           dohDnsServer: DohDnsServer(url: _dnsServerAddressController.text));
     }
     if (_type == DnsServerType.quic) {
       return DnsServerConfig(
           name: _nameController.text,
           clientIp: _clientIpController.text,
+          cacheDuration: int.tryParse(_cacheDurationController.text),
           quicDnsServer:
               QuicDnsServer(address: _dnsServerAddressController.text));
     }
@@ -437,6 +442,10 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
       _nameController.text = widget.dnsServer!.name;
       _type = _getDnsServerType(widget.dnsServer!);
       _clientIpController.text = widget.dnsServer!.dnsServer.clientIp;
+      _cacheDurationController.text =
+          widget.dnsServer!.dnsServer.cacheDuration != 0
+              ? widget.dnsServer!.dnsServer.cacheDuration.toString()
+              : '';
       if (widget.dnsServer!.dnsServer.hasFakeDnsServer()) {
         _fakeDnsPoolController.text = widget
             .dnsServer!.dnsServer.fakeDnsServer.poolConfigs
@@ -652,24 +661,45 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
               ],
             ),
           if (_type != DnsServerType.fake)
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: TextFormField(
-                  controller: _clientIpController,
-                  validator: (value) {
-                    if (value?.isNotEmpty ?? false) {
-                      if (!isValidIp(value!)) {
-                        return AppLocalizations.of(context)!.invalidIp;
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: TextFormField(
+                      controller: _clientIpController,
+                      validator: (value) {
+                        if (value?.isNotEmpty ?? false) {
+                          if (!isValidIp(value!)) {
+                            return AppLocalizations.of(context)!.invalidIp;
+                          }
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          hintText: '123.123.123.123',
+                          labelText: 'Client IP')),
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                    controller: _cacheDurationController,
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return AppLocalizations.of(context)!.empty;
                       }
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      hintText: '123.123.123.123',
-                      labelText: 'Client IP')),
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        hintText: '3600',
+                        suffixText: 's',
+                        labelText: AppLocalizations.of(context)!.cacheDuration,
+                        helperText:
+                            AppLocalizations.of(context)!.cacheDurationDesc,
+                        helperMaxLines: 2)),
+              ],
             ),
         ],
       ),
