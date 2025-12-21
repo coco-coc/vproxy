@@ -870,5 +870,6 @@
     }
   },
   "copyPath": "复制路径",
-  "invalidFields": "表格包含无效的输入，请修改后重试"
+  "invalidFields": "表格包含无效的输入，请修改后重试",
+  "lruSizeDesc": "每个CIDR的Fake DNS记录缓存数量。"
 }

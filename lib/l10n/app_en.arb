@@ -862,5 +862,6 @@
     }
   },
   "copyPath": "Copy Path",
-  "invalidFields": "Form contains invalid fields, please correct them first"
+  "invalidFields": "Form contains invalid fields, please correct them first",
+  "lruSizeDesc": "The number of fake DNS records to cache for each cidr. "
 }

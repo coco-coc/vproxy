@@ -2404,7 +2404,7 @@ abstract class AppLocalizations {
   /// No description provided for @tunIpv4Desc.
   ///
   /// In en, this message translates to:
-  /// **'oOn Windows/Linux, if your physical NIC supports IPv6, IPv6 traffic will not be handled by VX TUN, they will be handled by your physical NIC; on Android/iOS, IPv6 traffic will be blocked anyway.'**
+  /// **'On Windows/Linux, if your physical NIC supports IPv6, IPv6 traffic will not be handled by VX TUN, they will be handled by your physical NIC; on Android/iOS/macOS, IPv6 traffic will be blocked anyway.'**
   String get tunIpv4Desc;
 
   /// No description provided for @failedToCreateAllFirstLaunch.
@@ -4002,6 +4002,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Form contains invalid fields, please correct them first'**
   String get invalidFields;
+
+  /// No description provided for @lruSizeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The number of fake DNS records to cache for each cidr. '**
+  String get lruSizeDesc;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -375,6 +375,7 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _fakeDnsPoolController = TextEditingController();
+  final _lruSizeController = TextEditingController(text: '6666');
   final _dnsServerAddressController = TextEditingController();
   final _clientIpController = TextEditingController();
   bool _useDefaultDns = false;
@@ -394,7 +395,8 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
           fakeDnsServer: FakeDnsServer(
               poolConfigs: _fakeDnsPoolController.text
                   .split(',')
-                  .map((e) => FakeDnsServer_PoolConfig(cidr: e))
+                  .map((e) => FakeDnsServer_PoolConfig(
+                      cidr: e, lruSize: int.parse(_lruSizeController.text)))
                   .toList()));
     }
     if (_type == DnsServerType.plain) {
@@ -440,6 +442,10 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
             .dnsServer!.dnsServer.fakeDnsServer.poolConfigs
             .map((e) => e.cidr)
             .join(',');
+        _lruSizeController.text = widget.dnsServer!.dnsServer.fakeDnsServer
+                .poolConfigs.firstOrNull?.lruSize
+                .toString() ??
+            '6666';
       } else if (widget.dnsServer!.dnsServer.hasPlainDnsServer()) {
         _useDefaultDns =
             widget.dnsServer!.dnsServer.plainDnsServer.useDefaultDns;
@@ -463,6 +469,7 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
     _nameController.dispose();
     _fakeDnsPoolController.dispose();
     _dnsServerAddressController.dispose();
+    _lruSizeController.dispose();
     _clientIpController.dispose();
     super.dispose();
   }
@@ -536,6 +543,20 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
                           borderRadius: BorderRadius.circular(5),
                         ),
                         labelText: 'Pools')),
+                const SizedBox(height: 10),
+                TextFormField(
+                    controller: _lruSizeController,
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return AppLocalizations.of(context)!.empty;
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        labelText: 'LRU Size',
+                        helperMaxLines: 2,
+                        helperText: AppLocalizations.of(context)!.lruSizeDesc)),
               ],
             ),
           if (_type == DnsServerType.plain)
