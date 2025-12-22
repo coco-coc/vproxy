@@ -2,7 +2,8 @@
 
 <div>
 
-[![English](https://img.shields.io/badge/Language-English-blue)](README.md) [![中文](https://img.shields.io/badge/语言-中文-red)](README_CN.md)
+[![English](https://img.shields.io/badge/Language-English-blue)](README.md)
+[![中文](https://img.shields.io/badge/语言-中文-red)](README_CN.md)
 
 </div>
 
@@ -10,7 +11,9 @@
 
 ## Overview
 
-VX (formerly known as Vproxy) is a cross-platform proxy client built on top of [vx-core](https://github.com/5vnetwork/vx-core), which originated from [v2ray-core](https://www.v2fly.org/). 
+VX (formerly known as Vproxy) is a cross-platform proxy client built on top of
+[vx-core](https://github.com/5vnetwork/vx-core), which originated from
+[v2ray-core](https://www.v2fly.org/).
 
 ## Features
 
@@ -33,10 +36,18 @@ VX (formerly known as Vproxy) is a cross-platform proxy client built on top of [
 
 > **Note**: Most features are free, but some are available to paid users only.
 
+## About LICENCE
 
-## About LICENCE 
+We retain all rights to our source code and no one may reproduce, distribute, or
+create derivative works from our work.
 
-We retain all rights to our source code and no one may reproduce, distribute, or create derivative works from our work. 
+## About Open Source
+
+Currently, the flutter part of our app (this repo) is source code available, and
+the VX-core that powers the app is open-source. However, to prevent pirated
+softwares, there is a flutter plugin that connects the flutter part with the
+vx-core is currently close-source. It will be open-source when our app becomes
+more popular.
 
 ## Deep Linking (For airport owners)
 
@@ -47,6 +58,7 @@ vx://add/sub://<base64_encoded_url>?remarks=<subscription_name>
 ```
 
 **Example:**
+
 ```
 vx://add/sub://aHR0cHM6Ly9leGFtcGxlLmNvbS9hYmNk?remarks=%E6%9C%BA%E5%9C%BA%0A
 ```
@@ -58,6 +70,7 @@ vx://install-config?url=<subscription_url>&name=<subscription_name>
 ```
 
 **Example:**
+
 ```
 vx://install-config?url=https%3A%2F%2Fexample.com%2Fabcd&name=%E6%9C%BA%E5%9C%BA%0A
 ```
@@ -71,5 +84,5 @@ Both formats will add a subscription named "My Proxy" to the client.
 
 ### From Official Website
 
-Visit [vx.5vnetwork.com](https://vx.5vnetwork.com) to download the latest version for your platform.
-
+Visit [vx.5vnetwork.com](https://vx.5vnetwork.com) to download the latest
+version for your platform.

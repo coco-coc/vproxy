@@ -2,7 +2,8 @@
 
 <div>
 
-[![English](https://img.shields.io/badge/Language-English-blue)](README.md) [![中文](https://img.shields.io/badge/语言-中文-red)](README_CN.md)
+[![English](https://img.shields.io/badge/Language-English-blue)](README.md)
+[![中文](https://img.shields.io/badge/语言-中文-red)](README_CN.md)
 
 </div>
 
@@ -10,7 +11,8 @@
 
 ## 概览
 
-VX (之前叫Vproxy) 是一个全平台代理客户端，使用[vx-core](https://github.com/5vnetwork/vx-core)（改自[v2ray-core](https://www.v2fly.org/)）.
+VX (之前叫Vproxy)
+是一个全平台代理客户端，使用[vx-core](https://github.com/5vnetwork/vx-core)（改自[v2ray-core](https://www.v2fly.org/)）.
 
 ## 特点
 
@@ -33,11 +35,16 @@ VX (之前叫Vproxy) 是一个全平台代理客户端，使用[vx-core](https:/
 
 > 带Pro为付费功能
 
-> 一些顾客误认为VX是一个VPN软件。VX只是一个代理客户端，类似于小火箭，Clash，V2rayN，不提供节点
+> 一些用户误认为VX是一个VPN软件。VX只是一个代理客户端，类似于小火箭，Clash，V2rayN，不提供节点
 
-## About LICENCE 
+## About LICENCE
 
- We retain all rights to our source code and no one may reproduce, distribute, or create derivative works from our work. 
+We retain all rights to our source code and no one may reproduce, distribute, or
+create derivative works from our work.
+
+## 关于开源
+
+目前，VX的Flutter部分（本仓库）的源代码是公开的，它所使用的VX内核的是开源的。但是，为了防止盗版软件的出现，连接Flutter部分和内核部分的一个Flutter组件目前是闭源的。它会在VX用户数量更多后开源。
 
 ## 面向机场主的深度链接说明
 
@@ -48,6 +55,7 @@ vx://add/sub://<base64_encoded_url>?remarks=<subscription_name>
 ```
 
 **示范:**
+
 ```
 vx://add/sub://aHR0cHM6Ly9leGFtcGxlLmNvbS9hYmNk?remarks=%E6%9C%BA%E5%9C%BA%0A
 ```
@@ -59,6 +67,7 @@ vx://install-config?url=<subscription_url>&name=<subscription_name>
 ```
 
 **示范:**
+
 ```
 vx://install-config?url=https%3A%2F%2Fexample.com%2Fabcd&name=%E6%9C%BA%E5%9C%BA%0A
 ```
@@ -66,4 +75,3 @@ vx://install-config?url=https%3A%2F%2Fexample.com%2Fabcd&name=%E6%9C%BA%E5%9C%BA
 ## 安装
 
 ### 前往官网下载 [vx.5vnetwork.com](https://vx.5vnetwork.com)
-
