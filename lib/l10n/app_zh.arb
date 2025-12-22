@@ -277,7 +277,6 @@
   "unableToConnectToStore": "无法与商店连接",
   "loginBeforePurchase": "购买前请先登录",
   "loginBeforeRestore": "恢复购买购买前请先登录",
-  "alternativePurchase": "如购买失败，请通过其他平台或者官网购买。",
   "upgradeToPermanentPro": "升级为永久Pro",
   "caseInsensitive": "不区分大小写",
   "startFailed": "启动失败",
@@ -871,5 +870,7 @@
   },
   "copyPath": "复制路径",
   "invalidFields": "表格包含无效的输入，请修改后重试",
-  "lruSizeDesc": "每个CIDR的Fake DNS记录缓存数量。"
+  "lruSizeDesc": "每个CIDR的Fake DNS记录缓存数量。",
+  "cacheDuration": "缓存时长",
+  "cacheDurationDesc": "缓存DNS记录的时长。如果为空或0，DNS记录将缓存直到它们过期"
 }

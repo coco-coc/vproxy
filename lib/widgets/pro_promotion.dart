@@ -444,47 +444,8 @@ class IAPPurchase extends StatelessWidget {
                 ],
               ),
             ),
-          const Gap(10),
-          Text(AppLocalizations.of(context)!.alternativePurchase,
-              style: Theme.of(context).textTheme.bodySmall, maxLines: 2),
         ],
       ),
     );
   }
 }
-
-// Expanded(
-//   child: Card.outlined(
-//     elevation: 0,
-//     child: Padding(
-//       padding: const EdgeInsets.all(12),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Text('订阅Pro',
-//               style: Theme.of(context).textTheme.titleMedium),
-//           Gap(10),
-//           Text('\$1 每半年',
-//               style: Theme.of(context)
-//                   .textTheme
-//                   .bodyMedium
-//                   ?.copyWith(
-//                       color: Theme.of(context)
-//                           .colorScheme
-//                           .onSurfaceVariant)),
-//           Gap(10),
-//           Text('每月仅需约1元',
-//               style: Theme.of(context)
-//                   .textTheme
-//                   .bodySmall
-//                   ?.copyWith(
-//                       color: Theme.of(context)
-//                           .colorScheme
-//                           .onSurfaceVariant)),
-//           Gap(24),
-//           FilledButton.tonal(onPressed: () {}, child: Text('订阅'))
-//         ],
-//       ),
-//     ),
-//   ),
-// ),

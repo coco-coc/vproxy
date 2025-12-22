@@ -1483,12 +1483,6 @@ abstract class AppLocalizations {
   /// **'Please login before restoring purchase.'**
   String get loginBeforeRestore;
 
-  /// No description provided for @alternativePurchase.
-  ///
-  /// In en, this message translates to:
-  /// **'If purchase fails, please try other platforms or official website.'**
-  String get alternativePurchase;
-
   /// No description provided for @upgradeToPermanentPro.
   ///
   /// In en, this message translates to:
@@ -4008,6 +4002,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The number of fake DNS records to cache for each cidr. '**
   String get lruSizeDesc;
+
+  /// No description provided for @cacheDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache Duration'**
+  String get cacheDuration;
+
+  /// No description provided for @cacheDurationDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'How long to cache DNS record. If empty or 0, DNS records will cached until they expire'**
+  String get cacheDurationDesc;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

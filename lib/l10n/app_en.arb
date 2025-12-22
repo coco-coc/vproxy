@@ -274,7 +274,6 @@
   "unableToConnectToStore": "Unable to connect to store",
   "loginBeforePurchase": "Please login before purchasing. New users can try Pro for 7 days",
   "loginBeforeRestore": "Please login before restoring purchase.",
-  "alternativePurchase": "If purchase fails, please try other platforms or official website.",
   "upgradeToPermanentPro": "Upgrade to Pro",
   "caseInsensitive": "Case Insensitive",
   "startFailed": "Failed to start",
@@ -863,5 +862,7 @@
   },
   "copyPath": "Copy Path",
   "invalidFields": "Form contains invalid fields, please correct them first",
-  "lruSizeDesc": "The number of fake DNS records to cache for each cidr. "
+  "lruSizeDesc": "The number of fake DNS records to cache for each cidr. ",
+  "cacheDuration": "Cache Duration",
+  "cacheDurationDesc": "How long to cache DNS record. If empty or 0, DNS records will cached until they expire"
 }

@@ -40,6 +40,9 @@ class GitHubRelease {
     );
   }
 
+  String getDownloadUrl(String assetName) =>
+      assets.firstWhere((e) => e.name == assetName).downloadUrl;
+
   String get version => tagName.replaceAll('v', '');
 }
 
@@ -89,7 +92,7 @@ class GitHubReleaseService {
   /// Check for updates by comparing current version with latest GitHub release.
   ///
   /// return a version and download url if there is a newer release
-  static Future<(String, String)?> checkForUpdates(
+  static Future<GitHubRelease?> checkForUpdates(
       String currentVersion, String assetName) async {
     try {
       final release = await _getLatestReleaseContainingNewerAndroidApk(
@@ -97,10 +100,7 @@ class GitHubReleaseService {
       if (release == null) {
         return null;
       }
-      return (
-        release.version,
-        release.assets.firstWhere((e) => e.name == assetName).downloadUrl
-      );
+      return release;
     } catch (e, stackTrace) {
       logger.e('Error checking for updates', error: e, stackTrace: stackTrace);
       return null;
@@ -121,7 +121,10 @@ class GitHubReleaseService {
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as List<dynamic>;
-        final releases = json.map((e) => GitHubRelease.fromJson(e)).where((r) => !r.prerelease).toList();
+        final releases = json
+            .map((e) => GitHubRelease.fromJson(e))
+            .where((r) => !r.prerelease)
+            .toList();
         for (var release in releases) {
           if (versionNewerThan(release.version, currentVersion)) {
             if (release.assets.any(

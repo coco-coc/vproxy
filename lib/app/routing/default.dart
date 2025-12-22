@@ -93,7 +93,6 @@ enum DefaultRouteMode {
 
   List<DnsServerConfig> getDnsServerConfigs({required AppLocalizations al}) {
     final country = getUserCountryFromLocale();
-    print('country: $country');
     return [
       DnsServerConfig(
         name: dnsServerFake,
@@ -106,6 +105,7 @@ enum DefaultRouteMode {
         plainDnsServer: PlainDnsServer(
           addresses: ['1.1.1.1:53'],
         ),
+        cacheDuration: 3600,
       ),
       DnsServerConfig(
         name: al.dnsServerDirect,

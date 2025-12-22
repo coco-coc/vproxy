@@ -115,19 +115,49 @@ jobs:
         run: |
           cd macos && pod install
 
-      - name: Build
-        env:
-          LOG_KEY: ${{ secrets.LOG_KEY }}
-        run: flutter build macos --dart-define=LOG_KEY=$LOG_KEY --flavor production --release --obfuscate --split-debug-info=symbols/darwin
-
       - name: Set version
+        id: get_version
         run: |
           BUILD_NUMBER=$(grep '^version:' pubspec.yaml | sed 's/version: .*+\(.*\)/\1/')
           VERSION_NAME=$(grep '^version:' pubspec.yaml | sed 's/version: \(.*\)+.*/\1/')
-          /usr/libexec/PlistBuddy -c  "Set :CFBundleShortVersionString $VERSION_NAME" \
-          "build/macos/Build/Products/Release-production/VX.app/Contents/PlugIns/PacketTunnel.appex/Contents/Info.plist"
-          /usr/libexec/PlistBuddy -c  "Set :CFBundleVersion $BUILD_NUMBER" \
-          "build/macos/Build/Products/Release-production/VX.app/Contents/PlugIns/PacketTunnel.appex/Contents/Info.plist"
+          echo "version=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION_NAME"
+          echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+          echo "Extracted build number: $BUILD_NUMBER"
+
+      - name: Update Xcode project versions
+        run: |
+          cd macos
+          VERSION="${{ steps.get_version.outputs.version }}"
+          BUILD_NUMBER="${{ steps.get_version.outputs.build_number }}"
+          
+          # Update all CURRENT_PROJECT_VERSION entries (format: CURRENT_PROJECT_VERSION = value;)
+          sed -i '' "s/\(CURRENT_PROJECT_VERSION = \)[^;]*/\1$BUILD_NUMBER/g" \
+            Runner.xcodeproj/project.pbxproj
+          
+          # Update all MARKETING_VERSION entries (format: MARKETING_VERSION = value;)
+          sed -i '' "s/\(MARKETING_VERSION = \)[^;]*/\1$VERSION/g" \
+            Runner.xcodeproj/project.pbxproj
+          
+          echo "Updated all CURRENT_PROJECT_VERSION to $BUILD_NUMBER"
+          echo "Updated all MARKETING_VERSION to $VERSION"
+
+      - name: Build
+        env:
+          LOG_KEY: ${{ secrets.LOG_KEY }}
+        run: |
+          flutter build macos --dart-define=LOG_KEY=$LOG_KEY --flavor production --release --obfuscate \
+          --split-debug-info=symbols/darwin --build-name ${{ steps.get_version.outputs.version }} \
+          --build-number ${{ steps.get_version.outputs.build_number }}
+
+      # - name: Set version
+      #   run: |
+      #     BUILD_NUMBER=$(grep '^version:' pubspec.yaml | sed 's/version: .*+\(.*\)/\1/')
+      #     VERSION_NAME=$(grep '^version:' pubspec.yaml | sed 's/version: \(.*\)+.*/\1/')
+      #     /usr/libexec/PlistBuddy -c  "Set :CFBundleShortVersionString $VERSION_NAME" \
+      #     "build/macos/Build/Products/Release-production/VX.app/Contents/PlugIns/PacketTunnel.appex/Contents/Info.plist"
+      #     /usr/libexec/PlistBuddy -c  "Set :CFBundleVersion $BUILD_NUMBER" \
+      #     "build/macos/Build/Products/Release-production/VX.app/Contents/PlugIns/PacketTunnel.appex/Contents/Info.plist"
 
       - name: Package
         run: |
