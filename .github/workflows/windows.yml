@@ -72,10 +72,6 @@ jobs:
             -R 5VNetwork/vx-core \
             -p "x_win_arm64.zip" \
             -p "x_win_x86_64.zip"
-          gh release download latest \
-            -R 5VNetwork/vx-service \
-            -p "x_win_service_arm64.zip" \
-            -p "x_win_service_x86_64.zip"
 
       - name: unzip files
         if: steps.cache-x-releases.outputs.cache-hit != 'true'
@@ -83,14 +79,12 @@ jobs:
         run: |
           Expand-Archive -Path x_win_arm64.zip -DestinationPath ./x_win_arm64 -Force
           Expand-Archive -Path x_win_x86_64.zip -DestinationPath ./x_win_x86_64 -Force
-          Expand-Archive -Path x_win_service_arm64.zip -DestinationPath ./x_win_service_arm64 -Force
-          Expand-Archive -Path x_win_service_x86_64.zip -DestinationPath ./x_win_service_x86_64 -Force
 
       - name: copy files to tm_plugin
         run: |
           cp x_win_x86_64/x.dll ../tm-plugin/tm_windows/assets/x.dll
-          cp x_win_service_x86_64/vx_service.exe vx_service.exe
-          cp x_win_service_x86_64/service_install.exe service_install.exe
+          cp x_win_x86_64/vx_service.exe vx_service.exe
+          cp x_win_x86_64/service_install.exe service_install.exe
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
