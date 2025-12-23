@@ -48,7 +48,7 @@ Future<void> installWindowsService() async {
         [
           '-Command',
           'Start-Process',
-          '..\\vx-service\\service\\service_install.exe',
+          '..\\vx-core\\win_service\\service\\service_install.exe',
           'install',
           '-Verb',
           'RunAs'
