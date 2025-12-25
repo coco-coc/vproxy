@@ -232,12 +232,14 @@ class OutboundTableState extends State<OutboundTable> {
                                       previous.sortCol != current.sortCol ||
                                       previous.selected != current.selected,
                                   listener: (ctx, state) {
-                                    _scrollController.animateTo(
-                                      0,
-                                      duration:
-                                          const Duration(milliseconds: 300),
-                                      curve: Curves.easeInOut,
-                                    );
+                                    if (_scrollController.hasClients) {
+                                      _scrollController.animateTo(
+                                        0,
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        curve: Curves.easeInOut,
+                                      );
+                                    }
                                   },
                                   child: BlocSelector<
                                           OutboundBloc,
