@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -56,13 +57,13 @@ class AddMenuAnchor extends StatelessWidget {
                 final outbloc = context.read<OutboundBloc>();
                 final subBloc = context.read<SubscriptionBloc>();
                 final barcode = await Navigator.of(context, rootNavigator: true)
-                    .push(MaterialPageRoute(builder: (ctx) {
+                    .push<Barcode?>(MaterialPageRoute(builder: (ctx) {
                   return const ScanQrCode();
                 }));
                 if (barcode == null || barcode.displayValue == null) {
                   return;
                 }
-                print(barcode.displayValue);
+                logger.d(barcode.displayValue);
                 // final imageBytes = barcode.rawBytes;
                 // if (imageBytes == null) {
                 //   return;
@@ -128,6 +129,26 @@ class AddMenuAnchor extends StatelessWidget {
                   }
                 }
               }),
+          MenuItemButton(
+            leadingIcon: const Icon(Icons.file_open_rounded),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Text(AppLocalizations.of(context)!.selectFromFile),
+            ),
+            onPressed: () async {
+              final outbloc = context.read<OutboundBloc>();
+              final subBloc = context.read<SubscriptionBloc>();
+              final result = await FilePicker.platform.pickFiles(
+                type: FileType.any,
+                withData: true,
+              );
+              if (result == null) {
+                return;
+              }
+              await getNodesFromUrls(utf8.decode(result.files.first.bytes!),
+                  context, outbloc, subBloc);
+            },
+          ),
         ],
         builder: (context, controller, child) {
           if (colored) {
@@ -274,6 +295,8 @@ Future<void> getNodesFromUrls(String data, BuildContext context,
                       builder: (context) => SimpleDialog(
                             title:
                                 Text(AppLocalizations.of(context)!.failedNodes),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 16),
                             children:
                                 result.failedNodes.map((e) => Text(e)).toList(),
                           ));
