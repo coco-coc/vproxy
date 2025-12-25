@@ -166,7 +166,6 @@
   "contactUsFreely": "如果您在使用VX的过程中有任何问题，请随时联系我们。",
   "bugAreWelcome": "欢迎向我们反馈bug和建议，谢谢!",
   "copiedToClipboard": "已复制到剪贴板",
-  "openSourceSoftwareNoticeText": "VX使用开源的VX内核",
   "sourceCodeUrl": "源码链接",
   "email": "邮箱",
   "verificationCode": "验证码",
@@ -857,17 +856,8 @@
   "sourceCodeAvailable": "VX客户端的源代码已公开于Github，并且它由Github Actions自动构建与发布",
   "vxSourceCode": "VX客户端源代码",
   "vxCoreSourceCode": "VX内核源代码",
-  "windowsUpdateNotice": "如果您从2.x.x版本更新到此应用，为了保留您的数据库和偏好设置，请关闭应用，重命名文件夹 {source} 为 {dest} 然后启动应用。我们对此带来的不便表示歉意。",
-  "@windowsUpdateNotice": {
-    "placeholders": {
-      "source": {
-        "type": "String"
-      },
-      "dest": {
-        "type": "String"
-      }
-    }
-  },
+  "windowsUpdateNotice1": "如果您从2.x.x版本更新到此应用，为了保留您的数据库和偏好设置，请关闭应用，重命名以下文件夹：",
+  "windowsUpdateNotice2": "然后启动应用",
   "copyPath": "复制路径",
   "invalidFields": "表格包含无效的输入，请修改后重试",
   "lruSizeDesc": "每个CIDR的Fake DNS记录缓存数量。",

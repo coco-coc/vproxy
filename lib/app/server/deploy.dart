@@ -710,7 +710,7 @@ class AllInOneQuickDeploy extends QuickDeployOption {
                       serverNames: [realityDomain],
                       privateKey:
                           base64Url.decode(base64Url.normalize(privateKey)),
-                      shortIds: [Uint8List(16)]))
+                      shortIds: [Uint8List(8)]))
           ]),
     ]);
 

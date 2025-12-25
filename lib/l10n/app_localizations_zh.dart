@@ -459,9 +459,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get copiedToClipboard => '已复制到剪贴板';
 
   @override
-  String get openSourceSoftwareNoticeText => 'VX使用开源的VX内核';
-
-  @override
   String get sourceCodeUrl => '源码链接';
 
   @override
@@ -2050,9 +2047,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get vxCoreSourceCode => 'VX内核源代码';
 
   @override
-  String windowsUpdateNotice(String source, String dest) {
-    return '如果您从2.x.x版本更新到此应用，为了保留您的数据库和偏好设置，请关闭应用，重命名文件夹 $source 为 $dest 然后启动应用。我们对此带来的不便表示歉意。';
-  }
+  String get windowsUpdateNotice1 => '如果您从2.x.x版本更新到此应用，为了保留您的数据库和偏好设置，请关闭应用，重命名以下文件夹：';
+
+  @override
+  String get windowsUpdateNotice2 => '然后启动应用';
 
   @override
   String get copyPath => '复制路径';

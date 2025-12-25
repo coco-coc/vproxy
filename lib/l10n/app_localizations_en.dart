@@ -473,9 +473,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get copiedToClipboard => 'Copied to clipboard';
 
   @override
-  String get openSourceSoftwareNoticeText => 'VX uses open-source vx-core which originated from v2ray-core';
-
-  @override
   String get sourceCodeUrl => 'URL to source code';
 
   @override
@@ -2100,9 +2097,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vxCoreSourceCode => 'Source Code of VX-Core';
 
   @override
-  String windowsUpdateNotice(String source, String dest) {
-    return 'If you update to this app from a 2.x.x version, to reuse your previous database and preference, close the app, rename folder $source to $dest then start app. We apologize for the inconvenience.';
-  }
+  String get windowsUpdateNotice1 => 'If you update to this app from a 2.x.x version, to reuse your previous database and preference, close the app, rename the following folder: ';
+
+  @override
+  String get windowsUpdateNotice2 => 'Then start app.';
 
   @override
   String get copyPath => 'Copy Path';
