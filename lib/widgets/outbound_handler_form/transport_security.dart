@@ -917,6 +917,7 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
                 return 'Invalid base64URL format: ${e.toString()}';
               }
             } else {
+              if (widget.server) return null;
               return AppLocalizations.of(context)!.empty;
             }
             return null;
