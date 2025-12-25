@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gap/gap.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vx/app/settings/setting.dart';
@@ -115,9 +116,8 @@ class OpenSourceSoftwareNoticeScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           children: [
-            Text(AppLocalizations.of(context)!.openSourceSoftwareNoticeText),
-            const SizedBox(height: 10),
-            TextButton(
+            Gap(10),
+            FilledButton(
               onPressed: () {
                 launchUrl(Uri.parse(githubRepositoryUrl));
               },
