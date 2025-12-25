@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pasteboard/pasteboard.dart';
 import 'package:path/path.dart' hide context;
@@ -42,21 +43,43 @@ class _ShellPageState extends State<ShellPage> {
     super.initState();
     if (!persistentStateRepo.welcomeShown) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        if (Platform.isWindows) {
+        if (Platform.isWindows &&
+            File(join(resourceDirectory.parent.path, 'vproxy')).existsSync()) {
           //[C:\\Users\\YOUR USER NAME\\AppData\\Roaming\\com.5vnetwork\\vproxy]
           showDialog(
               context: context,
               builder: (context) => AlertDialog(
                     content: SizedBox(
                       width: 500,
-                      child: Text(
-                        AppLocalizations.of(context)!.windowsUpdateNotice(
-                            join(resourceDirectory.parent.path, 'vproxy'),
-                            resourceDirectory.path),
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.windowsUpdateNotice1,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          const Gap(10),
+                          Text(join(resourceDirectory.parent.path, 'vproxy')),
+                          const Gap(10),
+                          const Icon(Icons.arrow_downward),
+                          const Gap(10),
+                          Text(resourceDirectory.path),
+                          const Gap(10),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              AppLocalizations.of(context)!
+                                  .windowsUpdateNotice2,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     actions: [

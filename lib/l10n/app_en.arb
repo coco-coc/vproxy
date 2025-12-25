@@ -166,7 +166,6 @@
   "contactUsFreely": "If you have any questions, please contact us.",
   "bugAreWelcome": "Bug reports and suggestions are welcome, thanks very much!",
   "copiedToClipboard": "Copied to clipboard",
-  "openSourceSoftwareNoticeText": "VX uses open-source vx-core which originated from v2ray-core",
   "sourceCodeUrl": "URL to source code",
   "email": "Email",
   "verificationCode": "Verification Code",
@@ -849,17 +848,8 @@
   "sourceCodeAvailable": "VX is a source-available proxy client powered by open-source vx-core.",
   "vxSourceCode": "Source Code of VX",
   "vxCoreSourceCode": "Source Code of VX-Core",
-  "windowsUpdateNotice": "If you update to this app from a 2.x.x version, to reuse your previous database and preference, close the app, rename folder {source} to {dest} then start app. We apologize for the inconvenience.",
-  "@windowsUpdateNotice": {
-    "placeholders": {
-      "source": {
-        "type": "String"
-      },
-      "dest": {
-        "type": "String"
-      }
-    }
-  },
+  "windowsUpdateNotice1": "If you update to this app from a 2.x.x version, to reuse your previous database and preference, close the app, rename the following folder: ",
+  "windowsUpdateNotice2": "Then start app.",
   "copyPath": "Copy Path",
   "invalidFields": "Form contains invalid fields, please correct them first",
   "lruSizeDesc": "The number of fake DNS records to cache for each cidr. ",

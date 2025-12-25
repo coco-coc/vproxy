@@ -473,9 +473,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get copiedToClipboard => 'Скопировано в буфер обмена';
 
   @override
-  String get openSourceSoftwareNoticeText => 'В связи с использованием проектов с открытым исходным кодом по лицензии MPL-2.0 часть исходного кода данного программного обеспечения должна быть раскрыта. Для просмотра нажмите кнопку ниже.';
-
-  @override
   String get sourceCodeUrl => 'URL к исходному коду';
 
   @override
@@ -2100,9 +2097,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get vxCoreSourceCode => 'Source Code of VX-Core';
 
   @override
-  String windowsUpdateNotice(String source, String dest) {
-    return 'If you update to this app from a 2.x.x version, to reuse your previous database and preference, close the app, rename folder $source to $dest then start app. We apologize for the inconvenience.';
-  }
+  String get windowsUpdateNotice1 => 'If you update to this app from a 2.x.x version, to reuse your previous database and preference, close the app, rename the following folder: ';
+
+  @override
+  String get windowsUpdateNotice2 => 'Then start app.';
 
   @override
   String get copyPath => 'Copy Path';

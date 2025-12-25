@@ -961,12 +961,6 @@ abstract class AppLocalizations {
   /// **'Copied to clipboard'**
   String get copiedToClipboard;
 
-  /// No description provided for @openSourceSoftwareNoticeText.
-  ///
-  /// In en, this message translates to:
-  /// **'VX uses open-source vx-core which originated from v2ray-core'**
-  String get openSourceSoftwareNoticeText;
-
   /// No description provided for @sourceCodeUrl.
   ///
   /// In en, this message translates to:
@@ -3979,11 +3973,17 @@ abstract class AppLocalizations {
   /// **'Source Code of VX-Core'**
   String get vxCoreSourceCode;
 
-  /// No description provided for @windowsUpdateNotice.
+  /// No description provided for @windowsUpdateNotice1.
   ///
   /// In en, this message translates to:
-  /// **'If you update to this app from a 2.x.x version, to reuse your previous database and preference, close the app, rename folder {source} to {dest} then start app. We apologize for the inconvenience.'**
-  String windowsUpdateNotice(String source, String dest);
+  /// **'If you update to this app from a 2.x.x version, to reuse your previous database and preference, close the app, rename the following folder: '**
+  String get windowsUpdateNotice1;
+
+  /// No description provided for @windowsUpdateNotice2.
+  ///
+  /// In en, this message translates to:
+  /// **'Then start app.'**
+  String get windowsUpdateNotice2;
 
   /// No description provided for @copyPath.
   ///
