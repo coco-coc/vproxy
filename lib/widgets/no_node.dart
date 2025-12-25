@@ -25,8 +25,10 @@ class Welcome extends StatelessWidget {
               ),
         ),
         const Gap(10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        Wrap(
+
+          spacing: 10,
+          runSpacing: 5,
           children: [
             OutlinedButton.icon(
                 onPressed: () {
@@ -41,7 +43,6 @@ class Welcome extends StatelessWidget {
                 label: Text(
                   AppLocalizations.of(context)!.vxSourceCode,
                 )),
-            const Gap(10),
             OutlinedButton.icon(
                 onPressed: () {
                   launchUrl(Uri.parse('https://github.com/5vnetwork/vx-core'));
@@ -94,8 +95,8 @@ class Welcome extends StatelessWidget {
                 },
                 icon: Image.asset(
                   MediaQuery.of(context).platformBrightness == Brightness.light
-                      ? 'assets/icons/x_logo_white.png'
-                      : 'assets/icons/x_logo_black.png',
+                      ? 'assets/icons/x_logo_black.png'
+                      : 'assets/icons/x_logo_white.png',
                   width: 16,
                   height: 16,
                 ),
