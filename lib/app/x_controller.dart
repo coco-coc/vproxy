@@ -661,6 +661,7 @@ class XController implements MessageFlutterApi {
   }
 
   void _communicate({bool reconnect = false}) async {
+    logger.d("communicate: reconnect=$reconnect");
     if (_tm.state == TmStatus.connected) {
       final client = await getXClient();
       _commuStreamSub ??= (client.communicate(CommunicateRequest())).listen(
@@ -684,7 +685,7 @@ class XController implements MessageFlutterApi {
             logger.d("current status: $status");
             // reconnect to the server
             if (status == TmStatus.connected && !reconnect) {
-              _communicate(reconnect: true);
+              _communicate();
             }
           });
     }
