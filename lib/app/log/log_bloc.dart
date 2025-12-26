@@ -158,7 +158,7 @@ class LogBloc extends Bloc<LogEvent, LogState> {
   }
 
   Future<void> _subscribe({bool reconnect = false}) async {
-    logger.d('subscribing to log stream');
+    logger.d('subscribing to log stream: reconnect=$reconnect');
     try {
       _logStream ??= await xController.userLogStream();
     } catch (e) {
@@ -173,13 +173,13 @@ class LogBloc extends Bloc<LogEvent, LogState> {
       _disconnectLogStream();
       logger.d('log stream done');
     }, onError: (e) {
-      if (e is GrpcError && e.code == StatusCode.cancelled) {
-        return;
-      }
+      // if (e is GrpcError && e.code == StatusCode.cancelled) {
+      //   return;
+      // }
       logger.e('log stream error: $e');
       _disconnectLogStream();
       if (_tm.state == TmStatus.connected && _pref.enableLog && !reconnect) {
-        _subscribe(reconnect: true);
+        _subscribe();
       }
     });
   }
