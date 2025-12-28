@@ -125,8 +125,7 @@ class _AccountPageState extends State<AccountPage> {
                           ),
                         ),
                         const Gap(10),
-                        if (state.isActivated)
-                          const ActivatedIcon(),
+                        if (state.isActivated) const ActivatedIcon(),
                       ],
                     ),
                   ),
@@ -212,7 +211,14 @@ class _AccountPageState extends State<AccountPage> {
                         FilledButton.icon(
                           onPressed: _activate,
                           icon: _isActivating
-                              ? smallCircularProgressIndicator
+                              ? SizedBox(
+                                  width: 12,
+                                  height: 12,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Theme.of(context).colorScheme.onPrimary,
+                                  ),
+                                )
                               : const Icon(Icons.verified_user, size: 20),
                           label: Text(AppLocalizations.of(context)!.activate),
                           style: FilledButton.styleFrom(
