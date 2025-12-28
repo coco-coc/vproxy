@@ -361,6 +361,7 @@ class SubscriptionData {
   static SubscriptionData? parse(String description) {
     // Parse format: "STATUS=🚀↑:1.42GB,↓:4.48GB,TOT:200GB💡Expires:2025-12-04"
     // Or Chinese format: "剩余流量: 12.165GB。到期: 2025年11月20日 15时。"
+    // Or key-value format: "upload=1234; download=2234; total=1024000; expire=2218532293"
     String? totalData;
     String? usedData;
     String? remainingData;
@@ -373,17 +374,14 @@ class SubscriptionData {
               r'剩余流量[：:]\s*(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)',
               caseSensitive: false)
           .firstMatch(description);
-
       if (chineseRemainingMatch != null) {
         remainingData =
             '${chineseRemainingMatch.group(1)}${chineseRemainingMatch.group(2)}';
       }
-
       // Extract Chinese expiration date: "到期: 2025年11月20日 15时"
       final chineseExpirationMatch =
           RegExp(r'到期[：:]\s*(\d{4})年(\d{1,2})月(\d{1,2})日')
               .firstMatch(description);
-
       if (chineseExpirationMatch != null) {
         final year = chineseExpirationMatch.group(1);
         final month = chineseExpirationMatch.group(2)!.padLeft(2, '0');
@@ -391,50 +389,96 @@ class SubscriptionData {
         expirationDate = DateTime.tryParse('$year-$month-$day');
       }
 
-      // If Chinese format didn't match, try standard format
+      // If Chinese format didn't match, try key-value format: "upload=1234; download=2234; total=1024000; expire=2218532293"
       if (remainingData == null && expirationDate == null) {
-        // Extract total data
-        final totMatch =
-            RegExp(r'TOT:(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)', caseSensitive: false)
-                .firstMatch(description);
-        if (totMatch != null) {
-          totalData = '${totMatch.group(1)}${totMatch.group(2)}';
-        }
+        final keyValueMatch = RegExp(
+                r'upload\s*=\s*(\d+)\s*;\s*download\s*=\s*(\d+)\s*;\s*total\s*=\s*(\d+)\s*;\s*expire\s*=\s*(\d+)',
+                caseSensitive: false)
+            .firstMatch(description);
 
-        // Extract upload data
-        final uploadMatch =
-            RegExp(r'↑:(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)', caseSensitive: false)
-                .firstMatch(description);
-
-        // Extract download data
-        final downloadMatch =
-            RegExp(r'↓:(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)', caseSensitive: false)
-                .firstMatch(description);
-
-        // Calculate used data
-        if (uploadMatch != null && downloadMatch != null) {
-          final upload = double.tryParse(uploadMatch.group(1) ?? '0') ?? 0;
-          final download = double.tryParse(downloadMatch.group(1) ?? '0') ?? 0;
-          final total = upload + download;
-          usedData = '${total.toStringAsFixed(2)}GB';
-        }
-
-        // Calculate remaining data and percentage
-        if (totalData != null && usedData != null) {
-          final totalValue = double.tryParse(totMatch!.group(1) ?? '0') ?? 0;
-          final usedValue =
-              double.tryParse(usedData.replaceAll(RegExp(r'[^\d.]'), '')) ?? 0;
-          final remaining = totalValue - usedValue;
-          remainingData = '${remaining.toStringAsFixed(2)}GB';
+        if (keyValueMatch != null) {
+          // Parse values (they're in bytes)
+          final uploadBytes = int.tryParse(keyValueMatch.group(1) ?? '0') ?? 0;
+          final downloadBytes =
+              int.tryParse(keyValueMatch.group(2) ?? '0') ?? 0;
+          final totalBytes = int.tryParse(keyValueMatch.group(3) ?? '0') ?? 0;
+          final expireTimestamp =
+              int.tryParse(keyValueMatch.group(4) ?? '0') ?? 0;
+          // Convert bytes to human-readable format
+          String formatBytes(int bytes) {
+            if (bytes >= 1024 * 1024 * 1024 * 1024) {
+              return '${(bytes / (1024 * 1024 * 1024 * 1024)).toStringAsFixed(2)}TB';
+            } else if (bytes >= 1024 * 1024 * 1024) {
+              return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(2)}GB';
+            } else if (bytes >= 1024 * 1024) {
+              return '${(bytes / (1024 * 1024)).toStringAsFixed(2)}MB';
+            } else if (bytes >= 1024) {
+              return '${(bytes / 1024).toStringAsFixed(2)}KB';
+            } else {
+              return '${bytes}B';
+            }
+          }
+          totalData = formatBytes(totalBytes);
+          final usedBytes = uploadBytes + downloadBytes;
+          usedData = formatBytes(usedBytes);
+          final remainingBytes = totalBytes - usedBytes;
+          remainingData = formatBytes(remainingBytes);
           usagePercentage =
-              totalValue > 0 ? (usedValue / totalValue).clamp(0.0, 1.0) : 0.0;
-        }
+              totalBytes > 0 ? (usedBytes / totalBytes).clamp(0.0, 1.0) : 0.0;
 
-        // Extract expiration date
-        final expiresMatch =
-            RegExp(r'Expires?:\s*(\d{4}-\d{2}-\d{2})').firstMatch(description);
-        if (expiresMatch != null) {
-          expirationDate = DateTime.tryParse(expiresMatch.group(1)!);
+          // Convert Unix timestamp to DateTime
+          if (expireTimestamp > 0) {
+            expirationDate = DateTime.fromMillisecondsSinceEpoch(
+                expireTimestamp * 1000,
+                isUtc: true);
+          }
+        } else {
+          // Try standard format
+          // Extract total data
+          final totMatch = RegExp(r'TOT:(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)',
+                  caseSensitive: false)
+              .firstMatch(description);
+          if (totMatch != null) {
+            totalData = '${totMatch.group(1)}${totMatch.group(2)}';
+          }
+
+          // Extract upload data
+          final uploadMatch =
+              RegExp(r'↑:(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)', caseSensitive: false)
+                  .firstMatch(description);
+
+          // Extract download data
+          final downloadMatch =
+              RegExp(r'↓:(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)', caseSensitive: false)
+                  .firstMatch(description);
+
+          // Calculate used data
+          if (uploadMatch != null && downloadMatch != null) {
+            final upload = double.tryParse(uploadMatch.group(1) ?? '0') ?? 0;
+            final download =
+                double.tryParse(downloadMatch.group(1) ?? '0') ?? 0;
+            final total = upload + download;
+            usedData = '${total.toStringAsFixed(2)}GB';
+          }
+
+          // Calculate remaining data and percentage
+          if (totalData != null && usedData != null) {
+            final totalValue = double.tryParse(totMatch!.group(1) ?? '0') ?? 0;
+            final usedValue =
+                double.tryParse(usedData.replaceAll(RegExp(r'[^\d.]'), '')) ??
+                    0;
+            final remaining = totalValue - usedValue;
+            remainingData = '${remaining.toStringAsFixed(2)}GB';
+            usagePercentage =
+                totalValue > 0 ? (usedValue / totalValue).clamp(0.0, 1.0) : 0.0;
+          }
+
+          // Extract expiration date
+          final expiresMatch = RegExp(r'Expires?:\s*(\d{4}-\d{2}-\d{2})')
+              .firstMatch(description);
+          if (expiresMatch != null) {
+            expirationDate = DateTime.tryParse(expiresMatch.group(1)!);
+          }
         }
       }
     } catch (e) {
