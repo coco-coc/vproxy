@@ -3,23 +3,24 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i6;
-import 'dart:typed_data' as _i7;
+import 'dart:async' as _i7;
+import 'dart:typed_data' as _i8;
 
-import 'package:fixnum/fixnum.dart' as _i11;
+import 'package:fixnum/fixnum.dart' as _i13;
 import 'package:flutter/material.dart' as _i14;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i12;
+import 'package:mockito/src/dummies.dart' as _i10;
 import 'package:tm/protos/protos/router.pb.dart' as _i3;
-import 'package:tm/protos/protos/tun.pb.dart' as _i4;
-import 'package:vx/app/control.dart' as _i10;
-import 'package:vx/app/outbound/outbound_page.dart' as _i16;
+import 'package:tm/protos/protos/tun.pb.dart' as _i5;
+import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart' as _i11;
+import 'package:vx/app/control.dart' as _i12;
+import 'package:vx/app/home/home.dart' as _i15;
+import 'package:vx/app/outbound/outbound_page.dart' as _i17;
 import 'package:vx/app/outbound/outbound_repo.dart' as _i2;
-import 'package:vx/app/outbound/outbounds_bloc.dart' as _i15;
-import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart' as _i9;
-import 'package:vx/pref_helper.dart' as _i8;
-import 'package:vx/utils/download.dart' as _i5;
-import 'package:vx/xconfig_helper.dart' as _i13;
+import 'package:vx/app/outbound/outbounds_bloc.dart' as _i4;
+import 'package:vx/pref_helper.dart' as _i9;
+import 'package:vx/utils/auto_update_service.dart' as _i16;
+import 'package:vx/utils/download.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -67,9 +68,20 @@ class _FakeSelectorConfig_BalanceStrategy_2 extends _i1.SmartFake
         );
 }
 
-class _FakeTunConfig_TUN46Setting_3 extends _i1.SmartFake
-    implements _i4.TunConfig_TUN46Setting {
-  _FakeTunConfig_TUN46Setting_3(
+class _FakeOutboundTableSmallScreenPreference_3 extends _i1.SmartFake
+    implements _i4.OutboundTableSmallScreenPreference {
+  _FakeOutboundTableSmallScreenPreference_3(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeTunConfig_TUN46Setting_4 extends _i1.SmartFake
+    implements _i5.TunConfig_TUN46Setting {
+  _FakeTunConfig_TUN46Setting_4(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -81,7 +93,7 @@ class _FakeTunConfig_TUN46Setting_3 extends _i1.SmartFake
 /// A class which mocks [Downloader].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDownloader extends _i1.Mock implements _i5.Downloader {
+class MockDownloader extends _i1.Mock implements _i6.Downloader {
   MockDownloader() {
     _i1.throwOnMissingStub(this);
   }
@@ -96,7 +108,7 @@ class MockDownloader extends _i1.Mock implements _i5.Downloader {
       ) as _i2.OutboundRepo);
 
   @override
-  _i6.Future<void> downloadMulti(
+  _i7.Future<void> downloadMulti(
     List<String>? urls,
     String? dest,
   ) =>
@@ -108,12 +120,12 @@ class MockDownloader extends _i1.Mock implements _i5.Downloader {
             dest,
           ],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 
   @override
-  _i6.Future<void> downloadProxyFirst(
+  _i7.Future<void> downloadProxyFirst(
     String? url,
     String? dest,
   ) =>
@@ -125,12 +137,12 @@ class MockDownloader extends _i1.Mock implements _i5.Downloader {
             dest,
           ],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 
   @override
-  _i6.Future<void> download(
+  _i7.Future<void> download(
     String? url,
     String? dest,
   ) =>
@@ -142,31 +154,65 @@ class MockDownloader extends _i1.Mock implements _i5.Downloader {
             dest,
           ],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 
   @override
-  _i6.Future<_i7.Uint8List> downloadMemory(String? url) => (super.noSuchMethod(
+  _i7.Future<void> downloadZip(
+    String? url,
+    String? dest, {
+    bool? cleanDest = true,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #downloadZip,
+          [
+            url,
+            dest,
+          ],
+          {#cleanDest: cleanDest},
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
+  _i7.Future<_i8.Uint8List> downloadMemory(String? url) => (super.noSuchMethod(
         Invocation.method(
           #downloadMemory,
           [url],
         ),
-        returnValue: _i6.Future<_i7.Uint8List>.value(_i7.Uint8List(0)),
-      ) as _i6.Future<_i7.Uint8List>);
+        returnValue: _i7.Future<_i8.Uint8List>.value(_i8.Uint8List(0)),
+      ) as _i7.Future<_i8.Uint8List>);
 }
 
 /// A class which mocks [PrefHelper].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
+class MockPrefHelper extends _i1.Mock implements _i9.PrefHelper {
   MockPrefHelper() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
+  String get initialLocation => (super.noSuchMethod(
+        Invocation.getter(#initialLocation),
+        returnValue: _i10.dummyValue<String>(
+          this,
+          Invocation.getter(#initialLocation),
+        ),
+      ) as String);
+
+  @override
   bool get initialLaunch => (super.noSuchMethod(
         Invocation.getter(#initialLaunch),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  bool get welcomeShown => (super.noSuchMethod(
+        Invocation.getter(#welcomeShown),
         returnValue: false,
       ) as bool);
 
@@ -177,10 +223,16 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       ) as bool);
 
   @override
-  _i9.InboundMode get inboundMode => (super.noSuchMethod(
+  _i11.InboundMode get inboundMode => (super.noSuchMethod(
         Invocation.getter(#inboundMode),
-        returnValue: _i9.InboundMode.tun,
-      ) as _i9.InboundMode);
+        returnValue: _i11.InboundMode.tun,
+      ) as _i11.InboundMode);
+
+  @override
+  bool get sniff => (super.noSuchMethod(
+        Invocation.getter(#sniff),
+        returnValue: false,
+      ) as bool);
 
   @override
   _i3.SelectorConfig get manualSelectorConfig => (super.noSuchMethod(
@@ -192,23 +244,23 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       ) as _i3.SelectorConfig);
 
   @override
-  _i9.ProxySelectorMode get proxySelectorMode => (super.noSuchMethod(
+  _i11.ProxySelectorMode get proxySelectorMode => (super.noSuchMethod(
         Invocation.getter(#proxySelectorMode),
-        returnValue: _i9.ProxySelectorMode.auto,
-      ) as _i9.ProxySelectorMode);
+        returnValue: _i11.ProxySelectorMode.auto,
+      ) as _i11.ProxySelectorMode);
 
   @override
-  _i10.ProxySelectorManualNodeSelectionMode get proxySelectorManualMode =>
+  _i12.ProxySelectorManualNodeSelectionMode get proxySelectorManualMode =>
       (super.noSuchMethod(
         Invocation.getter(#proxySelectorManualMode),
-        returnValue: _i10.ProxySelectorManualNodeSelectionMode.single,
-      ) as _i10.ProxySelectorManualNodeSelectionMode);
+        returnValue: _i12.ProxySelectorManualNodeSelectionMode.single,
+      ) as _i12.ProxySelectorManualNodeSelectionMode);
 
   @override
-  List<_i11.Int64> get proxySelectorManualLandHandlers => (super.noSuchMethod(
+  List<_i13.Int64> get proxySelectorManualLandHandlers => (super.noSuchMethod(
         Invocation.getter(#proxySelectorManualLandHandlers),
-        returnValue: <_i11.Int64>[],
-      ) as List<_i11.Int64>);
+        returnValue: <_i13.Int64>[],
+      ) as List<_i13.Int64>);
 
   @override
   _i3.SelectorConfig_BalanceStrategy
@@ -277,7 +329,7 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
   @override
   String get proxyShareListenAddress => (super.noSuchMethod(
         Invocation.getter(#proxyShareListenAddress),
-        returnValue: _i12.dummyValue<String>(
+        returnValue: _i10.dummyValue<String>(
           this,
           Invocation.getter(#proxyShareListenAddress),
         ),
@@ -292,7 +344,7 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
   @override
   String get socksUdpAssociateAddress => (super.noSuchMethod(
         Invocation.getter(#socksUdpAssociateAddress),
-        returnValue: _i12.dummyValue<String>(
+        returnValue: _i10.dummyValue<String>(
           this,
           Invocation.getter(#socksUdpAssociateAddress),
         ),
@@ -349,11 +401,21 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
   @override
   String get outboundViewMode => (super.noSuchMethod(
         Invocation.getter(#outboundViewMode),
-        returnValue: _i12.dummyValue<String>(
+        returnValue: _i10.dummyValue<String>(
           this,
           Invocation.getter(#outboundViewMode),
         ),
       ) as String);
+
+  @override
+  _i4.OutboundTableSmallScreenPreference
+      get outboundTableSmallScreenPreference => (super.noSuchMethod(
+            Invocation.getter(#outboundTableSmallScreenPreference),
+            returnValue: _FakeOutboundTableSmallScreenPreference_3(
+              this,
+              Invocation.getter(#outboundTableSmallScreenPreference),
+            ),
+          ) as _i4.OutboundTableSmallScreenPreference);
 
   @override
   bool get shareLog => (super.noSuchMethod(
@@ -368,19 +430,13 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       ) as bool);
 
   @override
-  _i13.SniffPreference get sniffPreference => (super.noSuchMethod(
-        Invocation.getter(#sniffPreference),
-        returnValue: _i13.SniffPreference.disable,
-      ) as _i13.SniffPreference);
-
-  @override
-  _i4.TunConfig_TUN46Setting get tun46Setting => (super.noSuchMethod(
+  _i5.TunConfig_TUN46Setting get tun46Setting => (super.noSuchMethod(
         Invocation.getter(#tun46Setting),
-        returnValue: _FakeTunConfig_TUN46Setting_3(
+        returnValue: _FakeTunConfig_TUN46Setting_4(
           this,
           Invocation.getter(#tun46Setting),
         ),
-      ) as _i4.TunConfig_TUN46Setting);
+      ) as _i5.TunConfig_TUN46Setting);
 
   @override
   _i14.ThemeMode get themeMode => (super.noSuchMethod(
@@ -407,10 +463,10 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       ) as bool);
 
   @override
-  _i8.PingMode get pingMode => (super.noSuchMethod(
+  _i9.PingMode get pingMode => (super.noSuchMethod(
         Invocation.getter(#pingMode),
-        returnValue: _i8.PingMode.Real,
-      ) as _i8.PingMode);
+        returnValue: _i9.PingMode.Real,
+      ) as _i9.PingMode);
 
   @override
   bool get alwaysOn => (super.noSuchMethod(
@@ -499,7 +555,7 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
   @override
   String get dbName => (super.noSuchMethod(
         Invocation.getter(#dbName),
-        returnValue: _i12.dummyValue<String>(
+        returnValue: _i10.dummyValue<String>(
           this,
           Invocation.getter(#dbName),
         ),
@@ -518,10 +574,37 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       ) as bool);
 
   @override
+  bool get autoTestNodes => (super.noSuchMethod(
+        Invocation.getter(#autoTestNodes),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  int get nodeTestInterval => (super.noSuchMethod(
+        Invocation.getter(#nodeTestInterval),
+        returnValue: 0,
+      ) as int);
+
+  @override
+  _i15.NodesHelperSegment get nodesHelperSegment => (super.noSuchMethod(
+        Invocation.getter(#nodesHelperSegment),
+        returnValue: _i15.NodesHelperSegment.fastest,
+      ) as _i15.NodesHelperSegment);
+
+  @override
   set enableLog(bool? enable) => super.noSuchMethod(
         Invocation.setter(
           #enableLog,
           enable,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void setInitialLocation(String? location) => super.noSuchMethod(
+        Invocation.method(
+          #setInitialLocation,
+          [location],
         ),
         returnValueForMissingStub: null,
       );
@@ -536,6 +619,15 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       );
 
   @override
+  void setWelcomeShown(bool? shown) => super.noSuchMethod(
+        Invocation.method(
+          #setWelcomeShown,
+          [shown],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   void setDatabaseInitialized(bool? initialized) => super.noSuchMethod(
         Invocation.method(
           #setDatabaseInitialized,
@@ -545,10 +637,19 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       );
 
   @override
-  void setInboundMode(_i9.InboundMode? mode) => super.noSuchMethod(
+  void setInboundMode(_i11.InboundMode? mode) => super.noSuchMethod(
         Invocation.method(
           #setInboundMode,
           [mode],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void setSniff(bool? enable) => super.noSuchMethod(
+        Invocation.method(
+          #setSniff,
+          [enable],
         ),
         returnValueForMissingStub: null,
       );
@@ -563,7 +664,7 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       );
 
   @override
-  void setProxySelectorMode(_i9.ProxySelectorMode? mode) => super.noSuchMethod(
+  void setProxySelectorMode(_i11.ProxySelectorMode? mode) => super.noSuchMethod(
         Invocation.method(
           #setProxySelectorMode,
           [mode],
@@ -573,7 +674,7 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
 
   @override
   void setProxySelectorManualMode(
-          _i10.ProxySelectorManualNodeSelectionMode? mode) =>
+          _i12.ProxySelectorManualNodeSelectionMode? mode) =>
       super.noSuchMethod(
         Invocation.method(
           #setProxySelectorManualMode,
@@ -583,7 +684,7 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       );
 
   @override
-  void setProxySelectorLandHandlers(List<_i11.Int64>? ids) =>
+  void setProxySelectorLandHandlers(List<_i13.Int64>? ids) =>
       super.noSuchMethod(
         Invocation.method(
           #setProxySelectorLandHandlers,
@@ -676,10 +777,11 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       );
 
   @override
-  void setDownloadedInstallerPath(String? path) => super.noSuchMethod(
+  void setDownloadedInstallerPath(_i16.DownloadedInstaller? installer) =>
+      super.noSuchMethod(
         Invocation.method(
           #setDownloadedInstallerPath,
-          [path],
+          [installer],
         ),
         returnValueForMissingStub: null,
       );
@@ -694,7 +796,7 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       );
 
   @override
-  void setLanguage(_i8.Language? language) => super.noSuchMethod(
+  void setLanguage(_i9.Language? language) => super.noSuchMethod(
         Invocation.method(
           #setLanguage,
           [language],
@@ -838,7 +940,7 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       );
 
   @override
-  void setOutboundViewMode(_i15.OutboundViewMode? mode) => super.noSuchMethod(
+  void setOutboundViewMode(_i4.OutboundViewMode? mode) => super.noSuchMethod(
         Invocation.method(
           #setOutboundViewMode,
           [mode],
@@ -865,7 +967,7 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       );
 
   @override
-  void setSortCol((_i16.Col, int)? col) => super.noSuchMethod(
+  void setSortCol((_i17.Col, int)? col) => super.noSuchMethod(
         Invocation.method(
           #setSortCol,
           [col],
@@ -892,17 +994,7 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       );
 
   @override
-  void setSniffPreference(_i13.SniffPreference? preference) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #setSniffPreference,
-          [preference],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void setTun46Setting(_i4.TunConfig_TUN46Setting? setting) =>
+  void setTun46Setting(_i5.TunConfig_TUN46Setting? setting) =>
       super.noSuchMethod(
         Invocation.method(
           #setTun46Setting,
@@ -948,7 +1040,7 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       );
 
   @override
-  void setPingMode(_i8.PingMode? mode) => super.noSuchMethod(
+  void setPingMode(_i9.PingMode? mode) => super.noSuchMethod(
         Invocation.method(
           #setPingMode,
           [mode],
@@ -1119,10 +1211,38 @@ class MockPrefHelper extends _i1.Mock implements _i8.PrefHelper {
       );
 
   @override
-  void setLastAdsFetchTime(DateTime? time) => super.noSuchMethod(
+  void setAutoTestNodes(bool? enable) => super.noSuchMethod(
         Invocation.method(
-          #setLastAdsFetchTime,
+          #setAutoTestNodes,
+          [enable],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void setNodeTestInterval(int? minutes) => super.noSuchMethod(
+        Invocation.method(
+          #setNodeTestInterval,
+          [minutes],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void setLastNodeTestTime(DateTime? time) => super.noSuchMethod(
+        Invocation.method(
+          #setLastNodeTestTime,
           [time],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void setNodesHelperSegment(_i15.NodesHelperSegment? segment) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setNodesHelperSegment,
+          [segment],
         ),
         returnValueForMissingStub: null,
       );
