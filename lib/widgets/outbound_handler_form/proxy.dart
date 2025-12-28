@@ -159,11 +159,27 @@ class _AnytlsClient extends StatefulWidget {
 
 class _AnytlsClientState extends State<_AnytlsClient> {
   final _password = TextEditingController();
+  final _idleSessionCheckInterval = TextEditingController();
+  final _idleSessionTimeout = TextEditingController();
+  final _minIdleSession = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _password.text = widget.config.password;
+    if (widget.config.idleSessionCheckInterval == 0) {
+      widget.config.idleSessionCheckInterval = 30;
+    }
+    if (widget.config.idleSessionTimeout == 0) {
+      widget.config.idleSessionTimeout = 30;
+    }
+    if (widget.config.minIdleSession == 0) {
+      widget.config.minIdleSession = 5;
+    }
+    _idleSessionCheckInterval.text =
+        widget.config.idleSessionCheckInterval.toString();
+    _idleSessionTimeout.text = widget.config.idleSessionTimeout.toString();
+    _minIdleSession.text = widget.config.minIdleSession.toString();
   }
 
   @override
@@ -182,6 +198,45 @@ class _AnytlsClientState extends State<_AnytlsClient> {
           },
           decoration: InputDecoration(
             labelText: AppLocalizations.of(context)!.password,
+          ),
+        ),
+        boxH10,
+        TextFormField(
+          controller: _idleSessionCheckInterval,
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          validator: (value) {
+            widget.config.idleSessionCheckInterval = int.parse(value ?? '0');
+            return null;
+          },
+          decoration: InputDecoration(
+            labelText: 'Idle Session Check Interval',
+          ),
+        ),
+        boxH10,
+        TextFormField(
+          controller: _idleSessionTimeout,
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          validator: (value) {
+            widget.config.idleSessionTimeout = int.parse(value ?? '0');
+            return null;
+          },
+          decoration: InputDecoration(
+            labelText: 'Idle Session Timeout',
+          ),
+        ),
+        boxH10,
+        TextFormField(
+          controller: _minIdleSession,
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          validator: (value) {
+            widget.config.minIdleSession = int.parse(value ?? '0');
+            return null;
+          },
+          decoration: InputDecoration(
+            labelText: 'Min Idle Session',
           ),
         ),
       ],
@@ -1365,6 +1420,62 @@ class _HysteriaServerState extends State<HysteriaServer> {
             ),
           ],
         )
+      ],
+    );
+  }
+}
+
+class _HttpClient extends StatefulWidget {
+  const _HttpClient({super.key, required this.config});
+  final HttpClientConfig config;
+
+  @override
+  State<_HttpClient> createState() => __HttpClientState();
+}
+
+class __HttpClientState extends State<_HttpClient> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (!widget.config.hasAccount()) {
+      widget.config.account = Account();
+    }
+    _usernameController.text = widget.config.account.username;
+    _passwordController.text = widget.config.account.password;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TextFormField(
+          controller: _usernameController,
+          decoration: InputDecoration(
+            labelText: 'Username',
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return AppLocalizations.of(context)!.fieldRequired;
+            }
+            widget.config.account.username = value;
+            return null;
+          },
+        ),
+        boxH10,
+        TextFormField(
+          controller: _passwordController,
+          decoration: InputDecoration(labelText: 'Password'),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return AppLocalizations.of(context)!.fieldRequired;
+            }
+            widget.config.account.password = value;
+            return null;
+          },
+        ),
       ],
     );
   }
