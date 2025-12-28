@@ -581,7 +581,7 @@ class _RealiScannerState extends State<RealiScanner> {
                     shrinkWrap: true,
                     children: _results
                         .map((e) => FutureBuilder(
-                            future: xApiClient.geoIP(GeoIPRequest(ips: [e.ip])),
+                            future: getCountryCode(e.ip),
                             builder: (context, snapshot) {
                               return TextButton.icon(
                                   onPressed: () {
@@ -592,10 +592,8 @@ class _RealiScannerState extends State<RealiScanner> {
                                       widget.onDestinationTap(e.domain);
                                     }
                                   },
-                                  icon: snapshot.data?.countries.isNotEmpty ??
-                                          false
-                                      ? getCountryIcon(
-                                          snapshot.data!.countries.first)
+                                  icon: snapshot.data?.isNotEmpty ?? false
+                                      ? getCountryIcon(snapshot.data!)
                                       : null,
                                   label: Text('${e.ip} - ${e.domain}'));
                             }))

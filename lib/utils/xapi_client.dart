@@ -223,21 +223,21 @@ class XApiClient {
     return _xApiClient.speedTest(request);
   }
 
-  Future<GeoIPResponse> geoIP(GeoIPRequest request) async {
-    await _completer.future;
-    if (!File(await getGeoIPPath()).existsSync()) {
-      snack(rootLocalizations()?.geoSiteOrGeoIPFileNotFound,
-          duration: const Duration(seconds: 60));
-      try {
-        await geoDataHelper.downloadAndProcessGeo();
-        rootScaffoldMessengerKey.currentState?.removeCurrentSnackBar();
-      } catch (e) {
-        logger.e('downloadAndProcessGeo error', error: e);
-        snack(rootLocalizations()?.failedToDownloadGeoData(e.toString()));
-      }
-    }
-    return await _xApiClient.geoIP(request);
-  }
+  // Future<GeoIPResponse> geoIP(GeoIPRequest request) async {
+  //   await _completer.future;
+  //   if (!File(await getGeoIPPath()).existsSync()) {
+  //     snack(rootLocalizations()?.geoSiteOrGeoIPFileNotFound,
+  //         duration: const Duration(seconds: 60));
+  //     try {
+  //       await geoDataHelper.downloadAndProcessGeo();
+  //       rootScaffoldMessengerKey.currentState?.removeCurrentSnackBar();
+  //     } catch (e) {
+  //       logger.e('downloadAndProcessGeo error', error: e);
+  //       snack(rootLocalizations()?.failedToDownloadGeoData(e.toString()));
+  //     }
+  //   }
+  //   return await _xApiClient.geoIP(request);
+  // }
 
   //TODO:
   Future<ResponseStream<MonitorServerResponse>> monitorServer(

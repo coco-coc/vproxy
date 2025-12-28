@@ -660,14 +660,10 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
                       usableTesting: false,
                       ok: ok ? 1 : -1,
                       ping: res.ping,
+                      countryCode: res.country,
                       speed: ok ? null : 0);
                   emit(state.copyWith(
                       handlers: _sortHandlers(handlers, state.sortCol)));
-                  // if hanler is ok but country is empty, populate country
-                  if (handlers[index].countryCode.isEmpty &&
-                      res.ip.isNotEmpty) {
-                    _populateHandlerCountry(handlers[index]);
-                  }
                 }
                 _outboundRepo.updateHandler(h.id,
                     ok: ok ? 1 : -1,
@@ -725,14 +721,6 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
     }
 
     await Future.wait(futures);
-  }
-
-  Future<void> _populateHandlerCountry(OutboundHandler handler) async {
-    final rsp = await xApiClient.geoIP(GeoIPRequest(ips: [handler.serverIp]));
-    final countryCode = rsp.countries.first;
-    if (countryCode.isNotEmpty) {
-      await _outboundRepo.updateHandler(handler.id, country: countryCode);
-    }
   }
 
   Future<void> _onSubscriptionDelete(
@@ -797,33 +785,34 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
 
   Future<void> updateCountry(
       List<OutboundHandler> handlers, Emitter<OutboundState> emit) async {
-    try {
-      final futures = <Future>[];
-      final handlersWithIp = <OutboundHandler>[];
-      for (int i = 0; i < handlers.length; i++) {
-        final handler = handlers[i];
-        futures.add(testHandler(handler, _outboundRepo).then((h) {
-          if (h != null && h.serverIp.isNotEmpty) {
-            handlersWithIp.add(h);
-          }
-        }));
-      }
-      await Future.wait(futures);
-      final rsp = await xApiClient.geoIP(
-          GeoIPRequest(ips: handlersWithIp.map((h) => h.serverIp).toList()));
-      for (int i = 0; i < handlersWithIp.length; i++) {
-        final handler = handlersWithIp[i];
-        final countryCode = rsp.countries[i];
-        if (countryCode.isNotEmpty) {
-          await _outboundRepo.updateHandler(handler.id, country: countryCode);
-        }
-      }
-      emit(state.copyWith(
-          handlers: _sortHandlers(await _getHandlers(), state.sortCol)));
-    } catch (e) {
-      logger.e('updateCountry error', error: e);
-      // reportError(e, StackTrace.current);
-    }
+    add(StatusTestEvent(handlers: handlers));
+    // try {
+    //   final futures = <Future>[];
+    //   final handlersWithIp = <OutboundHandler>[];
+    //   for (int i = 0; i < handlers.length; i++) {
+    //     final handler = handlers[i];
+    //     futures.add(testHandler(handler, _outboundRepo).then((h) {
+    //       if (h != null && h.serverIp.isNotEmpty) {
+    //         handlersWithIp.add(h);
+    //       }
+    //     }));
+    //   }
+    //   await Future.wait(futures);
+    //   final rsp = await xApiClient.geoIP(
+    //       GeoIPRequest(ips: handlersWithIp.map((h) => h.serverIp).toList()));
+    //   for (int i = 0; i < handlersWithIp.length; i++) {
+    //     final handler = handlersWithIp[i];
+    //     final countryCode = rsp.countries[i];
+    //     if (countryCode.isNotEmpty) {
+    //       await _outboundRepo.updateHandler(handler.id, country: countryCode);
+    //     }
+    //   }
+    //   emit(state.copyWith(
+    //       handlers: _sortHandlers(await _getHandlers(), state.sortCol)));
+    // } catch (e) {
+    //   logger.e('updateCountry error', error: e);
+    //   // reportError(e, StackTrace.current);
+    // }
   }
 
   void _multiSelect(MultiSelectEvent e, Emitter<OutboundState> emit) {
