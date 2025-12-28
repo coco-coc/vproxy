@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -15,10 +16,12 @@ import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:macos_window_utils/macos/ns_window_button_type.dart';
 import 'package:macos_window_utils/window_manipulator.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 import 'package:tm/tm.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vx/app/blocs/inbound.dart';
 import 'package:vx/app/home/home.dart';
 import 'package:vx/app/start_close_button.dart';
@@ -58,6 +61,7 @@ import 'package:vx/app/settings/privacy.dart';
 import 'package:vx/app/settings/setting.dart';
 import 'package:vx/app/log/log_page.dart';
 import 'package:vx/app/routing/routing_page.dart';
+import 'package:vx/utils/activate.dart';
 import 'package:vx/utils/backup_service.dart';
 import 'package:vx/utils/device.dart';
 import 'package:vx/utils/github_release.dart';
@@ -101,7 +105,7 @@ Future<void> _init() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // fonts are bundled, disable runtime fetching on linux
-  if (Platform.isLinux) {
+  if (Platform.isLinux || Platform.isWindows) {
     GoogleFonts.config.allowRuntimeFetching = false;
   }
 
@@ -249,6 +253,7 @@ Future<void> _init() async {
       storage: storage,
       authProvider: authProvider);
 
+  bool isActivated = false;
   await Future.wait([
     _initDatabase(),
     _initWindow(),
@@ -260,11 +265,34 @@ Future<void> _init() async {
       }
       logger.d('isRunningAsAdmin: $isRunningAsAdmin');
     }),
+    Future(() async {
+      try {
+        // auth
+        String? licence = await storage.read(key: 'licence');
+        if (licence != null) {
+          String? uniqueId = await storage.read(key: uniqueIdKey);
+          if (uniqueId != null) {
+            isActivated = await validateLicence(
+                Licence.fromJson(jsonDecode(licence)), uniqueId)
+                ;
+          }
+        }
+      } catch (e) {
+        logger.e('Error validating licence', error: e);
+      }
+    }),
   ]);
 
   // outbound repo
   _outboundRepo = OutboundRepo(syncService);
   syncService.outboundRepo = _outboundRepo;
+
+  authBloc = AuthBloc(authProvider, isActivated);
+  xConfigHelper = XConfigHelper(
+    outboundRepo: _outboundRepo,
+    psr: persistentStateRepo,
+    authBloc: authBloc,
+  );
 
   geoDataHelper = GeoDataHelper(
       downloader: downloader,
@@ -301,12 +329,6 @@ Future<void> _init() async {
     MessageFlutterApi.setUp(xController);
   }
 
-  adsProvider = AdsProvider(
-      directory: resourceDirectory.path,
-      prefHelper: persistentStateRepo,
-      downloader: downloader,
-      authProvider: authProvider);
-
   logger
       .d("App start time: ${DateTime.now().difference(startTime).inSeconds}s");
 }
@@ -326,7 +348,6 @@ late final AutoSubscriptionUpdater subUpdater;
 late final XController xController;
 late final SyncService syncService;
 late final OutboundRepo _outboundRepo;
-late final AdsProvider adsProvider;
 NodeTestService? nodeTestService;
 final bool enableFirebase = !Platform.isWindows && !Platform.isLinux;
 bool googleApiAvailable = false;
@@ -373,9 +394,8 @@ GoRouter _router = GoRouter.routingConfig(
 final downloader = Downloader(_outboundRepo);
 late final GeoDataHelper geoDataHelper;
 final authProvider = SupabaseAuth();
-final authBloc = AuthBloc(authProvider);
-final xConfigHelper = XConfigHelper(
-    outboundRepo: _outboundRepo, psr: persistentStateRepo, authBloc: authBloc);
+late final AuthBloc authBloc;
+late final XConfigHelper xConfigHelper;
 final xApiClient = XApiClient();
 final appLinks = AppLinks();
 LogUploadService? logUploadService;
@@ -455,8 +475,12 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       _register('vx');
     }
     appLinks.uriLinkStream.listen(handlerAppLinks);
-    outboundBloc = OutboundBloc(_outboundRepo, xController, subUpdater)
-      ..add(InitialEvent());
+    outboundBloc = OutboundBloc(
+      _outboundRepo,
+      xController,
+      subUpdater,
+      authBloc,
+    )..add(InitialEvent());
     syncService.outboundBloc = outboundBloc;
     subBloc = SubscriptionBloc(_outboundRepo, subUpdater);
 
@@ -663,7 +687,12 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     );
     return MultiProvider(
       providers: [
-        Provider<AdsProvider>.value(value: adsProvider),
+        ChangeNotifierProvider<AdsProvider>(
+            create: (ctx) => AdsProvider(
+                adsDirectory: path.join(resourceDirectory.path, 'ads'),
+                sharedPreferences: pref,
+                authBloc: authBloc,
+                downloader: downloader)),
         Provider<XApiClient>.value(value: xApiClient),
         ChangeNotifierProvider.value(value: dbHelper),
         ChangeNotifierProvider<SetRepo>.value(value: dbHelper),
@@ -683,7 +712,9 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         ChangeNotifierProvider.value(value: syncService),
         BlocProvider(
             create: (ctx) => StartCloseCubit(
-                pref: persistentStateRepo, xController: xController)),
+                pref: persistentStateRepo,
+                xController: xController,
+                authBloc: authBloc)),
         ChangeNotifierProvider(
             create: (ctx) => BackupSerevice(
                 authProvider: authProvider, prefHelper: persistentStateRepo)),

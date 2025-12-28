@@ -12,6 +12,7 @@ import 'package:tm/protos/protos/inbound.pb.dart';
 import 'package:tm/protos/protos/proxy/anytls.pb.dart';
 import 'package:tm/protos/protos/proxy/dokodemo.pb.dart';
 import 'package:tm/protos/protos/proxy/dokodemo.pbjson.dart';
+import 'package:tm/protos/protos/proxy/http.pb.dart';
 import 'package:tm/protos/protos/proxy/hysteria.pb.dart';
 import 'package:tm/protos/protos/proxy/shadowsocks.pb.dart';
 import 'package:tm/protos/protos/proxy/socks.pb.dart';
@@ -92,6 +93,8 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
   SocksClientConfig _socksConfig = SocksClientConfig();
   AnytlsClientConfig _anytlsConfig = AnytlsClientConfig();
   Hysteria2ClientConfig _hysteriaConfig = _getDefaultHysteriaConfig();
+  HttpClientConfig _httpConfig = HttpClientConfig(account: Account());
+
   TextFormField? _name;
   final _nameController = TextEditingController();
   final _serverAddress = TextEditingController();
@@ -150,6 +153,8 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
           _hysteriaConfig.tlsConfig = _hysteriaConfig.tlsConfig.deepCopy();
         case ProxyProtocolLabel.anytls:
           _anytlsConfig = any.unpackInto(_anytlsConfig);
+        case ProxyProtocolLabel.http:
+          _httpConfig = any.unpackInto(_httpConfig);
         default:
           throw Exception('Unexpected protocol: ${_selectedProtocolLabel}');
       }
@@ -174,6 +179,8 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
         protocol = Any.pack(_hysteriaConfig);
       case ProxyProtocolLabel.anytls:
         protocol = Any.pack(_anytlsConfig);
+      case ProxyProtocolLabel.http:
+        protocol = Any.pack(_httpConfig);
       default:
         throw Exception('Unexpected protocol: ${_selectedProtocolLabel}');
       // _transportConfig.clear();
@@ -434,6 +441,8 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
               HysteriaClient(config: _hysteriaConfig),
             if (_selectedProtocolLabel == ProxyProtocolLabel.anytls)
               _AnytlsClient(config: _anytlsConfig),
+            if (_selectedProtocolLabel == ProxyProtocolLabel.http)
+              _HttpClient(config: _httpConfig),
             const Gap(10),
             if (_selectedProtocolLabel != ProxyProtocolLabel.hysteria2)
               Column(

@@ -275,6 +275,12 @@ class LogUploadService {
         'modelName': deviceInfo.modelName,
         'majorVersion': deviceInfo.majorVersion,
       });
+    } else if (deviceInfo is LinuxDeviceInfo) {
+      return json.encode({
+        'name': deviceInfo.name,
+        'version': deviceInfo.version,
+        'versionId': deviceInfo.versionId,
+      });
     } else {
       return '';
     }

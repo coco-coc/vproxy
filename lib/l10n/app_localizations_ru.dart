@@ -2116,4 +2116,13 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get cacheDurationDesc => 'How long to cache DNS record. If empty or 0, DNS records will cached until they expire';
+
+  @override
+  String get activate => 'Activate This Device';
+
+  @override
+  String get activateDesc => 'After activation, you can use most Pro features without logging in (except for cloud sync and cloud backup). Each account can activate up to 10 devices per year.';
+
+  @override
+  String get activated => 'Activated';
 }

@@ -112,37 +112,41 @@ class HomePage extends StatelessWidget {
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                      child: ScrollConfiguration(
-                    behavior: ScrollConfiguration.of(context)
-                        .copyWith(scrollbars: false),
-                    child: ListView(
-                      children: [
-                        const _Route(),
-                        const Gap(10),
-                        const ProxySelector(home: true),
-                        if (desktopPlatforms)
+                  Expanded(child: LayoutBuilder(builder: (ctx, c) {
+                    return ScrollConfiguration(
+                      behavior: ScrollConfiguration.of(context)
+                          .copyWith(scrollbars: false),
+                      child: ListView(
+                        children: [
+                          const _Route(),
+                          const Gap(10),
+                          const ProxySelector(home: true),
+                          if (desktopPlatforms)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: const _Inbound(),
+                            ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: const _Inbound(),
+                            padding: const EdgeInsets.only(top: 10),
+                            child: const _Subscription(),
                           ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: const _Subscription(),
-                        ),
-                        BlocBuilder<AuthBloc, AuthState>(
-                            builder: (context, state) {
-                          if (state.pro) {
-                            return const SizedBox.shrink();
-                          }
-                          return const Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child: Promotion(),
-                          );
-                        })
-                      ],
-                    ),
-                  )),
+                          BlocBuilder<AuthBloc, AuthState>(
+                              builder: (context, state) {
+                            if (state.pro) {
+                              return const SizedBox.shrink();
+                            }
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: ConstrainedBox(
+                                  constraints:
+                                      BoxConstraints(maxHeight: c.maxHeight),
+                                  child: Promotion(maxHeight: c.maxHeight)),
+                            );
+                          })
+                        ],
+                      ),
+                    );
+                  })),
                   const Gap(10),
                   const Expanded(child: Nodes())
                 ],

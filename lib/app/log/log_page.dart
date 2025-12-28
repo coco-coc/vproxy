@@ -526,6 +526,7 @@ class _LogListState extends State<LogList> {
     final showTrailing = _showTrailing(sessionInfo, isDirect);
     final child = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         if (!isProduction())
           Padding(
@@ -719,32 +720,48 @@ class _LogListState extends State<LogList> {
           scrollControlDisabledMaxHeightRatio: 0.8,
           constraints: const BoxConstraints(maxWidth: 500),
           useSafeArea: true,
+          isScrollControlled: true,
           builder: (ctx) {
             return Padding(
               padding:
                   const EdgeInsets.only(left: 8, right: 8, top: 24, bottom: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (showTrailing)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      child: Text(
-                          (isDirect
-                              ? AppLocalizations.of(context)!.addToProxy
-                              : AppLocalizations.of(context)!.addToDirect),
-                          style:
-                              Theme.of(context).textTheme.titleLarge!.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                  )),
-                    ),
-                  Expanded(
-                      child: SafeArea(
-                          child: SingleChildScrollView(
-                              physics: const ClampingScrollPhysics(),
-                              child: child))),
-                ],
+              child: NotificationListener<ScrollNotification>(
+                onNotification: (notification) {
+                  if (notification is ScrollUpdateNotification) {
+                    final metrics = notification.metrics;
+                    // Dismiss when scrolling down at the top
+                    // scrollDelta > 0 means scrolling down (content moving up)
+                    if (metrics.pixels <= 0 && 
+                        notification.scrollDelta != null && 
+                        notification.scrollDelta! > 0) {
+                      Navigator.of(ctx).pop();
+                      return true;
+                    }
+                  }
+                  return false;
+                },
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (showTrailing)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          child: Text(
+                              (isDirect
+                                  ? AppLocalizations.of(context)!.addToProxy
+                                  : AppLocalizations.of(context)!.addToDirect),
+                              style:
+                                  Theme.of(context).textTheme.titleLarge!.copyWith(
+                                        fontWeight: FontWeight.w500,
+                                      )),
+                        ),
+                      SafeArea(child: child),
+                    ],
+                  ),
+                ),
               ),
             );
           });

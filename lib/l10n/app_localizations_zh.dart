@@ -2066,4 +2066,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get cacheDurationDesc => '缓存DNS记录的时长。如果为空或0，DNS记录将缓存直到它们过期';
+
+  @override
+  String get activate => '激活此设备';
+
+  @override
+  String get activateDesc => '激活后，无需登录便可使用绝大多数Pro功能（仅云同步与云备份无法使用）。每个账号每年最多激活十台设备。';
+
+  @override
+  String get activated => '已激活';
 }

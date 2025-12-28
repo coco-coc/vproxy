@@ -862,5 +862,8 @@
   "invalidFields": "表格包含无效的输入，请修改后重试",
   "lruSizeDesc": "每个CIDR的Fake DNS记录缓存数量。",
   "cacheDuration": "缓存时长",
-  "cacheDurationDesc": "缓存DNS记录的时长。如果为空或0，DNS记录将缓存直到它们过期"
+  "cacheDurationDesc": "缓存DNS记录的时长。如果为空或0，DNS记录将缓存直到它们过期",
+  "activate": "激活此设备",
+  "activateDesc": "激活后，无需登录便可使用绝大多数Pro功能（仅云同步与云备份无法使用）。每个账号每年最多激活十台设备。",
+  "activated": "已激活"
 }

@@ -163,10 +163,12 @@ class RealtimeSpeedNotifier extends ChangeNotifier {
     connectionsHistory.add((connections!, now));
 
     final List<NodeInfo> newList = [];
+    double interval = 0;
     for (var stat in response.stats) {
       if (stat.id == 'direct' || stat.id == 'dns') {
         continue;
       }
+      interval = max(interval, stat.interval);
       uploadTotal += stat.up.toInt();
       downloadTotal += stat.down.toInt();
       int? nodeInfoIndex =
@@ -205,10 +207,13 @@ class RealtimeSpeedNotifier extends ChangeNotifier {
         stat.ping.toInt(),
       ));
     }
-    uploadSpeed = uploadTotal ~/ _interval;
-    uploadHistory.add((uploadSpeed!, now));
-    downloadSpeed = downloadTotal ~/ _interval;
-    downloadHistory.add((downloadSpeed!, now));
+    if (interval > 0) {
+      uploadSpeed = uploadTotal ~/ interval;
+      uploadHistory.add((uploadSpeed!, now));
+      downloadSpeed = downloadTotal ~/ interval;
+      downloadHistory.add((downloadSpeed!, now));
+    }
+
     newList.sort((a, b) => b.name.compareTo(a.name));
     nodeInfos = newList;
     notifyListeners();
@@ -1064,9 +1069,11 @@ class _ConnectionsDisplay extends StatelessWidget {
           ],
         ),
         Consumer<RealtimeSpeedNotifier>(builder: (ctx, speedProvider, child) {
-          final connections = demo ? '37' : (speedProvider.connections != null
-              ? speedProvider.connections.toString()
-              : '--');
+          final connections = demo
+              ? '37'
+              : (speedProvider.connections != null
+                  ? speedProvider.connections.toString()
+                  : '--');
           return Text(
             connections,
             style: Theme.of(context).textTheme.titleLarge!.copyWith(

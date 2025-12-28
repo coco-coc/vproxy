@@ -660,8 +660,8 @@ class XController implements MessageFlutterApi {
     _commuStreamSub = null;
   }
 
-  void _communicate({bool reconnect = false}) async {
-    logger.d("communicate: reconnect=$reconnect");
+  void _communicate() async {
+    logger.d("communicate");
     if (_tm.state == TmStatus.connected) {
       final client = await getXClient();
       _commuStreamSub ??= (client.communicate(CommunicateRequest())).listen(
@@ -673,7 +673,7 @@ class XController implements MessageFlutterApi {
               _onSubscriptionUpdate(m.subscriptionUpdate);
           },
           onDone: cancelCommuStream,
-          onError: (e) {
+          onError: (e) async {
             // for windows, this might due to the service crashes, so query the service state
             if (Platform.isWindows) {
               _statusStreamCtrl.add(XStatus.fromTmStatus(Tm.instance.state));
@@ -684,7 +684,8 @@ class XController implements MessageFlutterApi {
             final status = Tm.instance.state;
             logger.d("current status: $status");
             // reconnect to the server
-            if (status == TmStatus.connected && !reconnect) {
+            await Future.delayed(const Duration(seconds: 1));
+            if (status == TmStatus.connected) {
               _communicate();
             }
           });

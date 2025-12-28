@@ -4,6 +4,7 @@ import 'package:tm/protos/google/protobuf/any.pb.dart';
 import 'package:tm/protos/common/net/net.pb.dart';
 import 'package:tm/protos/protos/proxy/anytls.pb.dart';
 import 'package:tm/protos/protos/proxy/dokodemo.pb.dart';
+import 'package:tm/protos/protos/proxy/http.pb.dart';
 import 'package:tm/protos/protos/proxy/hysteria.pb.dart';
 import 'package:tm/protos/protos/proxy/shadowsocks.pb.dart';
 import 'package:tm/protos/protos/proxy/socks.pb.dart';
@@ -40,6 +41,9 @@ ProxyProtocolLabel getProtocolTypeFromAny(Any any) {
       return ProxyProtocolLabel.anytls;
     case 'type.googleapis.com/x.proxy.DokodemoConfig':
       return ProxyProtocolLabel.dokodemo;
+    case 'type.googleapis.com/x.proxy.HttpClientConfig' ||
+          'type.googleapis.com/x.proxy.HttpServerConfig':
+      return ProxyProtocolLabel.http;
     default:
       throw Exception('unknown protocol: ${any.typeUrl}');
   }
@@ -57,7 +61,8 @@ enum ProxyProtocolLabel {
   socks('Socks'),
   hysteria2('Hysteria2'),
   anytls('AnyTLS'),
-  dokodemo('Dokodemo');
+  dokodemo('Dokodemo'),
+  http('HTTP');
 
   const ProxyProtocolLabel(this.label);
   final String label;
@@ -85,6 +90,8 @@ enum ProxyProtocolLabel {
         return AnytlsServerConfig();
       case ProxyProtocolLabel.dokodemo:
         return DokodemoConfig();
+      case ProxyProtocolLabel.http:
+        return HttpServerConfig();
     }
   }
 }

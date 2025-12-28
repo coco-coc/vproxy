@@ -307,7 +307,7 @@ class XConfigHelper {
         )
       ]);
     }
-    if (_authBloc.state.pro && _persistentStateRepo.proxyShare) {
+    if (_persistentStateRepo.proxyShare) {
       inboundConfig.handlers.addAll([
         ProxyInboundConfig(
           address: _persistentStateRepo.proxyShareListenAddress,
