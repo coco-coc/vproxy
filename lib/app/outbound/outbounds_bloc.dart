@@ -669,6 +669,7 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
                     ok: ok ? 1 : -1,
                     ping: res.ping,
                     serverIp: res.ip,
+                    country: res.country,
                     pingTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
                     speed: ok ? null : 0);
               }).catchError((e) {
