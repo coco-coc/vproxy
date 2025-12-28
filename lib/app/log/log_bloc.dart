@@ -157,8 +157,8 @@ class LogBloc extends Bloc<LogEvent, LogState> {
     return null;
   }
 
-  Future<void> _subscribe({bool reconnect = false}) async {
-    logger.d('subscribing to log stream: reconnect=$reconnect');
+  Future<void> _subscribe() async {
+    logger.d('subscribing to log stream');
     try {
       _logStream ??= await xController.userLogStream();
     } catch (e) {
@@ -172,13 +172,14 @@ class LogBloc extends Bloc<LogEvent, LogState> {
     }, onDone: () {
       _disconnectLogStream();
       logger.d('log stream done');
-    }, onError: (e) {
+    }, onError: (e) async {
       // if (e is GrpcError && e.code == StatusCode.cancelled) {
       //   return;
       // }
       logger.e('log stream error: $e');
       _disconnectLogStream();
-      if (_tm.state == TmStatus.connected && _pref.enableLog && !reconnect) {
+      await Future.delayed(const Duration(seconds: 1));
+      if (_tm.state == TmStatus.connected && _pref.enableLog) {
         _subscribe();
       }
     });
@@ -195,8 +196,7 @@ class LogBloc extends Bloc<LogEvent, LogState> {
             //TODO
             tag: l.routeMessage.tag,
             handlerName: state.showHandler
-                ? await _outboundRepo
-                    .getHandlerName(l.routeMessage.tag)
+                ? await _outboundRepo.getHandlerName(l.routeMessage.tag)
                 : null,
             dst: l.routeMessage.dst,
             sniffDomain: l.routeMessage.sniffDomain,
