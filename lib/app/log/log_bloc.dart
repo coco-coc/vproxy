@@ -173,9 +173,9 @@ class LogBloc extends Bloc<LogEvent, LogState> {
       _disconnectLogStream();
       logger.d('log stream done');
     }, onError: (e) async {
-      // if (e is GrpcError && e.code == StatusCode.cancelled) {
-      //   return;
-      // }
+      if (e is GrpcError && e.code == StatusCode.cancelled) {
+        return;
+      }
       logger.e('log stream error: $e');
       _disconnectLogStream();
       await Future.delayed(const Duration(seconds: 1));
