@@ -266,14 +266,19 @@ Future<void> _init() async {
       logger.d('isRunningAsAdmin: $isRunningAsAdmin');
     }),
     Future(() async {
-      // auth
-      String? licence = await storage.read(key: 'licence');
-      if (licence != null) {
-        String? uniqueId = await storage.read(key: uniqueIdKey);
-        if (uniqueId != null) {
-          isActivated = await validateLicence(
-              Licence.fromJson(jsonDecode(licence)), uniqueId);
+      try {
+        // auth
+        String? licence = await storage.read(key: 'licence');
+        if (licence != null) {
+          String? uniqueId = await storage.read(key: uniqueIdKey);
+          if (uniqueId != null) {
+            isActivated = await validateLicence(
+                Licence.fromJson(jsonDecode(licence)), uniqueId)
+                ;
+          }
         }
+      } catch (e) {
+        logger.e('Error validating licence', error: e);
       }
     }),
   ]);
