@@ -30,12 +30,17 @@ class AdsProvider with ChangeNotifier {
         _downloader = downloader,
         _refreshInterval = refreshInterval {
     authBloc.stream.listen((state) {
-      if (state.pro) {
-        stop();
-      } else {
-        start();
-      }
+      onAuthStateChanged(state);
     });
+    onAuthStateChanged(authBloc.state);
+  }
+
+  void onAuthStateChanged(AuthState state) {
+    if (state.pro) {
+      stop();
+    } else {
+      start();
+    }
   }
 
   bool running = false;
