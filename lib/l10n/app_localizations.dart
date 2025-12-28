@@ -4014,6 +4014,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'How long to cache DNS record. If empty or 0, DNS records will cached until they expire'**
   String get cacheDurationDesc;
+
+  /// No description provided for @activate.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate This Device'**
+  String get activate;
+
+  /// No description provided for @activateDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'After activation, you can use most Pro features without logging in (except for cloud sync and cloud backup). Each account can activate up to 10 devices per year.'**
+  String get activateDesc;
+
+  /// No description provided for @activated.
+  ///
+  /// In en, this message translates to:
+  /// **'Activated'**
+  String get activated;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

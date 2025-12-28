@@ -17,6 +17,7 @@ import 'package:vx/app/outbound/subscription.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/app/x_controller.dart';
+import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/common/list.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/logger.dart';
@@ -28,8 +29,12 @@ import 'package:vx/main.dart';
 // TODO: Move test logic to statefulWidgets
 // TODO: speed test unusable set speed to -1
 class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
-  OutboundBloc(this._outboundRepo, this._xController, this._subscriptionUpdater)
-      : super(OutboundState(
+  OutboundBloc(
+    this._outboundRepo,
+    this._xController,
+    this._subscriptionUpdater,
+    this._authBloc,
+  ) : super(OutboundState(
             sortCol: persistentStateRepo.sortCol,
             viewMode: persistentStateRepo.outboundViewMode == 'grid'
                 ? OutboundViewMode.grid
@@ -94,6 +99,7 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   final OutboundRepo _outboundRepo;
   final XController _xController;
   final AutoSubscriptionUpdater _subscriptionUpdater;
+  final AuthBloc _authBloc;
   // late final StreamSubscription subscriptionChangeSub;
   // final _handlerBox = store.box<OutboundHandler>();
   // final _handlerGroupBox = store.box<OHTag>();
@@ -396,7 +402,7 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
       SwitchHandlerEvent e, Emitter<OutboundState> emit) async {
     final newList = List<OutboundHandler>.from(state.handlers);
     final index = newList.indexWhere((h) => h.id == e.handler.id);
-    final unlockPro = authBloc.state.pro;
+    final unlockPro = _authBloc.state.pro;
     // single node mode
     if (!unlockPro ||
         persistentStateRepo.proxySelectorManualMode ==
@@ -460,9 +466,9 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
       emit(state.copyWith(
           handlers: _sortHandlers(await _getHandlers(), state.sortCol)));
       await _xController.notifyHandlerChange();
+      await _xController.selectorBalancingStrategyChange(
+          defaultProxySelectorTag, SelectorConfig_BalanceStrategy.RANDOM);
     }
-    await _xController.selectorBalancingStrategyChange(
-        defaultProxySelectorTag, SelectorConfig_BalanceStrategy.RANDOM);
   }
 
   Future<void> _onHandlerEditted(

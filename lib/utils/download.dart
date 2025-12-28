@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:archive/archive_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:tm/protos/app/api/api.pbgrpc.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/main.dart';
+import 'package:vx/utils/path.dart';
 
 /// download content from url, save them to [dest] file
 Future<void> directDownloadToFile(String url, String dest,
@@ -54,7 +56,6 @@ Future<Uint8List> directDownloadMemory(String url,
 /// Download something and record traffic usage
 class Downloader {
   final OutboundRepo outboundRepo;
-
   Downloader(this.outboundRepo);
 
   /// download from multiple urls, return the first successful one
@@ -75,8 +76,8 @@ class Downloader {
           usable: true, orderBySpeed1MBDesc: true);
       if (handlers.isNotEmpty) {
         final configs = handlersToHandlerConfig(handlers);
-        await xApiClient
-            .download(DownloadRequest(url: url, handlers: configs, dest: dest));
+        await xApiClient.download(DownloadRequest(
+            url: url, handlers: configs.sublist(0, 5), dest: dest));
         return;
       }
     } catch (e) {
@@ -86,8 +87,28 @@ class Downloader {
     return await directDownloadToFile(url, dest);
   }
 
-  /// try direct download first, if failed, try to use outbound handlers
   Future<void> download(String url, String dest) async {
+    await _download(url, dest);
+  }
+
+  Future<void> downloadZip(String url, String dest,
+      {bool cleanDest = true}) async {
+    final tmpPath = '${await tempFilePath()}.zip';
+    await downloadProxyFirst(url, tmpPath);
+
+    if (cleanDest && Directory(dest).existsSync()) {
+      Directory(dest).deleteSync(recursive: true);
+    }
+
+    // unzip the file to dest. If dest already exists, there will be no error.
+    // existing files that are also in the zip will be replaced
+    // if dest does not exist, it will be created
+    await extractFileToDisk(tmpPath, dest);
+    File(tmpPath).deleteSync();
+  }
+
+  /// try direct download first, if failed, try to use outbound handlers
+  Future<void> _download(String url, String dest) async {
     try {
       await directDownloadToFile(url, dest);
       return;
@@ -97,10 +118,8 @@ class Downloader {
 
     final configs = handlersToHandlerConfig(await outboundRepo.getHandlers(
         usable: true, orderBySpeed1MBDesc: true));
-    // TODO: select outbound handlers
-    await xApiClient
-        .download(DownloadRequest(url: url, handlers: configs, dest: dest));
-    // TODO: record traffic usage
+    await xApiClient.download(
+        DownloadRequest(url: url, handlers: configs.sublist(0, 5), dest: dest));
   }
 
   Future<Uint8List> downloadMemory(String url) async {

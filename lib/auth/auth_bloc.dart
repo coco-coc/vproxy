@@ -8,15 +8,16 @@ import 'package:vx/auth/user.dart';
 import 'package:vx/main.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc(this._authRepo)
+  AuthBloc(this._authRepo, bool isActivated)
       : super(
           AuthState(
             user: _authRepo.currentUser,
+            isActivated: isActivated,
           ),
         ) {
-    
     on<_AuthUserChanged>(_onUserChanged);
-    
+    on<AuthActivatedEvent>(_onActivated);
+
     _userSubscription = _authRepo.user.listen(
       (user) {
         add(_AuthUserChanged(user));
@@ -27,11 +28,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void setTestUser() {
     emit(AuthState(
       user: User(id: 'test', email: 'test@test.com', pro: true),
+      isActivated: false,
     ));
   }
 
   void unsetTestUser() {
-    emit(AuthState());
+    emit(AuthState(isActivated: false));
   }
 
   final AuthProvider _authRepo;
@@ -39,7 +41,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   late String deviceToken;
 
   void _onUserChanged(_AuthUserChanged event, Emitter<AuthState> emit) {
-    emit(AuthState(user: event.user));
+    emit(AuthState(user: event.user, isActivated: state.isActivated));
+  }
+
+  void _onActivated(AuthActivatedEvent event, Emitter<AuthState> emit) {
+    emit(AuthState(user: state.user, isActivated: true));
   }
 
   @override
@@ -59,17 +65,26 @@ class _AuthUserChanged extends AuthEvent {
   final User? user;
 }
 
-class AuthState extends Equatable {
-  const AuthState({this.user});
-
-  final User? user;
-
-  bool get isAuthenticated => user != null;
-  
-  /// whether unlock pro features
-  bool get pro => user?.unlockPro ?? false;
-
-  @override
-  List<Object?> get props => [user];
+class AuthActivatedEvent extends AuthEvent {
+  const AuthActivatedEvent();
 }
 
+class AuthState extends Equatable {
+  const AuthState({this.user, required this.isActivated});
+
+  final User? user;
+  final bool isActivated;
+
+  bool get isAuthenticated => user != null;
+
+  /// whether unlock pro features
+  bool get pro {
+    if (isActivated) {
+      return true;
+    }
+    return user?.unlockPro ?? false;
+  }
+
+  @override
+  List<Object?> get props => [user, isActivated];
+}

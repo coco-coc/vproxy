@@ -30,22 +30,17 @@ abstract class AuthProvider {
 class SupabaseAuth extends AuthProvider {
   SupabaseAuth() {
     _userController = BehaviorSubject<my.User?>.seeded(
-      _currentUser,
+      currentUser,
     );
-    supabase.auth.onAuthStateChange.forEach((event) async {
-      logger.d(
-          "authStateChange, current user: ${event.session?.user}");
+    supabase.auth.onAuthStateChange.forEach((event) {
+      logger.d("authStateChange, current user: ${event.session?.user}");
       if (event.session != null) {
-        _currentUser = await _toUser(event.session!);
-        _userController.add(_currentUser);
+        _userController.add(_toUser(event.session!));
       } else {
-        _currentUser = null;
         _userController.add(null);
       }
     });
   }
-
-  my.User? _currentUser;
 
   late final BehaviorSubject<my.User?> _userController;
 
@@ -56,7 +51,10 @@ class SupabaseAuth extends AuthProvider {
 
   @override
   my.User? get currentUser {
-    return _currentUser;
+    if (supabase.auth.currentSession == null) {
+      return null;
+    }
+    return _toUser(supabase.auth.currentSession!);
   }
 
   // Helper function to decode JWT and extract claims
@@ -83,7 +81,7 @@ class SupabaseAuth extends AuthProvider {
   }
 
   // retrive user profile from supabase
-  Future<my.User> _toUser(Session session) async {
+  my.User _toUser(Session session) {
     final user = session.user;
 
     // Decode the access token to get custom claims
@@ -97,7 +95,7 @@ class SupabaseAuth extends AuthProvider {
       id: user.id,
       email: user.email!,
       pro: isPro,
-      proExpiredAt:  proExpiredAt != null
+      proExpiredAt: proExpiredAt != null
           ? DateTime.fromMillisecondsSinceEpoch(proExpiredAt * 1000)
           : null,
     );
@@ -109,12 +107,10 @@ class SupabaseAuth extends AuthProvider {
     await supabase.auth.refreshSession();
     final session = supabase.auth.currentSession;
     if (session == null) {
-      _currentUser = null;
       _userController.add(null);
       return;
     }
-    _currentUser = await _toUser(session);
-    _userController.add(_currentUser);
+    _userController.add(_toUser(session));
   }
 
   /// Performs Apple sign in on iOS or macOS

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -24,9 +25,11 @@ import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:vx/theme.dart';
 import 'package:vx/utils/debug.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
+import 'package:vx/widgets/ad.dart';
 import 'package:vx/widgets/pro_icon.dart';
 import 'package:vx/widgets/pro_promotion.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -248,9 +251,18 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
     const SizedBox(
       height: 5,
     ),
+    if (context.watch<AuthBloc>().state.isActivated)
+      Align(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 10.0, left: 5.0),
+          child: const ActivatedIcon(),
+        ),
+      ),
     Row(
       children: [
-        if (user == null || (user.lifetimePro == false))
+        if ((user == null || (user.lifetimePro == false)) &&
+            !context.watch<AuthBloc>().state.isActivated)
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -292,7 +304,7 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
     ),
     Row(
       children: [
-        if (!useStripe && (user == null || (user.lifetimePro == false)))
+        if ((!useStripe && (user == null || (user.lifetimePro == false))))
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -345,6 +357,17 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
           ),
         ),
       ],
+    ),
+    Gap(5),
+    Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: OutlinedButton.icon(
+          onPressed: () {
+            launchUrl(Uri.parse(adWantedUrl));
+          },
+          label: Text(AppLocalizations.of(context)!.adWanted),
+          icon: Icon(Icons.campaign_rounded,
+              color: Theme.of(context).colorScheme.primary)),
     ),
     const Version(),
     if (!isProduction())

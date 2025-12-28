@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path/path.dart' as path;
 import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/app/x_controller.dart';
+import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
@@ -26,8 +28,10 @@ class StartCloseCubit extends Cubit<XStatus> {
   StartCloseCubit({
     required PrefHelper pref,
     required XController xController,
+    required AuthBloc authBloc,
   })  : _pref = pref,
         _xController = xController,
+        _authBloc = authBloc,
         super(XStatus.unknown) {
     _statusSubscription = xController.statusStream().listen((status) {
       emit(status);
@@ -41,6 +45,7 @@ class StartCloseCubit extends Cubit<XStatus> {
   final PrefHelper _pref;
   final XController _xController;
   late final StreamSubscription<XStatus> _statusSubscription;
+  final AuthBloc _authBloc;
 
   @override
   Future<void> close() async {
@@ -55,7 +60,7 @@ class StartCloseCubit extends Cubit<XStatus> {
       return rootLocalizations()?.pleaseSelectARoutingMode;
     }
     if (rootNavigationKey.currentContext != null &&
-        !authBloc.state.pro &&
+        !_authBloc.state.pro &&
         !isDefaultRouteMode(
             _pref.routingMode!, rootNavigationKey.currentContext!)) {
       return rootLocalizations()?.freeUserCannotUseCustomRoutingMode;

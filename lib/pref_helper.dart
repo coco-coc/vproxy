@@ -781,16 +781,6 @@ class PrefHelper {
     _pref.setBool('showRpmNotice', show);
   }
 
-  DateTime? get lastAdsFetchTime {
-    final time = _pref.getInt('lastAdsFetchTime');
-    if (time == null) return null;
-    return DateTime.fromMillisecondsSinceEpoch(time);
-  }
-
-  void setLastAdsFetchTime(DateTime time) {
-    _pref.setInt('lastAdsFetchTime', time.millisecondsSinceEpoch);
-  }
-
   // Auto node testing settings
   bool get autoTestNodes {
     return _pref.getBool('autoTestNodes') ?? false;

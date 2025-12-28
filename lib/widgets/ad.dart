@@ -56,26 +56,27 @@ class _AdsState extends State<Ads> {
       crossAxisCount = 3;
     }
 
+    final adsProvider = context.watch<AdsProvider>();
     return SliverMasonryGrid(
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
         delegate: SliverChildBuilderDelegate((context, index) {
-          if (index > context.read<AdsProvider>().adsLen) {
+          if (index > adsProvider.adsLen) {
             return null;
           }
-          if (index == context.read<AdsProvider>().adsLen) {
-            return const _AdWantedCard();
+          if (index == adsProvider.adsLen) {
+            return const AdWantedCard();
           }
 
           Ad? ad = _ads[index];
           if (ad == null) {
-            ad = context.read<AdsProvider>().getNextAd();
+            ad = adsProvider.getNextAd();
             if (ad != null) {
               _ads[index] = ad;
             }
           }
           if (ad == null) {
-            return const _AdWantedCard();
+            return const AdWantedCard();
           }
           return AdWidget(ad: ad);
         }, childCount: context.read<AdsProvider>().adsLen + 1),
@@ -86,30 +87,34 @@ class _AdsState extends State<Ads> {
 }
 
 class AdWidget extends StatelessWidget {
-  const AdWidget({super.key, required this.ad});
+  const AdWidget({super.key, required this.ad, this.maxHeight});
   final Ad ad;
+  final double? maxHeight;
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Card(
-          margin: EdgeInsets.zero,
-          elevation: 2,
-          clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: GestureDetector(
-            onTap: () {
-              launchUrl(Uri.parse(ad!.website));
-            },
-            child: MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: Image(
-                image: ad.imageProvider!,
-                fit: BoxFit.fitWidth,
-                width: ad.width.toDouble() * 2,
+        ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: maxHeight ?? double.infinity),
+          child: Card(
+            margin: EdgeInsets.zero,
+            elevation: 2,
+            clipBehavior: Clip.antiAlias,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: GestureDetector(
+              onTap: () {
+                launchUrl(Uri.parse(ad!.website));
+              },
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Image(
+                  image: ad.imageProvider!,
+                  fit: BoxFit.fitWidth,
+                  width: ad.width.toDouble() * 2,
+                ),
               ),
             ),
           ),
@@ -157,15 +162,16 @@ class AdWidget extends StatelessWidget {
   }
 }
 
-class _AdWantedCard extends StatelessWidget {
-  const _AdWantedCard({super.key});
+const adWantedUrl = 'https://vx.5vnetwork.com/advertise';
+
+class AdWantedCard extends StatelessWidget {
+  const AdWantedCard({super.key});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(16),
-      onTap: () =>
-          launchUrl(Uri.parse('https://vx.5vnetwork.com/advertise')),
+      onTap: () => launchUrl(Uri.parse(adWantedUrl)),
       child: Card(
         elevation: 0,
         clipBehavior: Clip.antiAlias,

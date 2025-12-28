@@ -854,5 +854,8 @@
   "invalidFields": "Form contains invalid fields, please correct them first",
   "lruSizeDesc": "The number of fake DNS records to cache for each cidr. ",
   "cacheDuration": "Cache Duration",
-  "cacheDurationDesc": "How long to cache DNS record. If empty or 0, DNS records will cached until they expire"
+  "cacheDurationDesc": "How long to cache DNS record. If empty or 0, DNS records will cached until they expire",
+  "activate": "Activate This Device",
+  "activateDesc": "After activation, you can use most Pro features without logging in (except for cloud sync and cloud backup). Each account can activate up to 10 devices per year.",
+  "activated": "Activated"
 }
