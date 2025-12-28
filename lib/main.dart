@@ -105,7 +105,7 @@ Future<void> _init() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // fonts are bundled, disable runtime fetching on linux
-  if (Platform.isLinux) {
+  if (Platform.isLinux || Platform.isWindows) {
     GoogleFonts.config.allowRuntimeFetching = false;
   }
 
