@@ -863,5 +863,7 @@
   "useInvitationCode": "Use Invitation Code",
   "useInvitationCodeDesc": "Input other's invitation code to get 3 month of pro features for both!",
   "apply": "Apply",
-  "remainingTime": "Remaining Times"
+  "remainingTime": "Remaining Times",
+  "scanQrCode": "Scan QR Code",
+  "expired": "Expired"
 }

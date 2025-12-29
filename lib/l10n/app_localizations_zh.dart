@@ -2093,4 +2093,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get remainingTime => '剩余次数';
+
+  @override
+  String get scanQrCode => '扫描二维码';
+
+  @override
+  String get expired => '已过期';
 }

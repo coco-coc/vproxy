@@ -871,5 +871,7 @@
   "useInvitationCode": "使用邀请码",
   "useInvitationCodeDesc": "输入其他人的邀请码，双方都将获得3个月Pro功能免费体验！",
   "apply": "应用",
-  "remainingTime": "剩余次数"
+  "remainingTime": "剩余次数",
+  "scanQrCode": "扫描二维码",
+  "expired": "已过期"
 }

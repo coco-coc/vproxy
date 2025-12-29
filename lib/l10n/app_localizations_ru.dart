@@ -2143,4 +2143,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get remainingTime => 'Remaining Times';
+
+  @override
+  String get scanQrCode => 'Scan QR Code';
+
+  @override
+  String get expired => 'Expired';
 }

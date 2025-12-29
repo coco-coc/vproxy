@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
@@ -15,10 +17,12 @@ import 'package:vx/main.dart';
 import 'package:vx/theme.dart';
 import 'package:vx/utils/activate.dart';
 import 'package:vx/utils/logger.dart';
+import 'package:vx/utils/qr.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
 import 'package:vx/widgets/divider.dart';
 import 'package:vx/widgets/pro_icon.dart';
 import 'package:flutter/services.dart';
+import 'package:vx/widgets/take_picture.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key, this.showAppBar = true});
@@ -96,8 +100,7 @@ class _AccountPageState extends State<AccountPage> {
           }
           return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: ListView(
               children: [
                 Row(
                   children: [
@@ -135,7 +138,7 @@ class _AccountPageState extends State<AccountPage> {
                           state.user!.proExpiredAt != null
                               ? DateFormat('yyyy-MM-dd')
                                   .format(state.user!.proExpiredAt!.toLocal())
-                              : '',
+                              : AppLocalizations.of(context)!.expired,
                           style: Theme.of(context).textTheme.bodyLarge),
                       IconButton(
                         onPressed: _canRefresh ? _refreshUser : null,
@@ -318,8 +321,8 @@ class __InvitationState extends State<_Invitation> {
     super.dispose();
   }
 
-  void _useInvitationCode() async {
-    if (_invitationCodeController.text.isEmpty) {
+  void _useInvitationCode(String code) async {
+    if (code.isEmpty) {
       return;
     }
     setState(() {
@@ -335,7 +338,7 @@ class __InvitationState extends State<_Invitation> {
           headers: {
             'Authorization': 'Bearer $token',
           },
-          body: _invitationCodeController.text);
+          body: code);
       if (response.status == 200) {
         setState(() {
           _invitationEnjoyed = true;
@@ -364,6 +367,13 @@ class __InvitationState extends State<_Invitation> {
         ),
       );
     }
+  }
+
+  void _shareInvitationCode() async {
+    if (_invitationCode == null || _invitationCode!.isEmpty) {
+      return;
+    }
+    shareQrCode(context, _invitationCode!);
   }
 
   @override
@@ -431,10 +441,20 @@ class __InvitationState extends State<_Invitation> {
                 ),
               ),
               const Gap(5),
-              FilledButton.icon(
-                onPressed: _copyInvitationCode,
-                icon: const Icon(Icons.copy, size: 18),
-                label: Text(AppLocalizations.of(context)!.copy),
+              Row(
+                children: [
+                  FilledButton.icon(
+                    onPressed: _copyInvitationCode,
+                    icon: const Icon(Icons.copy, size: 18),
+                    label: Text(AppLocalizations.of(context)!.copy),
+                  ),
+                  Gap(10),
+                  FilledButton.icon(
+                    onPressed: _shareInvitationCode,
+                    icon: const Icon(Icons.qr_code, size: 18),
+                    label: Text(AppLocalizations.of(context)!.qrCode),
+                  ),
+                ],
               ),
               const Gap(5),
               Padding(
@@ -499,7 +519,9 @@ class __InvitationState extends State<_Invitation> {
                 builder: (context, value, child) {
                   final isEmpty = value.text.isEmpty;
                   return FilledButton.icon(
-                    onPressed: _applying || isEmpty ? null : _useInvitationCode,
+                    onPressed: _applying || isEmpty
+                        ? null
+                        : () => _useInvitationCode(value.text),
                     icon: _applying
                         ? SizedBox(
                             width: 16,
@@ -519,7 +541,39 @@ class __InvitationState extends State<_Invitation> {
                     ),
                   );
                 },
-              )
+              ),
+              Gap(10),
+              if (Platform.isAndroid || Platform.isIOS)
+                FilledButton.icon(
+                  onPressed: () async {
+                    final barcode =
+                        await Navigator.of(context, rootNavigator: true)
+                            .push<Barcode?>(MaterialPageRoute(builder: (ctx) {
+                      return const ScanQrCode();
+                    }));
+                    if (barcode == null || barcode.displayValue == null) {
+                      return;
+                    }
+                    _useInvitationCode(barcode.rawValue ?? '');
+                  },
+                  icon: _applying
+                      ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        )
+                      : const Icon(Icons.qr_code_scanner_rounded, size: 18),
+                  label: Text(AppLocalizations.of(context)!.scanQrCode),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 16,
+                    ),
+                  ),
+                ),
             ],
           )
       ],
