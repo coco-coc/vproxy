@@ -645,8 +645,15 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
       logger.e('statusTest error', error: e);
     }
 
+    late PingMode pingMode;
+    if (e.pingMode != null) {
+      pingMode = e.pingMode!;
+    } else {
+      pingMode = persistentStateRepo.pingMode;
+    }
+
     late final List<Future> futures;
-    if (persistentStateRepo.pingMode == PingMode.Real) {
+    if (pingMode == PingMode.Real) {
       futures = handlersToBeTested
           .map((h) => xApiClient
                   .handlerUsable(HandlerUsableRequest(handler: h.toConfig()))
@@ -665,6 +672,7 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
                   emit(state.copyWith(
                       handlers: _sortHandlers(handlers, state.sortCol)));
                 }
+                print('updateHandler: ${h.id}, ${res.country}, ${res.ip}');
                 _outboundRepo.updateHandler(h.id,
                     ok: ok ? 1 : -1,
                     ping: res.ping,
@@ -786,7 +794,7 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
 
   Future<void> updateCountry(
       List<OutboundHandler> handlers, Emitter<OutboundState> emit) async {
-    add(StatusTestEvent(handlers: handlers));
+    add(StatusTestEvent(handlers: handlers, pingMode: PingMode.Real));
     // try {
     //   final futures = <Future>[];
     //   final handlersWithIp = <OutboundHandler>[];
@@ -1017,10 +1025,11 @@ class SpeedTestEvent extends OutboundEvent {
 }
 
 class StatusTestEvent extends OutboundEvent {
-  const StatusTestEvent({this.handlers});
+  const StatusTestEvent({this.handlers, this.pingMode});
 
   /// if null, test all displayed enabled handlers
   final List<OutboundHandler>? handlers;
+  final PingMode? pingMode;
 }
 
 class PopulateCountryEvent extends OutboundEvent {}
