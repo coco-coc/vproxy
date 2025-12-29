@@ -2075,4 +2075,22 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get activated => '已激活';
+
+  @override
+  String get myInvitationCode => '我的邀请码';
+
+  @override
+  String get myInvitationCodeDesc => '分享此邀请码给你的朋友，双方都将获得3个月Pro功能免费体验';
+
+  @override
+  String get useInvitationCode => '使用邀请码';
+
+  @override
+  String get useInvitationCodeDesc => '输入其他人的邀请码，双方都将获得3个月Pro功能免费体验！';
+
+  @override
+  String get apply => '应用';
+
+  @override
+  String get remainingTime => '剩余次数';
 }

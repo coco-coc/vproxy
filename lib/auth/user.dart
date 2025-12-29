@@ -9,6 +9,7 @@ class User extends Equatable {
   final String id;
   final String email;
   final DateTime? proExpiredAt;
+  
   final bool pro;
 
   @override

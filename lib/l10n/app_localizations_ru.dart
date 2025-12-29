@@ -2125,4 +2125,22 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get activated => 'Activated';
+
+  @override
+  String get myInvitationCode => 'My Invitation Code';
+
+  @override
+  String get myInvitationCodeDesc => 'Share this code to your friends, both sides will get 3 month of pro features for free';
+
+  @override
+  String get useInvitationCode => 'Use Invitation Code';
+
+  @override
+  String get useInvitationCodeDesc => 'Input other\'s invitation code to get 3 month of pro features for both!';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String get remainingTime => 'Remaining Times';
 }

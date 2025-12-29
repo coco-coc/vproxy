@@ -857,5 +857,11 @@
   "cacheDurationDesc": "How long to cache DNS record. If empty or 0, DNS records will cached until they expire",
   "activate": "Activate This Device",
   "activateDesc": "After activation, you can use most Pro features without logging in (except for cloud sync and cloud backup). Each account can activate up to 10 devices per year.",
-  "activated": "Activated"
+  "activated": "Activated",
+  "myInvitationCode": "My Invitation Code",
+  "myInvitationCodeDesc": "Share this code to your friends, both sides will get 3 month of pro features for free",
+  "useInvitationCode": "Use Invitation Code",
+  "useInvitationCodeDesc": "Input other's invitation code to get 3 month of pro features for both!",
+  "apply": "Apply",
+  "remainingTime": "Remaining Times"
 }

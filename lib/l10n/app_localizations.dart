@@ -4032,6 +4032,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Activated'**
   String get activated;
+
+  /// No description provided for @myInvitationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'My Invitation Code'**
+  String get myInvitationCode;
+
+  /// No description provided for @myInvitationCodeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this code to your friends, both sides will get 3 month of pro features for free'**
+  String get myInvitationCodeDesc;
+
+  /// No description provided for @useInvitationCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Invitation Code'**
+  String get useInvitationCode;
+
+  /// No description provided for @useInvitationCodeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Input other\'s invitation code to get 3 month of pro features for both!'**
+  String get useInvitationCodeDesc;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @remainingTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining Times'**
+  String get remainingTime;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
