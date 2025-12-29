@@ -244,6 +244,7 @@ Future<void> _init() async {
   }
 
   resourceDirectory = await resourceDir();
+  print('resourceDirectory: ${resourceDirectory.path}');
   storage = const FlutterSecureStorage();
 
   bool isActivated = false;

@@ -4,6 +4,7 @@
 #ifdef GDK_WINDOWING_X11
 #include <gdk/gdkx.h>
 #endif
+#include <glib.h>
 
 #include "flutter/generated_plugin_registrant.h"
 
@@ -13,6 +14,24 @@ struct _MyApplication {
 };
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
+
+// Log handler to suppress GDK device-related critical warnings
+static void log_handler(const gchar* log_domain,
+                        GLogLevelFlags log_level,
+                        const gchar* message,
+                        gpointer user_data) {
+  // Suppress GDK-CRITICAL warnings about gdk_device_get_source assertion failures
+  // These are harmless warnings from plugins trying to access device info
+  if (log_domain && g_strcmp0(log_domain, "Gdk") == 0 &&
+      (log_level & G_LOG_LEVEL_CRITICAL) &&
+      message && g_strrstr(message, "gdk_device_get_source") != NULL &&
+      g_strrstr(message, "assertion") != NULL) {
+    // Suppress this specific warning by returning early
+    return;
+  }
+  // Let other messages pass through to default handler
+  g_log_default_handler(log_domain, log_level, message, user_data);
+}
 
 // Implements GApplication::activate.
 static void my_application_activate(GApplication* application) {
@@ -91,6 +110,11 @@ static gboolean my_application_local_command_line(GApplication* application, gch
 // Implements GApplication::startup.
 static void my_application_startup(GApplication* application) {
   //MyApplication* self = MY_APPLICATION(object);
+
+  // Install log handler to suppress GDK device-related critical warnings
+  // This prevents harmless warnings from plugins that try to access device info
+  g_log_set_handler("Gdk", G_LOG_LEVEL_CRITICAL,
+                    log_handler, NULL);
 
   // Perform any actions required at application startup.
 
