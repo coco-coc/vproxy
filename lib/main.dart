@@ -273,8 +273,7 @@ Future<void> _init() async {
           String? uniqueId = await storage.read(key: uniqueIdKey);
           if (uniqueId != null) {
             isActivated = await validateLicence(
-                Licence.fromJson(jsonDecode(licence)), uniqueId)
-                ;
+                Licence.fromJson(jsonDecode(licence)), uniqueId);
           }
         }
       } catch (e) {

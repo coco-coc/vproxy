@@ -865,5 +865,13 @@
   "cacheDurationDesc": "缓存DNS记录的时长。如果为空或0，DNS记录将缓存直到它们过期",
   "activate": "激活此设备",
   "activateDesc": "激活后，无需登录便可使用绝大多数Pro功能（仅云同步与云备份无法使用）。每个账号每年最多激活十台设备。",
-  "activated": "已激活"
+  "activated": "已激活",
+  "myInvitationCode": "我的邀请码",
+  "myInvitationCodeDesc": "分享此邀请码给你的朋友，双方都将获得3个月Pro功能免费体验",
+  "useInvitationCode": "使用邀请码",
+  "useInvitationCodeDesc": "输入其他人的邀请码，双方都将获得3个月Pro功能免费体验！",
+  "apply": "应用",
+  "remainingTime": "剩余次数",
+  "scanQrCode": "扫描二维码",
+  "expired": "已过期"
 }

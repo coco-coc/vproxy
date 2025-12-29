@@ -11,16 +11,6 @@ import 'package:vx/theme.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/utils/xapi_client.dart';
 
-// Hero(
-//         tag: 'server',
-//         child: Material(
-//           child: ServerStatus(
-//             bloc: context.read<ServerStatusBloc>(),
-//             name: server.name,
-//           ),
-//         ),
-//       )
-
 class ServerStatus extends StatefulWidget {
   const ServerStatus({
     super.key,
@@ -69,7 +59,25 @@ class _ServerStatusState extends State<ServerStatus> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(AppLocalizations.of(context)!.failedConnectServer),
+          TextButton(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        content: SizedBox(
+                          width: 300,
+                          height: 200,
+                          child: Text(_error ?? ''),
+                        ),
+                      ));
+            },
+            child: Text(
+              AppLocalizations.of(context)!.failedConnectServer,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+            ),
+          ),
           TextButton(
               onPressed: () => _connect(),
               child: Text(AppLocalizations.of(context)!.retry)),

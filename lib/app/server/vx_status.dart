@@ -145,6 +145,23 @@ class VXServiceStatus extends StatelessWidget {
                           ],
                         ),
                       );
+                    case VXErrorState():
+                      return Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: IconButton(
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                        content: SizedBox(
+                                          width: 300,
+                                          height: 200,
+                                          child: Text(state.error),
+                                        ),
+                                      ));
+                            },
+                            icon: const Icon(Icons.error)),
+                      );
                   }
                 }),
               ),

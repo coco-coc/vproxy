@@ -17,6 +17,12 @@ Future<bool> validateLicence(Licence licence, String uniqueId) async {
     return false;
   }
 
+  // if licence expired
+  if (licence.expiresAt != null &&
+      licence.expiresAt!.isBefore(DateTime.now())) {
+    return false;
+  }
+
   // Verify the signature using Ed25519
   try {
     // Decode the public key from base64
@@ -30,10 +36,13 @@ Future<bool> validateLicence(Licence licence, String uniqueId) async {
         publicKeyBytes.sublist(publicKeyBytes.length - 32);
 
     // Create the payload that was signed
-    final payload = {
+    final payload = <String, dynamic>{
       'deviceInfoHash': licence.deviceInfoHash,
       'userId': licence.userId,
     };
+    if (licence.expiresAt != null) {
+      payload['expiresAt'] = licence.expiresAt!.millisecondsSinceEpoch ~/ 1000;
+    }
 
     // Encode the payload as JSON (same as in TypeScript)
     final payloadJson = jsonEncode(payload);
@@ -92,18 +101,25 @@ Future<bool> _verifyEd25519Signature({
 class Licence {
   final String deviceInfoHash;
   final String userId;
+  // null means no expiration
+  final DateTime? expiresAt;
   final String signature;
 
   Licence(
       {required this.deviceInfoHash,
       required this.userId,
-      required this.signature});
+      required this.signature,
+      this.expiresAt});
 
   factory Licence.fromJson(Map<String, dynamic> json) {
     return Licence(
       deviceInfoHash: json['deviceInfoHash'],
       userId: json['userId'],
       signature: json['signature'],
+      expiresAt: json['expiresAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(
+              (json['expiresAt'] as int) * 1000)
+          : null,
     );
   }
 }

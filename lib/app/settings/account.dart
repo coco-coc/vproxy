@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
@@ -15,8 +17,12 @@ import 'package:vx/main.dart';
 import 'package:vx/theme.dart';
 import 'package:vx/utils/activate.dart';
 import 'package:vx/utils/logger.dart';
+import 'package:vx/utils/qr.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
+import 'package:vx/widgets/divider.dart';
 import 'package:vx/widgets/pro_icon.dart';
+import 'package:flutter/services.dart';
+import 'package:vx/widgets/take_picture.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key, this.showAppBar = true});
@@ -94,8 +100,7 @@ class _AccountPageState extends State<AccountPage> {
           }
           return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: ListView(
               children: [
                 Row(
                   children: [
@@ -113,20 +118,14 @@ class _AccountPageState extends State<AccountPage> {
                 if (state.user!.lifetimePro == true)
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0),
-                    child: Row(
-                      children: [
-                        Chip(
-                          avatar: proIcon,
-                          label: Text(
-                              AppLocalizations.of(context)!.lifetimeProAccount,
-                              style: Theme.of(context).textTheme.bodySmall),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                        ),
-                        const Gap(10),
-                        if (state.isActivated) const ActivatedIcon(),
-                      ],
+                    child: Chip(
+                      avatar: proIcon,
+                      label: Text(
+                          AppLocalizations.of(context)!.lifetimeProAccount,
+                          style: Theme.of(context).textTheme.bodySmall),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
                     ),
                   ),
                 if (state.user!.lifetimePro == false)
@@ -139,7 +138,7 @@ class _AccountPageState extends State<AccountPage> {
                           state.user!.proExpiredAt != null
                               ? DateFormat('yyyy-MM-dd')
                                   .format(state.user!.proExpiredAt!.toLocal())
-                              : '',
+                              : AppLocalizations.of(context)!.expired,
                           style: Theme.of(context).textTheme.bodyLarge),
                       IconButton(
                         onPressed: _canRefresh ? _refreshUser : null,
@@ -202,8 +201,9 @@ class _AccountPageState extends State<AccountPage> {
                     ],
                   ),
                 ),
-                Gap(20),
-                if (!context.watch<AuthBloc>().state.isActivated)
+                const Gap(10),
+                if (state.isActivated) const ActivatedIcon(),
+                if (!state.isActivated)
                   Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -216,7 +216,8 @@ class _AccountPageState extends State<AccountPage> {
                                   height: 12,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: Theme.of(context).colorScheme.onPrimary,
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
                                   ),
                                 )
                               : const Icon(Icons.verified_user, size: 20),
@@ -246,11 +247,336 @@ class _AccountPageState extends State<AccountPage> {
                       ],
                     ),
                   ),
+                const Gap(20),
+                divider,
+                const Gap(20),
+                const _Invitation(),
               ],
             ),
           );
         },
       ),
+    );
+  }
+}
+
+class _Invitation extends StatefulWidget {
+  const _Invitation({super.key});
+
+  @override
+  State<_Invitation> createState() => __InvitationState();
+}
+
+class __InvitationState extends State<_Invitation> {
+  bool _isLoading = true;
+  String? _error;
+  String? _invitationCode;
+  int? _remainingTime;
+  bool? _invitationEnjoyed;
+  final _invitationCodeController = TextEditingController();
+  bool _applying = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _getInvitationCode();
+  }
+
+  void _getInvitationCode() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      final currentUser = supabase.auth.currentUser;
+      if (currentUser == null) {
+        return;
+      }
+      final response = await supabase
+          .from('profiles')
+          .select()
+          .eq('id', currentUser.id)
+          .single();
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _invitationCode = response['invite_code'] as String?;
+          _remainingTime = response['invite_code_remaining_times'] as int?;
+          _invitationEnjoyed = response['invitation_enjoyed'] as bool?;
+        });
+      }
+    } catch (e) {
+      logger.e('Failed to fetch invitation code: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _error = e.toString();
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _invitationCodeController.dispose();
+    super.dispose();
+  }
+
+  void _useInvitationCode(String code) async {
+    if (code.isEmpty) {
+      return;
+    }
+    setState(() {
+      _applying = true;
+    });
+    try {
+      final authProvider = context.read<AuthProvider>();
+      final token = supabase.auth.currentSession?.accessToken;
+      if (token == null) {
+        throw 'No Token';
+      }
+      final response = await supabase.functions.invoke('invitation',
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+          body: code);
+      if (response.status == 200) {
+        setState(() {
+          _invitationEnjoyed = true;
+        });
+        authProvider.refreshUser();
+      }
+    } catch (e) {
+      logger.e('Failed to use invitation code: $e');
+      snack(e.toString());
+    } finally {
+      setState(() {
+        _applying = false;
+      });
+    }
+  }
+
+  void _copyInvitationCode() async {
+    if (_invitationCode == null || _invitationCode!.isEmpty) {
+      return;
+    }
+    await Clipboard.setData(ClipboardData(text: _invitationCode!));
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.copiedToClipboard),
+        ),
+      );
+    }
+  }
+
+  void _shareInvitationCode() async {
+    if (_invitationCode == null || _invitationCode!.isEmpty) {
+      return;
+    }
+    shareQrCode(context, _invitationCode!);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    if (_error != null) {
+      return Center(
+        child: Text(_error!),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (_invitationCode != null &&
+            _remainingTime != null &&
+            _remainingTime! > 0)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.card_giftcard,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const Gap(8),
+                  Text(
+                    AppLocalizations.of(context)!.myInvitationCode,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ],
+              ),
+              const Gap(12),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainer,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color:
+                        Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                  ),
+                ),
+                child: SelectableText(
+                  _invitationCode!,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              const Gap(5),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  AppLocalizations.of(context)!.myInvitationCodeDesc,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                ),
+              ),
+              const Gap(5),
+              Row(
+                children: [
+                  FilledButton.icon(
+                    onPressed: _copyInvitationCode,
+                    icon: const Icon(Icons.copy, size: 18),
+                    label: Text(AppLocalizations.of(context)!.copy),
+                  ),
+                  Gap(10),
+                  FilledButton.icon(
+                    onPressed: _shareInvitationCode,
+                    icon: const Icon(Icons.qr_code, size: 18),
+                    label: Text(AppLocalizations.of(context)!.qrCode),
+                  ),
+                ],
+              ),
+              const Gap(5),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  '${_remainingTime} ${AppLocalizations.of(context)!.remainingTime}',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                ),
+              )
+            ],
+          ),
+        // Divider between sections
+        if (_invitationEnjoyed != true)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Gap(20),
+              Divider(
+                height: 1,
+                thickness: 1,
+                color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+              ),
+              const Gap(20),
+              Row(
+                children: [
+                  Icon(
+                    Icons.input,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const Gap(8),
+                  Text(
+                    AppLocalizations.of(context)!.useInvitationCode,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ],
+              ),
+              const Gap(12),
+              TextField(
+                controller: _invitationCodeController,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.confirmation_number),
+                  helperText:
+                      AppLocalizations.of(context)!.useInvitationCodeDesc,
+                  helperMaxLines: 3,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  filled: true,
+                  fillColor:
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
+                ),
+                enabled: !_applying,
+              ),
+              const Gap(10),
+              ValueListenableBuilder<TextEditingValue>(
+                valueListenable: _invitationCodeController,
+                builder: (context, value, child) {
+                  final isEmpty = value.text.isEmpty;
+                  return FilledButton.icon(
+                    onPressed: _applying || isEmpty
+                        ? null
+                        : () => _useInvitationCode(value.text),
+                    icon: _applying
+                        ? SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          )
+                        : const Icon(Icons.check, size: 18),
+                    label: Text(AppLocalizations.of(context)!.apply),
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 16,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              Gap(10),
+              if (Platform.isAndroid || Platform.isIOS)
+                FilledButton.icon(
+                  onPressed: () async {
+                    final barcode =
+                        await Navigator.of(context, rootNavigator: true)
+                            .push<Barcode?>(MaterialPageRoute(builder: (ctx) {
+                      return const ScanQrCode();
+                    }));
+                    if (barcode == null || barcode.displayValue == null) {
+                      return;
+                    }
+                    _useInvitationCode(barcode.rawValue ?? '');
+                  },
+                  icon: _applying
+                      ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        )
+                      : const Icon(Icons.qr_code_scanner_rounded, size: 18),
+                  label: Text(AppLocalizations.of(context)!.scanQrCode),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 16,
+                    ),
+                  ),
+                ),
+            ],
+          )
+      ],
     );
   }
 }

@@ -9,6 +9,7 @@ import 'package:tm/tm.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vx/app/outbound/outbound_page.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
+import 'package:vx/utils/qr.dart';
 import 'package:vx/widgets/ad.dart';
 import 'package:vx/app/outbound/add.dart';
 import 'package:vx/auth/auth_bloc.dart';

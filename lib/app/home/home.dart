@@ -37,6 +37,7 @@ import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
 import 'package:collection/collection.dart';
+import 'package:vx/utils/logger.dart';
 import 'package:vx/widgets/home_card.dart';
 import 'package:vx/widgets/no_node.dart';
 

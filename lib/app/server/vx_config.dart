@@ -56,6 +56,10 @@ class VXConfig extends StatelessWidget {
             return Center(
               child: Text(AppLocalizations.of(context)!.installVXCoreFirst),
             );
+          case VXErrorState():
+            return Center(
+              child: Text(state.error),
+            );
         }
       },
     );
@@ -103,18 +107,18 @@ class _Config extends StatelessWidget {
               Tab(text: AppLocalizations.of(context)!.outboundMode),
               Tab(text: AppLocalizations.of(context)!.others),
             ]),
-          const  Gap(10),
+            const Gap(10),
             Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TabBarView(children: [
-                                _Inbounds(config: state.config!),
-                                _Routing(config: state.config!),
-                               const  _Geo(),
-                               const _Outbounds(),
-                               const _Others(),
-                              ]),
-                )),
+              padding: const EdgeInsets.all(8.0),
+              child: TabBarView(children: [
+                _Inbounds(config: state.config!),
+                _Routing(config: state.config!),
+                const _Geo(),
+                const _Outbounds(),
+                const _Others(),
+              ]),
+            )),
           ],
         ),
       );

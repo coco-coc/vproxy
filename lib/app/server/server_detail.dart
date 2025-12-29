@@ -146,7 +146,7 @@ class _OverviewState extends State<_Overview> {
                       width: 290,
                       child: Hero(
                         tag: 'server${widget.server.id}',
-                        child: ServerListTile(
+                        child: ServerCard(
                           server: widget.server,
                           showStatus: true,
                           serverStatusKey: _serverStatusKey,
@@ -167,7 +167,7 @@ class _OverviewState extends State<_Overview> {
                   height: 174,
                   child: Hero(
                     tag: 'server${widget.server.id}',
-                    child: ServerListTile(
+                    child: ServerCard(
                       server: widget.server,
                       showStatus: true,
                       serverStatusKey: _serverStatusKey,

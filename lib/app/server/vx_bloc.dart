@@ -76,11 +76,8 @@ class VXReloadConfigEvent extends VXEvent {}
 
 class VXDiscardChangesEvent extends VXEvent {}
 
-class _VXStatusEvent extends VXEvent {
-  final VproxyStatusResponse status;
-  _VXStatusEvent(this.status);
-  @override
-  List<Object?> get props => [status];
+class _RefreshVXStatusEvent extends VXEvent {
+  _RefreshVXStatusEvent();
 }
 
 class VXSetLogLevelEvent extends VXEvent {
@@ -95,6 +92,13 @@ sealed class VXState extends Equatable {
 
 class VXLoadingState extends VXState {
   VXLoadingState();
+}
+
+class VXErrorState extends VXState {
+  final String error;
+  VXErrorState(this.error);
+  @override
+  List<Object?> get props => [error];
 }
 
 class VXNotInstalledState extends VXState {
@@ -154,7 +158,7 @@ class VXBloc extends Bloc<VXEvent, VXState> {
         _outboundBloc = outboundBloc,
         super(VXLoadingState()) {
     on<VXBlocInitialEvent>(_onVproxyBlocInitialEvent);
-    on<_VXStatusEvent>(_onVproxyStatusEvent);
+    on<_RefreshVXStatusEvent>(_onRefreshVXStatusEvent);
     on<VXRestartEvent>(_onVproxyRestartEvent);
     on<VXStopEvent>(_onVproxyStopEvent);
     on<VXStartEvent>(_onVproxyStartEvent);
@@ -175,7 +179,7 @@ class VXBloc extends Bloc<VXEvent, VXState> {
 
   @override
   void onTransition(Transition<VXEvent, VXState> transition) {
-    if (transition.event is _VXStatusEvent) {
+    if (transition.event is _RefreshVXStatusEvent) {
       return;
     }
     super.onTransition(transition);
@@ -200,22 +204,23 @@ class VXBloc extends Bloc<VXEvent, VXState> {
     // periodically fetch vx status
     _timer?.cancel();
     _timer = Timer.periodic(Duration(seconds: 10), (timer) async {
-      final status = await _xapiClient.vproxyStatus(_server);
+      add(_RefreshVXStatusEvent());
+    });
+    add(_RefreshVXStatusEvent());
+  }
+
+  Future<void> _onRefreshVXStatusEvent(
+      _RefreshVXStatusEvent event, Emitter<VXState> emit) async {
+    late VproxyStatusResponse status;
+    try {
+      status = await _xapiClient.vproxyStatus(_server);
       if (!_isRunning) {
         return;
       }
-      add(_VXStatusEvent(status));
-    });
-    await _fetchVproxyStatus();
-  }
+    } catch (e) {
+      emit(VXErrorState(e.toString()));
+    }
 
-  Future<void> _fetchVproxyStatus() async {
-    add(_VXStatusEvent(await _xapiClient.vproxyStatus(_server)));
-  }
-
-  Future<void> _onVproxyStatusEvent(
-      _VXStatusEvent event, Emitter<VXState> emit) async {
-    final status = event.status;
     if (status.installed) {
       VXInstalledState s = state is VXInstalledState
           ? (state as VXInstalledState).copyWith(
@@ -257,31 +262,31 @@ class VXBloc extends Bloc<VXEvent, VXState> {
   Future<void> _onVproxyRestartEvent(
       VXRestartEvent event, Emitter<VXState> emit) async {
     await _xapiClient.vx(_server, restart: true);
-    await _fetchVproxyStatus();
+    add(_RefreshVXStatusEvent());
   }
 
   Future<void> _onVproxyStopEvent(
       VXStopEvent event, Emitter<VXState> emit) async {
     await _xapiClient.vx(_server, stop: true);
-    await _fetchVproxyStatus();
+    add(_RefreshVXStatusEvent());
   }
 
   Future<void> _onVproxyStartEvent(
       VXStartEvent event, Emitter<VXState> emit) async {
     await _xapiClient.vx(_server, start: true);
-    await _fetchVproxyStatus();
+    add(_RefreshVXStatusEvent());
   }
 
   Future<void> _onVproxyUpdateEvent(
       VXUpdateEvent event, Emitter<VXState> emit) async {
     await _xapiClient.vx(_server, update: true);
-    await _fetchVproxyStatus();
+    add(_RefreshVXStatusEvent());
   }
 
   Future<void> _onVproxyUninstallEvent(
       VXUninstallEvent event, Emitter<VXState> emit) async {
     await _xapiClient.vx(_server, uninstall: true);
-    await _fetchVproxyStatus();
+    add(_RefreshVXStatusEvent());
   }
 
   Future<void> _onVproxyAddInboundEvent(

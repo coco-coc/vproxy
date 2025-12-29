@@ -190,7 +190,7 @@ class _ServersState extends State<Servers> {
                         final server = _servers[index];
                         return Hero(
                           tag: 'server${server.id}',
-                          child: ServerListTile(
+                          child: ServerCard(
                             server: server,
                             onTap: () {
                               final fullScreen =
@@ -245,8 +245,8 @@ class _ServersState extends State<Servers> {
   }
 }
 
-class ServerListTile extends StatelessWidget {
-  const ServerListTile({
+class ServerCard extends StatelessWidget {
+  const ServerCard({
     super.key,
     required this.server,
     this.onTap,
