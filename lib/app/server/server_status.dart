@@ -11,16 +11,6 @@ import 'package:vx/theme.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/utils/xapi_client.dart';
 
-// Hero(
-//         tag: 'server',
-//         child: Material(
-//           child: ServerStatus(
-//             bloc: context.read<ServerStatusBloc>(),
-//             name: server.name,
-//           ),
-//         ),
-//       )
-
 class ServerStatus extends StatefulWidget {
   const ServerStatus({
     super.key,
