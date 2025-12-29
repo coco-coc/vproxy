@@ -360,6 +360,22 @@
       }
     }
   },
+  "bbrError": "Failed to enable BBR: {error}",
+  "@bbrError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "firewallError": "Failed to disable OS firewall: {error}",
+  "@firewallError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "failedToDeploy": "Failed to deploy: {value}",
   "@failedToDeploy": {
     "placeholders": {
@@ -865,5 +881,6 @@
   "apply": "Apply",
   "remainingTime": "Remaining Times",
   "scanQrCode": "Scan QR Code",
-  "expired": "Expired"
+  "expired": "Expired",
+  "deploySuccessWarnings": "Deploy nodes successfully, but these tasks failed: "
 }

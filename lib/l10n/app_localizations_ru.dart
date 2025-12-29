@@ -908,6 +908,16 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String bbrError(String error) {
+    return 'Failed to enable BBR: $error';
+  }
+
+  @override
+  String firewallError(String error) {
+    return 'Failed to disable OS firewall: $error';
+  }
+
+  @override
   String failedToDeploy(String value) {
     return 'Не удалось развернуть: $value';
   }
@@ -2149,4 +2159,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get expired => 'Expired';
+
+  @override
+  String get deploySuccessWarnings => 'Deploy nodes successfully, but these tasks failed: ';
 }

@@ -409,12 +409,13 @@ class XApiClient {
     return await _xApiClient.decode(DecodeRequest(data: data));
   }
 
-  Future<void> deploy({
+  Future<DeployResponse> deploy({
     required SshServer server,
     Uint8List? xrayConfig,
     Uint8List? hysteriaConfig,
     ServerConfig? serverConfig,
     Map<String, Uint8List>? files,
+    bool? disableOSFirewall,
   }) async {
     await _completer.future;
     final req = DeployRequest(
@@ -422,9 +423,10 @@ class XApiClient {
       xrayConfig: xrayConfig,
       hysteriaConfig: hysteriaConfig,
       vxConfig: serverConfig,
+      disableFirewall: disableOSFirewall,
     );
     req.files.addAll(files ?? {});
-    await _xApiClient.deploy(req);
+    return await _xApiClient.deploy(req);
   }
 
   Future<GenerateCertResponse> generateCert(String domain) async {

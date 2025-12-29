@@ -246,13 +246,6 @@ Future<void> _init() async {
   resourceDirectory = await resourceDir();
   storage = const FlutterSecureStorage();
 
-  //  sync service
-  syncService = SyncService(
-      deviceId: await getUniqueDeviceId(),
-      prefHelper: persistentStateRepo,
-      storage: storage,
-      authProvider: authProvider);
-
   bool isActivated = false;
   await Future.wait([
     _initDatabase(),
@@ -282,6 +275,12 @@ Future<void> _init() async {
     }),
   ]);
 
+  //  sync service
+  syncService = SyncService(
+      deviceId: await getUniqueDeviceId(),
+      prefHelper: persistentStateRepo,
+      storage: storage,
+      authProvider: authProvider);
   // outbound repo
   _outboundRepo = OutboundRepo(syncService);
   syncService.outboundRepo = _outboundRepo;

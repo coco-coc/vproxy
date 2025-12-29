@@ -1166,7 +1166,7 @@ class XConfigHelper {
   }
 }
 
-final useTcpForGrpc = Platform.isWindows || isPkg || true;
+final useTcpForGrpc = Platform.isWindows || isPkg;
 
 Future<String> grpcListenAddrUnix() async {
   late String address;

@@ -363,6 +363,22 @@
       }
     }
   },
+  "bbrError": "启用BBR失败: {error}",
+  "@bbrError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "firewallError": "禁用OS防火墙失败: {error}",
+  "@firewallError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "failedToDeploy": "部署失败: {value}",
   "@failedToDeploy": {
     "placeholders": {
@@ -873,5 +889,6 @@
   "apply": "应用",
   "remainingTime": "剩余次数",
   "scanQrCode": "扫描二维码",
-  "expired": "已过期"
+  "expired": "已过期",
+  "deploySuccessWarnings": "部署节点成功，但这些任务失败: "
 }

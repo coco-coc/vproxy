@@ -1663,6 +1663,18 @@ abstract class AppLocalizations {
   /// **'{deploy} on Server-{server} succeeded'**
   String deploySuccess(String deploy, String server);
 
+  /// No description provided for @bbrError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to enable BBR: {error}'**
+  String bbrError(String error);
+
+  /// No description provided for @firewallError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to disable OS firewall: {error}'**
+  String firewallError(String error);
+
   /// No description provided for @failedToDeploy.
   ///
   /// In en, this message translates to:
@@ -4080,6 +4092,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Expired'**
   String get expired;
+
+  /// No description provided for @deploySuccessWarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Deploy nodes successfully, but these tasks failed: '**
+  String get deploySuccessWarnings;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
