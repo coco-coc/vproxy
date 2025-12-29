@@ -217,10 +217,10 @@ Future<void> _init() async {
             'X-Supabase-Client-Platform-Version': 'Windows',
           }
         : null,
-    url: kDebugMode
+    url: false
         ? 'http://127.0.0.1:14572'
         : 'https://qgewguqxyteoowbxeofi.supabase.co',
-    anonKey: kDebugMode
+    anonKey: false
         ? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0'
         : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZXdndXF4eXRlb293Ynhlb2ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2OTc2ODAsImV4cCI6MjA2NzI3MzY4MH0.UmaVdCukolvrboBhEDhgvXVVbxKZSV0r1TDjlozq0TI',
   );
