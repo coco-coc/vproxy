@@ -1117,7 +1117,7 @@ class XConfigHelper {
 
   Future<l.LoggerConfig> _getLoggerConfig() async {
     late final l.Level logLevel;
-    if (!isProduction() || (_persistentStateRepo.enableDebugLog && !isPkg)) {
+    if (!isProduction() || (_persistentStateRepo.enableDebugLog)) {
       logLevel = l.Level.DEBUG;
     } else {
       logLevel = l.Level.DISABLED;
@@ -1166,7 +1166,7 @@ class XConfigHelper {
   }
 }
 
-final useTcpForGrpc = Platform.isWindows || isPkg;
+final useTcpForGrpc = Platform.isWindows || isPkg || true;
 
 Future<String> grpcListenAddrUnix() async {
   late String address;

@@ -99,10 +99,14 @@ class RealtimeSpeedNotifier extends ChangeNotifier {
         _outboundRepo = outboundRepo {
     _statusStream = _controller.statusStream().listen((event) async {
       if (event == XStatus.connected) {
-        _speedStream =
-            (await _controller.outboundStatsStream(_interval)).listen((event) {
-          _process(event);
-        });
+        try {
+          _speedStream = (await _controller.outboundStatsStream(_interval))
+              .listen((event) {
+            _process(event);
+          });
+        } catch (e) {
+          logger.e("error starting speed stream", error: e);
+        }
       } else if (event == XStatus.disconnected) {
         uploadSpeed = null;
         downloadSpeed = null;
