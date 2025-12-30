@@ -7,17 +7,17 @@ import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/app/outbound/subscription.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/data/database.dart';
-import 'package:vx/data/sync.dart';
-import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/random.dart';
 // import 'package:vx/data/object_box.dart';
 
 // tag handlers change, single handler change,
 class OutboundRepo {
-  OutboundRepo(this.syncService);
+  OutboundRepo(
+    this._database,
+  );
 
-  SyncService? syncService;
+  final AppDatabase _database;
   final LruCache<String, String> _handlerIdToName = LruCache(500);
 
   /// id might be "1" or "1-2-3"(in the case of chain handler)
@@ -58,7 +58,7 @@ class OutboundRepo {
   }
 
   Future<List<OutboundHandler>> getAllHandlers() async {
-    return await database.managers.outboundHandlers.get();
+    return await _database.managers.outboundHandlers.get();
   }
 
   Future<List<OutboundHandler>> getHandlersByNodeGroup(NodeGroup group) async {
@@ -71,7 +71,7 @@ class OutboundRepo {
   }
 
   Future<void> addHandlerGroup(String name) async {
-    await database.syncInsertReturning(database.outboundHandlerGroups,
+    await _database.syncInsertReturning(_database.outboundHandlerGroups,
         OutboundHandlerGroupsCompanion(name: Value(name)));
     // await database
     //     .into(database.outboundHandlerGroups)
@@ -79,15 +79,15 @@ class OutboundRepo {
   }
 
   Future<void> removeHandlerGroup(String name) async {
-    await database.syncDeleteName(database.outboundHandlerGroups, name);
+    await _database.syncDeleteName(_database.outboundHandlerGroups, name);
     // await (database.delete(database.outboundHandlerGroups)
     //       ..where((g) => g.name.equals(name)))
     //     .go();
   }
 
   Future<void> addHandlerToGroup(String groupName, List<int> handlerIds) async {
-    await database.transactionInsertSync(
-        database.outboundHandlerGroupRelations,
+    await _database.transactionInsertSync(
+        _database.outboundHandlerGroupRelations,
         handlerIds
             .map((e) => OutboundHandlerGroupRelationsCompanion(
                 handlerId: Value(e), groupName: Value(groupName)))
@@ -97,16 +97,16 @@ class OutboundRepo {
   /// Get all handlers belonging to a specific group
   Future<List<OutboundHandler>> getHandlersByGroup(String groupName) async {
     // Join with the junction table to filter by group name
-    final q = database.select(database.outboundHandlers).join([
+    final q = _database.select(_database.outboundHandlers).join([
       innerJoin(
-          database.outboundHandlerGroupRelations,
-          database.outboundHandlerGroupRelations.handlerId
-              .equalsExp(database.outboundHandlers.id),
+          _database.outboundHandlerGroupRelations,
+          _database.outboundHandlerGroupRelations.handlerId
+              .equalsExp(_database.outboundHandlers.id),
           useColumns: false),
     ])
       ..where(
-          database.outboundHandlerGroupRelations.groupName.equals(groupName));
-    return q.map((row) => row.readTable(database.outboundHandlers)).get();
+          _database.outboundHandlerGroupRelations.groupName.equals(groupName));
+    return q.map((row) => row.readTable(_database.outboundHandlers)).get();
   }
 
   Future<List<OutboundHandler>> getHandlers(
@@ -143,7 +143,7 @@ class OutboundRepo {
           bool orderByPingAsc = false,
           int? limit}) {
     // Create a query to get handlers filtered by the parameters
-    final query = database.select(database.outboundHandlers);
+    final query = _database.select(_database.outboundHandlers);
 
     // Apply filters based on parameters
     if (subId != null) {
@@ -213,13 +213,13 @@ class OutboundRepo {
   }
 
   Future<OutboundHandler?> getHandlerById(int id) async {
-    return await (database.select(database.outboundHandlers)
+    return await (_database.select(_database.outboundHandlers)
           ..where((tbl) => tbl.id.equals(id)))
         .getSingleOrNull();
   }
 
   Future<List<Subscription>> getAllSubs() async {
-    return await (database.select(database.subscriptions)).get();
+    return await (_database.select(_database.subscriptions)).get();
   }
 
   // Future<void> removeHandlerById(int id) async {
@@ -228,7 +228,7 @@ class OutboundRepo {
   // }
 
   Future<void> removeHandlersByIds(List<int> ids) async {
-    await database.syncDeleteId(database.outboundHandlers, ids);
+    await _database.syncDeleteId(_database.outboundHandlers, ids);
     // await (database.delete(database.outboundHandlers)..where((tbl) => tbl.id.isIn(ids)))
     //     .go();
   }
@@ -239,28 +239,28 @@ class OutboundRepo {
       List<HandlerConfig> handlers,
       {String groupName = defaultGroupName}) async {
     final result = <OutboundHandler?>[];
-    await database.transaction(() async {
+    await _database.transaction(() async {
       // create group if not exists
       final existingGroup =
-          await (database.select(database.outboundHandlerGroups)
+          await (_database.select(_database.outboundHandlerGroups)
                 ..where((g) => g.name.equals(groupName)))
               .getSingleOrNull();
       if (existingGroup == null) {
-        await database
-            .into(database.outboundHandlerGroups)
+        await _database
+            .into(_database.outboundHandlerGroups)
             .insert(OutboundHandlerGroupsCompanion(name: Value(groupName)));
       }
       // insert handlers and relations
       for (var handler in handlers) {
-        final h = await database.syncInsertReturning(
-            database.outboundHandlers,
+        final h = await _database.syncInsertReturning(
+            _database.outboundHandlers,
             OutboundHandlersCompanion(
               id: Value(SnowflakeId.generate()),
               config: Value(handler),
             ));
         result.add(h);
-        await database.syncInsertReturning(
-            database.outboundHandlerGroupRelations,
+        await _database.syncInsertReturning(
+            _database.outboundHandlerGroupRelations,
             OutboundHandlerGroupRelationsCompanion(
                 handlerId: Value(h.id), groupName: Value(groupName)));
         // await database.into(database.outboundHandlerGroupRelations).insert(
@@ -289,9 +289,9 @@ class OutboundRepo {
       ping: ping != null ? Value(ping) : const Value.absent(),
       ok: ok != null ? Value(ok) : const Value.absent(),
     );
-    await database.transaction(() async {
+    await _database.transaction(() async {
       for (var id in ids) {
-        await (database.update(database.outboundHandlers)
+        await (_database.update(_database.outboundHandlers)
               ..where((t) => t.id.equals(id)))
             .write(companion);
       }
@@ -299,9 +299,9 @@ class OutboundRepo {
   }
 
   Future<void> updateHandlersTx(Map<int, OutboundHandlersCompanion> map) async {
-    await database.transaction(() async {
+    await _database.transaction(() async {
       for (var entry in map.entries) {
-        await (database.update(database.outboundHandlers)
+        await (_database.update(_database.outboundHandlers)
               ..where((t) => t.id.equals(entry.key)))
             .write(entry.value);
       }
@@ -319,7 +319,7 @@ class OutboundRepo {
       bool? selected,
       bool? enabled,
       String? serverIp}) async {
-    return (await (database.update(database.outboundHandlers)
+    return (await (_database.update(_database.outboundHandlers)
               ..where((t) => t.id.equals(id)))
             .writeReturning(OutboundHandlersCompanion(
       countryCode: country != null ? Value(country) : const Value.absent(),
@@ -339,34 +339,34 @@ class OutboundRepo {
 
   /// Replace an existing handler
   Future<void> replaceHandler(OutboundHandler h) async {
-    await (database.syncUpdateId(database.outboundHandlers, h.id,
+    await (_database.syncUpdateId(_database.outboundHandlers, h.id,
         h.toCompanion().copyWith(updatedAt: Value(DateTime.now()))));
   }
 
   Future<int> getNumOfSubs() async {
-    return (await (database.select(database.subscriptions)).get()).length;
+    return (await (_database.select(_database.subscriptions)).get()).length;
   }
 
   Future<List<Subscription>> getSubsByName(String name) async {
-    return await (database.select(database.subscriptions)
+    return await (_database.select(_database.subscriptions)
           ..where((tbl) => tbl.name.equals(name)))
         .get();
   }
 
   Future<List<OutboundHandlerGroup>> getGroups() async {
-    return await (database.select(database.outboundHandlerGroups)).get();
+    return await (_database.select(_database.outboundHandlerGroups)).get();
   }
 
   Stream<List<OutboundHandlerGroup>> getStreamOfGroups() {
-    return database.select(database.outboundHandlerGroups).watch();
+    return _database.select(_database.outboundHandlerGroups).watch();
   }
 
   Stream<List<MySubscription>> getStreamOfSubs({int? limit, bool? stared}) {
-    final q = database.select(database.subscriptions);
+    final q = _database.select(_database.subscriptions);
     if (stared != null) {
       q.where((tbl) => tbl.placeOnTop.equals(stared));
     }
-    
+
     q.orderBy([
       (t) => OrderingTerm(expression: t.placeOnTop, mode: OrderingMode.desc)
     ]);
@@ -395,14 +395,14 @@ class OutboundRepo {
     SubscriptionsCompanion sub,
   ) async {
     final newSub =
-        await database.syncInsertReturning(database.subscriptions, sub);
+        await _database.syncInsertReturning(_database.subscriptions, sub);
     return newSub;
   }
 
   Future<Subscription> updateSubscription(int id,
       {String? name, String? link, bool? enabled, bool? placeOnTop}) async {
-    return await database.syncUpdateId(
-        database.subscriptions,
+    return await _database.syncUpdateId(
+        _database.subscriptions,
         id,
         SubscriptionsCompanion(
           name: name != null ? Value(name) : const Value.absent(),
@@ -414,7 +414,7 @@ class OutboundRepo {
 
   Future<OutboundHandlerGroup> updateOutboundHandlerGroup(String name,
       {bool? placeOnTop}) async {
-    return (await (database.update(database.outboundHandlerGroups)
+    return (await (_database.update(_database.outboundHandlerGroups)
               ..where((t) => t.name.equals(name)))
             .writeReturning(OutboundHandlerGroupsCompanion(
       updatedAt: Value(DateTime.now()),
@@ -426,7 +426,7 @@ class OutboundRepo {
   /// remove a subscription and all its handlers
   Future<void> removeSubscription(int id) async {
     // await (database.delete(database.subscriptions)..where((t) => t.id.equals(id))).go();
-    await database.syncDeleteId(database.subscriptions, [id]);
+    await _database.syncDeleteId(_database.subscriptions, [id]);
   }
 }
 

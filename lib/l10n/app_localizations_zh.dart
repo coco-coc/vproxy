@@ -1540,7 +1540,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cloudSyncDesc1 => '多设备间同步数据库。';
 
   @override
-  String get cloudSyncDesc2 => '可以与谷歌FCM服务器正常通信的苹果设备和安卓设备（需装有谷歌服务）可以实现实时同步。其他设备会每5分钟同步一次。';
+  String get cloudSyncDesc2 => '可以与谷歌FCM服务器正常通信的苹果设备和安卓设备（需装有谷歌服务）可以实现实时同步。其他设备会每5分钟同步一次。您可以点击左上角V图标手动触发同步';
 
   @override
   String get cloudSyncDesc3 => '同步数据会在同步后自动从云端消除，如果一直没有同步，数据在云端最多保留7天。';

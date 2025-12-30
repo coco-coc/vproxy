@@ -276,15 +276,15 @@ Future<void> _init() async {
     }),
   ]);
 
+  // outbound repo
+  _outboundRepo = OutboundRepo(database);
   //  sync service
   syncService = SyncService(
       deviceId: await getUniqueDeviceId(),
       prefHelper: persistentStateRepo,
       storage: storage,
+      outboundRepo: _outboundRepo,
       authProvider: authProvider);
-  // outbound repo
-  _outboundRepo = OutboundRepo(syncService);
-  syncService.outboundRepo = _outboundRepo;
 
   authBloc = AuthBloc(authProvider, isActivated);
   xConfigHelper = XConfigHelper(
@@ -635,7 +635,12 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // logger.d(state);
+    logger.d(state);
+    if (state == AppLifecycleState.resumed) {
+      if (pref.getBool('shouldSync') ?? false) {
+        syncService.sync();
+      }
+    }
     super.didChangeAppLifecycleState(state);
   }
 
@@ -926,9 +931,11 @@ Future<void> _initPref() async {
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
-  // await Firebase.initializeApp();
+  // Background handlers run in a separate isolate, so we need to initialize
+  // everything from scratch. SharedPreferences and database CAN be used,
+  // but must be initialized in this isolate.
 
   print("Handling a background message: ${message.messageId}");
+  final sharedPref = await SharedPreferences.getInstance();
+  sharedPref.setBool('shouldSync', true);
 }

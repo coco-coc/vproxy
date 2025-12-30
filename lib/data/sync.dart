@@ -6,24 +6,22 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:protobuf/protobuf.dart';
 import 'package:tm/protos/protos/outbound.pb.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/auth/auth_provider.dart';
 import 'package:vx/data/database.dart';
-import 'package:vx/data/database_log.dart';
 import 'package:vx/data/ssh_server.dart';
 import 'package:vx/data/sync.pb.dart';
 import 'package:vx/main.dart' hide App;
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/encrypt.dart';
 import 'package:vx/utils/logger.dart';
-import 'package:vx/utils/device.dart';
 
 class SyncService with ChangeNotifier {
   final String deviceId;
   String? fcmToken;
+  bool errorGettingFcmToken = false;
   StreamSubscription<String>? fcmTokenSubscription;
 
   // Batch processing fields for incoming operations (from server)
@@ -38,7 +36,7 @@ class SyncService with ChangeNotifier {
   bool _isUploading = false;
 
   final PrefHelper prefHelper;
-  late final OutboundRepo outboundRepo;
+  final OutboundRepo outboundRepo;
   OutboundBloc? outboundBloc;
   FlutterSecureStorage storage;
   bool enable = false;
@@ -54,7 +52,8 @@ class SyncService with ChangeNotifier {
       {required this.deviceId,
       required this.prefHelper,
       required this.storage,
-      required this.authProvider}) {
+      required this.authProvider,
+      required this.outboundRepo}) {
     logger.i('SyncService initialized with deviceId: $deviceId');
 
     _userSubscription = authProvider.user.listen((user) {
@@ -75,7 +74,12 @@ class SyncService with ChangeNotifier {
     if (enable) {
       logger.d('enable sync');
       if (fcmEnabled) {
-        fcmToken ??= await FirebaseMessaging.instance.getToken();
+        try {
+          fcmToken ??= await FirebaseMessaging.instance.getToken();
+        } catch (e) {
+          logger.e('Failed to get FCM token', error: e);
+          errorGettingFcmToken = true;
+        }
         fcmTokenSubscription ??=
             FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
           this.fcmToken = fcmToken;
@@ -144,16 +148,19 @@ class SyncService with ChangeNotifier {
     } else if (prefHelper.deviceIdRefreshTime!
             .isBefore(DateTime.now().subtract(const Duration(days: 15))) ||
         (prefHelper.fcmToken != fcmToken)) {
-      supabase.from('device_id_tokens').update({
+      final Map<String, dynamic> m = {
         'user_id': supabase.auth.currentUser!.id,
         'device_id': deviceId,
-        'fcm_token': fcmToken,
         'updated_at': DateTime.now().toIso8601String(),
-      });
+      };
+      if (!errorGettingFcmToken) {
+        m['fcm_token'] = fcmToken;
+      }
+      supabase.from('device_id_tokens').update(m);
       prefHelper.setDeviceIdUpdateTime(DateTime.now());
     }
-    if (fcmToken != null) {
-      prefHelper.setFcmToken(fcmToken!);
+    if (!errorGettingFcmToken) {
+      prefHelper.setFcmToken(fcmToken);
     }
   }
 
@@ -325,21 +332,6 @@ class SyncService with ChangeNotifier {
           .eq('user_id', supabase.auth.currentUser!.id)
           .eq('device_id', deviceId)
           .select();
-      // if (operationsRaw.isNotEmpty) {
-      //   // TODO: use trigger to make it more efficient
-      //   // delete all sync operations of this user and device id
-      //   supabase
-      //       .from('sync_operations')
-      //       .delete()
-      //       .eq('user_id', supabase.auth.currentUser!.id)
-      //       .eq('device_id', deviceId)
-      //       .then((value) {
-      //     logger.i('Deleted ${value} sync operations');
-      //   }).catchError((e) {
-      //     logger.e('Failed to delete sync operations', error: e);
-      //   });
-      // }
-
       final operations = operationsRaw
           .map((e) {
             print("sync operation: ${e['data']}");
@@ -347,7 +339,7 @@ class SyncService with ChangeNotifier {
           })
           .expand((e) => e.operations)
           .toList();
-      
+
       print("sync operations: ${operations.length}");
 
       // Add operation to cache
@@ -688,5 +680,51 @@ class SyncService with ChangeNotifier {
 
     logger.i('SyncService disposed');
     super.dispose();
+  }
+}
+
+extension SqlArgumentExtension on SqlArgument {
+  static SqlArgument fromObject(Object? arg) {
+    if (arg == null) {
+      return SqlArgument();
+    }
+    switch (arg) {
+      case String s:
+        return SqlArgument(string: s);
+      case BigInt b:
+        return SqlArgument(int64: Int64((b).toInt()));
+      case int i:
+        return SqlArgument(int32: i);
+      case bool b:
+        return SqlArgument(bool_4: b);
+      case Uint8List u:
+        return SqlArgument(bytes: u);
+      case double d:
+        return SqlArgument(double_6: d);
+      default:
+        throw Exception('Unsupported argument type: ${arg.runtimeType}');
+    }
+  }
+
+  Object? toObject() {
+    if (hasIsNull()) {
+      return null;
+    }
+    switch (whichType()) {
+      case SqlArgument_Type.string:
+        return string;
+      case SqlArgument_Type.int64:
+        return int64.toInt();
+      case SqlArgument_Type.int32:
+        return int32;
+      case SqlArgument_Type.bool_4:
+        return bool_4;
+      case SqlArgument_Type.bytes:
+        return bytes;
+      case SqlArgument_Type.double_6:
+        return double_6;
+      case SqlArgument_Type.notSet:
+        return null;
+    }
   }
 }

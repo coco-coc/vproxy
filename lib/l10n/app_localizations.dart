@@ -2962,7 +2962,7 @@ abstract class AppLocalizations {
   /// No description provided for @cloudSyncDesc2.
   ///
   /// In en, this message translates to:
-  /// **'For Android devices with Google Services installed and Apple devices that can communicate with Google FCM servers, sync are real-time. Otherwise, sync will happen every 5 minutes.'**
+  /// **'For Android devices with Google Services installed and notification on and Apple devices that can communicate with Google FCM servers, sync are real-time. Otherwise, sync will happen every 5 minutes, you can click the top left V logo icon to trigger a sync manually.'**
   String get cloudSyncDesc2;
 
   /// No description provided for @cloudSyncDesc3.
