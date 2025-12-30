@@ -250,7 +250,7 @@ class OutboundTableState extends State<OutboundTable> {
                                           (state.using4, state.handlers),
                                       builder: (ctx, r) {
                                         if (r.$2.isEmpty) {
-                                          return Center(
+                                          return const Center(
                                             child: AddMenuAnchor(
                                               elevatedButton: true,
                                             ),
@@ -345,6 +345,8 @@ class OutboundTableState extends State<OutboundTable> {
                                             ],
                                           );
                                         } else {
+                                          print(
+                                              'handler being used list view ${r.$1}');
                                           // List View
                                           return CustomScrollView(
                                             controller: _scrollController,
@@ -531,7 +533,9 @@ class _HandlerRowState extends State<HandlerRow> {
   @override
   void didUpdateWidget(covariant HandlerRow oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.handler != widget.handler || oldWidget.cols != widget.cols) {
+    if (oldWidget.handler != widget.handler ||
+        oldWidget.cols != widget.cols ||
+        oldWidget.showDot != widget.showDot) {
       _shouldRebuild = true;
     }
   }

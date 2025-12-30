@@ -1663,6 +1663,18 @@ abstract class AppLocalizations {
   /// **'{deploy} on Server-{server} succeeded'**
   String deploySuccess(String deploy, String server);
 
+  /// No description provided for @bbrError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to enable BBR: {error}'**
+  String bbrError(String error);
+
+  /// No description provided for @firewallError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to disable OS firewall: {error}'**
+  String firewallError(String error);
+
   /// No description provided for @failedToDeploy.
   ///
   /// In en, this message translates to:
@@ -2950,7 +2962,7 @@ abstract class AppLocalizations {
   /// No description provided for @cloudSyncDesc2.
   ///
   /// In en, this message translates to:
-  /// **'For Android devices with Google Services installed and Apple devices that can communicate with Google FCM servers, sync are real-time. Otherwise, sync will happen every 5 minutes.'**
+  /// **'For Android devices with Google Services installed and notification on and Apple devices that can communicate with Google FCM servers, sync are real-time. Otherwise, sync will happen every 5 minutes, you can click the top left V logo icon to trigger a sync manually.'**
   String get cloudSyncDesc2;
 
   /// No description provided for @cloudSyncDesc3.
@@ -4080,6 +4092,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Expired'**
   String get expired;
+
+  /// No description provided for @deploySuccessWarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Deploy nodes successfully, but these tasks failed: '**
+  String get deploySuccessWarnings;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

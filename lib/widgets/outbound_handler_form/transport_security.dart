@@ -925,40 +925,43 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
         ),
         const Gap(10),
         if (widget.server)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: TextFormField(
-              controller: _privateKeyController,
-              maxLines: 2,
-              decoration: InputDecoration(
-                label: Text('Private Key(base64URL)'),
-                helper: Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                      onPressed: () async {
-                        final (publicKey, privateKey) = await context
-                            .read<XApiClient>()
-                            .generateX25519KeyPair();
-                        _publicKeyController.text = publicKey;
-                        _privateKeyController.text = privateKey;
-                      },
-                      child: Text(AppLocalizations.of(context)!.generate)),
+          Column(
+            children: [
+              TextFormField(
+                controller: _privateKeyController,
+                maxLines: 2,
+                decoration: InputDecoration(
+                  label: Text('Private Key(base64URL)'),
                 ),
-              ),
-              validator: (value) {
-                if (value != null && value.isNotEmpty) {
-                  try {
-                    final normalized = base64Url.normalize(value.trim());
-                    widget.config.privateKey = base64Url.decode(normalized);
-                  } catch (e) {
-                    return 'Invalid base64URL format: ${e.toString()}';
+                validator: (value) {
+                  if (value != null && value.isNotEmpty) {
+                    try {
+                      final normalized = base64Url.normalize(value.trim());
+                      widget.config.privateKey = base64Url.decode(normalized);
+                    } catch (e) {
+                      return 'Invalid base64URL format: ${e.toString()}';
+                    }
+                  } else {
+                    return AppLocalizations.of(context)!.empty;
                   }
-                } else {
-                  return AppLocalizations.of(context)!.empty;
-                }
-                return null;
-              },
-            ),
+                  return null;
+                },
+              ),
+              const Gap(2),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                    onPressed: () async {
+                      final (publicKey, privateKey) = await context
+                          .read<XApiClient>()
+                          .generateX25519KeyPair();
+                      _publicKeyController.text = publicKey;
+                      _privateKeyController.text = privateKey;
+                    },
+                    child: Text(AppLocalizations.of(context)!.generate)),
+              ),
+              const Gap(2),
+            ],
           ),
         TextFormField(
           controller: _shortIdController,

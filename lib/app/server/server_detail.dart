@@ -331,16 +331,94 @@ class _QuickDeployState extends State<QuickDeploy> {
     );
     if (result == true) {
       try {
-        await deployer.deploy(widget.server, option).then((list) {
-          outboundBloc.add(AddHandlersEvent(list));
-        });
+        final deployResult = await deployer.deploy(widget.server, option);
+        outboundBloc.add(AddHandlersEvent(deployResult.handlerConfigs));
         if (option is AllInOneQuickDeploy) {
           vxBloc.add(VXReloadConfigEvent());
         }
-        snack(rootLocalizations()
-            ?.deploySuccess(option.getTitle(context), widget.server.name));
+
+        // Show success dialog with any warnings
+        final hasWarnings = deployResult.bbrError.isNotEmpty ||
+            deployResult.firewallError.isNotEmpty;
+        final warnings = <String>[];
+        if (deployResult.bbrError.isNotEmpty) {
+          warnings.add(rootLocalizations()?.bbrError(deployResult.bbrError) ??
+              'BBR failed to enable');
+        }
+        if (deployResult.firewallError.isNotEmpty) {
+          warnings.add(
+              rootLocalizations()?.firewallError(deployResult.firewallError) ??
+                  'Firewall failed to disable');
+        }
+
+        if (rootNavigationKey.currentState?.mounted == true) {
+          showDialog(
+            context: rootNavigationKey.currentState!.context,
+            builder: (context) => AlertDialog(
+              icon: Icon(
+                Icons.check_circle,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              title: Text(
+                hasWarnings
+                    ? AppLocalizations.of(context)!.deploySuccessWarnings
+                    : AppLocalizations.of(context)!.deploySuccess(
+                        option.getTitle(context), widget.server.name),
+              ),
+              content: hasWarnings
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ...warnings.map((warning) => Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.error_outline,
+                                    size: 20,
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                                  const Gap(8),
+                                  Expanded(
+                                    child: Text(
+                                      warning,
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
+                      ],
+                    )
+                  : null,
+            ),
+          );
+        }
       } catch (e) {
-        snack(rootLocalizations()?.failedToDeploy(e.toString()));
+        if (rootNavigationKey.currentState?.mounted == true) {
+          showDialog(
+            context: rootNavigationKey.currentState!.context,
+            builder: (context) => AlertDialog(
+              icon: Icon(
+                Icons.error_outline_rounded,
+                color: Theme.of(context).colorScheme.error,
+                size: 48,
+              ),
+              title: Text(
+                AppLocalizations.of(context)!.failedToDeploy(e.toString()),
+              ),
+              actions: [
+                FilledButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(AppLocalizations.of(context)!.close),
+                ),
+              ],
+            ),
+          );
+        }
       }
     }
   }

@@ -1,12 +1,24 @@
 part of 'deployer.dart';
 
+class DeployResult {
+  final List<HandlerConfig> handlerConfigs;
+  final String bbrError;
+  final String firewallError;
+
+  DeployResult({
+    required this.handlerConfigs,
+    required this.bbrError,
+    required this.firewallError,
+  });
+}
+
 abstract class QuickDeployOption {
   abstract final int id;
   String getTitle(BuildContext context);
   String getSummary(BuildContext context);
   String getDetails(BuildContext context);
   Widget getFormWidget(BuildContext context, {String? destination});
-  Future<List<HandlerConfig>> deploy(SshServer server);
+  Future<DeployResult> deploy(SshServer server);
 
   bool disableOSFirewall = true;
   void setDisableOSFirewall(bool value) {
@@ -71,7 +83,7 @@ class BasicQuickDeploy extends QuickDeployOption {
   }
 
   @override
-  Future<List<HandlerConfig>> deploy(SshServer server) async {
+  Future<DeployResult> deploy(SshServer server) async {
     final ports = generateUniqueNumbers(10, min: 10000, max: 49152);
     final vmessPorts = ports.sublist(0, 5).join(',');
     final ssPorts = ports.sublist(5, 10).join(',');
@@ -101,16 +113,17 @@ class BasicQuickDeploy extends QuickDeployOption {
     final domain = generateRealisticDomain();
     final certResponse = await xApiClient.generateCert(domain);
 
-    await xApiClient.deploy(
+    final result = await xApiClient.deploy(
         server: server,
         xrayConfig: utf8.encode(xrayConfig),
         hysteriaConfig: utf8.encode(hysteriaConfig),
+        disableOSFirewall: disableOSFirewall,
         files: {
           certPath: Uint8List.fromList(certResponse.cert),
           keyPath: Uint8List.fromList(certResponse.key),
         });
 
-    return [
+    return DeployResult(handlerConfigs: [
       HandlerConfig(
           outbound: OutboundHandlerConfig(
               tag: '${server.name} vmess',
@@ -156,7 +169,7 @@ class BasicQuickDeploy extends QuickDeployOption {
                   ])),
               protocol: Any.pack(VlessClientConfig(
                   id: uuid, flow: 'xtls-rprx-vision', encryption: 'none'))))
-    ];
+    ], bbrError: result.bbrError, firewallError: result.firewallError);
   }
 }
 
@@ -195,7 +208,7 @@ class MasqueradeQuickDeploy extends QuickDeployOption {
   }
 
   // TODO: use ss for cdn since it is not encrypted
-  Future<List<HandlerConfig>> deploy(SshServer server) async {
+  Future<DeployResult> deploy(SshServer server) async {
     var xrayConfig = await rootBundle.loadString('assets/configs/2_xray.json');
     final uuid = const Uuid().v4();
     xrayConfig = xrayConfig.replaceAll('__UUID__', uuid);
@@ -254,9 +267,10 @@ class MasqueradeQuickDeploy extends QuickDeployOption {
     //   xrayConfig = xrayConfig.replaceAll('__XHTTP_LISTEN__', '127.0.0.1');
     // }
 
-    await xApiClient.deploy(
+    final result = await xApiClient.deploy(
       server: server,
       xrayConfig: utf8.encode(xrayConfig),
+      disableOSFirewall: disableOSFirewall,
     );
     final realityConfig = RealityConfig(
       fingerprint: "chrome",
@@ -277,7 +291,7 @@ class MasqueradeQuickDeploy extends QuickDeployOption {
     final tlsConfig = TlsConfig(
       serverName: cdnDomain,
     );
-    return [
+    return DeployResult(handlerConfigs: [
       ...[
         HandlerConfig(
             outbound: OutboundHandlerConfig(
@@ -409,7 +423,7 @@ class MasqueradeQuickDeploy extends QuickDeployOption {
                     ),
                     tls: tlsConfig))),
       ],
-    ];
+    ], bbrError: result.bbrError, firewallError: result.firewallError);
   }
 }
 
@@ -632,7 +646,7 @@ class AllInOneQuickDeploy extends QuickDeployOption {
     return AllInOneForm(deploy: this, destination: destination!);
   }
 
-  Future<List<HandlerConfig>> deploy(SshServer server) async {
+  Future<DeployResult> deploy(SshServer server) async {
     final websocketPath = '/' + const Uuid().v4();
     final xhttpPath = '/' + const Uuid().v4();
     final httpUpgradePath = '/' + const Uuid().v4();
@@ -712,9 +726,10 @@ class AllInOneQuickDeploy extends QuickDeployOption {
           ]),
     ]);
 
-    await xApiClient.deploy(
+    final result = await xApiClient.deploy(
       server: server,
       serverConfig: serverConfig,
+      disableOSFirewall: disableOSFirewall,
     );
 
     final handlerConfigs = (await xApiClient.convertInboundToOutbound(server,
@@ -739,7 +754,10 @@ class AllInOneQuickDeploy extends QuickDeployOption {
       ));
     }
 
-    return handlerConfigs;
+    return DeployResult(
+        handlerConfigs: handlerConfigs,
+        bbrError: result.bbrError,
+        firewallError: result.firewallError);
   }
 }
 

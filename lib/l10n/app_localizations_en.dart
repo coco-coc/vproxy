@@ -908,6 +908,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String bbrError(String error) {
+    return 'Failed to enable BBR: $error';
+  }
+
+  @override
+  String firewallError(String error) {
+    return 'Failed to disable OS firewall: $error';
+  }
+
+  @override
   String failedToDeploy(String value) {
     return 'Failed to deploy: $value';
   }
@@ -1580,7 +1590,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cloudSyncDesc1 => 'Sync your database between multiple devices. ';
 
   @override
-  String get cloudSyncDesc2 => 'For Android devices with Google Services installed and Apple devices that can communicate with Google FCM servers, sync are real-time. Otherwise, sync will happen every 5 minutes.';
+  String get cloudSyncDesc2 => 'For Android devices with Google Services installed and notification on and Apple devices that can communicate with Google FCM servers, sync are real-time. Otherwise, sync will happen every 5 minutes, you can click the top left V logo icon to trigger a sync manually.';
 
   @override
   String get cloudSyncDesc3 => 'The sync data will be automatically cleared from the cloud after your device have fetched them. If your device has not fetched them for 7 days, the data will deleted from the cloud.';
@@ -2149,4 +2159,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expired => 'Expired';
+
+  @override
+  String get deploySuccessWarnings => 'Deploy nodes successfully, but these tasks failed: ';
 }

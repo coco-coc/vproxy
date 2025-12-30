@@ -732,8 +732,12 @@ class PrefHelper {
     return _pref.getString('fcmToken');
   }
 
-  void setFcmToken(String token) {
-    _pref.setString('fcmToken', token);
+  void setFcmToken(String? token) {
+    if (token == null) {
+      _pref.remove('fcmToken');
+    } else {
+      _pref.setString('fcmToken', token);
+    }
   }
 
   int get machineId {

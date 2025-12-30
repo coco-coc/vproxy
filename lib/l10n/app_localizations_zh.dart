@@ -858,6 +858,16 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String bbrError(String error) {
+    return '启用BBR失败: $error';
+  }
+
+  @override
+  String firewallError(String error) {
+    return '禁用OS防火墙失败: $error';
+  }
+
+  @override
   String failedToDeploy(String value) {
     return '部署失败: $value';
   }
@@ -1530,7 +1540,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cloudSyncDesc1 => '多设备间同步数据库。';
 
   @override
-  String get cloudSyncDesc2 => '可以与谷歌FCM服务器正常通信的苹果设备和安卓设备（需装有谷歌服务）可以实现实时同步。其他设备会每5分钟同步一次。';
+  String get cloudSyncDesc2 => '可以与谷歌FCM服务器正常通信的苹果设备和安卓设备（需装有谷歌服务）可以实现实时同步。其他设备会每5分钟同步一次。您可以点击左上角V图标手动触发同步';
 
   @override
   String get cloudSyncDesc3 => '同步数据会在同步后自动从云端消除，如果一直没有同步，数据在云端最多保留7天。';
@@ -2099,4 +2109,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get expired => '已过期';
+
+  @override
+  String get deploySuccessWarnings => '部署节点成功，但这些任务失败: ';
 }

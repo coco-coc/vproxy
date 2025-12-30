@@ -9,7 +9,7 @@ license: Commercial
 display_name: VX
 
 postinstall_scripts:
-  - chmod +x /usr/share/vx/data/flutter_assets/packages/tm_linux/assets/x
+  - chmod +x /usr/share/vxproxyclient/data/flutter_assets/packages/tm_linux/assets/x
   - echo "Installed VX"
   #- echo "VX requires root privileges to function properly"
   #- echo "Setting up network permissions..."

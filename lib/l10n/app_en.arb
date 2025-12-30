@@ -360,6 +360,22 @@
       }
     }
   },
+  "bbrError": "Failed to enable BBR: {error}",
+  "@bbrError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "firewallError": "Failed to disable OS firewall: {error}",
+  "@firewallError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "failedToDeploy": "Failed to deploy: {value}",
   "@failedToDeploy": {
     "placeholders": {
@@ -659,7 +675,7 @@
   "syncBackup": "Sync & Backup",
   "cloudSync": "Cloud Sync",
   "cloudSyncDesc1": "Sync your database between multiple devices. ",
-  "cloudSyncDesc2": "For Android devices with Google Services installed and Apple devices that can communicate with Google FCM servers, sync are real-time. Otherwise, sync will happen every 5 minutes.",
+  "cloudSyncDesc2": "For Android devices with Google Services installed and notification on and Apple devices that can communicate with Google FCM servers, sync are real-time. Otherwise, sync will happen every 5 minutes, you can click the top left V logo icon to trigger a sync manually.",
   "cloudSyncDesc3": "The sync data will be automatically cleared from the cloud after your device have fetched them. If your device has not fetched them for 7 days, the data will deleted from the cloud.",
   "nodeSub": "Node/Subscription",
   "routeSetDNSSelector": "Rule/Set/Selector/DNS",
@@ -865,5 +881,6 @@
   "apply": "Apply",
   "remainingTime": "Remaining Times",
   "scanQrCode": "Scan QR Code",
-  "expired": "Expired"
+  "expired": "Expired",
+  "deploySuccessWarnings": "Deploy nodes successfully, but these tasks failed: "
 }

@@ -46,7 +46,7 @@ class Deployer with ChangeNotifier {
   /// Set of servers that are under deployment
   final deploying = <int>{};
 
-  Future<List<HandlerConfig>> deploy(
+  Future<DeployResult> deploy(
       SshServer server, QuickDeployOption option) async {
     if (deploying.contains(server.id)) {
       throw Exception('Server is under deployment');
@@ -54,19 +54,8 @@ class Deployer with ChangeNotifier {
     deploying.add(server.id);
     notifyListeners();
 
-    final handlers = <HandlerConfig>[];
     try {
-      switch (option.runtimeType) {
-        case BasicQuickDeploy:
-          handlers.addAll(await option.deploy(server));
-        case MasqueradeQuickDeploy:
-          handlers.addAll(await option.deploy(server));
-        case AllInOneQuickDeploy:
-          handlers.addAll(await option.deploy(server));
-        default:
-          throw Exception('Invalid option');
-      }
-      return handlers;
+      return await option.deploy(server);
     } catch (e) {
       logger.e('Failed to deploy', error: e);
       // await reportError(e, StackTrace.current);
