@@ -407,14 +407,11 @@ jobs:
         run: |
           gh release download ${{ steps.get_version.outputs.version }} \
             -R 5VNetwork/vx \
-            -p "VXInstaller.exe" \
-            -p "VXInstaller-arm64.exe"
+            -p "VXInstaller.exe" 
 
       - name: Upload Windows Installer to R2
         run: |
           aws s3 cp VXInstaller.exe s3://vproxy/ \
             --profile r2 \
             --endpoint-url https://37c1d94ef4ab81c55c6e7d0158613800.r2.cloudflarestorage.com
-          aws s3 cp VXInstaller-arm64.exe s3://vproxy/ \
-            --profile r2 \
-            --endpoint-url https://37c1d94ef4ab81c55c6e7d0158613800.r2.cloudflarestorage.com
+       
