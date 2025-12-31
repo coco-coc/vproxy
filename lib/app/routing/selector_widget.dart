@@ -18,7 +18,10 @@ import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:vx/pref_helper.dart';
+import 'package:vx/utils/geoip.dart';
 import 'package:vx/utils/logger.dart';
+import 'package:vx/widgets/divider.dart';
 import 'package:vx/widgets/form_dialog.dart';
 import 'package:vx/widgets/info_widget.dart';
 
@@ -88,21 +91,6 @@ class _SelectorWidgetState extends State<SelectorWidget> {
       xController.selectorSelectStrategyOrLandhandlerChange(hs);
     }
   }
-
-  // void _onRename(int index) async {
-  //   final name = await showStringForm(context,
-  //       initialValue: _configs[index].name,
-  //       title: '重命名选择器',
-  //       helperText: '选择器名称不能重复');
-  //   if (name != null) {
-  //     _configs[index] =
-  //         HandlerSelector(name: name, config: _configs[index].config);
-  //     database.managers.handlerSelectors
-  //         .filter((f) => f.name(_configs[index].name))
-  //         .update((f) => f(name: Value(name)));
-  //     setState(() {});
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -243,58 +231,6 @@ class _SelectorConfigWidgetState extends State<SelectorConfigWidget>
     }
   }
 
-  void _onHandlerChange(
-      int handlerId,
-      bool selected,
-      Function(void Function()) setState,
-      ValueNotifier<int> valueListenable,
-      Map<int, bool> selectedMap) async {
-    try {
-      if (selected) {
-        await _repo.addHandlerToSelector(widget.config.tag, handlerId);
-        widget.config.filter.handlerIds.add(Int64(handlerId));
-        valueListenable.value++;
-        selectedMap[handlerId] = true;
-      } else {
-        await _repo.removeHandlerFromSelector(widget.config.tag, handlerId);
-        widget.config.filter.handlerIds.remove(Int64(handlerId));
-        valueListenable.value--;
-        selectedMap[handlerId] = false;
-      }
-    } catch (e) {
-      logger.e('Error changing handler: $e');
-      snack(e.toString());
-    }
-    setState(() {});
-    widget.onFilterChange();
-  }
-
-  void _onHandlerGroupChange(String groupName, bool selected,
-      Function(void Function()) setState) async {
-    if (selected) {
-      await _repo.addHandlerGroupToSelector(widget.config.tag, groupName);
-      widget.config.filter.groupTags.add(groupName);
-    } else {
-      await _repo.removeHandlerGroupFromSelector(widget.config.tag, groupName);
-      widget.config.filter.groupTags.remove(groupName);
-    }
-    setState(() {});
-    widget.onFilterChange();
-  }
-
-  void _onSubChange(
-      int subId, bool selected, Function(void Function()) setState) async {
-    if (selected) {
-      await _repo.addSubscriptionToSelector(widget.config.tag, subId);
-      widget.config.filter.subIds.add(Int64(subId));
-    } else {
-      await _repo.removeSubscriptionFromSelector(widget.config.tag, subId);
-      widget.config.filter.subIds.remove(Int64(subId));
-    }
-    setState(() {});
-    widget.onFilterChange();
-  }
-
   @override
   void initState() {
     super.initState();
@@ -398,188 +334,10 @@ class _SelectorConfigWidgetState extends State<SelectorConfigWidget>
           ],
         ),
         if (!widget.config.filter.all)
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Row(
-              children: [
-                MenuAnchor(
-                  consumeOutsideTap: true,
-                  menuChildren:
-                      context.read<OutboundBloc>().state.groups.map((e) {
-                    return FutureBuilder(
-                      future: context
-                          .read<OutboundRepo>()
-                          .getHandlersByNodeGroup(e),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const SizedBox.shrink();
-                        }
-                        final valueListenable = ValueNotifier(0);
-                        final selectedMap = <int, bool>{};
-                        for (var handler in snapshot.data
-                                ?.where((e) => e.config.hasOutbound()) ??
-                            <OutboundHandler>[]) {
-                          selectedMap[handler.id] = widget
-                              .config.filter.handlerIds
-                              .contains(Int64(handler.id));
-                          if (selectedMap[handler.id]!) {
-                            valueListenable.value++;
-                          }
-                        }
-                        return SubmenuButton(
-                          leadingIcon: ValueListenableBuilder(
-                              valueListenable: valueListenable,
-                              builder: (context, value, child) {
-                                return value > 0
-                                    ? const Icon(Icons.check_box_outlined)
-                                    : const Icon(
-                                        Icons.check_box_outline_blank_rounded);
-                              }),
-                          menuChildren: snapshot.data
-                                  ?.where((e) => e.config.hasOutbound())
-                                  .map((e) {
-                                return StatefulBuilder(
-                                    builder: (ctx, setState) {
-                                  // bool handlerSelected = widget
-                                  //     .config.filter.handlerIds
-                                  //     .contains(Int64(e.id));
-                                  return MenuItemButton(
-                                    leadingIcon: Checkbox(
-                                        value: selectedMap[e.id],
-                                        onChanged: (value) {
-                                          _onHandlerChange(
-                                              e.id,
-                                              value ?? false,
-                                              setState,
-                                              valueListenable,
-                                              selectedMap);
-                                        }),
-                                    closeOnActivate: false,
-                                    onPressed: () {
-                                      _onHandlerChange(
-                                          e.id,
-                                          !selectedMap[e.id]!,
-                                          setState,
-                                          valueListenable,
-                                          selectedMap);
-                                    },
-                                    child: Text(e.name),
-                                  );
-                                });
-                              }).toList() ??
-                              [],
-                          child:
-                              Text(groupNametoLocalizedName(context, e.name)),
-                        );
-                      },
-                    );
-                  }).toList(),
-                  builder: (context, controller, child) {
-                    return ActionChip(
-                      label: Text(AppLocalizations.of(context)!.node),
-                      labelPadding: const EdgeInsets.symmetric(horizontal: 6),
-                      avatar: widget.config.filter.handlerIds.isNotEmpty
-                          ? const Icon(
-                              Icons.check_box_outlined,
-                            )
-                          : const Icon(
-                              Icons.check_box_outline_blank_rounded,
-                            ),
-                      onPressed: () {
-                        if (controller.isOpen) {
-                          controller.close();
-                        } else {
-                          controller.open();
-                        }
-                      },
-                    );
-                  },
-                ),
-                const Gap(5),
-                MenuAnchor(
-                  consumeOutsideTap: true,
-                  menuChildren: context
-                      .read<OutboundBloc>()
-                      .state
-                      .groups
-                      .map((e) => StatefulBuilder(builder: (context, setState) {
-                            late bool groupSelected;
-                            if (e is MySubscription) {
-                              groupSelected = widget.config.filter.subIds
-                                  .contains(Int64(e.id));
-                            } else {
-                              groupSelected = widget.config.filter.groupTags
-                                  .contains(e.name);
-                            }
-                            return MenuItemButton(
-                              leadingIcon: Checkbox(
-                                  value: groupSelected,
-                                  onChanged: (value) {
-                                    if (value == true) {
-                                      if (e is MySubscription) {
-                                        _onSubChange(e.id, true, setState);
-                                      } else {
-                                        _onHandlerGroupChange(
-                                            e.name, true, setState);
-                                      }
-                                    } else {
-                                      if (e is MySubscription) {
-                                        _onSubChange(e.id, false, setState);
-                                      } else {
-                                        _onHandlerGroupChange(
-                                            e.name, false, setState);
-                                      }
-                                    }
-                                  }),
-                              closeOnActivate: false,
-                              onPressed: () {
-                                if (groupSelected) {
-                                  if (e is MySubscription) {
-                                    _onSubChange(e.id, false, setState);
-                                  } else {
-                                    _onHandlerGroupChange(
-                                        e.name, false, setState);
-                                  }
-                                } else {
-                                  if (e is MySubscription) {
-                                    _onSubChange(e.id, true, setState);
-                                  } else {
-                                    _onHandlerGroupChange(
-                                        e.name, true, setState);
-                                  }
-                                }
-                              },
-                              child: Text(
-                                  groupNametoLocalizedName(context, e.name)),
-                            );
-                          }))
-                      .toList(),
-                  builder: (context, controller, child) {
-                    return ActionChip(
-                      label: Text(AppLocalizations.of(context)!.nodeGroup),
-                      labelPadding: const EdgeInsets.symmetric(horizontal: 6),
-                      avatar: widget.config.filter.groupTags.isNotEmpty ||
-                              widget.config.filter.subIds.isNotEmpty
-                          ? const Icon(
-                              Icons.check_box_outlined,
-                            )
-                          : const Icon(
-                              Icons.check_box_outline_blank_rounded,
-                            ),
-                      onPressed: () {
-                        if (controller.isOpen) {
-                          controller.close();
-                        } else {
-                          controller.open();
-                        }
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
+          _SelectorFilter(
+              config: widget.config,
+              selectorRepo: _repo,
+              onFilterChange: widget.onFilterChange),
         const Gap(10),
         Text(AppLocalizations.of(context)!.selectingStrategy,
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
@@ -682,6 +440,432 @@ class _SelectorConfigWidgetState extends State<SelectorConfigWidget>
           ],
         )
       ],
+    );
+  }
+}
+
+class _SelectorFilter extends StatefulWidget {
+  const _SelectorFilter({
+    super.key,
+    required this.config,
+    required this.selectorRepo,
+    required this.onFilterChange,
+  });
+
+  final SelectorConfig config;
+  final SelectorRepo selectorRepo;
+  final Function() onFilterChange;
+  @override
+  State<_SelectorFilter> createState() => _SelectorFilterState();
+}
+
+class _SelectorFilterState extends State<_SelectorFilter> {
+  void _onHandlerChange(
+      int handlerId,
+      bool selected,
+      Function(void Function()) setState,
+      ValueNotifier<int> valueListenable,
+      Map<int, bool> selectedMap) async {
+    try {
+      if (selected) {
+        await widget.selectorRepo
+            .addHandlerToSelector(widget.config.tag, handlerId);
+        widget.config.filter.handlerIds.add(Int64(handlerId));
+        valueListenable.value++;
+        selectedMap[handlerId] = true;
+      } else {
+        await widget.selectorRepo
+            .removeHandlerFromSelector(widget.config.tag, handlerId);
+        widget.config.filter.handlerIds.remove(Int64(handlerId));
+        valueListenable.value--;
+        selectedMap[handlerId] = false;
+      }
+    } catch (e) {
+      logger.e('Error changing handler: $e');
+      snack(e.toString());
+    }
+    setState(() {});
+    widget.onFilterChange();
+  }
+
+  void _onHandlerGroupChange(String groupName, bool selected,
+      Function(void Function()) setState) async {
+    if (selected) {
+      await widget.selectorRepo
+          .addHandlerGroupToSelector(widget.config.tag, groupName);
+      widget.config.filter.groupTags.add(groupName);
+    } else {
+      await widget.selectorRepo
+          .removeHandlerGroupFromSelector(widget.config.tag, groupName);
+      widget.config.filter.groupTags.remove(groupName);
+    }
+    setState(() {});
+    widget.onFilterChange();
+  }
+
+  void _onSubChange(
+      int subId, bool selected, Function(void Function()) setState) async {
+    if (selected) {
+      await widget.selectorRepo
+          .addSubscriptionToSelector(widget.config.tag, subId);
+      widget.config.filter.subIds.add(Int64(subId));
+    } else {
+      await widget.selectorRepo
+          .removeSubscriptionFromSelector(widget.config.tag, subId);
+      widget.config.filter.subIds.remove(Int64(subId));
+    }
+    setState(() {});
+    widget.onFilterChange();
+  }
+
+  void _onPrefixChange(
+      String prefix, bool selected, Function(void Function()) setState) async {
+    if (selected) {
+      widget.config.filter.prefixes.add(prefix);
+    } else {
+      widget.config.filter.prefixes.remove(prefix);
+    }
+    await widget.selectorRepo.updateSelector(widget.config);
+    setState(() {});
+    widget.onFilterChange();
+  }
+
+  void _onSubStringChange(String subString, bool selected,
+      Function(void Function()) setState) async {
+    if (selected) {
+      widget.config.filter.subStrings.add(subString);
+    } else {
+      widget.config.filter.subStrings.remove(subString);
+    }
+    await widget.selectorRepo.updateSelector(widget.config);
+    setState(() {});
+    widget.onFilterChange();
+  }
+
+  void _onAreaChange(
+      String area, bool selected, Function(void Function()) setState) async {
+    if (selected) {
+      widget.config.filter.countryCodes.add(area);
+    } else {
+      widget.config.filter.countryCodes.remove(area);
+    }
+    await widget.selectorRepo.updateSelector(widget.config);
+    setState(() {});
+    widget.onFilterChange();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print('build ${widget.config.filter.writeToJson()}');
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          MenuAnchor(
+            consumeOutsideTap: true,
+            menuChildren: context.read<OutboundBloc>().state.groups.map((e) {
+              return FutureBuilder(
+                future: context.read<OutboundRepo>().getHandlersByNodeGroup(e),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox.shrink();
+                  }
+                  final valueListenable = ValueNotifier(0);
+                  final selectedMap = <int, bool>{};
+                  for (var handler
+                      in snapshot.data?.where((e) => e.config.hasOutbound()) ??
+                          <OutboundHandler>[]) {
+                    selectedMap[handler.id] = widget.config.filter.handlerIds
+                        .contains(Int64(handler.id));
+                    if (selectedMap[handler.id]!) {
+                      valueListenable.value++;
+                    }
+                  }
+                  return SubmenuButton(
+                    leadingIcon: ValueListenableBuilder(
+                        valueListenable: valueListenable,
+                        builder: (context, value, child) {
+                          return value > 0
+                              ? const Icon(Icons.check_box_outlined)
+                              : const Icon(
+                                  Icons.check_box_outline_blank_rounded);
+                        }),
+                    menuChildren: snapshot.data
+                            ?.where((e) => e.config.hasOutbound())
+                            .map((e) {
+                          return StatefulBuilder(builder: (ctx, setState) {
+                            // bool handlerSelected = widget
+                            //     .config.filter.handlerIds
+                            //     .contains(Int64(e.id));
+                            return MenuItemButton(
+                              leadingIcon: Checkbox(
+                                  value: selectedMap[e.id],
+                                  onChanged: (value) {
+                                    _onHandlerChange(e.id, value ?? false,
+                                        setState, valueListenable, selectedMap);
+                                  }),
+                              closeOnActivate: false,
+                              onPressed: () {
+                                _onHandlerChange(e.id, !selectedMap[e.id]!,
+                                    setState, valueListenable, selectedMap);
+                              },
+                              child: Text(e.name),
+                            );
+                          });
+                        }).toList() ??
+                        [],
+                    child: Text(groupNametoLocalizedName(context, e.name)),
+                  );
+                },
+              );
+            }).toList(),
+            builder: (context, controller, child) {
+              return ActionChip(
+                label: Text(AppLocalizations.of(context)!.node),
+                labelPadding: const EdgeInsets.symmetric(horizontal: 6),
+                avatar: widget.config.filter.handlerIds.isNotEmpty
+                    ? const Icon(
+                        Icons.check_box_outlined,
+                      )
+                    : const Icon(
+                        Icons.check_box_outline_blank_rounded,
+                      ),
+                onPressed: () {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    controller.open();
+                  }
+                },
+              );
+            },
+          ),
+          const Gap(5),
+          MenuAnchor(
+            consumeOutsideTap: true,
+            menuChildren: context
+                .read<OutboundBloc>()
+                .state
+                .groups
+                .map((e) => StatefulBuilder(builder: (context, setState) {
+                      late bool groupSelected;
+                      if (e is MySubscription) {
+                        groupSelected =
+                            widget.config.filter.subIds.contains(Int64(e.id));
+                      } else {
+                        groupSelected =
+                            widget.config.filter.groupTags.contains(e.name);
+                      }
+                      return MenuItemButton(
+                        leadingIcon: Checkbox(
+                            value: groupSelected,
+                            onChanged: (value) {
+                              if (value == true) {
+                                if (e is MySubscription) {
+                                  _onSubChange(e.id, true, setState);
+                                } else {
+                                  _onHandlerGroupChange(e.name, true, setState);
+                                }
+                              } else {
+                                if (e is MySubscription) {
+                                  _onSubChange(e.id, false, setState);
+                                } else {
+                                  _onHandlerGroupChange(
+                                      e.name, false, setState);
+                                }
+                              }
+                            }),
+                        closeOnActivate: false,
+                        onPressed: () {
+                          if (groupSelected) {
+                            if (e is MySubscription) {
+                              _onSubChange(e.id, false, setState);
+                            } else {
+                              _onHandlerGroupChange(e.name, false, setState);
+                            }
+                          } else {
+                            if (e is MySubscription) {
+                              _onSubChange(e.id, true, setState);
+                            } else {
+                              _onHandlerGroupChange(e.name, true, setState);
+                            }
+                          }
+                        },
+                        child: Text(groupNametoLocalizedName(context, e.name)),
+                      );
+                    }))
+                .toList(),
+            builder: (context, controller, child) {
+              return ActionChip(
+                label: Text(AppLocalizations.of(context)!.nodeGroup),
+                labelPadding: const EdgeInsets.symmetric(horizontal: 6),
+                avatar: widget.config.filter.groupTags.isNotEmpty ||
+                        widget.config.filter.subIds.isNotEmpty
+                    ? const Icon(
+                        Icons.check_box_outlined,
+                      )
+                    : const Icon(
+                        Icons.check_box_outline_blank_rounded,
+                      ),
+                onPressed: () {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    controller.open();
+                  }
+                },
+              );
+            },
+          ),
+          const Gap(5),
+          MenuAnchor(
+            menuChildren: [
+              StatefulBuilder(builder: (ctx, setState0) {
+                return SubmenuButton(
+                  leadingIcon: widget.config.filter.prefixes.isNotEmpty
+                      ? const Icon(Icons.check_box_outlined)
+                      : const Icon(Icons.check_box_outline_blank_rounded),
+                  menuChildren: [
+                    for (var prefix in widget.config.filter.prefixes)
+                      MenuItemButton(
+                        trailingIcon: Icon(Icons.delete_outline_rounded),
+                        onPressed: () {
+                          _onPrefixChange(prefix, false, setState0);
+                        },
+                        closeOnActivate: false,
+                        child: Text(prefix),
+                      ),
+                    const Divider(),
+                    MenuItemButton(
+                      leadingIcon: const Icon(Icons.add_rounded),
+                      onPressed: () async {
+                        final value = await showStringForm(
+                          context,
+                          title: AppLocalizations.of(context)!.add,
+                        );
+                        if (value != null) {
+                          _onPrefixChange(value, true, setState);
+                        }
+                      },
+                      closeOnActivate: false,
+                      child: Text(AppLocalizations.of(context)!.add),
+                    ),
+                  ],
+                  child: Text(AppLocalizations.of(context)!.prefix),
+                );
+              }),
+              StatefulBuilder(builder: (ctx, setState0) {
+                return SubmenuButton(
+                  leadingIcon: widget.config.filter.subStrings.isNotEmpty
+                      ? const Icon(Icons.check_box_outlined)
+                      : const Icon(Icons.check_box_outline_blank_rounded),
+                  menuChildren: [
+                    for (var subString in widget.config.filter.subStrings)
+                      MenuItemButton(
+                        closeOnActivate: false,
+                        leadingIcon: Icon(Icons.delete_outline_rounded),
+                        onPressed: () {
+                          _onSubStringChange(subString, false, setState0);
+                        },
+                        child: Text(subString),
+                      ),
+                    const Divider(),
+                    MenuItemButton(
+                      leadingIcon: const Icon(Icons.add_rounded),
+                      onPressed: () async {
+                        final value = await showStringForm(
+                          context,
+                          title: AppLocalizations.of(context)!.add,
+                        );
+                        if (value != null) {
+                          _onSubStringChange(value, true, setState);
+                        }
+                      },
+                      closeOnActivate: false,
+                      child: Text(AppLocalizations.of(context)!.add),
+                    ),
+                  ],
+                  child: Text(AppLocalizations.of(context)!.subString),
+                );
+              }),
+              FutureBuilder(
+                  future: context.read<OutboundRepo>().getAllCountryCodes(),
+                  builder: (ctx, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox.shrink();
+                    }
+                    final valueListenable = ValueNotifier(0);
+                    valueListenable.value =
+                        widget.config.filter.countryCodes.length;
+                    return SubmenuButton(
+                      leadingIcon: ValueListenableBuilder(
+                          valueListenable: valueListenable,
+                          builder: (context, value, child) {
+                            return value > 0
+                                ? const Icon(Icons.check_box_outlined)
+                                : const Icon(
+                                    Icons.check_box_outline_blank_rounded);
+                          }),
+                      menuChildren: [
+                        for (var countryCode in snapshot.data ?? [])
+                          StatefulBuilder(builder: (ctx, setState) {
+                            return MenuItemButton(
+                              closeOnActivate: false,
+                              leadingIcon: getCountryIcon(countryCode),
+                              trailingIcon: Checkbox(
+                                  value: widget.config.filter.countryCodes
+                                      .contains(countryCode),
+                                  onChanged: (value) {
+                                    _onAreaChange(
+                                        countryCode, value ?? false, setState);
+                                    valueListenable.value = widget
+                                        .config.filter.countryCodes.length;
+                                  }),
+                              onPressed: () {
+                                _onAreaChange(
+                                    countryCode,
+                                    !widget.config.filter.countryCodes
+                                        .contains(countryCode),
+                                    setState);
+                                valueListenable.value =
+                                    widget.config.filter.countryCodes.length;
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(countryCode),
+                              ),
+                            );
+                          }),
+                      ],
+                      child: Text(AppLocalizations.of(context)!.area),
+                    );
+                  }),
+            ],
+            builder: (context, controller, child) {
+              return ActionChip(
+                label: Text(AppLocalizations.of(context)!.others),
+                labelPadding: const EdgeInsets.symmetric(horizontal: 6),
+                avatar: widget.config.filter.prefixes.isNotEmpty ||
+                        widget.config.filter.subStrings.isNotEmpty ||
+                        widget.config.filter.countryCodes.isNotEmpty
+                    ? const Icon(
+                        Icons.check_box_outlined,
+                      )
+                    : const Icon(
+                        Icons.check_box_outline_blank_rounded,
+                      ),
+                onPressed: () {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    controller.open();
+                  }
+                },
+              );
+            },
+          )
+        ],
+      ),
     );
   }
 }

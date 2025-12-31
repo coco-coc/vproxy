@@ -890,5 +890,9 @@
   "remainingTime": "剩余次数",
   "scanQrCode": "扫描二维码",
   "expired": "已过期",
-  "deploySuccessWarnings": "部署节点成功，但这些任务失败: "
+  "deploySuccessWarnings": "部署节点成功，但这些任务失败: ",
+  "subString": "子字符",
+  "echDomain": "ECH域名",
+  "generateEchConfig": "生成ECH配置",
+  "echDomainDesc": "外部ClientHello SNI"
 }

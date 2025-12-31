@@ -2162,4 +2162,16 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get deploySuccessWarnings => 'Deploy nodes successfully, but these tasks failed: ';
+
+  @override
+  String get subString => 'Sub String';
+
+  @override
+  String get echDomain => 'ECH Domain';
+
+  @override
+  String get generateEchConfig => 'Generate ECH Config';
+
+  @override
+  String get echDomainDesc => 'Outer ClientHello SNI';
 }

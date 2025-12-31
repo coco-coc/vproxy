@@ -882,5 +882,9 @@
   "remainingTime": "Remaining Times",
   "scanQrCode": "Scan QR Code",
   "expired": "Expired",
-  "deploySuccessWarnings": "Deploy nodes successfully, but these tasks failed: "
+  "deploySuccessWarnings": "Deploy nodes successfully, but these tasks failed: ",
+  "subString": "Sub String",
+  "echDomain": "ECH Domain",
+  "generateEchConfig": "Generate ECH Config",
+  "echDomainDesc": "Outer ClientHello SNI"
 }
