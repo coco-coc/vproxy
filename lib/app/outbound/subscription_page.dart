@@ -370,28 +370,35 @@ class SubscriptionData {
     double? usagePercentage;
 
     try {
-      // Try Chinese format first: "剩余流量: 12.165GB。到期: 2025年11月20日 15时。"
-      final chineseRemainingMatch = RegExp(
-              r'剩余流量[：:]\s*(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)',
-              caseSensitive: false)
-          .firstMatch(description);
-      if (chineseRemainingMatch != null) {
-        remainingData =
-            '${chineseRemainingMatch.group(1)}${chineseRemainingMatch.group(2)}';
-      }
-      // Extract Chinese expiration date: "到期: 2025年11月20日 15时"
-      final chineseExpirationMatch =
-          RegExp(r'到期[：:]\s*(\d{4})年(\d{1,2})月(\d{1,2})日')
-              .firstMatch(description);
-      if (chineseExpirationMatch != null) {
-        final year = chineseExpirationMatch.group(1);
-        final month = chineseExpirationMatch.group(2)!.padLeft(2, '0');
-        final day = chineseExpirationMatch.group(3)!.padLeft(2, '0');
-        expirationDate = DateTime.tryParse('$year-$month-$day');
-      }
+      if (description.contains('剩余流量')) {
+        // Try Chinese format first: "剩余流量: 12.165GB。到期: 2025年11月20日 15时。"
+        final chineseRemainingMatch = RegExp(
+                r'剩余流量[：:]\s*(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)',
+                caseSensitive: false)
+            .firstMatch(description);
+        if (chineseRemainingMatch != null) {
+          remainingData =
+              '${chineseRemainingMatch.group(1)}${chineseRemainingMatch.group(2)}';
+        }
+        // Extract Chinese expiration date: "到期: 2025年11月20日 15时" or "到期: 不过期"
+        final chineseExpirationMatch =
+            RegExp(r'到期[：:]\s*(?:不过期|(\d{4})年(\d{1,2})月(\d{1,2})日)')
+                .firstMatch(description);
+        if (chineseExpirationMatch != null) {
 
-      // If Chinese format didn't match, try key-value format: "upload=1234; download=2234; total=1024000; expire=2218532293"
-      if (remainingData == null && expirationDate == null) {
+          // Check if it's "不过期" (no expiration) - group 1 will be null
+          if (chineseExpirationMatch.group(1) != null) {
+            final year = chineseExpirationMatch.group(1);
+            final month = chineseExpirationMatch.group(2)!.padLeft(2, '0');
+            final day = chineseExpirationMatch.group(3)!.padLeft(2, '0');
+            expirationDate = DateTime.tryParse('$year-$month-$day');
+          } else {
+            expirationDate = DateTime(9999, 12, 31);
+          }
+          // If group 1 is null, it means "不过期" was matched, so expirationDate stays null
+        }
+      } else {
+        // If Chinese format didn't match, try key-value format: "upload=1234; download=2234; total=1024000; expire=2218532293"
         final keyValueMatch = RegExp(
                 r'upload\s*=\s*(\d+)\s*;\s*download\s*=\s*(\d+)\s*;\s*total\s*=\s*(\d+)\s*;\s*expire\s*=\s*(\d+)',
                 caseSensitive: false)
@@ -419,6 +426,7 @@ class SubscriptionData {
               return '${bytes}B';
             }
           }
+
           totalData = formatBytes(totalBytes);
           final usedBytes = uploadBytes + downloadBytes;
           usedData = formatBytes(usedBytes);
