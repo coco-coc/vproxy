@@ -427,7 +427,8 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
           initialValue: '',
           builder: (field) => const SizedBox.shrink(),
           validator: (value) {
-            if (widget.config.certificates.isEmpty &&
+            if (widget.server &&
+                widget.config.certificates.isEmpty &&
                 widget.config.issueCas.isEmpty) {
               setState(() {
                 _noCertErrorMessage =
