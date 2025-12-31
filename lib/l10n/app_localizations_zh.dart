@@ -2112,4 +2112,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get deploySuccessWarnings => '部署节点成功，但这些任务失败: ';
+
+  @override
+  String get subString => '子字符';
+
+  @override
+  String get echDomain => 'ECH域名';
+
+  @override
+  String get generateEchConfig => '生成ECH配置';
+
+  @override
+  String get echDomainDesc => '外部ClientHello SNI';
 }

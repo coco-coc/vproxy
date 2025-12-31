@@ -4098,6 +4098,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deploy nodes successfully, but these tasks failed: '**
   String get deploySuccessWarnings;
+
+  /// No description provided for @subString.
+  ///
+  /// In en, this message translates to:
+  /// **'Sub String'**
+  String get subString;
+
+  /// No description provided for @echDomain.
+  ///
+  /// In en, this message translates to:
+  /// **'ECH Domain'**
+  String get echDomain;
+
+  /// No description provided for @generateEchConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate ECH Config'**
+  String get generateEchConfig;
+
+  /// No description provided for @echDomainDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Outer ClientHello SNI'**
+  String get echDomainDesc;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

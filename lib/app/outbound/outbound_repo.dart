@@ -109,6 +109,22 @@ class OutboundRepo {
     return q.map((row) => row.readTable(_database.outboundHandlers)).get();
   }
 
+  Future<List<String>> getAllCountryCodes() async {
+    final query =
+        _database.selectOnly(_database.outboundHandlers, distinct: true)
+          ..addColumns([_database.outboundHandlers.countryCode])
+          ..where(_database.outboundHandlers.countryCode.isNotNull())
+          ..where(_database.outboundHandlers.countryCode.isNotValue(''));
+
+    final results = await query.get();
+    return results
+        .map((row) => row.read(_database.outboundHandlers.countryCode) ?? '')
+        .where((code) => code.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+  }
+
   Future<List<OutboundHandler>> getHandlers(
       {int? subId,
       double? speed1MBLessEqual,

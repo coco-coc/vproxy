@@ -51,6 +51,7 @@ import 'package:tm/protos/transport/protocols/splithttp/config.pb.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:tm/protos/protos/tls/tls.pb.dart';
 import 'package:vx/utils/error.dart';
+import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/xapi_client.dart';
 import 'package:vx/widgets/add_button.dart';
 import 'package:vx/widgets/delete_menu_anchor.dart';

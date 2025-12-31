@@ -929,9 +929,7 @@ class __MultiSecurityProtocolsState extends State<_MultiSecurityProtocols> {
                     .copyWith(color: Theme.of(context).colorScheme.error)),
           ),
         if (_selected != null)
-          _MultiSecurityProtocol(
-              key: ValueKey(_selected),
-              protocol: _selected!)
+          _MultiSecurityProtocol(key: ValueKey(_selected), protocol: _selected!)
       ],
     );
   }
@@ -1101,6 +1099,7 @@ class __UserConfigState extends State<_UserConfig> {
                 child: TextButton(
                     onPressed: () {
                       _userSecretController.text = const Uuid().v4();
+                      widget.config.secret = _userSecretController.text;
                     },
                     child:
                         Text(AppLocalizations.of(context)!.generatePassword)),

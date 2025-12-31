@@ -721,6 +721,9 @@ class AppDatabase extends _$AppDatabase {
       filter: selector.config.filter.all
           ? SelectorConfig_Filter(all: true)
           : SelectorConfig_Filter(
+              prefixes: selector.config.filter.prefixes,
+              subStrings: selector.config.filter.subStrings,
+              countryCodes: selector.config.filter.countryCodes,
               handlerIds: (await (select(selectorHandlerRelations)
                         ..where((s) => s.selectorName.equals(selector.name)))
                       .get())

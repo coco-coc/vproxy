@@ -5,7 +5,8 @@ void main() {
   group('SubscriptionData.parse', () {
     group('Standard format', () {
       test('should parse standard format with all fields', () {
-        const description = 'STATUS=🚀↑:1.42GB,↓:4.48GB,TOT:200GB💡Expires:2025-12-04';
+        const description =
+            'STATUS=🚀↑:1.42GB,↓:4.48GB,TOT:200GB💡Expires:2025-12-04';
         final result = SubscriptionData.parse(description);
 
         expect(result, isNotNull);
@@ -80,7 +81,8 @@ void main() {
     });
 
     group('Chinese format', () {
-      test('should parse Chinese format with remaining data and expiration', () {
+      test('should parse Chinese format with remaining data and expiration',
+          () {
         const description = '剩余流量: 12.165GB。到期: 2025年11月20日 15时。';
         final result = SubscriptionData.parse(description);
 
@@ -105,6 +107,15 @@ void main() {
         expect(result, isNotNull);
         expect(result!.remainingData, '10GB');
         expect(result.expirationDate, DateTime(2025, 12, 31));
+      });
+
+      test('should parse Chinese format with no expiration date', () {
+        const description = '剩余流量：10GB。到期：不过期';
+        final result = SubscriptionData.parse(description);
+
+        expect(result, isNotNull);
+        expect(result!.remainingData, '10GB');
+        expect(result.expirationDate, DateTime(9999, 12, 31));
       });
 
       test('should parse Chinese format with different units', () {
@@ -136,7 +147,8 @@ void main() {
 
     group('Key-value format', () {
       test('should parse key-value format with all fields', () {
-        const description = 'upload=1234; download=2234; total=1024000; expire=2218532293';
+        const description =
+            'upload=1234; download=2234; total=1024000; expire=2218532293';
         final result = SubscriptionData.parse(description);
 
         expect(result, isNotNull);
@@ -157,14 +169,18 @@ void main() {
         const downloadBytes = 3 * 1024 * 1024 * 1024;
         const expireTimestamp = 1735689600; // 2025-01-01 00:00:00 UTC
 
-        final description = 'upload=$uploadBytes; download=$downloadBytes; total=$totalBytes; expire=$expireTimestamp';
+        final description =
+            'upload=$uploadBytes; download=$downloadBytes; total=$totalBytes; expire=$expireTimestamp';
         final result = SubscriptionData.parse(description);
 
         expect(result, isNotNull);
         expect(result!.totalData, '10.00GB');
         expect(result.usedData, '5.00GB');
         expect(result.remainingData, '5.00GB');
-        expect(result.expirationDate, DateTime.fromMillisecondsSinceEpoch(expireTimestamp * 1000, isUtc: true));
+        expect(
+            result.expirationDate,
+            DateTime.fromMillisecondsSinceEpoch(expireTimestamp * 1000,
+                isUtc: true));
         expect(result.usagePercentage, closeTo(0.5, 0.01));
       });
 
@@ -175,7 +191,8 @@ void main() {
         const downloadBytes = 30 * 1024 * 1024;
         const expireTimestamp = 1735689600;
 
-        final description = 'upload=$uploadBytes; download=$downloadBytes; total=$totalBytes; expire=$expireTimestamp';
+        final description =
+            'upload=$uploadBytes; download=$downloadBytes; total=$totalBytes; expire=$expireTimestamp';
         final result = SubscriptionData.parse(description);
 
         expect(result, isNotNull);
@@ -192,7 +209,8 @@ void main() {
         const downloadBytes = 300 * 1024;
         const expireTimestamp = 1735689600;
 
-        final description = 'upload=$uploadBytes; download=$downloadBytes; total=$totalBytes; expire=$expireTimestamp';
+        final description =
+            'upload=$uploadBytes; download=$downloadBytes; total=$totalBytes; expire=$expireTimestamp';
         final result = SubscriptionData.parse(description);
 
         expect(result, isNotNull);
@@ -208,7 +226,8 @@ void main() {
         const downloadBytes = 300 * 1024 * 1024 * 1024;
         const expireTimestamp = 1735689600;
 
-        final description = 'upload=$uploadBytes; download=$downloadBytes; total=$totalBytes; expire=$expireTimestamp';
+        final description =
+            'upload=$uploadBytes; download=$downloadBytes; total=$totalBytes; expire=$expireTimestamp';
         final result = SubscriptionData.parse(description);
 
         expect(result, isNotNull);
@@ -218,7 +237,8 @@ void main() {
       });
 
       test('should parse key-value format with whitespace variations', () {
-        const description = 'upload = 1234 ; download = 2234 ; total = 1024000 ; expire = 2218532293';
+        const description =
+            'upload = 1234 ; download = 2234 ; total = 1024000 ; expire = 2218532293';
         final result = SubscriptionData.parse(description);
 
         expect(result, isNotNull);
@@ -227,7 +247,8 @@ void main() {
       });
 
       test('should parse key-value format without spaces', () {
-        const description = 'upload=1234;download=2234;total=1024000;expire=2218532293';
+        const description =
+            'upload=1234;download=2234;total=1024000;expire=2218532293';
         final result = SubscriptionData.parse(description);
 
         expect(result, isNotNull);
@@ -236,7 +257,8 @@ void main() {
       });
 
       test('should parse key-value format with zero expire timestamp', () {
-        const description = 'upload=1000000; download=2000000; total=10000000; expire=0';
+        const description =
+            'upload=1000000; download=2000000; total=10000000; expire=0';
         final result = SubscriptionData.parse(description);
 
         expect(result, isNotNull);
@@ -246,7 +268,8 @@ void main() {
       });
 
       test('should parse key-value format case-insensitively', () {
-        const description = 'UPLOAD=1234; DOWNLOAD=2234; TOTAL=1024000; EXPIRE=2218532293';
+        const description =
+            'UPLOAD=1234; DOWNLOAD=2234; TOTAL=1024000; EXPIRE=2218532293';
         final result = SubscriptionData.parse(description);
 
         expect(result, isNotNull);
@@ -256,7 +279,8 @@ void main() {
     });
 
     group('Edge cases', () {
-      test('should return SubscriptionData with null fields for empty string', () {
+      test('should return SubscriptionData with null fields for empty string',
+          () {
         const description = '';
         final result = SubscriptionData.parse(description);
 
@@ -268,7 +292,8 @@ void main() {
         expect(result.usagePercentage, isNull);
       });
 
-      test('should return SubscriptionData with null fields for invalid format', () {
+      test('should return SubscriptionData with null fields for invalid format',
+          () {
         const description = 'This is not a valid subscription description';
         final result = SubscriptionData.parse(description);
 
@@ -300,7 +325,8 @@ void main() {
         expect(result.remainingData, isNull);
       });
 
-      test('should calculate usage percentage correctly when total is zero', () {
+      test('should calculate usage percentage correctly when total is zero',
+          () {
         const description = 'upload=0; download=0; total=0; expire=2218532293';
         final result = SubscriptionData.parse(description);
 
@@ -315,7 +341,8 @@ void main() {
         const downloadBytes = 20 * 1024 * 1024 * 1024 * 1024;
         const expireTimestamp = 1735689600;
 
-        final description = 'upload=$uploadBytes; download=$downloadBytes; total=$totalBytes; expire=$expireTimestamp';
+        final description =
+            'upload=$uploadBytes; download=$downloadBytes; total=$totalBytes; expire=$expireTimestamp';
         final result = SubscriptionData.parse(description);
 
         expect(result, isNotNull);
@@ -326,7 +353,8 @@ void main() {
       });
 
       test('should handle small byte values', () {
-        const description = 'upload=100; download=200; total=1000; expire=2218532293';
+        const description =
+            'upload=100; download=200; total=1000; expire=2218532293';
         final result = SubscriptionData.parse(description);
 
         expect(result, isNotNull);
@@ -338,7 +366,8 @@ void main() {
 
     group('Format priority', () {
       test('should prioritize Chinese format over key-value format', () {
-        const description = '剩余流量: 10GB。到期: 2025年1月1日 upload=1234; download=2234; total=1024000; expire=2218532293';
+        const description =
+            '剩余流量: 10GB。到期: 2025年1月1日 upload=1234; download=2234; total=1024000; expire=2218532293';
         final result = SubscriptionData.parse(description);
 
         expect(result, isNotNull);
@@ -350,8 +379,10 @@ void main() {
         expect(result.usedData, isNull);
       });
 
-      test('should use key-value format when Chinese format does not match', () {
-        const description = 'upload=10737418240; download=21474836480; total=107374182400; expire=1735689600';
+      test('should use key-value format when Chinese format does not match',
+          () {
+        const description =
+            'upload=10737418240; download=21474836480; total=107374182400; expire=1735689600';
         final result = SubscriptionData.parse(description);
 
         expect(result, isNotNull);
@@ -360,7 +391,9 @@ void main() {
         expect(result.remainingData, '70.00GB');
       });
 
-      test('should fall back to standard format when key-value format does not match', () {
+      test(
+          'should fall back to standard format when key-value format does not match',
+          () {
         const description = '↑:1GB,↓:2GB,TOT:10GB';
         final result = SubscriptionData.parse(description);
 
@@ -372,4 +405,3 @@ void main() {
     });
   });
 }
-

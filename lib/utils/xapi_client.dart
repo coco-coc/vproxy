@@ -545,6 +545,11 @@ class XApiClient {
         await _xApiClient.toUrl(ToUrlRequest(outboundConfogs: configs));
     return response;
   }
+
+  Future<GenerateECHResponse> generateECHResponse(String domain) async {
+    await _completer.future;
+    return await _xApiClient.generateECH(GenerateECHRequest(domain: domain));
+  }
 }
 
 Future<bool> isIOSSimulator() async {

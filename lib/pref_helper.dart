@@ -822,6 +822,26 @@ class PrefHelper {
   void setNodesHelperSegment(NodesHelperSegment segment) {
     _pref.setInt('nodesHelperSegment', segment.index);
   }
+
+  List<String> getSelectorSubString() {
+    final subString = _pref.getStringList('selectorSubString');
+    if (subString == null) return [];
+    return subString;
+  }
+
+  void setSelectorSubString(List<String> subString) {
+    _pref.setStringList('selectorSubString', subString);
+  }
+
+  List<String> getSelectorPrefix() {
+    final prefix = _pref.getStringList('selectorPrefix');
+    if (prefix == null) return [];
+    return prefix;
+  }
+
+  void setSelectorPrefix(List<String> prefix) {
+    _pref.setStringList('selectorPrefix', prefix);
+  }
 }
 
 enum PingMode {
