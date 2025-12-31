@@ -2,8 +2,11 @@ part of 'outbound_handler_form.dart';
 
 /// config is modified directly. Some fields are saved when validating the form.
 class _TransportSecurityTls extends StatefulWidget {
-  const _TransportSecurityTls(
-      {required this.config, this.showAlpn = true, this.server = false});
+  const _TransportSecurityTls({
+    required this.config,
+    this.showAlpn = true,
+    this.server = false,
+  });
 
   final TlsConfig config;
   final bool showAlpn;
@@ -25,6 +28,9 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
   // New controllers for missing fields
   final _masterKeyLogController = TextEditingController();
   final _echKeyController = TextEditingController();
+  final _echConfigGenerateController = TextEditingController();
+  String? _echConfigGenerateError;
+  String? _noCertErrorMessage;
 
   @override
   void initState() {
@@ -65,6 +71,7 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
               decoration: const InputDecoration(label: Text('Server Name')),
               validator: (value) {
                 widget.config.serverName = _serverNameController.text;
+
                 return null;
               },
             ),
@@ -90,9 +97,10 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
         // Multiple Certificates Section
         _CertificateCollection(
           title: 'Certificate',
+          errorMessage: _noCertErrorMessage,
           description: AppLocalizations.of(context)!.certToBeProvidedToPeer,
           certificates: widget.config.certificates,
-          showServerPaths: widget.server,
+          server: widget.server,
         ),
         const Gap(10),
         // Multiple Root CAs Section
@@ -184,7 +192,7 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
             title: 'Issue CA',
             description: AppLocalizations.of(context)!.issueCADesc,
             certificates: widget.config.issueCas,
-            showServerPaths: widget.server,
+            server: widget.server,
           ),
         const Gap(10),
         TextFormField(
@@ -316,6 +324,51 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
                 onChanged: (value) =>
                     setState(() => widget.config.enableEch = value)),
           ),
+        if (widget.server)
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: FormContainer(children: [
+              TextFormField(
+                controller: _echConfigGenerateController,
+                decoration: InputDecoration(
+                    label: Text(AppLocalizations.of(context)!.echDomain),
+                    errorText: _echConfigGenerateError,
+                    errorMaxLines: 3,
+                    helperText: AppLocalizations.of(context)!.echDomainDesc),
+                validator: (value) {
+                  return null;
+                },
+              ),
+              const Gap(5),
+              FilledButton.tonal(
+                onPressed: () async {
+                  try {
+                    if (_echConfigGenerateController.text.trim().isEmpty) {
+                      setState(() {
+                        _echConfigGenerateError =
+                            AppLocalizations.of(context)!.fieldRequired;
+                      });
+                      return;
+                    }
+                    setState(() {
+                      _echConfigGenerateError = null;
+                    });
+                    final response = await context
+                        .read<XApiClient>()
+                        .generateECHResponse(_echConfigGenerateController.text);
+                    _echConfigController.text = hex.encode(response.config);
+                    _echKeyController.text = hex.encode(response.key);
+                  } catch (e) {
+                    logger.e(e);
+                    setState(() {
+                      _echConfigGenerateError = e.toString();
+                    });
+                  }
+                },
+                child: Text(AppLocalizations.of(context)!.generateEchConfig),
+              ),
+            ]),
+          ),
         const Gap(10),
         if (!widget.server)
           FormContainer(children: [
@@ -368,7 +421,23 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
               onChanged: (value) => setState(() => widget.config.noSNI = value),
               title: Text('No SNI'),
             ),
-          ])
+          ]),
+        // Hidden FormField to trigger validation listener
+        FormField<String>(
+          initialValue: '',
+          builder: (field) => const SizedBox.shrink(),
+          validator: (value) {
+            if (widget.config.certificates.isEmpty &&
+                widget.config.issueCas.isEmpty) {
+              setState(() {
+                _noCertErrorMessage =
+                    'One of certificates or issue cas must be provided';
+              });
+              return 'One of certificates or issue cas must be provided';
+            }
+            return null;
+          },
+        ),
       ],
     );
   }
@@ -378,6 +447,7 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
     _serverNameController.dispose();
     _nextProtocolController.dispose();
     _peerSHA256HashControlller.dispose();
+    _echConfigGenerateController.dispose();
     // Dispose all CA controllers
     for (var controller in _CAControllers) {
       controller.dispose();
@@ -396,13 +466,15 @@ class _CertificateCollection extends StatefulWidget {
     required this.title,
     required this.description,
     required this.certificates,
-    required this.showServerPaths,
+    required this.server,
+    this.errorMessage,
   });
 
   final String title;
   final String description;
   final List<Certificate> certificates;
-  final bool showServerPaths;
+  final bool server;
+  final String? errorMessage;
 
   @override
   State<_CertificateCollection> createState() => _CertificateCollectionState();
@@ -530,7 +602,7 @@ class _CertificateCollectionState extends State<_CertificateCollection> {
 
   void _validateCertificates() {
     for (var i = 0; i < _certControllers.length; i++) {
-      if (widget.showServerPaths) {
+      if (widget.server) {
         if ((_certControllers[i].text.isEmpty &&
                 _certPathControllers[i].text.isEmpty) ||
             (_keyControllers[i].text.isEmpty &&
@@ -561,8 +633,8 @@ class _CertificateCollectionState extends State<_CertificateCollection> {
     return ExpansionTile(
         title:
             Text(widget.title, style: Theme.of(context).textTheme.titleMedium),
-        subtitle: _certError != null
-            ? Text(_certError!,
+        subtitle: _certError != null || widget.errorMessage != null
+            ? Text(_certError != null ? _certError! : widget.errorMessage!,
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall!
@@ -575,6 +647,7 @@ class _CertificateCollectionState extends State<_CertificateCollection> {
             _validateCertificates();
           }
         },
+        initiallyExpanded: widget.server,
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
         collapsedBackgroundColor:
             Theme.of(context).colorScheme.surfaceContainerLow,
@@ -638,12 +711,11 @@ class _CertificateCollectionState extends State<_CertificateCollection> {
                           validator: (value) {
                             final cert = _certControllers[index];
                             final certPath = _certPathControllers[index];
-                            if (widget.showServerPaths &&
+                            if (widget.server &&
                                 cert.text.isEmpty &&
                                 certPath.text.isEmpty) {
                               return 'Certificate and certificate file path cannot be empty at the same time';
-                            } else if (!widget.showServerPaths &&
-                                cert.text.isEmpty) {
+                            } else if (!widget.server && cert.text.isEmpty) {
                               return AppLocalizations.of(context)!
                                   .fieldRequired;
                             }
@@ -676,17 +748,17 @@ class _CertificateCollectionState extends State<_CertificateCollection> {
                     validator: (value) {
                       final key = _keyControllers[index];
                       final keyPath = _keyPathControllers[index];
-                      if (widget.showServerPaths &&
+                      if (widget.server &&
                           key.text.isEmpty &&
                           keyPath.text.isEmpty) {
                         return 'Key and key file path cannot be empty at the same time';
-                      } else if (!widget.showServerPaths && key.text.isEmpty) {
+                      } else if (!widget.server && key.text.isEmpty) {
                         return AppLocalizations.of(context)!.fieldRequired;
                       }
                       return null;
                     },
                   ),
-                  if (widget.showServerPaths) ...[
+                  if (widget.server) ...[
                     const Gap(10),
                     TextFormField(
                       controller: certPathController,

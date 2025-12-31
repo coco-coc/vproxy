@@ -860,14 +860,12 @@ class SocksServer extends StatefulWidget {
 
 class _SocksServerState extends State<SocksServer> {
   final _addressController = TextEditingController();
-  final _usernameController = TextEditingController();
   late AuthType _authType;
   bool _udpEnabled = false;
 
   @override
   void initState() {
     super.initState();
-    _usernameController.text = widget.config.accounts.firstOrNull?.id ?? '';
     _addressController.text = widget.config.address;
     _authType = widget.config.authType;
     _udpEnabled = widget.config.udpEnabled;
@@ -904,28 +902,6 @@ class _SocksServerState extends State<SocksServer> {
             );
           }).toList(),
         ),
-        if (_authType == AuthType.PASSWORD)
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: TextFormField(
-              controller: _usernameController,
-              onChanged: (value) {
-                if (widget.config.accounts.isEmpty) {
-                  widget.config.accounts
-                      .add(UserConfig(id: value, userLevel: 0, secret: ''));
-                } else {
-                  widget.config.accounts.first.id = value;
-                }
-              },
-              decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.account),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return AppLocalizations.of(context)!.empty;
-                }
-              },
-            ),
-          ),
         boxH10,
         TextFormField(
           controller: _addressController,
