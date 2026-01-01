@@ -1430,6 +1430,7 @@ Future<void> insertDefault(BuildContext context) async {
       persistentStateRepo.setDatabaseInitialized(true);
     }
     // check if custom direct, custom proxy set, direct app set and proxy app set exists
+    // domain set
     final customDirect = await (database.select(database.atomicDomainSets)
           ..where((tbl) => tbl.name.equals(al.customDirect)))
         .getSingleOrNull();
@@ -1446,6 +1447,24 @@ Future<void> insertDefault(BuildContext context) async {
           AtomicDomainSetsCompanion(name: Value(al.customProxy)),
           mode: InsertMode.insertOrIgnore);
     }
+    //  ip set
+    final customDirectIpSet = await (database.select(database.atomicIpSets)
+          ..where((tbl) => tbl.name.equals(al.customDirect)))
+        .getSingleOrNull();
+    if (customDirectIpSet == null) {
+      await database.into(database.atomicIpSets).insert(
+          AtomicIpSetsCompanion(name: Value(al.customDirect)),
+          mode: InsertMode.insertOrIgnore);
+    }
+    final customProxyIpSet = await (database.select(database.atomicIpSets)
+          ..where((tbl) => tbl.name.equals(al.customProxy)))
+        .getSingleOrNull();
+    if (customProxyIpSet == null) {
+      await database.into(database.atomicIpSets).insert(
+          AtomicIpSetsCompanion(name: Value(al.customProxy)),
+          mode: InsertMode.insertOrIgnore);
+    }
+    // app set
     final directAppSet = await (database.select(database.appSets)
           ..where((tbl) => tbl.name.equals(al.direct)))
         .getSingleOrNull();
