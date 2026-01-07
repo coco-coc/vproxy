@@ -200,6 +200,7 @@ class ProPurchases extends ChangeNotifier {
             'invalidPurchase ${stateWithPurchaseDetail.purchaseDetails.toString()}',
             '无法验证购买');
       } else {
+        logger.d('verify success');
         if (stateWithPurchaseDetail.purchaseDetails.pendingCompletePurchase) {
           await iapConnection
               .completePurchase(stateWithPurchaseDetail.purchaseDetails);
@@ -228,7 +229,6 @@ class ProPurchases extends ChangeNotifier {
     if (userId == null) {
       throw Exception('userId is null');
     }
-
     final headers = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
