@@ -4134,6 +4134,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Restore Successful'**
   String get restoreSuccessful;
+
+  /// No description provided for @pleaseUseAnotherEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported email, please use another email'**
+  String get pleaseUseAnotherEmail;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

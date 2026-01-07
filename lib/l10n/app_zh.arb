@@ -896,5 +896,6 @@
   "echDomain": "ECH域名",
   "generateEchConfig": "生成ECH配置",
   "echDomainDesc": "外部ClientHello SNI",
-  "restoreSuccessful": "恢复成功"
+  "restoreSuccessful": "恢复成功",
+  "pleaseUseAnotherEmail": "不支持该邮箱，请使用其他邮箱"
 }

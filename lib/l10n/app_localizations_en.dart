@@ -2180,4 +2180,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get restoreSuccessful => 'Restore Successful';
+
+  @override
+  String get pleaseUseAnotherEmail => 'Unsupported email, please use another email';
 }

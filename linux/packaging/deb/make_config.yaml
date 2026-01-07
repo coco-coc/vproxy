@@ -20,7 +20,7 @@ postinstall_scripts:
   #- cp /usr/share/polkit-1/actions/com.5vnetwork.vx.policy /usr/share/polkit-1/actions/ || echo "PolicyKit policy installation failed"
 postuninstall_scripts:
   - echo "VX has been removed from your system"
-    # build-packages:
+    # build-packages: 
     #   - libsecret-1-dev
     #   - libjsoncpp-dev
     # stage-packages:

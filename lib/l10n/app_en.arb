@@ -888,5 +888,6 @@
   "echDomain": "ECH Domain",
   "generateEchConfig": "Generate ECH Config",
   "echDomainDesc": "Outer ClientHello SNI",
-  "restoreSuccessful": "Restore Successful"
+  "restoreSuccessful": "Restore Successful",
+  "pleaseUseAnotherEmail": "Unsupported email, please use another email"
 }

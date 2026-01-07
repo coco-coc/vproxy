@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:vx/auth/auth_provider.dart';
@@ -20,28 +21,61 @@ class _EmailAuthState extends State<EmailAuth> {
   bool _isSendingOtp = false;
   bool _isLoggingIn = false;
   String? _sendOtpError;
-  late final TextField _email;
+  String? _emailError;
+  Set<String> _disposableEmailDomains = {};
 
   @override
   initState() {
     super.initState();
+    _loadDisposableEmailBlocklist();
+    _emailController.addListener(_validateEmail);
   }
 
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-    _email = TextField(
-      controller: _emailController,
-      decoration: InputDecoration(
-        border: const OutlineInputBorder(),
-        labelText: AppLocalizations.of(context)!.email,
-      ),
-    );
+  Future<void> _loadDisposableEmailBlocklist() async {
+    try {
+      final content = await rootBundle.loadString(
+        'assets/disposable_email_blocklist.conf',
+      );
+      final domains = content
+          .split('\n')
+          .map((line) => line.trim())
+          .where((line) => line.isNotEmpty)
+          .toSet();
+      setState(() {
+        _disposableEmailDomains = domains;
+      });
+    } catch (e) {
+      // If blocklist fails to load, continue without blocking
+    }
+  }
+
+  void _validateEmail() {
+    final email = _emailController.text.trim();
+    if (email.isEmpty) {
+      setState(() => _emailError = null);
+      return;
+    }
+
+    if (!emailRegExp.hasMatch(email)) {
+      setState(() => _emailError = null);
+      return;
+    }
+
+    // Extract domain from email
+    final domain = email.split('@').last.toLowerCase();
+    
+    if (_disposableEmailDomains.contains(domain)) {
+      setState(() {
+        _emailError = AppLocalizations.of(context)!.pleaseUseAnotherEmail;
+      });
+    } else {
+      setState(() => _emailError = null);
+    }
   }
 
   @override
   void dispose() {
+    _emailController.removeListener(_validateEmail);
     _emailController.dispose();
     _otpController.dispose();
     super.dispose();
@@ -49,7 +83,15 @@ class _EmailAuthState extends State<EmailAuth> {
 
   List<Widget> _buildContent() {
     return [
-      _email,
+      TextField(
+        controller: _emailController,
+        decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          labelText: AppLocalizations.of(context)!.email,
+          errorText: _emailError,
+          errorMaxLines: 2,
+        ),
+      ),
       const SizedBox(height: 10),
       TextField(
         controller: _otpController,
@@ -83,7 +125,8 @@ class _EmailAuthState extends State<EmailAuth> {
               : TextButton(
                   onPressed: () async {
                     if (_emailController.text.isNotEmpty &&
-                        emailRegExp.hasMatch(_emailController.text)) {
+                        emailRegExp.hasMatch(_emailController.text) &&
+                        _emailError == null) {
                       setState(() {
                         _isSendingOtp = true;
                         _sendOtpError = null;
@@ -117,6 +160,7 @@ class _EmailAuthState extends State<EmailAuth> {
         onPressed: () async {
           if (_emailController.text.isNotEmpty &&
               emailRegExp.hasMatch(_emailController.text) &&
+              _emailError == null &&
               _otpController.text.isNotEmpty &&
               numericRegExp.hasMatch(_otpController.text)) {
             setState(() => _isLoggingIn = true);

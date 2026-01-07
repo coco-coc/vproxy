@@ -2130,4 +2130,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get restoreSuccessful => '恢复成功';
+
+  @override
+  String get pleaseUseAnotherEmail => '不支持该邮箱，请使用其他邮箱';
 }
