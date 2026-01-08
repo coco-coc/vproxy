@@ -1,3 +1,4 @@
+/// for generating unique id for database rows
 class SnowflakeId {
   static int _lastTimestamp = 0;
   static int _sequence = 0;

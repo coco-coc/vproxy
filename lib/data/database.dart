@@ -388,265 +388,275 @@ class AppDatabase extends _$AppDatabase {
             await m.runMigrationSteps(
               from: from,
               to: to,
-              steps: migrationSteps(from7To8: (m, schema) async {
-                m.addColumn(
-                    schema.atomicDomainSets, schema.atomicDomainSets.geoUrl);
-                m.addColumn(schema.atomicIpSets, schema.atomicIpSets.geoUrl);
-              }, from6To7: (m, schema) async {
-                // outboundHandlers id column no longer auto increment
-                await m.alterTable(TableMigration(schema.outboundHandlers,
-                    newColumns: [schema.outboundHandlers.updatedAt]));
-                // outboundHandlerGroups
-                await m.addColumn(schema.outboundHandlerGroups,
-                    schema.outboundHandlerGroups.updatedAt);
-                // subscriptions. id column no longer auto increment
-                await m.alterTable(TableMigration(schema.subscriptions,
-                    newColumns: [schema.subscriptions.updatedAt]));
-                // atomicDomainSets
-                await m.addColumn(
-                    schema.atomicDomainSets, schema.atomicDomainSets.updatedAt);
-                // greatDomainSets
-                await m.addColumn(
-                    schema.greatDomainSets, schema.greatDomainSets.updatedAt);
-                // appSets
-                await m.addColumn(schema.appSets, schema.appSets.updatedAt);
-                // atomicIpSets
-                await m.addColumn(
-                    schema.atomicIpSets, schema.atomicIpSets.updatedAt);
-                // greatIpSets
-                await m.addColumn(
-                    schema.greatIpSets, schema.greatIpSets.updatedAt);
-                // dnsServers
-                await m.alterTable(
-                    TableMigration(schema.dnsServers, columnTransformer: {
-                  schema.dnsServers.id: const CustomExpression(
-                      '(abs(random()) % 9223372036854775807)')
-                }, newColumns: [
-                  schema.dnsServers.updatedAt
-                ]));
-                // sshServers
-                await m.addColumn(
-                    schema.sshServers, schema.sshServers.updatedAt);
-                // customRouteModes
-                await m.alterTable(
-                  TableMigration(schema.customRouteModes,
-                      newColumns: [schema.customRouteModes.updatedAt]),
-                );
-                // handlerSelectors
-                await m.addColumn(
-                    schema.handlerSelectors, schema.handlerSelectors.updatedAt);
-                // selectorHandlerRelations
-                await m.alterTable(TableMigration(
-                    schema.selectorHandlerRelations,
-                    columnTransformer: {
-                      schema.selectorHandlerRelations.id:
-                          const CustomExpression(
-                              '(abs(random()) % 9223372036854775807)')
-                    }));
-                // selectorSubscriptionRelations
-                await m.alterTable(TableMigration(
-                    schema.selectorSubscriptionRelations,
-                    columnTransformer: {
-                      schema.selectorSubscriptionRelations.id:
-                          const CustomExpression(
-                              '(abs(random()) % 9223372036854775807)')
-                    }));
-                // selectorHandlerGroupRelations
-                await m.alterTable(TableMigration(
-                    schema.selectorHandlerGroupRelations,
-                    columnTransformer: {
-                      schema.selectorHandlerGroupRelations.id:
-                          const CustomExpression(
-                              '(abs(random()) % 9223372036854775807)')
-                    }));
-              }, from1To2: (m, schema) async {
-                await m.addColumn(schema.apps, schema.apps.icon);
-                await m.createTable(schema.commonSshKeys);
-                await m.dropColumn(schema.sshServers, 'port');
-                await m.dropColumn(schema.sshServers, 'user');
-                await m.dropColumn(schema.sshServers, 'password');
-                await m.dropColumn(schema.sshServers, 'passphrase');
-                await m.dropColumn(schema.sshServers, 'pub_key');
-              }, from2To3: (m, schema) async {
-                const customDirect = '自定义直连';
-                const customProxy = '自定义代理';
+              steps: migrationSteps(
+                from1To2: (m, schema) async {
+                  await m.addColumn(schema.apps, schema.apps.icon);
+                  await m.createTable(schema.commonSshKeys);
+                  await m.dropColumn(schema.sshServers, 'port');
+                  await m.dropColumn(schema.sshServers, 'user');
+                  await m.dropColumn(schema.sshServers, 'password');
+                  await m.dropColumn(schema.sshServers, 'passphrase');
+                  await m.dropColumn(schema.sshServers, 'pub_key');
+                },
+                from2To3: (m, schema) async {
+                  const customDirect = '自定义直连';
+                  const customProxy = '自定义代理';
 
-                // create tables
-                await m.createTable(schema.outboundHandlerGroups);
-                await m.createTable(schema.outboundHandlerGroupRelations);
-                await m.createTable(schema.atomicDomainSets);
-                await m.createTable(schema.greatDomainSets);
-                await m.createTable(schema.atomicIpSets);
-                await m.createTable(schema.greatIpSets);
-                await m.createTable(schema.appSets);
-                await m.createTable(schema.customRouteModes);
-                await m.createTable(schema.handlerSelectors);
-                // Save existing data before table recreation
-                try {
-                  // outboundHandlers
+                  // create tables
+                  await m.createTable(schema.outboundHandlerGroups);
+                  await m.createTable(schema.outboundHandlerGroupRelations);
+                  await m.createTable(schema.atomicDomainSets);
+                  await m.createTable(schema.greatDomainSets);
+                  await m.createTable(schema.atomicIpSets);
+                  await m.createTable(schema.greatIpSets);
+                  await m.createTable(schema.appSets);
+                  await m.createTable(schema.customRouteModes);
+                  await m.createTable(schema.handlerSelectors);
+                  // Save existing data before table recreation
+                  try {
+                    // outboundHandlers
+                    final oldData =
+                        await customSelect('SELECT * FROM outbound_handlers')
+                            .get();
+                    logger.d(
+                        'Saving ${oldData.length} outbound handlers before migration');
+                    await m
+                        .deleteTable(schema.outboundHandlers.actualTableName);
+                    await m.createTable(schema.outboundHandlers);
+                    // Restore outboundHandlers data with schema transformation
+                    for (final row in oldData) {
+                      // Create new companion with transformed data
+                      final newCompanion = OutboundHandlersCompanion(
+                        id: Value(row.data['id'] as int),
+                        config: Value(HandlerConfig(
+                            outbound: OutboundHandlerConfig.fromBuffer(
+                                row.data['config'] as Uint8List))),
+                        subId: Value(row.data['sub_id'] as int?),
+                        // New columns get default values
+                      );
+                      await into(outboundHandlers).insert(newCompanion);
+                    }
+                  } catch (e) {
+                    logger.e('Error migrating outboundHandlers', error: e);
+                    rethrow;
+                  }
+
+                  // subscriptions
+                  await m.alterTable(TableMigration(schema.subscriptions));
+
+                  try {
+                    // geoDomains
+                    final oldData =
+                        await customSelect('SELECT * FROM geo_domains').get();
+                    logger.d(
+                        'Saving ${oldData.length} geo domains before migration');
+                    await m.deleteTable(schema.geoDomains.actualTableName);
+                    await m.createTable(schema.geoDomains);
+                    // Restore geoDomains data
+                    for (final row in oldData) {
+                      await into(geoDomains).insert(GeoDomainsCompanion(
+                        domainSetName: Value((row.data['go_proxy'] as int) == 1
+                            ? customProxy
+                            : customDirect),
+                        geoDomain:
+                            Value(Domain.fromBuffer(row.data['geo_domain'])),
+                      ));
+                    }
+                    logger.d('Restored ${oldData.length} geo domains');
+                  } catch (e) {
+                    logger.e('Error migrating geoDomains', error: e);
+                    rethrow;
+                  }
+
+                  try {
+                    // apps
+                    final oldData =
+                        await customSelect('SELECT * FROM apps').get();
+                    logger.d('Saving ${oldData.length} apps before migration');
+                    await m.deleteTable(schema.apps.actualTableName);
+                    await m.createTable(schema.apps);
+                    // Restore apps data
+                    for (final row in oldData) {
+                      await into(apps).insert(AppsCompanion(
+                        appSetName: Value((row.data['proxy'] as int) == 1
+                            ? proxy
+                            : directAppSetName),
+                        appId: Value(AppId.fromBuffer(row.data['app_id'])),
+                      ));
+                    }
+                    logger.d('Restored ${oldData.length} apps');
+                  } catch (e) {
+                    logger.e('Error migrating apps', error: e);
+                    rethrow;
+                  }
+
+                  try {
+                    // cidrs
+                    final oldData =
+                        await customSelect('SELECT * FROM cidrs').get();
+                    logger.d('Saving ${oldData.length} cidrs before migration');
+                    await m.deleteTable(schema.cidrs.actualTableName);
+                    await m.createTable(schema.cidrs);
+                    // Restore cidrs data
+                    for (final row in oldData) {
+                      await into(cidrs).insert(CidrsCompanion(
+                        cidr: Value(CIDR.fromBuffer(row.data['cidr'])),
+                        ipSetName: Value((row.data['proxy'] as int) == 1
+                            ? customProxy
+                            : customDirect),
+                      ));
+                    }
+                    logger.d('Restored ${oldData.length} cidrs');
+                  } catch (e) {
+                    logger.e('Error migrating cidrs', error: e);
+                    rethrow;
+                  }
+                },
+                from3To4: (m, schema) async {
+                  await m.createTable(schema.selectorHandlerGroupRelations);
+                  await m.createTable(schema.selectorHandlerRelations);
+                  await m.createTable(schema.selectorSubscriptionRelations);
+                },
+                from4To5: (m, schema) async {
+                  const dnsServerProxy = 'Proxy DNS Server';
+                  const dnsServerDirect = 'Direct DNS Server';
+                  await m.addColumn(schema.greatDomainSets,
+                      schema.greatDomainSets.oppositeName);
+                  // select all greatDomainSets and populate oppositeName column
+                  final gds = await select(greatDomainSets).get();
+                  for (final row in gds) {
+                    await (update(greatDomainSets)
+                          ..where((e) => e.name.equals(row.name)))
+                        .write(GreatDomainSetsCompanion(
+                            oppositeName: Value(row.set.oppositeName)));
+                  }
+                  // select all rows in customRouteModes
                   final oldData =
-                      await customSelect('SELECT * FROM outbound_handlers')
+                      await customSelect('SELECT * FROM custom_route_modes')
                           .get();
-                  logger.d(
-                      'Saving ${oldData.length} outbound handlers before migration');
-                  await m.deleteTable(schema.outboundHandlers.actualTableName);
-                  await m.createTable(schema.outboundHandlers);
-                  // Restore outboundHandlers data with schema transformation
+                  await m.dropColumn(
+                      schema.customRouteModes, 'domain_sets_proxy_dns');
+                  await m.addColumn(schema.customRouteModes,
+                      schema.customRouteModes.dnsRules);
                   for (final row in oldData) {
-                    // Create new companion with transformed data
-                    final newCompanion = OutboundHandlersCompanion(
-                      id: Value(row.data['id'] as int),
-                      config: Value(HandlerConfig(
-                          outbound: OutboundHandlerConfig.fromBuffer(
-                              row.data['config'] as Uint8List))),
-                      subId: Value(row.data['sub_id'] as int?),
-                      // New columns get default values
-                    );
-                    await into(outboundHandlers).insert(newCompanion);
+                    final domainSetsProxyDns =
+                        row.data['domain_sets_proxy_dns'] as String;
+                    final domainTags =
+                        jsonDecode(domainSetsProxyDns) as List<dynamic>;
+                    final domainTagsString =
+                        domainTags.map((e) => e.toString()).toList();
+                    if (domainTagsString.isNotEmpty) {
+                      await (update(customRouteModes)
+                            ..where((e) => e.id.equals(row.data['id'])))
+                          .write(CustomRouteModesCompanion(
+                              dnsRules: Value(dns.DnsRules(rules: [
+                        dns.DnsRuleConfig(
+                            ruleName: '代理域名(proxy domains) A/AAAA',
+                            dnsServerName: dnsServerFake,
+                            includedTypes: [
+                              dns.DnsType.DnsType_A,
+                              dns.DnsType.DnsType_AAAA
+                            ],
+                            domainTags: domainTagsString),
+                        dns.DnsRuleConfig(
+                            ruleName: '代理域名(proxy domains)',
+                            dnsServerName: dnsServerProxy,
+                            domainTags: domainTagsString),
+                        dns.DnsRuleConfig(
+                          ruleName: '直连域名(direct domains)',
+                          dnsServerName: dnsServerDirect,
+                        )
+                      ]))));
+                    }
                   }
-                } catch (e) {
-                  logger.e('Error migrating outboundHandlers', error: e);
-                  rethrow;
-                }
-
-                // subscriptions
-                await m.alterTable(TableMigration(schema.subscriptions));
-
-                try {
-                  // geoDomains
-                  final oldData =
-                      await customSelect('SELECT * FROM geo_domains').get();
-                  logger.d(
-                      'Saving ${oldData.length} geo domains before migration');
-                  await m.deleteTable(schema.geoDomains.actualTableName);
-                  await m.createTable(schema.geoDomains);
-                  // Restore geoDomains data
-                  for (final row in oldData) {
-                    await into(geoDomains).insert(GeoDomainsCompanion(
-                      domainSetName: Value((row.data['go_proxy'] as int) == 1
-                          ? customProxy
-                          : customDirect),
-                      geoDomain:
-                          Value(Domain.fromBuffer(row.data['geo_domain'])),
-                    ));
-                  }
-                  logger.d('Restored ${oldData.length} geo domains');
-                } catch (e) {
-                  logger.e('Error migrating geoDomains', error: e);
-                  rethrow;
-                }
-
-                try {
-                  // apps
-                  final oldData =
-                      await customSelect('SELECT * FROM apps').get();
-                  logger.d('Saving ${oldData.length} apps before migration');
-                  await m.deleteTable(schema.apps.actualTableName);
-                  await m.createTable(schema.apps);
-                  // Restore apps data
-                  for (final row in oldData) {
-                    await into(apps).insert(AppsCompanion(
-                      appSetName: Value((row.data['proxy'] as int) == 1
-                          ? proxy
-                          : directAppSetName),
-                      appId: Value(AppId.fromBuffer(row.data['app_id'])),
-                    ));
-                  }
-                  logger.d('Restored ${oldData.length} apps');
-                } catch (e) {
-                  logger.e('Error migrating apps', error: e);
-                  rethrow;
-                }
-
-                try {
-                  // cidrs
-                  final oldData =
-                      await customSelect('SELECT * FROM cidrs').get();
-                  logger.d('Saving ${oldData.length} cidrs before migration');
-                  await m.deleteTable(schema.cidrs.actualTableName);
-                  await m.createTable(schema.cidrs);
-                  // Restore cidrs data
-                  for (final row in oldData) {
-                    await into(cidrs).insert(CidrsCompanion(
-                      cidr: Value(CIDR.fromBuffer(row.data['cidr'])),
-                      ipSetName: Value((row.data['proxy'] as int) == 1
-                          ? customProxy
-                          : customDirect),
-                    ));
-                  }
-                  logger.d('Restored ${oldData.length} cidrs');
-                } catch (e) {
-                  logger.e('Error migrating cidrs', error: e);
-                  rethrow;
-                }
-              }, from3To4: (m, schema) async {
-                await m.createTable(schema.selectorHandlerGroupRelations);
-                await m.createTable(schema.selectorHandlerRelations);
-                await m.createTable(schema.selectorSubscriptionRelations);
-              }, from4To5: (m, schema) async {
-                const dnsServerProxy = 'Proxy DNS Server';
-                const dnsServerDirect = 'Direct DNS Server';
-                await m.addColumn(schema.greatDomainSets,
-                    schema.greatDomainSets.oppositeName);
-                // select all greatDomainSets and populate oppositeName column
-                final gds = await select(greatDomainSets).get();
-                for (final row in gds) {
-                  await (update(greatDomainSets)
-                        ..where((e) => e.name.equals(row.name)))
-                      .write(GreatDomainSetsCompanion(
-                          oppositeName: Value(row.set.oppositeName)));
-                }
-                // select all rows in customRouteModes
-                final oldData =
-                    await customSelect('SELECT * FROM custom_route_modes')
-                        .get();
-                await m.dropColumn(
-                    schema.customRouteModes, 'domain_sets_proxy_dns');
-                await m.addColumn(
-                    schema.customRouteModes, schema.customRouteModes.dnsRules);
-                for (final row in oldData) {
-                  final domainSetsProxyDns =
-                      row.data['domain_sets_proxy_dns'] as String;
-                  final domainTags =
-                      jsonDecode(domainSetsProxyDns) as List<dynamic>;
-                  final domainTagsString =
-                      domainTags.map((e) => e.toString()).toList();
-                  if (domainTagsString.isNotEmpty) {
-                    await (update(customRouteModes)
-                          ..where((e) => e.id.equals(row.data['id'])))
-                        .write(CustomRouteModesCompanion(
-                            dnsRules: Value(dns.DnsRules(rules: [
-                      dns.DnsRuleConfig(
-                          ruleName: '代理域名(proxy domains) A/AAAA',
-                          dnsServerName: dnsServerFake,
-                          includedTypes: [
-                            dns.DnsType.DnsType_A,
-                            dns.DnsType.DnsType_AAAA
-                          ],
-                          domainTags: domainTagsString),
-                      dns.DnsRuleConfig(
-                          ruleName: '代理域名(proxy domains)',
-                          dnsServerName: dnsServerProxy,
-                          domainTags: domainTagsString),
-                      dns.DnsRuleConfig(
-                        ruleName: '直连域名(direct domains)',
-                        dnsServerName: dnsServerDirect,
-                      )
-                    ]))));
-                  }
-                }
-                await m.createTable(schema.dnsServers);
-              }, from5To6: (m, schema) async {
-                await m.addColumn(schema.outboundHandlerGroups,
-                    schema.outboundHandlerGroups.placeOnTop);
-                await m.addColumn(
-                    schema.subscriptions, schema.subscriptions.placeOnTop);
-                await m.addColumn(schema.atomicDomainSets,
-                    schema.atomicDomainSets.clashRuleUrls);
-                await m.addColumn(schema.appSets, schema.appSets.clashRuleUrls);
-                await m.addColumn(
-                    schema.atomicIpSets, schema.atomicIpSets.clashRuleUrls);
-              }),
+                  await m.createTable(schema.dnsServers);
+                },
+                from5To6: (m, schema) async {
+                  await m.addColumn(schema.outboundHandlerGroups,
+                      schema.outboundHandlerGroups.placeOnTop);
+                  await m.addColumn(
+                      schema.subscriptions, schema.subscriptions.placeOnTop);
+                  await m.addColumn(schema.atomicDomainSets,
+                      schema.atomicDomainSets.clashRuleUrls);
+                  await m.addColumn(
+                      schema.appSets, schema.appSets.clashRuleUrls);
+                  await m.addColumn(
+                      schema.atomicIpSets, schema.atomicIpSets.clashRuleUrls);
+                },
+                from6To7: (m, schema) async {
+                  // outboundHandlers id column no longer auto increment
+                  await m.alterTable(TableMigration(schema.outboundHandlers,
+                      newColumns: [schema.outboundHandlers.updatedAt]));
+                  // outboundHandlerGroups
+                  await m.addColumn(schema.outboundHandlerGroups,
+                      schema.outboundHandlerGroups.updatedAt);
+                  // subscriptions. id column no longer auto increment
+                  await m.alterTable(TableMigration(schema.subscriptions,
+                      newColumns: [schema.subscriptions.updatedAt]));
+                  // atomicDomainSets
+                  await m.addColumn(schema.atomicDomainSets,
+                      schema.atomicDomainSets.updatedAt);
+                  // greatDomainSets
+                  await m.addColumn(
+                      schema.greatDomainSets, schema.greatDomainSets.updatedAt);
+                  // appSets
+                  await m.addColumn(schema.appSets, schema.appSets.updatedAt);
+                  // atomicIpSets
+                  await m.addColumn(
+                      schema.atomicIpSets, schema.atomicIpSets.updatedAt);
+                  // greatIpSets
+                  await m.addColumn(
+                      schema.greatIpSets, schema.greatIpSets.updatedAt);
+                  // dnsServers
+                  await m.alterTable(
+                      TableMigration(schema.dnsServers, columnTransformer: {
+                    schema.dnsServers.id: const CustomExpression(
+                        '(abs(random()) % 9223372036854775807)')
+                  }, newColumns: [
+                    schema.dnsServers.updatedAt
+                  ]));
+                  // sshServers
+                  await m.addColumn(
+                      schema.sshServers, schema.sshServers.updatedAt);
+                  // customRouteModes
+                  await m.alterTable(
+                    TableMigration(schema.customRouteModes,
+                        newColumns: [schema.customRouteModes.updatedAt]),
+                  );
+                  // handlerSelectors
+                  await m.addColumn(schema.handlerSelectors,
+                      schema.handlerSelectors.updatedAt);
+                  // selectorHandlerRelations
+                  await m.alterTable(TableMigration(
+                      schema.selectorHandlerRelations,
+                      columnTransformer: {
+                        schema.selectorHandlerRelations.id:
+                            const CustomExpression(
+                                '(abs(random()) % 9223372036854775807)')
+                      }));
+                  // selectorSubscriptionRelations
+                  await m.alterTable(TableMigration(
+                      schema.selectorSubscriptionRelations,
+                      columnTransformer: {
+                        schema.selectorSubscriptionRelations.id:
+                            const CustomExpression(
+                                '(abs(random()) % 9223372036854775807)')
+                      }));
+                  // selectorHandlerGroupRelations
+                  await m.alterTable(TableMigration(
+                      schema.selectorHandlerGroupRelations,
+                      columnTransformer: {
+                        schema.selectorHandlerGroupRelations.id:
+                            const CustomExpression(
+                                '(abs(random()) % 9223372036854775807)')
+                      }));
+                },
+                from7To8: (m, schema) async {
+                  m.addColumn(
+                      schema.atomicDomainSets, schema.atomicDomainSets.geoUrl);
+                  m.addColumn(schema.atomicIpSets, schema.atomicIpSets.geoUrl);
+                },
+              ),
             );
           });
 

@@ -22,8 +22,10 @@ import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/widgets/pro_icon.dart';
 
-final useStripe =
-    Platform.isWindows || (androidApkRelease) || appFlavor == "pkg" || Platform.isLinux;
+final useStripe = Platform.isWindows ||
+    (androidApkRelease) ||
+    appFlavor == "pkg" ||
+    Platform.isLinux;
 void showProPromotionDialog(BuildContext context) {
   if (Provider.of<MyLayout>(context, listen: false).isCompact) {
     Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
@@ -274,7 +276,6 @@ class IAPPurchase extends StatelessWidget {
               if (proPurchases.state is IAPStateWithPurchaseDetail) {
                 final stateWithPurchaseDetail =
                     proPurchases.state as IAPStateWithPurchaseDetail;
-                inspect(proPurchases.state);
                 if (stateWithPurchaseDetail.purchaseDetails.status ==
                     PurchaseStatus.canceled) {
                   return Center(
@@ -296,6 +297,24 @@ class IAPPurchase extends StatelessWidget {
                         child: CircularProgressIndicator()),
                   );
                 } else if (stateWithPurchaseDetail.verifying ?? false) {
+                  if (stateWithPurchaseDetail.purchaseDetails.status ==
+                      PurchaseStatus.restored) {
+                    return SizedBox(
+                      height: 200,
+                      child: Center(
+                          child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator()),
+                          const Gap(10),
+                          Text(AppLocalizations.of(context)!.restoringPurchase),
+                        ],
+                      )),
+                    );
+                  }
                   return SizedBox(
                     height: 200,
                     child: Center(
@@ -344,16 +363,44 @@ class IAPPurchase extends StatelessWidget {
                     ],
                   ));
                 } else if (stateWithPurchaseDetail.success ?? false) {
-                  return Center(
-                      child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.check_circle,
-                          color: Colors.green, size: 32),
-                      const Gap(10),
-                      Text(AppLocalizations.of(context)!.purchaseSuccessful),
-                    ],
-                  ));
+                  if (stateWithPurchaseDetail.purchaseDetails.status ==
+                      PurchaseStatus.purchased) {
+                    return Center(
+                        child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.check_circle,
+                            color: Colors.green, size: 32),
+                        const Gap(10),
+                        Text(AppLocalizations.of(context)!.purchaseSuccessful),
+                      ],
+                    ));
+                  } else if (stateWithPurchaseDetail.purchaseDetails.status ==
+                      PurchaseStatus.restored) {
+                    return Center(
+                        child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.check_circle,
+                            color: Colors.green, size: 32),
+                        const Gap(10),
+                        Text(AppLocalizations.of(context)!.restoreSuccessful),
+                      ],
+                    ));
+                  } else {
+                    logger.e(
+                        'unknown purchase status: ${stateWithPurchaseDetail.purchaseDetails.status}');
+                  }
+                  // return Center(
+                  //     child: Row(
+                  //   mainAxisSize: MainAxisSize.min,
+                  //   children: [
+                  //     const Icon(Icons.check_circle,
+                  //         color: Colors.green, size: 32),
+                  //     const Gap(10),
+                  //     Text(AppLocalizations.of(context)!.purchaseSuccessful),
+                  //   ],
+                  // ));
                 } else if (stateWithPurchaseDetail.purchaseDetails.status ==
                     PurchaseStatus.error) {
                   return Center(

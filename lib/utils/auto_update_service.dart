@@ -336,7 +336,7 @@ class AutoUpdateService extends ChangeNotifier {
         '--',
         'bash',
         '-c',
-        'echo "Running the following command to update VX:"; echo "sudo ${isRpm() ? 'dnf install' : 'dpkg -i'} ${installer}"; bash'
+        'echo "Running the following command to update VX:"; echo "sudo ${isRpm() ? 'dnf install' : 'dpkg -i'} ${installer.path}"; bash'
       ]);
       // await exitCurrentApp();
     }

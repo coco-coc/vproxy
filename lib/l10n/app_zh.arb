@@ -247,6 +247,7 @@
   "purchase": "购买",
   "purchaseCancelled": "购买已取消",
   "verifyingPurchase": "正在验证购买...",
+  "restoringPurchase": "正在恢复购买...",
   "purchaseVerificationFailed": "无法验证购买: {reason}",
   "@purchaseVerificationFailed": {
     "placeholders": {
@@ -894,5 +895,7 @@
   "subString": "子字符",
   "echDomain": "ECH域名",
   "generateEchConfig": "生成ECH配置",
-  "echDomainDesc": "外部ClientHello SNI"
+  "echDomainDesc": "外部ClientHello SNI",
+  "restoreSuccessful": "恢复成功",
+  "pleaseUseAnotherEmail": "不支持该邮箱，请使用其他邮箱"
 }

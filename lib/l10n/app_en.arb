@@ -244,6 +244,7 @@
   "purchase": "Purchase",
   "purchaseCancelled": "Purchase Cancelled",
   "verifyingPurchase": "Verifying Purchase...",
+  "restoringPurchase": "Restoring Purchase...",
   "purchaseVerificationFailed": "Unable to verify purchase: {reason}",
   "@purchaseVerificationFailed": {
     "placeholders": {
@@ -886,5 +887,7 @@
   "subString": "Sub String",
   "echDomain": "ECH Domain",
   "generateEchConfig": "Generate ECH Config",
-  "echDomainDesc": "Outer ClientHello SNI"
+  "echDomainDesc": "Outer ClientHello SNI",
+  "restoreSuccessful": "Restore Successful",
+  "pleaseUseAnotherEmail": "Unsupported email, please use another email"
 }

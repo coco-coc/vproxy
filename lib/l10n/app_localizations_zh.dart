@@ -693,6 +693,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get verifyingPurchase => '正在验证购买...';
 
   @override
+  String get restoringPurchase => '正在恢复购买...';
+
+  @override
   String purchaseVerificationFailed(String reason) {
     return '无法验证购买: $reason';
   }
@@ -2124,4 +2127,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get echDomainDesc => '外部ClientHello SNI';
+
+  @override
+  String get restoreSuccessful => '恢复成功';
+
+  @override
+  String get pleaseUseAnotherEmail => '不支持该邮箱，请使用其他邮箱';
 }

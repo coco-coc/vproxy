@@ -1429,6 +1429,12 @@ abstract class AppLocalizations {
   /// **'Verifying Purchase...'**
   String get verifyingPurchase;
 
+  /// No description provided for @restoringPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring Purchase...'**
+  String get restoringPurchase;
+
   /// No description provided for @purchaseVerificationFailed.
   ///
   /// In en, this message translates to:
@@ -4122,6 +4128,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Outer ClientHello SNI'**
   String get echDomainDesc;
+
+  /// No description provided for @restoreSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Successful'**
+  String get restoreSuccessful;
+
+  /// No description provided for @pleaseUseAnotherEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported email, please use another email'**
+  String get pleaseUseAnotherEmail;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

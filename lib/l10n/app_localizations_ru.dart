@@ -707,6 +707,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get verifyingPurchase => 'Подтверждение покупки...';
 
   @override
+  String get restoringPurchase => 'Restoring Purchase...';
+
+  @override
   String purchaseVerificationFailed(String reason) {
     return 'Не удалось подтвердить покупку: $reason';
   }
@@ -2174,4 +2177,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get echDomainDesc => 'Outer ClientHello SNI';
+
+  @override
+  String get restoreSuccessful => 'Restore Successful';
+
+  @override
+  String get pleaseUseAnotherEmail => 'Unsupported email, please use another email';
 }

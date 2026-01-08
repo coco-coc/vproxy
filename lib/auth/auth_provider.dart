@@ -198,19 +198,6 @@ class SupabaseAuth extends AuthProvider {
     );
   }
 
-  // Future<void> sendLinkToEmail(String email) async {
-  //   final arc = fa.ActionCodeSettings(
-  //     url: 'https://example.com/?email=$email',
-  //     handleCodeInApp: true,
-  //     // iOSBundleId: 'com.example.ios',
-  //     // androidPackageName: 'com.example.android',
-  //     // androidInstallApp: true,
-  //     // androidMinimumVersion: '12',
-  //   );
-  //   return _firebaseAuth.sendSignInLinkToEmail(
-  //       email: email, actionCodeSettings: arc);
-  // }
-
   @override
   Future<void> signInWithEmailOtp(String email) async {
     await supabase.auth.signInWithOtp(
