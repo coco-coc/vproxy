@@ -48,7 +48,8 @@ abstract class SetRepo with ChangeNotifier {
   Future<void> updateAtomicDomainSet(String name,
       {GeositeConfig? geositeConfig,
       List<String>? clashRuleUrls,
-      bool? useBloomFilter});
+      bool? useBloomFilter,
+      String? geoUrl});
   Future<void> updateGreateDomainSet(String name,
       {GreatDomainSetConfig? greatDomainSet});
 
@@ -61,7 +62,7 @@ abstract class SetRepo with ChangeNotifier {
   Future<void> removeGreatIpSet(String ipSetName);
   Future<void> addAtomicIpSet(AtomicIpSet atomicIpSet);
   Future<void> updateAtomicIpSet(String name,
-      {GeoIPConfig? geoIpConfig, List<String>? clashRuleUrls});
+      {GeoIPConfig? geoIpConfig, List<String>? clashRuleUrls, String? geoUrl});
   Future<void> removeAtomicIpSet(String ipSetName);
   Stream<List<GreatIpSet>> getGreatIpSetsStream();
   Stream<List<AtomicIpSet>> getAtomicIpSetsStream();
@@ -205,23 +206,18 @@ class DbHelper
         name: Value(config.name),
         geoIpConfig: Value(config.geoIpConfig),
         clashRuleUrls: Value(config.clashRuleUrls),
+        geoUrl: Value(config.geoUrl),
       ),
       mode: InsertMode.insertOrReplace,
     );
-    // await database.managers.atomicIpSets.create(
-    //     (o) => o(
-    //           name: config.name,
-    //           geoIpConfig: Value(config.geoIpConfig),
-    //           clashRuleUrls: Value(config.clashRuleUrls),
-    //         ),
-    //     mode: InsertMode.insert);
   }
 
   @override
   Future<void> updateAtomicIpSet(String name,
       {GeoIPConfig? geoIpConfig,
       List<String>? clashRuleUrls,
-      String? newName}) async {
+      String? newName,
+      String? geoUrl}) async {
     await database.syncUpdateName(
       database.atomicIpSets,
       name,
@@ -231,17 +227,9 @@ class DbHelper
             geoIpConfig != null ? Value(geoIpConfig) : const Value.absent(),
         clashRuleUrls:
             clashRuleUrls != null ? Value(clashRuleUrls) : const Value.absent(),
+        geoUrl: geoUrl != null ? Value(geoUrl) : const Value.absent(),
       ),
     );
-    // await database.managers.atomicIpSets
-    //     .filter((f) => f.name.equals(name))
-    //     .update((o) => o(
-    //         name: newName != null ? Value(newName) : const Value.absent(),
-    //         geoIpConfig:
-    //             geoIpConfig != null ? Value(geoIpConfig) : const Value.absent(),
-    //         clashRuleUrls: clashRuleUrls != null
-    //             ? Value(clashRuleUrls)
-    //             : const Value.absent()));
   }
 
   @override
@@ -313,6 +301,7 @@ class DbHelper
         geositeConfig: Value(config.geositeConfig),
         clashRuleUrls: Value(config.clashRuleUrls),
         useBloomFilter: Value(config.useBloomFilter),
+        geoUrl: Value(config.geoUrl),
       ),
     );
     // await database.managers.atomicDomainSets.create(
@@ -328,7 +317,8 @@ class DbHelper
   Future<void> updateAtomicDomainSet(String name,
       {GeositeConfig? geositeConfig,
       List<String>? clashRuleUrls,
-      bool? useBloomFilter}) async {
+      bool? useBloomFilter,
+      String? geoUrl}) async {
     // await database.managers.atomicDomainSets
     //     .filter((f) => f.name.equals(name))
     //     .update((o) => o(
@@ -353,6 +343,7 @@ class DbHelper
         useBloomFilter: useBloomFilter != null
             ? Value(useBloomFilter)
             : const Value.absent(),
+        geoUrl: geoUrl != null ? Value(geoUrl) : const Value.absent(),
       ),
     );
   }

@@ -712,6 +712,7 @@ class _SmallIpSetFormState extends State<SmallIpSetForm> with FormDataGetter {
           filepath: _geoIpFilePathController.text,
           codes: _geoIpCodes,
         ),
+        geoUrl: _geoUrlController.text,
       );
     }
     return null;

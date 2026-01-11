@@ -639,6 +639,7 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
           geositeConfig: config.geositeConfig,
           clashRuleUrls: config.clashRuleUrls,
           useBloomFilter: config.useBloomFilter,
+          geoUrl: config.geoUrl,
         );
       }
       // setState(() {
@@ -956,16 +957,6 @@ class _IPSetWidgetState extends State<IPSetWidget> {
         snack(AppLocalizations.of(context)!.setNameDuplicate);
         return;
       }
-      // setState(() {
-      //   if (set == null) {
-      //     _atomicIpSets.add(config);
-      //   } else {
-      //     final index = _atomicIpSets.indexWhere((e) => e.name == set.name);
-      //     if (index != -1) {
-      //       _atomicIpSets[index] = config;
-      //     }
-      //   }
-      // });
       if (set == null) {
         await repo.addAtomicIpSet(config);
       } else {
@@ -973,6 +964,7 @@ class _IPSetWidgetState extends State<IPSetWidget> {
           set.name,
           geoIpConfig: config.geoIpConfig,
           clashRuleUrls: config.clashRuleUrls,
+          geoUrl: config.geoUrl,
         );
       }
       geoDataHelper.makeGeoDataAvailable();
