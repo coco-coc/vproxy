@@ -14,12 +14,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide User;
-import 'package:vx/auth/auth_provider.dart';
 import 'package:vx/auth/user.dart';
 import 'package:flutter_common/auth/auth_provider.dart';
 import 'package:flutter_common/util/jwt.dart';
@@ -47,14 +45,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void setTestUser() {
-    emit(AuthState(
+    emit(const AuthState(
       user: User(id: 'test', email: 'test@test.com', pro: true),
       isActivated: false,
     ));
   }
 
   void unsetTestUser() {
-    emit(AuthState(isActivated: false));
+    emit(const AuthState(isActivated: false));
   }
 
   final AuthProvider _authRepo;

@@ -17,7 +17,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:drift/drift.dart' hide Column;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -46,12 +45,8 @@ import 'package:vx/data/database.dart';
 import 'package:vx/main.dart' hide App;
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/pref_helper.dart';
-import 'package:vx/theme.dart';
 import 'package:vx/utils/desktop_installed_apps.dart';
 import 'package:vx/utils/xapi_client.dart';
-import 'package:vx/widgets/form_dialog.dart';
-import 'package:vx/widgets/pro_icon.dart';
-import 'package:vx/widgets/pro_promotion.dart';
 
 part 'ip.dart';
 

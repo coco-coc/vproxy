@@ -16,7 +16,6 @@
 import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart' as path;
-import 'package:vx/utils/logger.dart';
 
 /// A utility class for compressing and decompressing files
 class CompressionHelper {

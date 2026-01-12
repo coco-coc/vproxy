@@ -550,7 +550,7 @@ class _SpeedChart extends StatelessWidget {
     // Align the top tick with the actual max speed so we can show
     // exactly 3 Y labels: min / mid / max.
     final maxY = maxValue.toDouble().clamp(1.0, double.infinity);
-    final minY = 0.0;
+    const minY = 0.0;
     final maxX = (allData.length - 1).toDouble().clamp(1.0, double.infinity);
     final yInterval = (maxY - minY) / 2.0;
 
@@ -670,7 +670,7 @@ class _SpeedChart extends StatelessWidget {
                 final timeStr = _formatTime(dataPoint.$2);
                 return LineTooltipItem(
                   '${bytesToReadable(touchedSpot.y.toInt())}\n$timeStr',
-                  TextStyle(
+                  const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 10,
@@ -679,7 +679,7 @@ class _SpeedChart extends StatelessWidget {
               }
               return LineTooltipItem(
                 bytesToReadable(touchedSpot.y.toInt()),
-                TextStyle(
+                const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 10,
@@ -711,7 +711,7 @@ class _MemoryStatsState extends State<MemoryStats> {
 
   @override
   Widget build(BuildContext context) {
-    final color = ShimmerPurple;
+    const color = ShimmerPurple;
     return GestureDetector(
       onTap: _toggleView,
       child: Container(
@@ -735,12 +735,12 @@ class _MemoryStatsState extends State<MemoryStats> {
           ],
         ),
         child: _showChart
-            ? _MemoryChart(
-                key: const ValueKey('chart'),
+            ? const _MemoryChart(
+                key: ValueKey('chart'),
                 color: color,
               )
-            : _MemoryDisplay(
-                key: const ValueKey('display'),
+            : const _MemoryDisplay(
+                key: ValueKey('display'),
                 color: color,
               ),
       ),
@@ -894,7 +894,7 @@ class _MemoryChart extends StatelessWidget {
     final maxValue =
         averagedData.map((e) => e.$1).reduce((a, b) => a > b ? a : b);
     final maxY = (maxValue * 1.1).toDouble().clamp(1.0, double.infinity);
-    final minY = 0.0;
+    const minY = 0.0;
 
     return LineChartData(
       gridData: FlGridData(
@@ -949,7 +949,7 @@ class _MemoryChart extends StatelessWidget {
                 final timeStr = _formatTime(dataPoint.$2);
                 return LineTooltipItem(
                   '${bytesToReadable(touchedSpot.y.toInt())}\n$timeStr',
-                  TextStyle(
+                  const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 10,
@@ -958,7 +958,7 @@ class _MemoryChart extends StatelessWidget {
               }
               return LineTooltipItem(
                 bytesToReadable(touchedSpot.y.toInt()),
-                TextStyle(
+                const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 10,
@@ -1194,7 +1194,7 @@ class _ConnectionsChart extends StatelessWidget {
 
     final maxValue = allData.map((e) => e.$1).reduce((a, b) => a > b ? a : b);
     final maxY = maxValue.toDouble().clamp(1.0, double.infinity);
-    final minY = 0.0;
+    const minY = 0.0;
     final maxX = (allData.length - 1).toDouble().clamp(1.0, double.infinity);
     final yInterval = (maxY - minY) / 2.0;
 
@@ -1323,7 +1323,7 @@ class _ConnectionsChart extends StatelessWidget {
                 final timeStr = _formatTime(dataPoint.$2);
                 return LineTooltipItem(
                   '${touchedSpot.y.toInt()}\n$timeStr',
-                  TextStyle(
+                  const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 10,
@@ -1332,7 +1332,7 @@ class _ConnectionsChart extends StatelessWidget {
               }
               return LineTooltipItem(
                 touchedSpot.y.toInt().toString(),
-                TextStyle(
+                const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 10,
@@ -1354,7 +1354,7 @@ class NodeStatsWidget extends StatelessWidget {
     return Consumer<RealtimeSpeedNotifier>(
       builder: (context, speedProvider, _) {
         if (speedProvider.nodeInfos.isEmpty) {
-          return SizedBox();
+          return const SizedBox();
         }
 
         return Container(
@@ -1718,7 +1718,7 @@ class _NodeChart extends StatelessWidget {
 
     final maxValue = averagedValues.reduce((a, b) => a > b ? a : b);
     final maxY = (maxValue * 1.1).toDouble().clamp(1.0, double.infinity);
-    final minY = 0.0;
+    const minY = 0.0;
 
     return LineChartData(
       gridData: FlGridData(
@@ -1772,7 +1772,7 @@ class _NodeChart extends StatelessWidget {
                   : bytesToReadable(touchedSpot.y.toInt());
               return LineTooltipItem(
                 valueStr,
-                TextStyle(
+                const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 10,

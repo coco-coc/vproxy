@@ -22,11 +22,9 @@ import 'package:logger/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vx/common/common.dart';
 import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/path.dart';
-import 'package:vx/utils/upload_log.dart';
 
 Future<String> getLogFileName() async {
   return "${(await PackageInfo.fromPlatform()).version}-${DateTime.now().toString().replaceAll(':', '_')}.txt";

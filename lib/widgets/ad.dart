@@ -14,17 +14,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:async';
-import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:vx/auth/auth_bloc.dart';
 
-import 'dart:io';
 
 import 'package:vx/common/extension.dart';
 import 'package:vx/data/ads_provider.dart';
@@ -121,7 +117,7 @@ class AdWidget extends StatelessWidget {
             ),
             child: GestureDetector(
               onTap: () {
-                launchUrl(Uri.parse(ad!.website));
+                launchUrl(Uri.parse(ad.website));
               },
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
@@ -205,7 +201,7 @@ class AdWantedCard extends StatelessWidget {
               children: [
                 Icon(Icons.campaign,
                     size: 24, color: Theme.of(context).colorScheme.primary),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
                   AppLocalizations.of(context)!.adWanted,
                   style: TextStyle(

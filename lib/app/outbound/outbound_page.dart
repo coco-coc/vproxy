@@ -20,18 +20,14 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
-import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/protos/outbound.pb.dart';
 import 'package:vx/app/outbound/add.dart';
 import 'package:vx/app/outbound/add_chain_handler.dart';
 import 'package:vx/app/outbound/edit_outbound.dart';
-import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/app/outbound/subscription.dart';
 import 'package:vx/app/outbound/subscription_page.dart';
@@ -42,7 +38,6 @@ import 'package:vx/common/common.dart';
 import 'package:vx/common/extension.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/app/layout_provider.dart';
-import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/theme.dart';
 import 'package:vx/l10n/app_localizations.dart';
@@ -52,7 +47,6 @@ import 'package:vx/utils/xapi_client.dart';
 import 'package:vx/widgets/ad.dart';
 import 'package:vx/widgets/form_dialog.dart';
 import 'package:vx/app/outbound/outbound_handler_card.dart';
-import 'package:vx/widgets/no_node.dart';
 
 part 'action_menu_anchor.dart';
 part 'group_selector.dart';
@@ -607,16 +601,16 @@ class _HandlerRowState extends State<HandlerRow> {
           const Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: const EdgeInsets.only(left: 4),
+                padding: EdgeInsets.only(left: 4),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.circle,
                       size: 8,
                       color: XBlue,
                     ),
-                    const Gap(2),
+                    Gap(2),
                   ],
                 ),
               ))
@@ -779,7 +773,7 @@ class OutboundMenuAnchor extends StatelessWidget {
                       shareQrCode(context, qrCodeData);
                     }),
                 MenuItemButton(
-                    leadingIcon: Icon(Icons.category_rounded),
+                    leadingIcon: const Icon(Icons.category_rounded),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 4),
                       child: Text(
@@ -804,13 +798,13 @@ class OutboundMenuAnchor extends StatelessWidget {
                   .read<OutboundBloc>()
                   .add(HandlersDeleteEvent([handler.id]))),
         ],
-        builder: (context, _menuController, child) {
+        builder: (context, menuController, child) {
           return Material(
             color: color,
             child: GestureDetector(
               onLongPressStart: (details) {
                 if (!desktopPlatforms) {
-                  _menuController.open(
+                  menuController.open(
                       position: Offset(
                           details.localPosition.dx, details.localPosition.dy));
                 }
@@ -819,8 +813,8 @@ class OutboundMenuAnchor extends StatelessWidget {
                 borderRadius: borderRadius,
                 onTap: clickable
                     ? () {
-                        if (_menuController.isOpen) {
-                          _menuController.close();
+                        if (menuController.isOpen) {
+                          menuController.close();
                         } else {
                           final bloc = context.read<OutboundBloc>();
                           if (bloc.state.multiSelect) {
@@ -840,7 +834,7 @@ class OutboundMenuAnchor extends StatelessWidget {
                     : null,
                 onSecondaryTapDown: desktopPlatforms
                     ? (TapDownDetails details) {
-                        _menuController.open(
+                        menuController.open(
                             position: Offset(details.localPosition.dx,
                                 details.localPosition.dy));
                       }

@@ -32,16 +32,13 @@ import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/app/settings/account.dart';
 import 'package:vx/app/settings/advanced/advanced.dart';
 import 'package:vx/app/settings/contact.dart';
-import 'package:vx/app/settings/general/language.dart';
 import 'package:vx/app/settings/open_source_software_notice_screen.dart';
 import 'package:vx/app/settings/privacy.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/auth/user.dart';
 import 'package:vx/main.dart';
-import 'package:vx/pref_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:vx/theme.dart';
 import 'package:vx/utils/debug.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
@@ -268,11 +265,11 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
       height: 5,
     ),
     if (context.watch<AuthBloc>().state.isActivated)
-      Align(
+      const Align(
         alignment: Alignment.centerLeft,
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 10.0, left: 5.0),
-          child: const ActivatedIcon(),
+          padding: EdgeInsets.only(bottom: 10.0, left: 5.0),
+          child: ActivatedIcon(),
         ),
       ),
     Row(
@@ -315,7 +312,7 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
         ),
       ],
     ),
-    SizedBox(
+    const SizedBox(
       height: 5,
     ),
     Row(
@@ -374,7 +371,7 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
         ),
       ],
     ),
-    Gap(5),
+    const Gap(5),
     Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: OutlinedButton.icon(
@@ -389,7 +386,7 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
     if (!isProduction())
       Row(
         children: [
-          IconButton(
+          const IconButton(
             onPressed: saveLogToApplicationDocumentsDir,
             icon: Icon(Icons.file_copy),
           ),
@@ -398,7 +395,7 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
               final dbPath = await getDbPath(context.read<SharedPreferences>());
               clearDatabase(dbPath);
             },
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
           ),
           TextButton(
             onPressed: () async {
@@ -413,19 +410,19 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
                       .copy(join(dstDir, "db.sqlite"));
               print('copied, ${newFile.path}');
             },
-            child: Text('Copy Database'),
+            child: const Text('Copy Database'),
           ),
           TextButton(
             onPressed: () {
               context.read<AuthBloc>().unsetTestUser();
             },
-            child: Text('Unset'),
+            child: const Text('Unset'),
           ),
           TextButton(
             onPressed: () {
               context.read<AuthBloc>().setTestUser();
             },
-            child: Text('Set'),
+            child: const Text('Set'),
           ),
         ],
       ),
@@ -448,7 +445,7 @@ class CompactSettingScreen extends StatelessWidget {
                   onPressed: () {
                     context.pop();
                   },
-                  icon: Icon(Icons.arrow_back_rounded)),
+                  icon: const Icon(Icons.arrow_back_rounded)),
               automaticallyImplyLeading: true,
             )
           : null,
@@ -513,7 +510,7 @@ class Version extends StatelessWidget {
                     demo = true;
                     App.of(context)?.rebuildAllChildren();
                     if (Platform.isMacOS) {
-                      await windowManager.setSize(Size(1280, 800));
+                      await windowManager.setSize(const Size(1280, 800));
                     }
                     context.read<RealtimeSpeedNotifier>().demo();
                   }

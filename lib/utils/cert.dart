@@ -19,7 +19,6 @@ import 'dart:io';
 
 import 'package:ffi/ffi.dart';
 import 'package:tm/protos/protos/tls/certificate.pb.dart';
-import 'package:vx/common/common.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/path.dart';
 import 'package:vx/utils/x_api_bindings_generated.dart';

@@ -15,13 +15,11 @@
 
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
 import 'package:vx/common/net.dart';
-import 'package:vx/main.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
 
 class AddDialog extends StatefulWidget {
@@ -35,7 +33,7 @@ class _AddDialogState extends State<AddDialog> {
   final TextEditingController _controller = TextEditingController();
   Domain_Type _type = Domain_Type.Plain;
   final _formKey = GlobalKey<FormState>();
-  bool _parsingFile = false;
+  final bool _parsingFile = false;
 
   @override
   void dispose() {

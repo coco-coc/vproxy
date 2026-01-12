@@ -24,7 +24,6 @@ import 'package:pasteboard/pasteboard.dart';
 import 'package:path/path.dart' hide context;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/pref_helper.dart';
-import 'package:vx/widgets/ad.dart';
 import 'package:vx/app/control.dart';
 
 import 'package:vx/app/start_close_button.dart';
@@ -32,12 +31,8 @@ import 'package:vx/app/top_bar.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/common/extension.dart';
 import 'package:vx/app/navigation.dart';
-import 'package:vx/data/sync.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
-import 'package:vx/utils/debug.dart';
-import 'package:vx/utils/logger.dart';
-import 'package:vx/utils/path.dart';
 import 'package:vx/widgets/divider.dart';
 import 'package:vx/widgets/no_node.dart';
 
@@ -326,7 +321,7 @@ class _ShellPageState extends State<ShellPage> {
                         onPressed: () {
                           context.push('/setting');
                         },
-                        icon: Icon(Icons.settings_rounded)),
+                        icon: const Icon(Icons.settings_rounded)),
                     if (Platform.isMacOS) const SyncButton(),
                     Builder(builder: (context) {
                       return IconButton(

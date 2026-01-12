@@ -63,9 +63,13 @@ void main() {
       test('should download and process geo files successfully', () async {
         // Arrange
         when(mockDownloader.downloadMulti(any, any))
-            .thenAnswer((_) async {});
+            .thenAnswer((_) async {
+              return null;
+            });
         when(mockXApiClient.processGeoFiles())
-            .thenAnswer((_) async {});
+            .thenAnswer((_) async {
+              return null;
+            });
         when(mockPrefHelper.setLastGeoUpdate(any))
             .thenReturn(null);
 
@@ -95,7 +99,9 @@ void main() {
         // Arrange
         final error = Exception('Process failed');
         when(mockDownloader.downloadMulti(any, any))
-            .thenAnswer((_) async {});
+            .thenAnswer((_) async {
+              return null;
+            });
         when(mockXApiClient.processGeoFiles())
             .thenThrow(error);
 
@@ -112,7 +118,9 @@ void main() {
         when(mockDownloader.downloadMulti(any, any))
             .thenAnswer((_) => completer.future);
         when(mockXApiClient.processGeoFiles())
-            .thenAnswer((_) async {});
+            .thenAnswer((_) async {
+              return null;
+            });
         when(mockPrefHelper.setLastGeoUpdate(any))
             .thenReturn(null);
 
@@ -137,9 +145,13 @@ void main() {
       test('should download geo files when they do not exist', () async {
         // Arrange
         when(mockDownloader.downloadMulti(any, any))
-            .thenAnswer((_) async {});
+            .thenAnswer((_) async {
+              return null;
+            });
         when(mockXApiClient.processGeoFiles())
-            .thenAnswer((_) async {});
+            .thenAnswer((_) async {
+              return null;
+            });
         when(mockPrefHelper.setLastGeoUpdate(any))
             .thenReturn(null);
         when(mockDatabaseHelper.getAtomicDomainSets())
@@ -206,7 +218,9 @@ void main() {
             .thenAnswer((_) async => [mockAtomicIpSet]);
 
         when(mockDownloader.download(any, any))
-            .thenAnswer((_) async {});
+            .thenAnswer((_) async {
+              return null;
+            });
 
         // Act
         await geoDataHelper.makeGeoDataAvailable();
@@ -288,9 +302,13 @@ void main() {
         // Arrange
         when(mockPrefHelper.lastGeoUpdate).thenReturn(null);
         when(mockDownloader.downloadMulti(any, any))
-            .thenAnswer((_) async {});
+            .thenAnswer((_) async {
+              return null;
+            });
         when(mockXApiClient.processGeoFiles())
-            .thenAnswer((_) async {});
+            .thenAnswer((_) async {
+              return null;
+            });
         when(mockPrefHelper.setLastGeoUpdate(any))
             .thenReturn(null);
 
@@ -392,7 +410,7 @@ void main() {
 
         final mockAtomicDomainSet = MockAtomicDomainSet();
         final mockAppSet = MockAppSet();
-        final duplicateUrl = 'https://example.com/duplicate.yaml';
+        const duplicateUrl = 'https://example.com/duplicate.yaml';
 
         when(mockAtomicDomainSet.clashRuleUrls)
             .thenReturn([duplicateUrl]);
@@ -407,7 +425,9 @@ void main() {
             .thenAnswer((_) async => []);
 
         when(mockDownloader.download(any, any))
-            .thenAnswer((_) async {});
+            .thenAnswer((_) async {
+              return null;
+            });
 
         // Act
         await geoDataHelper.makeGeoDataAvailable();

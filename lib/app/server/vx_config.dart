@@ -16,37 +16,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
-import 'package:protobuf/protobuf.dart';
-import 'package:provider/provider.dart';
-import 'package:tm/protos/common/log/log.pb.dart';
 import 'package:tm/protos/google/protobuf/any.pbserver.dart';
 import 'package:tm/protos/protos/inbound.pb.dart';
 import 'package:tm/protos/protos/logger.pb.dart';
-import 'package:tm/protos/protos/proxy/hysteria.pb.dart';
-import 'package:tm/protos/protos/proxy/shadowsocks.pb.dart';
-import 'package:tm/protos/protos/proxy/socks.pb.dart';
-import 'package:tm/protos/protos/proxy/trojan.pb.dart';
-import 'package:tm/protos/protos/proxy/vmess.pb.dart';
 import 'package:tm/protos/protos/server/server.pb.dart';
-import 'package:tm/protos/transport/protocols/grpc/config.pb.dart';
-import 'package:tm/protos/transport/protocols/http/config.pb.dart';
-import 'package:tm/protos/transport/protocols/httpupgrade/config.pb.dart';
-import 'package:tm/protos/transport/protocols/websocket/config.pb.dart';
 import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/server/vx_bloc.dart';
 import 'package:vx/common/config.dart';
-import 'package:vx/common/net.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/l10n/app_localizations.dart';
-import 'package:vx/utils/xapi_client.dart';
-import 'package:vx/widgets/add_button.dart';
 import 'package:vx/widgets/clickable_card.dart';
-import 'package:vx/widgets/delete_menu_anchor.dart';
-import 'package:vx/widgets/divider.dart';
-import 'package:vx/widgets/dropdown_filter_chip.dart';
 import 'package:vx/widgets/form_dialog.dart';
 import 'package:vx/widgets/outbound_handler_form/outbound_handler_form.dart';
-import 'package:vx/widgets/text_divider.dart';
 
 part 'vx_config_inbound.dart';
 part 'vx_config_routing.dart';
@@ -84,7 +65,7 @@ class VXConfig extends StatelessWidget {
 enum ServerDetailSegment { inbounds, routing, geo, outbounds, others }
 
 class _Config extends StatelessWidget {
-  const _Config({super.key});
+  const _Config();
   @override
   Widget build(BuildContext context) {
     // final config = context.select((VproxyBloc bloc) =>
@@ -142,7 +123,7 @@ class _Config extends StatelessWidget {
 }
 
 class _Geo extends StatelessWidget {
-  const _Geo({super.key});
+  const _Geo();
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
@@ -150,7 +131,7 @@ class _Geo extends StatelessWidget {
 }
 
 class _Outbounds extends StatelessWidget {
-  const _Outbounds({super.key});
+  const _Outbounds();
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
@@ -158,10 +139,10 @@ class _Outbounds extends StatelessWidget {
 }
 
 class _Others extends StatelessWidget {
-  const _Others({super.key});
+  const _Others();
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _LogLevel(),
@@ -171,7 +152,7 @@ class _Others extends StatelessWidget {
 }
 
 class _LogLevel extends StatelessWidget {
-  const _LogLevel({super.key});
+  const _LogLevel();
 
   @override
   Widget build(BuildContext context) {
@@ -193,7 +174,7 @@ class _LogLevel extends StatelessWidget {
       children: [
         Text(AppLocalizations.of(context)!.logLevel,
             style: Theme.of(context).textTheme.titleSmall),
-        Gap(5),
+        const Gap(5),
         Wrap(
           spacing: 5,
           runSpacing: 5,

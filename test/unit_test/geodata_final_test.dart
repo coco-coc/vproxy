@@ -188,9 +188,9 @@ void main() {
 
       test('should handle null clash rule URLs gracefully', () {
         // Test the logic for handling null clash rule URLs
-        final List<String>? nullUrls = null;
-        final List<String>? emptyUrls = [];
-        final List<String>? validUrls = ['https://example.com/rules.yaml'];
+        const List<String>? nullUrls = null;
+        final List<String> emptyUrls = [];
+        final List<String> validUrls = ['https://example.com/rules.yaml'];
 
         // Test null handling
         final urls1 = <String>{};
@@ -269,16 +269,12 @@ void main() {
         Completer<void>? completer;
         
         // First call - should create completer
-        if (completer == null) {
-          completer = Completer<void>();
-          expect(completer, isNotNull);
-        }
-        
+        completer = Completer<void>();
+        expect(completer, isNotNull);
+              
         // Second call - should return existing completer
-        if (completer != null) {
-          expect(completer, isNotNull);
-        }
-        
+        expect(completer, isNotNull);
+              
         // Complete and reset
         completer.complete();
         completer = null;

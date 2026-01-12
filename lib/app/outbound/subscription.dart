@@ -31,7 +31,6 @@ import 'package:vx/utils/logger.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/xapi_client.dart';
-import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/xconfig_helper.dart';
 
 class MySubscription extends Subscription implements NodeGroup {

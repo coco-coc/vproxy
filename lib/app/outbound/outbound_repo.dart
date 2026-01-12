@@ -23,7 +23,6 @@ import 'package:vx/app/outbound/subscription.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/data/database_provider.dart';
-import 'package:vx/data/sync.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/random.dart';
 // import 'package:vx/data/object_box.dart';

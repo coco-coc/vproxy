@@ -18,7 +18,6 @@ import 'dart:io';
 import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fixnum/fixnum.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,7 +54,6 @@ import 'package:vx/main.dart';
 import 'package:collection/collection.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/widgets/home_card.dart';
-import 'package:vx/widgets/no_node.dart';
 
 part 'realtime_speed.dart';
 part 'route.dart';
@@ -110,7 +108,7 @@ class HomePage extends StatelessWidget {
                         child: _Inbound(),
                       ),
                     const Padding(
-                      padding: const EdgeInsets.only(top: 10),
+                      padding: EdgeInsets.only(top: 10),
                       child: _Subscription(),
                     ),
                     Padding(
@@ -139,13 +137,13 @@ class HomePage extends StatelessWidget {
                           const Gap(10),
                           const ProxySelector(home: true),
                           if (desktopPlatforms)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: const _Inbound(),
+                            const Padding(
+                              padding: EdgeInsets.only(top: 8.0),
+                              child: _Inbound(),
                             ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: const _Subscription(),
+                          const Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child: _Subscription(),
                           ),
                           BlocBuilder<AuthBloc, AuthState>(
                               builder: (context, state) {
@@ -177,7 +175,7 @@ class HomePage extends StatelessWidget {
 }
 
 class _Subscription extends StatefulWidget {
-  const _Subscription({super.key});
+  const _Subscription();
 
   @override
   State<_Subscription> createState() => _SubscriptionState();
@@ -246,7 +244,7 @@ class _SubscriptionState extends State<_Subscription> {
             child: Expanded(
               child: Column(
                 children: [
-                  Spacer(),
+                  const Spacer(),
                   // Show parsed data if available
                   if (parsedData?.expirationDate != null ||
                       parsedData?.remainingData != null) ...[
@@ -358,7 +356,7 @@ class _SubscriptionState extends State<_Subscription> {
 }
 
 class _Inbound extends StatelessWidget {
-  const _Inbound({super.key});
+  const _Inbound();
 
   @override
   Widget build(BuildContext context) {

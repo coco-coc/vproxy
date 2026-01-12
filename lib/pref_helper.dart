@@ -13,10 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
@@ -28,15 +26,10 @@ import 'package:vx/app/control.dart';
 import 'package:vx/app/home/home.dart';
 import 'package:vx/app/outbound/outbound_page.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
-import 'package:vx/app/routing/default.dart';
-import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/common/common.dart';
-import 'package:vx/data/database.dart';
-import 'package:vx/utils/auto_update_service.dart';
 import 'package:vx/utils/logger.dart';
-import 'package:vx/xconfig_helper.dart';
 
 enum PingMode {
   Real,

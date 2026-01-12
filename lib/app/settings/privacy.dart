@@ -21,7 +21,6 @@ import 'package:vx/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vx/app/settings/setting.dart';
-import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/upload_log.dart';

@@ -22,6 +22,8 @@
 // https://pub.dev/packages/flutter_oss_licenses
 
 /// All dependencies including transitive dependencies.
+library;
+
 
 /// Direct `dependencies`.
 const dependencies = <Package>[

@@ -15,7 +15,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tm/protos/app/api/api.pb.dart';
 import 'package:vx/app/server/vx_bloc.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/theme.dart';
@@ -61,36 +60,36 @@ class VXServiceStatus extends StatelessWidget {
               trailing: MenuAnchor(
                 menuChildren: [
                   MenuItemButton(
-                    leadingIcon: Icon(Icons.restart_alt_outlined),
+                    leadingIcon: const Icon(Icons.restart_alt_outlined),
                     onPressed: () {
                       context.read<VXBloc>().add(VXRestartEvent());
                     },
                     child: Text(AppLocalizations.of(context)!.restart),
                   ),
                   MenuItemButton(
-                    leadingIcon: Icon(Icons.stop_outlined),
+                    leadingIcon: const Icon(Icons.stop_outlined),
                     onPressed: () {
                       context.read<VXBloc>().add(VXStopEvent());
                     },
                     child: Text(AppLocalizations.of(context)!.stop),
                   ),
                   MenuItemButton(
-                    leadingIcon: Icon(Icons.play_arrow_outlined),
+                    leadingIcon: const Icon(Icons.play_arrow_outlined),
                     onPressed: () {
                       context.read<VXBloc>().add(VXStartEvent());
                     },
                     child: Text(AppLocalizations.of(context)!.start),
                   ),
                   MenuItemButton(
-                    leadingIcon: Icon(Icons.update_outlined),
+                    leadingIcon: const Icon(Icons.update_outlined),
                     onPressed: () {
                       context.read<VXBloc>().add(VXUpdateEvent());
                     },
                     child: Text(AppLocalizations.of(context)!.update),
                   ),
-                  Divider(),
+                  const Divider(),
                   MenuItemButton(
-                    leadingIcon: Icon(Icons.delete_outline),
+                    leadingIcon: const Icon(Icons.delete_outline),
                     onPressed: () {
                       context.read<VXBloc>().add(VXUninstallEvent());
                     },
@@ -102,7 +101,7 @@ class VXServiceStatus extends StatelessWidget {
                       onPressed: () {
                         controller.open();
                       },
-                      icon: Icon(Icons.more_vert));
+                      icon: const Icon(Icons.more_vert));
                 },
               ),
               contentPadding: const EdgeInsets.only(left: 16, right: 16),

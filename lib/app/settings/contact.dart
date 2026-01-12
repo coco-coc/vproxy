@@ -88,7 +88,7 @@ class ContactScreen extends StatelessWidget {
                       width: 16,
                       height: 16,
                     ),
-                    label: Text(' X')),
+                    label: const Text(' X')),
                 const SizedBox(width: 10),
                 OutlinedButton.icon(
                     onPressed: () {
@@ -104,7 +104,7 @@ class ContactScreen extends StatelessWidget {
                     },
                     icon: Image.asset('assets/icons/youtube.png',
                         width: 24, height: 24),
-                    label: Text('Youtube')),
+                    label: const Text('Youtube')),
               ],
             ),
             const SizedBox(height: 10),

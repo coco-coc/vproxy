@@ -16,7 +16,7 @@
 part of 'home.dart';
 
 class _Route extends StatefulWidget {
-  const _Route({super.key});
+  const _Route();
 
   @override
   State<_Route> createState() => _RouteState();

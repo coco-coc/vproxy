@@ -14,25 +14,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'package:android_package_installer/android_package_installer.dart';
-import 'package:archive/archive_io.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tray_manager/tray_manager.dart';
-import 'package:vx/common/version.dart';
-import 'package:vx/main.dart';
-import 'package:vx/pref_helper.dart';
-import 'package:vx/utils/download.dart';
-import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/os.dart';
-import 'package:vx/utils/path.dart';
-import 'package:window_manager/window_manager.dart';
 
 Future<String> assetName() async {
   if (Platform.isAndroid) {

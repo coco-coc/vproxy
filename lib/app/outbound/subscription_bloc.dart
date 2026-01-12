@@ -17,13 +17,11 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:drift/remote.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/outbound/subscription.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
-import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/random.dart';
 

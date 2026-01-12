@@ -18,15 +18,11 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:drift/remote.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Table, Column, RouterConfig;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:path/path.dart';
-import 'package:protobuf/protobuf.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/common/net/net.pb.dart';
 import 'package:tm/protos/protos/geo.pb.dart';
@@ -36,7 +32,6 @@ import 'package:tm/protos/protos/transport.pb.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/routing/routing_page.dart';
-import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/server/add_server.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/common/common.dart';
@@ -50,7 +45,6 @@ import 'package:tm/protos/protos/router.pb.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
 import 'package:tm/protos/protos/dns.pb.dart' as dns;
 import 'package:vx/data/database.steps.dart';
-import 'package:vx/data/database_log.dart';
 import 'package:vx/data/sync.dart';
 import 'package:vx/data/sync.pb.dart';
 import 'package:vx/l10n/app_localizations.dart';
@@ -58,8 +52,6 @@ import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
-import 'package:vx/utils/random.dart';
-import 'package:vx/xconfig_helper.dart';
 import 'package:json_annotation/json_annotation.dart' as ja;
 // import 'database.steps.dart';
 
@@ -214,7 +206,7 @@ class AppDatabase extends _$AppDatabase {
             if (e.toString().contains('database is locked') ||
                 e.toString().contains('SQLITE_BUSY')) {
               // Wait with exponential backoff
-              final delay = Duration(milliseconds: 200); // 200ms
+              const delay = Duration(milliseconds: 200); // 200ms
               logger.d(
                   'Database locked, waiting ${delay.inMilliseconds}ms before retry');
               await Future.delayed(delay);

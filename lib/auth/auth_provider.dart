@@ -14,19 +14,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // import 'package:firebase_auth/firebase_auth.dart' hide User;
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
-import 'package:crypto/crypto.dart';
-import 'package:flutter/foundation.dart';
-import 'package:rxdart/subjects.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:vx/auth/user.dart' as my;
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:vx/main.dart';
-import 'package:vx/utils/logger.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 /// TODO: update the Web client ID with your own.
 ///

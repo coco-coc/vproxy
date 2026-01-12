@@ -17,7 +17,6 @@ import 'package:tm/protos/app/api/api.pb.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/data/database.dart';
-import 'package:vx/main.dart';
 import 'package:vx/utils/xapi_client.dart';
 
 /// Test usability of [handler], update it if the result conflicts with

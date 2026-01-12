@@ -126,7 +126,7 @@ class _DebugLogPageState extends State<DebugLogPage> {
                             final logUploadService =
                                 context.read<LogUploadService>();
                             try {
-                              await logUploadService!.uploadDebugLog(
+                              await logUploadService.uploadDebugLog(
                                   reson ?? 'no reason provided');
                               snack('日志上传成功。谢谢您的反馈！');
                               // remove all debug log files

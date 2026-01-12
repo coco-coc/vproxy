@@ -1,12 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:path/path.dart';
-import 'package:tm/protos/protos/outbound.pb.dart';
-import 'package:vx/data/sync.pb.dart';
 import 'package:vx/utils/os.dart';
-import 'package:vx/utils/path.dart';
 
 
 void checkDesktopArchitecture() {

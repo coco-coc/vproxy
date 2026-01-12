@@ -13,10 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import 'dart:developer';
 import 'dart:io';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +29,6 @@ import 'package:vx/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vx/app/layout_provider.dart';
 import 'package:vx/auth/auth_bloc.dart';
-import 'package:vx/iap/iap.dart';
 import 'package:vx/iap/pro.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
@@ -250,9 +247,9 @@ class IAPPurchase extends StatelessWidget {
               iconSize: 16,
               style: IconButton.styleFrom(
                 foregroundColor: Theme.of(context).colorScheme.primary,
-                padding: EdgeInsets.symmetric(horizontal: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                minimumSize: Size(16, 16),
+                minimumSize: const Size(16, 16),
               ),
               onPressed: () {
                 Pasteboard.writeText(
@@ -358,13 +355,13 @@ class IAPPurchase extends StatelessWidget {
                                 .toLocalString(context)),
                         maxLines: 10,
                       ),
-                      Gap(5),
+                      const Gap(5),
                       TextButton(
                           onPressed: () {
                             proPurchases.reverify();
                           },
                           child: Text(AppLocalizations.of(context)!.retry)),
-                      Gap(10),
+                      const Gap(10),
                       _ifYouHavePaid(context, stateWithPurchaseDetail),
                     ],
                   );
@@ -373,7 +370,7 @@ class IAPPurchase extends StatelessWidget {
                       child: Column(
                     children: [
                       Text(AppLocalizations.of(context)!.invalidPurchase),
-                      Gap(10),
+                      const Gap(10),
                       _ifYouHavePaid(context, stateWithPurchaseDetail),
                     ],
                   ));
@@ -487,7 +484,7 @@ class IAPPurchase extends StatelessWidget {
                   WidgetSpan(
                     child: TextButton(
                         style: TextButton.styleFrom(
-                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
                           minimumSize: Size.zero,
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           visualDensity: VisualDensity.compact,

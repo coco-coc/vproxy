@@ -86,10 +86,10 @@ class _InboundFormState extends State<InboundForm> with FormDataGetter {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(width: 800),
+          const SizedBox(width: 800),
           Text(AppLocalizations.of(context)!.normalInboundDesc,
               style: Theme.of(context).textTheme.titleSmall!.copyWith()),
-          Gap(10),
+          const Gap(10),
           TextFormField(
             controller: _nameController,
             validator: (value) {
@@ -103,7 +103,7 @@ class _InboundFormState extends State<InboundForm> with FormDataGetter {
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(5))),
           ),
-          Gap(10),
+          const Gap(10),
           TextFormField(
             controller: _addressController,
             validator: (value) {
@@ -115,7 +115,7 @@ class _InboundFormState extends State<InboundForm> with FormDataGetter {
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(5))),
           ),
-          Gap(10),
+          const Gap(10),
           TextFormField(
             controller: _portController,
             validator: (value) {
@@ -133,15 +133,15 @@ class _InboundFormState extends State<InboundForm> with FormDataGetter {
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(5))),
           ),
-          Gap(10),
+          const Gap(10),
           _UserConfig(config: _userConfig),
-          Gap(10),
-          TextDivider(text: 'Proxy Protocol'),
-          Gap(10),
+          const Gap(10),
+          const TextDivider(text: 'Proxy Protocol'),
+          const Gap(10),
           _ProxyProtocols(key: _protocolsKey, protocols: _protocols),
-          Gap(10),
-          TextDivider(text: 'Stream'),
-          Gap(10),
+          const Gap(10),
+          const TextDivider(text: 'Stream'),
+          const Gap(10),
           _TransportInput(
               key: _transportKey, config: _config.transport, server: true)
         ],
@@ -199,14 +199,15 @@ class _MultiInboundFormState extends State<MultiInboundForm>
     );
   }
 
+  @override
   initState() {
     super.initState();
     _multiConfig = widget.multiConfig.deepCopy();
-    _nameController.text = widget.multiConfig!.tag;
-    _addressController.text = widget.multiConfig!.address;
-    _portController.text = widget.multiConfig!.ports.join(',');
-    if (widget.multiConfig!.users.isNotEmpty) {
-      _userConfig = widget.multiConfig!.users.first;
+    _nameController.text = widget.multiConfig.tag;
+    _addressController.text = widget.multiConfig.address;
+    _portController.text = widget.multiConfig.ports.join(',');
+    if (widget.multiConfig.users.isNotEmpty) {
+      _userConfig = widget.multiConfig.users.first;
     } else {
       _userConfig = UserConfig();
     }
@@ -229,7 +230,7 @@ class _MultiInboundFormState extends State<MultiInboundForm>
         children: [
           Text(AppLocalizations.of(context)!.multiDesc,
               style: Theme.of(context).textTheme.titleSmall!.copyWith()),
-          Gap(10),
+          const Gap(10),
           TextFormField(
             controller: _nameController,
             validator: (value) {
@@ -243,7 +244,7 @@ class _MultiInboundFormState extends State<MultiInboundForm>
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(5))),
           ),
-          Gap(10),
+          const Gap(10),
           TextFormField(
             controller: _addressController,
             decoration: InputDecoration(
@@ -252,7 +253,7 @@ class _MultiInboundFormState extends State<MultiInboundForm>
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(5))),
           ),
-          Gap(10),
+          const Gap(10),
           TextFormField(
             controller: _portController,
             validator: (value) {
@@ -270,9 +271,9 @@ class _MultiInboundFormState extends State<MultiInboundForm>
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(5))),
           ),
-          Gap(10),
+          const Gap(10),
           _UserConfig(config: _userConfig),
-          Gap(10),
+          const Gap(10),
           SizedBox(
             width: 800,
             child: Column(
@@ -499,7 +500,7 @@ class __ProxyProtocolsState extends State<_ProxyProtocols> with FormDataGetter {
                     },
                   )
               ])),
-        Gap(10),
+        const Gap(10),
         _selectedProtocol(),
       ],
     );
@@ -508,7 +509,7 @@ class __ProxyProtocolsState extends State<_ProxyProtocols> with FormDataGetter {
   Widget _selectedProtocol() {
     switch (_selected.$1) {
       case ProxyProtocolLabel.vmess:
-        return VmessServer(config: _selected!.$2 as VmessServerConfig);
+        return VmessServer(config: _selected.$2 as VmessServerConfig);
       case ProxyProtocolLabel.trojan:
         return TrojanServer(config: _selected.$2 as TrojanServerConfig);
       case ProxyProtocolLabel.shadowsocks:
@@ -532,7 +533,7 @@ class __ProxyProtocolsState extends State<_ProxyProtocols> with FormDataGetter {
 
 /// transportProtocols is modified directly
 class _MultiTransportProtocols extends StatefulWidget {
-  const _MultiTransportProtocols({super.key, required this.transportProtocols});
+  const _MultiTransportProtocols({required this.transportProtocols});
   final List<MultiProxyInboundConfig_Protocol> transportProtocols;
 
   @override
@@ -559,7 +560,7 @@ class _MultiTransportProtocolsState extends State<_MultiTransportProtocols> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
+        const SizedBox(
           width: double.infinity,
         ),
         Wrap(
@@ -625,7 +626,7 @@ class _MultiTransportProtocolsState extends State<_MultiTransportProtocols> {
                   },
                 )
               ])),
-        Gap(10),
+        const Gap(10),
         if (_selected != null)
           _MultiTransportProtocol(
               key: ValueKey(_selected),
@@ -646,7 +647,7 @@ class _MultiTransportProtocol extends StatelessWidget {
     return Column(
       children: [
         _MultiInboundTransportCondition(protocol: protocol),
-        Gap(10),
+        const Gap(10),
         if (protocol.hasWebsocket())
           _TransportProtocolWebsocket(
               key: globalKey, initialConfig: protocol.websocket),
@@ -664,7 +665,7 @@ class _MultiTransportProtocol extends StatelessWidget {
 }
 
 class _MultiInboundTransportCondition extends StatefulWidget {
-  const _MultiInboundTransportCondition({super.key, required this.protocol});
+  const _MultiInboundTransportCondition({required this.protocol});
   final MultiProxyInboundConfig_Protocol protocol;
   @override
   State<_MultiInboundTransportCondition> createState() =>
@@ -723,10 +724,10 @@ class __MultiInboundTransportConditionState
           if (!widget.protocol.always)
             Column(
               children: [
-                Gap(10),
+                const Gap(10),
                 TextFormField(
                   controller: handshakeAddressController,
-                  decoration: InputDecoration(labelText: 'SNI'),
+                  decoration: const InputDecoration(labelText: 'SNI'),
                   onChanged: (value) {
                     widget.protocol.sni = value;
                   },
@@ -739,18 +740,18 @@ class __MultiInboundTransportConditionState
                     return null;
                   },
                 ),
-                Gap(10),
+                const Gap(10),
                 TextFormField(
                   controller: alpnController,
-                  decoration: InputDecoration(labelText: 'ALPN'),
+                  decoration: const InputDecoration(labelText: 'ALPN'),
                   onChanged: (value) {
                     widget.protocol.alpn = value;
                   },
                 ),
-                Gap(10),
+                const Gap(10),
                 TextFormField(
                   controller: pathController,
-                  decoration: InputDecoration(labelText: 'Path'),
+                  decoration: const InputDecoration(labelText: 'Path'),
                   onChanged: (value) {
                     widget.protocol.path = value;
                   },
@@ -760,12 +761,13 @@ class __MultiInboundTransportConditionState
                         return 'Invalid path';
                       }
                     }
+                    return null;
                   },
                 ),
-                Gap(10),
+                const Gap(10),
                 CheckboxListTile(
                   value: widget.protocol.h2,
-                  title: Text('H2'),
+                  title: const Text('H2'),
                   subtitle: Text(
                       AppLocalizations.of(context)!.transportConditionH2Desc),
                   onChanged: (value) {
@@ -849,7 +851,7 @@ extension MultiProxyInboundConfigSecurityExtension
 }
 
 class _MultiSecurityProtocols extends StatefulWidget {
-  const _MultiSecurityProtocols({super.key, required this.securityProtocols});
+  const _MultiSecurityProtocols({required this.securityProtocols});
   final List<MultiProxyInboundConfig_Security> securityProtocols;
 
   @override
@@ -876,7 +878,7 @@ class __MultiSecurityProtocolsState extends State<_MultiSecurityProtocols> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
+        const SizedBox(
           width: double.infinity,
         ),
         Wrap(
@@ -933,7 +935,7 @@ class __MultiSecurityProtocolsState extends State<_MultiSecurityProtocols> {
                   },
                 )
               ])),
-        Gap(10),
+        const Gap(10),
         if (_errorMessage != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 10.0),
@@ -958,7 +960,7 @@ class _MultiSecurityProtocol extends StatelessWidget {
     return Column(
       children: [
         _MultiInboundSecurityCondition(protocol: protocol),
-        Gap(10),
+        const Gap(10),
         if (protocol.hasTls())
           _TransportSecurityTls(
             config: protocol.tls,
@@ -972,7 +974,7 @@ class _MultiSecurityProtocol extends StatelessWidget {
 }
 
 class _MultiInboundSecurityCondition extends StatefulWidget {
-  const _MultiInboundSecurityCondition({super.key, required this.protocol});
+  const _MultiInboundSecurityCondition({required this.protocol});
   final MultiProxyInboundConfig_Security protocol;
   @override
   State<_MultiInboundSecurityCondition> createState() =>
@@ -1027,10 +1029,10 @@ class __MultiInboundSecurityConditionState
           if (!widget.protocol.always)
             Column(
               children: [
-                Gap(10),
+                const Gap(10),
                 TextFormField(
                   controller: domainsController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Domains',
                     hintText: 'example.com,example.org',
                   ),
@@ -1042,15 +1044,15 @@ class __MultiInboundSecurityConditionState
                           return 'Invalid';
                         }
                       }
-                      widget.protocol.domains.addAll(value!.split(','));
+                      widget.protocol.domains.addAll(value.split(','));
                     }
                     return null;
                   },
                 ),
-                Gap(10),
+                const Gap(10),
                 TextFormField(
                   controller: regularExpressionController,
-                  decoration: InputDecoration(labelText: 'Regular Expression'),
+                  decoration: const InputDecoration(labelText: 'Regular Expression'),
                   onChanged: (value) {
                     widget.protocol.regularExpression = value;
                   },
@@ -1065,7 +1067,7 @@ class __MultiInboundSecurityConditionState
 
 /// config is edited directly
 class _UserConfig extends StatefulWidget {
-  const _UserConfig({super.key, required this.config});
+  const _UserConfig({required this.config});
   final UserConfig config;
   @override
   State<_UserConfig> createState() => __UserConfigState();
@@ -1102,7 +1104,7 @@ class __UserConfigState extends State<_UserConfig> {
               helperText: AppLocalizations.of(context)!.optional,
               labelText: AppLocalizations.of(context)!.accountName),
         ),
-        Gap(10),
+        const Gap(10),
         TextFormField(
           controller: _userSecretController,
           onChanged: (value) {

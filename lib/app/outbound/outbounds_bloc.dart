@@ -26,7 +26,6 @@ import 'package:tm/protos/protos/outbound.pb.dart';
 import 'package:tm/protos/protos/router.pb.dart';
 import 'package:tm/tm.dart';
 import 'package:vx/app/control.dart';
-import 'package:vx/app/outbound/outbound.dart';
 import 'package:vx/app/outbound/outbound_page.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/outbound/subscription.dart';

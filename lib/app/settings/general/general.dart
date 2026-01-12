@@ -94,13 +94,13 @@ class GeneralSettingPage extends StatelessWidget {
               const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Divider(),
+                  Divider(),
                   AutoUpdateSettings(),
                 ],
               ),
             const Divider(),
             const Padding(
-              padding: const EdgeInsets.only(
+              padding: EdgeInsets.only(
                   top: 10, bottom: 10, left: 16, right: 16),
               child: ThemeModeSetting(),
             ),
@@ -176,7 +176,7 @@ class _PingModeSettingState extends State<PingModeSetting> {
       children: [
         Text(AppLocalizations.of(context)!.pingTestMethod,
             style: Theme.of(context).textTheme.bodyLarge),
-        Gap(10),
+        const Gap(10),
         DropdownMenu<PingMode>(
             initialSelection: _pingMode,
             requestFocusOnTap: false,
@@ -184,7 +184,7 @@ class _PingModeSettingState extends State<PingModeSetting> {
               DropdownMenuEntry(
                   value: PingMode.Real,
                   label: AppLocalizations.of(context)!.pingReal),
-              DropdownMenuEntry(value: PingMode.Rtt, label: 'RTT'),
+              const DropdownMenuEntry(value: PingMode.Rtt, label: 'RTT'),
             ],
             onSelected: (value) {
               context
@@ -194,7 +194,7 @@ class _PingModeSettingState extends State<PingModeSetting> {
                 _pingMode = value ?? PingMode.Real;
               });
             }),
-        Gap(10),
+        const Gap(10),
         if (_pingMode == PingMode.Real)
           Text(AppLocalizations.of(context)!.pingRealDesc,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
@@ -228,7 +228,7 @@ class _ThemeModeSettingState extends State<ThemeModeSetting> {
       children: [
         Text(AppLocalizations.of(context)!.themeMode,
             style: Theme.of(context).textTheme.bodyLarge),
-        Gap(10),
+        const Gap(10),
         DropdownMenu<ThemeMode>(
             initialSelection: _themeMode,
             requestFocusOnTap: false,
@@ -356,7 +356,7 @@ class _StartOnBootSettingState extends State<StartOnBootSetting> {
           children: [
             Text(AppLocalizations.of(context)!.startOnBoot,
                 style: Theme.of(context).textTheme.bodyLarge),
-            Expanded(child: SizedBox()),
+            const Expanded(child: SizedBox()),
             Switch(
               value: _startOnBoot,
               onChanged: (value) async {
@@ -408,7 +408,7 @@ class _AlwaysOnSettingState extends State<AlwaysOnSetting> {
           children: [
             Text(AppLocalizations.of(context)!.alwaysOn,
                 style: Theme.of(context).textTheme.bodyLarge),
-            Expanded(child: SizedBox()),
+            const Expanded(child: SizedBox()),
             Switch(
               value: _alwaysOn,
               onChanged: (value) {
@@ -493,9 +493,9 @@ class _NodeTestSettingsState extends State<NodeTestSettings> {
             controller: _intervalController,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
-              labelText: '${AppLocalizations.of(context)!.interval}',
+              labelText: AppLocalizations.of(context)!.interval,
               suffixText: 'min',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
             ),
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             onChanged: (event) {

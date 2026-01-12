@@ -13,13 +13,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vx/app/control.dart';
 import 'package:vx/app/settings/setting.dart';
-import 'package:vx/common/common.dart';
 import 'package:vx/data/ads_provider.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/widgets/ad.dart';

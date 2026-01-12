@@ -26,7 +26,6 @@ import 'package:tm/protos/protos/outbound.pb.dart';
 import 'package:vx/widgets/outbound_handler_form/outbound_handler_form.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/data/database.dart';
-import 'package:vx/main.dart';
 
 class AddEditChainHandlerDialog extends StatefulWidget {
   const AddEditChainHandlerDialog(

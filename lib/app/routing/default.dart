@@ -19,7 +19,6 @@ import 'package:tm/protos/protos/dns.pb.dart';
 import 'package:tm/protos/protos/geo.pb.dart';
 import 'package:tm/protos/protos/router.pb.dart';
 import 'package:vx/app/routing/routing_page.dart';
-import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/common/const.dart';
 import 'package:vx/data/database.dart';
@@ -459,20 +458,20 @@ enum DefaultRouteMode {
       domainTags: [al.cnModeDirectDomains],
       outboundTag: directHandlerTag,
     );
-    final _customProxyDomainGoProxyRule = RuleConfig(
+    final customProxyDomainGoProxyRule = RuleConfig(
       ruleName: al.ruleNameCustomProxyDomain,
       domainTags: [al.customProxy],
       selectorTag: defaultProxySelectorTag,
     );
-    final _customProxyIpGoProxyRule = RuleConfig(
+    final customProxyIpGoProxyRule = RuleConfig(
       ruleName: al.ruleNameCustomProxyIp,
       dstIpTags: [al.customProxy],
       selectorTag: defaultProxySelectorTag,
     );
 
     return [
-      _customProxyDomainGoProxyRule,
-      _customProxyIpGoProxyRule,
+      customProxyDomainGoProxyRule,
+      customProxyIpGoProxyRule,
       directIpGoDirectRule,
       directDomainGoDirectRule, //TODO: This can be deleted
       goProxyRule
@@ -495,19 +494,19 @@ enum DefaultRouteMode {
       outboundTag: directHandlerTag,
       matchAll: true,
     );
-    final _customDirectDomainGoDirectRule = RuleConfig(
+    final customDirectDomainGoDirectRule = RuleConfig(
       ruleName: al.ruleNameCustomDirectDomain,
       domainTags: [al.customDirect],
       outboundTag: directHandlerTag,
     );
-    final _customDirectIpGoDirectRule = RuleConfig(
+    final customDirectIpGoDirectRule = RuleConfig(
       ruleName: al.ruleNameCustomDirectIp,
       dstIpTags: [al.customDirect],
       outboundTag: directHandlerTag,
     );
     return [
-      _customDirectIpGoDirectRule,
-      _customDirectDomainGoDirectRule,
+      customDirectIpGoDirectRule,
+      customDirectDomainGoDirectRule,
       proxyIpGoProxyRule,
       proxyDomainGoProxyRule,
       goDirectRule
@@ -530,19 +529,19 @@ enum DefaultRouteMode {
       outboundTag: directHandlerTag,
       matchAll: true,
     );
-    final _customDirectDomainGoDirectRule = RuleConfig(
+    final customDirectDomainGoDirectRule = RuleConfig(
       ruleName: al.ruleNameCustomDirectDomain,
       domainTags: [al.customDirect],
       outboundTag: directHandlerTag,
     );
-    final _customDirectIpGoDirectRule = RuleConfig(
+    final customDirectIpGoDirectRule = RuleConfig(
       ruleName: al.ruleNameCustomDirectIp,
       dstIpTags: [al.customDirect],
       outboundTag: directHandlerTag,
     );
     return [
-      _customDirectIpGoDirectRule,
-      _customDirectDomainGoDirectRule,
+      customDirectIpGoDirectRule,
+      customDirectDomainGoDirectRule,
       proxyIpGoProxyRule,
       proxyDomainGoProxyRule,
       goDirectRule
@@ -565,19 +564,19 @@ enum DefaultRouteMode {
       outboundTag: directHandlerTag,
       matchAll: true,
     );
-    final _customDirectDomainGoDirectRule = RuleConfig(
+    final customDirectDomainGoDirectRule = RuleConfig(
       ruleName: al.ruleNameCustomDirectDomain,
       domainTags: [al.customDirect],
       outboundTag: directHandlerTag,
     );
-    final _customDirectIpGoDirectRule = RuleConfig(
+    final customDirectIpGoDirectRule = RuleConfig(
       ruleName: al.ruleNameCustomDirectIp,
       dstIpTags: [al.customDirect],
       outboundTag: directHandlerTag,
     );
     return [
-      _customDirectIpGoDirectRule,
-      _customDirectDomainGoDirectRule,
+      customDirectIpGoDirectRule,
+      customDirectDomainGoDirectRule,
       proxyIpGoProxyRule,
       proxyDomainGoProxyRule,
       goDirectRule

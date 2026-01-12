@@ -14,24 +14,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:async';
-import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tm/protos/protos/dns.pb.dart';
-import 'package:tm/protos/protos/geo.pb.dart';
 import 'package:tm/protos/protos/router.pb.dart';
 import 'package:tm/tm.dart';
 import 'package:vx/app/control.dart';
 import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/routing/routing_page.dart';
-import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/x_controller.dart';
 import 'package:vx/auth/auth_bloc.dart';
-import 'package:vx/auth/auth_provider.dart';
-import 'package:vx/common/common.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/data/database_provider.dart';
 import 'package:vx/pref_helper.dart';
@@ -39,7 +33,6 @@ import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/main.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:vx/xconfig_helper.dart';
 
 part 'tm_state.dart';
 part 'tm_event.dart';

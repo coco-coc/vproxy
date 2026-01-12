@@ -22,7 +22,6 @@ import 'package:tm/protos/app/api/api.pbgrpc.dart';
 import 'package:tm/protos/protos/outbound.pb.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/utils/logger.dart';
-import 'package:vx/main.dart';
 import 'package:vx/utils/path.dart';
 import 'package:vx/utils/xapi_client.dart';
 

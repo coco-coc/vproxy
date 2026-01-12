@@ -26,4 +26,5 @@ Future<AppDatabase?> _initDatabase(SharedPreferences pref,
   }
 
   logger.d('Database initialized');
+  return null;
 }

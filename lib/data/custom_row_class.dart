@@ -801,9 +801,9 @@ class Cidr extends DataClass implements Insertable<Cidr> {
       );
   Cidr copyWithCompanion(CidrsCompanion data) {
     return Cidr(
-      id: data.id.present ? data.id.value : this.id,
-      ipSetName: data.ipSetName.present ? data.ipSetName.value : this.ipSetName,
-      cidr: data.cidr.present ? data.cidr.value : this.cidr,
+      id: data.id.present ? data.id.value : id,
+      ipSetName: data.ipSetName.present ? data.ipSetName.value : ipSetName,
+      cidr: data.cidr.present ? data.cidr.value : cidr,
     );
   }
 
@@ -823,9 +823,9 @@ class Cidr extends DataClass implements Insertable<Cidr> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Cidr &&
-          other.id == this.id &&
-          other.ipSetName == this.ipSetName &&
-          other.cidr == this.cidr);
+          other.id == id &&
+          other.ipSetName == ipSetName &&
+          other.cidr == cidr);
 }
 
 class AtomicDomainSet extends DataClass implements Insertable<AtomicDomainSet> {

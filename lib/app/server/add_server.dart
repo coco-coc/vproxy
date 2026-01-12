@@ -29,7 +29,6 @@ import 'package:gap/gap.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/data/ssh_server.dart';
-import 'package:vx/main.dart';
 import 'package:vx/utils/geoip.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/random.dart';

@@ -13,14 +13,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
-import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/app/server/deployer.dart';
 import 'package:vx/app/server/server_page.dart';
@@ -128,7 +126,7 @@ class _ServerDetailState extends State<ServerDetail> {
 }
 
 class _Overview extends StatefulWidget {
-  const _Overview({super.key, required this.server});
+  const _Overview({required this.server});
   final SshServer server;
 
   @override
@@ -202,7 +200,7 @@ class _OverviewState extends State<_Overview> {
 }
 
 class _VX extends StatelessWidget {
-  const _VX({super.key});
+  const _VX();
 
   @override
   Widget build(BuildContext context) {
@@ -578,7 +576,7 @@ class QuickDeployOptionDetial extends StatelessWidget {
         ),
         const Gap(16),
         option.getFormWidget(context, destination: destination),
-        Gap(10),
+        const Gap(10),
         StatefulBuilder(builder: (ctx, setState) {
           return SwitchListTile(
             title: Text(AppLocalizations.of(context)!.disableOSFirewall),

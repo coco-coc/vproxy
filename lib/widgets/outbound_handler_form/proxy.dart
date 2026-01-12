@@ -147,9 +147,9 @@ class _TrojanClientState extends State<_TrojanClient> {
             labelText: AppLocalizations.of(context)!.password,
           ),
         ),
-        Gap(10),
+        const Gap(10),
         SwitchListTile(
-          title: Text('Vision'),
+          title: const Text('Vision'),
           subtitle: Text(AppLocalizations.of(context)!.visionDesc),
           value: widget.config.vision,
           onChanged: (value) {
@@ -224,7 +224,7 @@ class _AnytlsClientState extends State<_AnytlsClient> {
             widget.config.idleSessionCheckInterval = int.parse(value ?? '0');
             return null;
           },
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Idle Session Check Interval',
           ),
         ),
@@ -237,7 +237,7 @@ class _AnytlsClientState extends State<_AnytlsClient> {
             widget.config.idleSessionTimeout = int.parse(value ?? '0');
             return null;
           },
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Idle Session Timeout',
           ),
         ),
@@ -250,7 +250,7 @@ class _AnytlsClientState extends State<_AnytlsClient> {
             widget.config.minIdleSession = int.parse(value ?? '0');
             return null;
           },
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Min Idle Session',
           ),
         ),
@@ -554,7 +554,7 @@ class _VmessServerState extends State<VmessServer> {
 }
 
 class _Secrets extends StatefulWidget {
-  const _Secrets({super.key, required this.secrets});
+  const _Secrets({required this.secrets});
   final List<String> secrets;
   @override
   State<_Secrets> createState() => __SecretsState();
@@ -576,7 +576,9 @@ class __SecretsState extends State<_Secrets> {
   @override
   void dispose() {
     _newSecretController.dispose();
-    _secretControllers.forEach((e) => e.dispose());
+    for (var e in _secretControllers) {
+      e.dispose();
+    }
     super.dispose();
   }
 
@@ -609,7 +611,7 @@ class __SecretsState extends State<_Secrets> {
             Expanded(
               child: TextFormField(
                 controller: secretController,
-                decoration: InputDecoration(labelText: 'Secret'),
+                decoration: const InputDecoration(labelText: 'Secret'),
               ),
             ),
             boxW10,
@@ -623,7 +625,7 @@ class __SecretsState extends State<_Secrets> {
             Expanded(
               child: TextFormField(
                 controller: _newSecretController,
-                decoration: InputDecoration(labelText: 'Secret'),
+                decoration: const InputDecoration(labelText: 'Secret'),
               ),
             ),
             boxW10,
@@ -654,7 +656,7 @@ class _TrojanServerState extends State<TrojanServer> {
     return Column(
       children: [
         SwitchListTile(
-          title: Text('Vision'),
+          title: const Text('Vision'),
           value: widget.config.vision,
           onChanged: (value) {
             setState(() {
@@ -672,7 +674,7 @@ class AnyTlsServer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox();
+    return const SizedBox();
   }
 }
 
@@ -746,11 +748,11 @@ class _DokodemoServerState extends State<DokodemoServer> {
             hintText: '4431',
           ).applyDefaults(Theme.of(context).inputDecorationTheme),
         ),
-        Gap(10),
+        const Gap(10),
         Row(
           children: [
             ChoiceChip(
-                label: Text('TCP'),
+                label: const Text('TCP'),
                 selected: widget.config.networks.contains(Network.TCP),
                 onSelected: (value) {
                   setState(() {
@@ -761,9 +763,9 @@ class _DokodemoServerState extends State<DokodemoServer> {
                     }
                   });
                 }),
-            Gap(5),
+            const Gap(5),
             ChoiceChip(
-                label: Text('UDP'),
+                label: const Text('UDP'),
                 selected: widget.config.networks.contains(Network.UDP),
                 onSelected: (value) {
                   if (value) {
@@ -860,7 +862,7 @@ class VlessServer extends StatefulWidget {
 class _VlessServerState extends State<VlessServer> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox();
+    return const SizedBox();
   }
 }
 
@@ -1360,10 +1362,10 @@ class _HysteriaState extends State<Hysteria> {
         ),
         const Gap(10),
         FormContainer(children: [
-          Text(
+          const Text(
             'TLS',
           ),
-          Gap(10),
+          const Gap(10),
           _TransportSecurityTls(
               config: widget.tlsConfig, showAlpn: false, server: widget.server),
         ])
@@ -1417,7 +1419,7 @@ class _HysteriaServerState extends State<HysteriaServer> {
 }
 
 class _HttpClient extends StatefulWidget {
-  const _HttpClient({super.key, required this.config});
+  const _HttpClient({required this.config});
   final HttpClientConfig config;
 
   @override
@@ -1444,7 +1446,7 @@ class __HttpClientState extends State<_HttpClient> {
       children: [
         TextFormField(
           controller: _usernameController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Username',
           ),
           validator: (value) {
@@ -1458,7 +1460,7 @@ class __HttpClientState extends State<_HttpClient> {
         boxH10,
         TextFormField(
           controller: _passwordController,
-          decoration: InputDecoration(labelText: 'Password'),
+          decoration: const InputDecoration(labelText: 'Password'),
           validator: (value) {
             if (value == null || value.isEmpty) {
               return AppLocalizations.of(context)!.fieldRequired;

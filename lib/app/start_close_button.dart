@@ -17,7 +17,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
@@ -88,7 +87,7 @@ class StartCloseCubit extends Cubit<XStatus> {
     final canStartError = _canStart();
     if (canStartError != null) {
       snack(rootLocalizations()?.startFailedWithReason(canStartError),
-          duration: Duration(seconds: 60));
+          duration: const Duration(seconds: 60));
       return;
     }
 

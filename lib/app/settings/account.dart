@@ -17,7 +17,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -28,15 +27,12 @@ import 'package:vx/app/settings/privacy.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:vx/auth/auth_bloc.dart';
-import 'package:vx/auth/auth_provider.dart';
 import 'package:flutter_common/auth/auth_provider.dart';
 import 'package:flutter_common/auth/sign_in_page.dart';
 import 'package:vx/main.dart';
-import 'package:vx/theme.dart';
 import 'package:vx/utils/activate.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/qr.dart';
-import 'package:vx/widgets/circular_progress_indicator.dart';
 import 'package:vx/widgets/divider.dart';
 import 'package:vx/widgets/pro_icon.dart';
 import 'package:flutter/services.dart';
@@ -211,7 +207,7 @@ class _AccountPageState extends State<AccountPage> {
                         ),
                         child: Text(AppLocalizations.of(context)!.logout),
                       ),
-                      Gap(10),
+                      const Gap(10),
                       ElevatedButton(
                         onPressed: () {
                           showDialog(
@@ -311,7 +307,7 @@ class _AccountPageState extends State<AccountPage> {
 }
 
 class _Invitation extends StatefulWidget {
-  const _Invitation({super.key});
+  const _Invitation();
 
   @override
   State<_Invitation> createState() => __InvitationState();
@@ -498,7 +494,7 @@ class __InvitationState extends State<_Invitation> {
                     icon: const Icon(Icons.copy, size: 18),
                     label: Text(AppLocalizations.of(context)!.copy),
                   ),
-                  Gap(10),
+                  const Gap(10),
                   FilledButton.icon(
                     onPressed: _shareInvitationCode,
                     icon: const Icon(Icons.qr_code, size: 18),
@@ -510,7 +506,7 @@ class __InvitationState extends State<_Invitation> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Text(
-                  '${_remainingTime} ${AppLocalizations.of(context)!.remainingTime}',
+                  '$_remainingTime ${AppLocalizations.of(context)!.remainingTime}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
@@ -592,7 +588,7 @@ class __InvitationState extends State<_Invitation> {
                   );
                 },
               ),
-              Gap(10),
+              const Gap(10),
               if (Platform.isAndroid || Platform.isIOS)
                 FilledButton.icon(
                   onPressed: () async {

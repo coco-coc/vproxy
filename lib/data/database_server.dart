@@ -18,7 +18,6 @@ import 'package:grpc/service_api.dart';
 import 'package:tm/protos/protos/db/db.pbgrpc.dart';
 import 'package:vx/data/database.dart';
 import 'package:drift/drift.dart';
-import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
 
 class DatabaseServer extends DbServiceBase {

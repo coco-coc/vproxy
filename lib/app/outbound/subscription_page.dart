@@ -19,11 +19,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/tm.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:vx/app/outbound/outbound_page.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/outbound/subscription.dart';
 import 'package:vx/app/x_controller.dart';
@@ -32,7 +29,6 @@ import 'package:vx/utils/qr.dart';
 import 'package:vx/widgets/ad.dart';
 import 'package:vx/app/outbound/add.dart';
 import 'package:vx/auth/auth_bloc.dart';
-import 'package:vx/data/ads_provider.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -41,11 +37,8 @@ import 'package:provider/provider.dart';
 import 'package:vx/app/layout_provider.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/app/outbound/subscription_bloc.dart';
-import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/common/common.dart';
-import 'package:vx/common/net.dart';
 import 'package:vx/data/database.dart';
-import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
 
 class SubscriptionPage extends StatefulWidget {
@@ -673,7 +666,7 @@ class _SubScriptionListTileState extends State<SubScriptionListTile> {
                                       color: colorScheme.onSurface,
                                     ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           if (parsedData.expirationDate != null)
                             Row(
                               mainAxisSize: MainAxisSize.min,

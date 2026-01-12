@@ -64,7 +64,7 @@ class CurrentNodes extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data!.isEmpty) {
-                  return Center(child: AddMenuAnchor(elevatedButton: true));
+                  return const Center(child: AddMenuAnchor(elevatedButton: true));
                 }
                 return ListView.separated(
                   physics: const ClampingScrollPhysics(),
@@ -102,7 +102,7 @@ class CurrentNodes extends StatelessWidget {
                   },
                 );
               }
-              return SizedBox();
+              return const SizedBox();
             }),
       ),
     );
@@ -119,7 +119,7 @@ class ActiveNodes extends StatelessWidget {
   Widget build(BuildContext context) {
     final realtime = context.watch<RealtimeSpeedNotifier>();
     if (realtime.nodeInfos.isEmpty) {
-      return SizedBox();
+      return const SizedBox();
     }
     return HomeCard(
         title: AppLocalizations.of(context)!.activeNodes,
@@ -362,7 +362,7 @@ class _NodeListItem extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.speed,
                     size: 14,
                     color: XBlue,

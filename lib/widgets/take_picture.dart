@@ -15,7 +15,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:vx/utils/logger.dart';
 
 class ScanQrCode extends StatefulWidget {
   const ScanQrCode({super.key});

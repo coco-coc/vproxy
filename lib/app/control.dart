@@ -15,16 +15,12 @@
 
 import 'dart:io';
 
-import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:collection/collection.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:vector_graphics/vector_graphics_compat.dart';
 import 'package:vx/app/blocs/inbound.dart';
 import 'package:vx/app/home/home.dart';
 import 'package:vx/app/routing/default.dart';
@@ -37,10 +33,7 @@ import 'package:vx/app/routing/repo.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:tm/protos/protos/router.pb.dart';
 import 'package:tm/protos/protos/router.pbenum.dart';
-import 'package:vx/app/log/log_bloc.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
-import 'package:vx/app/routing/routing_page.dart';
-import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/common/common.dart';
@@ -74,8 +67,8 @@ class ControlDrawer extends StatelessWidget {
       backgroundColor: Platform.isWindows
           ? Theme.of(context).colorScheme.surface
           : Theme.of(context).colorScheme.surface,
-      children: [
-        const Padding(
+      children: const [
+        Padding(
           padding: EdgeInsets.all(10),
           child: Control(),
         ),
@@ -116,7 +109,7 @@ class Control extends StatelessWidget {
                       ]);
                     });
               },
-              icon: Icon(Icons.help_outline_rounded)),
+              icon: const Icon(Icons.help_outline_rounded)),
         ),
         BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
           if (state.pro) {
@@ -559,21 +552,21 @@ class ManualModeCard extends StatelessWidget {
                 onAdd: (handlerId) {
                   context
                       .read<ProxySelectorBloc>()
-                      .add(ManualModeLandHandlersChangeEvent(
+                      .add(const ManualModeLandHandlersChangeEvent(
                           // [...r.landHandlers, handlerId]
                           ));
                 },
                 onRemove: (handlerId) {
                   context
                       .read<ProxySelectorBloc>()
-                      .add(ManualModeLandHandlersChangeEvent(
+                      .add(const ManualModeLandHandlersChangeEvent(
                           // r.landHandlers.where((e) => e != handlerId).toList()
                           ));
                 },
                 onReplace: (p0, p1) {
                   context
                       .read<ProxySelectorBloc>()
-                      .add(ManualModeLandHandlersChangeEvent(
+                      .add(const ManualModeLandHandlersChangeEvent(
                           // r.landHandlers.map((e) => e == p0 ? p1 : e).toList()
                           ));
                 },

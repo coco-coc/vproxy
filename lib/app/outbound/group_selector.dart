@@ -138,7 +138,7 @@ class _GroupSelectorState extends State<GroupSelector> {
                       if (e.name != defaultGroupName)
                         Column(
                           children: [
-                            Divider(),
+                            const Divider(),
                             MenuItemButton(
                               leadingIcon: const Icon(Icons.delete),
                               onPressed: () {

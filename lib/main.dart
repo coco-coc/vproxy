@@ -35,7 +35,6 @@ import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
-import 'package:tm/tm.dart';
 import 'package:vx/app/blocs/inbound.dart';
 import 'package:vx/app/home/home.dart';
 import 'package:vx/app/start_close_button.dart';
@@ -631,7 +630,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
               )
           : null,
       routerConfig: _router,
-      localizationsDelegates: [
+      localizationsDelegates: const [
         ...AppLocalizations.localizationsDelegates,
         ...xv_localizations.AppLocalizations.localizationsDelegates,
       ],
@@ -706,9 +705,9 @@ void dialog(String message) {
     context: rootNavigationKey.currentContext!,
     barrierDismissible: false,
     builder: (context) => AlertDialog(
-      title: Icon(Icons.error_outline_rounded),
+      title: const Icon(Icons.error_outline_rounded),
       content: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 400), child: Text(message)),
+          constraints: const BoxConstraints(maxWidth: 400), child: Text(message)),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
@@ -803,7 +802,7 @@ Future<void> _initWindow(SharedPreferences pref) async {
 
 Future<void> initSupabase() async {
   await Supabase.initialize(
-    authOptions: FlutterAuthClientOptions(detectSessionInUri: !kDebugMode),
+    authOptions: const FlutterAuthClientOptions(detectSessionInUri: !kDebugMode),
     headers: Platform.isWindows
         ? {
             'X-Supabase-Client-Platform-Version': 'Windows',

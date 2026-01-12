@@ -18,7 +18,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +38,6 @@ import 'package:tm/protos/protos/tls/tls.pb.dart';
 import 'package:tm/protos/protos/transport.pb.dart';
 import 'package:tm/protos/protos/user.pb.dart';
 import 'package:tm/protos/transport/protocols/grpc/config.pb.dart';
-import 'package:tm/protos/transport/protocols/httpupgrade/config.pb.dart';
 import 'package:tm/protos/transport/protocols/splithttp/config.pb.dart';
 import 'package:tm/protos/transport/protocols/websocket/config.pb.dart';
 import 'package:tm/protos/transport/security/reality/config.pb.dart';
@@ -56,7 +54,6 @@ import 'package:vx/utils/geoip.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/xapi_client.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
-import 'package:vx/widgets/outbound_handler_form/outbound_handler_form.dart';
 
 part 'deploy.dart';
 

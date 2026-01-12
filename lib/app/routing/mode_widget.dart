@@ -15,8 +15,6 @@
 
 import 'dart:async';
 
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide RouterConfig;
 import 'package:go_router/go_router.dart';
@@ -34,13 +32,10 @@ import 'package:vx/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:tm/protos/protos/router.pb.dart';
-import 'package:vx/app/log/log_page.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/routing/mode_form.dart';
-import 'package:vx/app/routing/set_form.dart';
 import 'package:vx/app/routing/set_widget.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
-import 'package:vx/common/common.dart';
 import 'package:vx/common/config.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
@@ -51,7 +46,6 @@ import 'package:vx/widgets/form_dialog.dart';
 import 'package:vx/widgets/info_widget.dart';
 import 'package:vx/widgets/pro_icon.dart';
 import 'package:vx/widgets/pro_promotion.dart';
-import 'package:vx/xconfig_helper.dart';
 
 class ModeWidget extends StatefulWidget {
   const ModeWidget({super.key, this.switchModeButton});
@@ -98,9 +92,7 @@ class _ModeWidgetState extends State<ModeWidget>
             .where(
                 (e) => e.name == context.read<SharedPreferences>().routingMode)
             .firstOrNull;
-        if (_selected == null) {
-          _selected = _customRouteModes.firstOrNull;
-        }
+        _selected ??= _customRouteModes.firstOrNull;
       } else {
         _selected = _customRouteModes
             .where((e) => e.name == _selected!.name)
@@ -301,7 +293,7 @@ class _ModeWidgetState extends State<ModeWidget>
                                 ]));
                       },
                       icon: const Icon(Icons.info_outline_rounded)),
-                  Gap(5),
+                  const Gap(5),
                   MenuAnchor(
                     menuChildren: [
                       MenuItemButton(
@@ -536,7 +528,7 @@ class UnmodifiableRouteConfig extends StatelessWidget {
 }
 
 class _StandardModeWidget extends StatelessWidget {
-  const _StandardModeWidget({super.key, required this.routeMode});
+  const _StandardModeWidget({required this.routeMode});
   final CustomRouteMode routeMode;
   @override
   Widget build(BuildContext context) {
@@ -555,7 +547,7 @@ class _StandardModeWidget extends StatelessWidget {
 }
 
 class _StandardModeDnsRules extends StatefulWidget {
-  const _StandardModeDnsRules({super.key, required this.routeMode});
+  const _StandardModeDnsRules({required this.routeMode});
   final CustomRouteMode routeMode;
   @override
   State<_StandardModeDnsRules> createState() => _StandardModeDnsRulesState();
@@ -1225,7 +1217,7 @@ class _RouterConfigWidgetState extends State<RouterConfigWidget> {
 
 class _CustomModeDnsRules extends StatefulWidget {
   const _CustomModeDnsRules(
-      {super.key, required this.routeMode, required this.onUpdate});
+      {required this.routeMode, required this.onUpdate});
   final CustomRouteMode routeMode;
   final Function(CustomRouteMode) onUpdate;
   @override

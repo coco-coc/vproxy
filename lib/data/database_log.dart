@@ -14,13 +14,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:drift/drift.dart';
-import 'package:fixnum/fixnum.dart';
-import 'package:vx/data/sync.dart';
-import 'package:vx/data/sync.pb.dart';
-import 'package:vx/utils/logger.dart';
 
 class LogInterceptor extends QueryInterceptor {
   Future<T> _run<T>(

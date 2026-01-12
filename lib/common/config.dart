@@ -20,13 +20,11 @@ import 'package:tm/protos/common/net/net.pb.dart';
 import 'package:tm/protos/protos/proxy/anytls.pb.dart';
 import 'package:tm/protos/protos/proxy/dokodemo.pb.dart';
 import 'package:tm/protos/protos/proxy/http.pb.dart';
-import 'package:tm/protos/protos/proxy/hysteria.pb.dart';
 import 'package:tm/protos/protos/proxy/shadowsocks.pb.dart';
 import 'package:tm/protos/protos/proxy/socks.pb.dart';
 import 'package:tm/protos/protos/proxy/trojan.pb.dart';
 import 'package:tm/protos/protos/proxy/vless.pb.dart';
 import 'package:tm/protos/protos/proxy/vmess.pb.dart';
-import 'package:tm/protos/protos/tls/tls.pb.dart';
 import 'package:vx/theme.dart';
 import 'package:vx/widgets/outbound_handler_form/outbound_handler_form.dart';
 

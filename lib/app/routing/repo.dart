@@ -14,14 +14,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:drift/drift.dart';
-import 'package:flutter/foundation.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
 import 'package:tm/protos/protos/dns.pb.dart';
 import 'package:tm/protos/protos/geo.pb.dart';
 import 'package:tm/protos/protos/router.pb.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/data/database_provider.dart';
-import 'package:vx/main.dart' hide App;
 import 'package:vx/utils/random.dart';
 
 abstract class SelectorRepo {

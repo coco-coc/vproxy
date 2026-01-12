@@ -15,7 +15,6 @@
 
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:vx/data/sync.pb.dart';
 import 'package:vx/utils/file.dart';
 
 /// Encrypt raw bytes to base64 string (general purpose)

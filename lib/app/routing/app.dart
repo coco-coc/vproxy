@@ -333,7 +333,7 @@ class AddAppIdAndroidScreen extends StatefulWidget {
 }
 
 class _AddAppIdAndroidScreenState extends State<AddAppIdAndroidScreen> {
-  Map<String, SelectedApp> _selectedApps = {};
+  final Map<String, SelectedApp> _selectedApps = {};
   List<App> _originalApps = [];
   bool _showSystemApps = false;
   late List<AppInfo> _appInfos;
@@ -662,7 +662,7 @@ class AddAppIdDesktopScreen extends StatefulWidget {
 }
 
 class _AddAppIdDesktopScreenState extends State<AddAppIdDesktopScreen> {
-  Map<String, SelectedApp> _selectedApps = {};
+  final Map<String, SelectedApp> _selectedApps = {};
   List<App> _originalApps = [];
   late List<DesktopAppInfo> _appInfos;
   List<DesktopAppInfo> _filteredAppInfos = [];

@@ -14,13 +14,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
-import 'package:vx/app/routing/repo.dart';
 import 'package:vx/app/settings/setting.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/data/sync.dart';
@@ -70,7 +68,7 @@ class _SyncPageState extends State<SyncPage> {
 }
 
 class _Backup extends StatefulWidget {
-  const _Backup({super.key});
+  const _Backup();
 
   @override
   State<_Backup> createState() => __BackupState();
@@ -131,16 +129,14 @@ class __BackupState extends State<_Backup> {
               top: 10,
             ),
             child: Text(
-                AppLocalizations.of(context)!.currentBackup +
-                    ' ' +
-                    DateTime.parse(_latestBackup!.replaceAll('.db', ''))
+                '${AppLocalizations.of(context)!.currentBackup} ${DateTime.parse(_latestBackup!.replaceAll('.db', ''))
                         .toLocal()
                         .toString()
                         .split('.')
-                        .first,
+                        .first}',
                 style: Theme.of(context).textTheme.bodyMedium),
           ),
-        Gap(10),
+        const Gap(10),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
@@ -170,7 +166,7 @@ class __BackupState extends State<_Backup> {
                           ),
                         )
                       : Text(AppLocalizations.of(context)!.uploadDb)),
-              Gap(10),
+              const Gap(10),
               FilledButton(
                   onPressed: () async {
                     try {
@@ -196,7 +192,7 @@ class __BackupState extends State<_Backup> {
                           ),
                         )
                       : Text(AppLocalizations.of(context)!.restoreDb)),
-              Gap(10),
+              const Gap(10),
               FilledButton.tonal(
                   style: FilledButton.styleFrom(
                     backgroundColor:
@@ -218,7 +214,7 @@ class __BackupState extends State<_Backup> {
             ],
           ),
         ),
-        Gap(10),
+        const Gap(10),
         TextField(
           controller: _passwordController,
           obscureText: true,
@@ -232,12 +228,12 @@ class __BackupState extends State<_Backup> {
           },
           decoration: InputDecoration(
               errorText: _errorText,
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               labelText: AppLocalizations.of(context)!.password,
               helperText: AppLocalizations.of(context)!.backupPasswordDesc,
               helperMaxLines: 2),
         ),
-        Gap(5),
+        const Gap(5),
         Align(
           alignment: Alignment.centerRight,
           child: FilledButton(
@@ -252,7 +248,7 @@ class __BackupState extends State<_Backup> {
 }
 
 class _Sync extends StatefulWidget {
-  const _Sync({super.key});
+  const _Sync();
 
   @override
   State<_Sync> createState() => __SyncState();
@@ -298,11 +294,11 @@ class __SyncState extends State<_Sync> {
                 onSelected: (value) {},
                 label: Text(AppLocalizations.of(context)!.cloudSync),
                 selected: _cloudSync),
-            Gap(10),
+            const Gap(10),
             ChoiceChip(
                 label: Text(AppLocalizations.of(context)!.lanSync),
                 selected: !_cloudSync),
-            Expanded(child: SizedBox()),
+            const Expanded(child: SizedBox()),
             Consumer<SyncService>(
               builder: (context, syncService, child) {
                 if (syncService.syncing) {
@@ -317,19 +313,19 @@ class __SyncState extends State<_Sync> {
                           },
                     icon: syncService.syncing
                         ? smallCircularProgressIndicator
-                        : Icon(Icons.sync));
+                        : const Icon(Icons.sync));
               },
             )
           ],
         ),
-        Gap(10),
+        const Gap(10),
         Row(
           children: [
             Text('•',
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     )),
-            Gap(5),
+            const Gap(5),
             Expanded(
               child: Text(AppLocalizations.of(context)!.cloudSyncDesc1,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
@@ -338,7 +334,7 @@ class __SyncState extends State<_Sync> {
             ),
           ],
         ),
-        Gap(5),
+        const Gap(5),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -346,7 +342,7 @@ class __SyncState extends State<_Sync> {
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     )),
-            Gap(5),
+            const Gap(5),
             Expanded(
               child: Text(AppLocalizations.of(context)!.cloudSyncDesc2,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
@@ -355,7 +351,7 @@ class __SyncState extends State<_Sync> {
             ),
           ],
         ),
-        Gap(5),
+        const Gap(5),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -363,7 +359,7 @@ class __SyncState extends State<_Sync> {
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     )),
-            Gap(5),
+            const Gap(5),
             Expanded(
               child: Text(AppLocalizations.of(context)!.cloudSyncDesc3,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
@@ -376,7 +372,7 @@ class __SyncState extends State<_Sync> {
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Column(
             children: [
-              Gap(10),
+              const Gap(10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -392,7 +388,7 @@ class __SyncState extends State<_Sync> {
                       })
                 ],
               ),
-              Gap(10),
+              const Gap(10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -410,7 +406,7 @@ class __SyncState extends State<_Sync> {
                       })
                 ],
               ),
-              Gap(10),
+              const Gap(10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -428,7 +424,7 @@ class __SyncState extends State<_Sync> {
                       })
                 ],
               ),
-              Gap(10),
+              const Gap(10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -447,7 +443,7 @@ class __SyncState extends State<_Sync> {
             ],
           ),
         ),
-        Gap(10),
+        const Gap(10),
         TextField(
           controller: _passwordController,
           obscureText: true,
@@ -461,12 +457,12 @@ class __SyncState extends State<_Sync> {
           },
           decoration: InputDecoration(
               errorText: _errorText,
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               labelText: AppLocalizations.of(context)!.password,
               helperText: AppLocalizations.of(context)!.syncPasswordDesc,
               helperMaxLines: 2),
         ),
-        Gap(5),
+        const Gap(5),
         Align(
           alignment: Alignment.centerRight,
           child: FilledButton(

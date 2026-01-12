@@ -19,7 +19,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
@@ -36,7 +35,7 @@ void saveLogToApplicationDocumentsDir() async {
   }
 
   // copy tunnel logFile to dst dir
-  final tunnelLogDir = await getTunnelLogDir();
+  final tunnelLogDir = getTunnelLogDir();
   final dstTunnelLogDir = join(dstDir, "tunnel_logs");
   if (!Directory(dstTunnelLogDir).existsSync()) {
     Directory(dstTunnelLogDir).createSync(recursive: true);
@@ -60,7 +59,7 @@ void saveLogToApplicationDocumentsDir() async {
   );
 
   // copy flutterLogDir to ApplicationDocumentsDirectory
-  final flutterLogDir = await getFlutterLogDir();
+  final flutterLogDir = getFlutterLogDir();
   if (await flutterLogDir.exists()) {
     final dstFlutterLogDir = join(dstDir, "flutter_logs");
     if (!Directory(dstFlutterLogDir).existsSync()) {

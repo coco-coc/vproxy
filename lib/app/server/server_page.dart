@@ -17,9 +17,7 @@ import 'dart:async';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
@@ -148,7 +146,7 @@ class _ServersState extends State<Servers> {
   }
 
   void _addServer() {
-    if (!context.read<AuthBloc>().state.pro && _servers.length >= 1) {
+    if (!context.read<AuthBloc>().state.pro && _servers.isNotEmpty) {
       showProPromotionDialog(context);
       return;
     }

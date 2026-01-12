@@ -16,7 +16,7 @@
 part of 'vx_config.dart';
 
 class _Routing extends StatelessWidget {
-  const _Routing({super.key, required this.config});
+  const _Routing({required this.config});
   final ServerConfig config;
 
   @override

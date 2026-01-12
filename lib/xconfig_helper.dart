@@ -16,11 +16,7 @@
 import 'dart:io';
 
 import 'package:drift/drift.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' hide RouterConfig;
-import 'package:flutter/services.dart';
 import 'package:installed_apps/index.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
@@ -32,7 +28,6 @@ import 'package:tm/protos/protos/geo.pb.dart';
 import 'package:tm/protos/protos/inbound.pb.dart';
 import 'package:tm/protos/protos/logger.pb.dart' as l;
 import 'package:tm/protos/protos/client.pb.dart' as core;
-import 'package:tm/protos/protos/logger.pbenum.dart';
 import 'package:tm/protos/protos/proxy/freedom.pb.dart';
 import 'package:tm/protos/protos/proxy/http.pb.dart';
 import 'package:tm/protos/protos/proxy/socks.pb.dart';
@@ -44,14 +39,11 @@ import 'package:tm/protos/protos/tun.pb.dart';
 import 'package:vx/app/control.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/routing/default.dart';
-import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/routing/selector_widget.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/common/common.dart';
-import 'package:vx/data/database.dart';
 import 'package:vx/data/database_provider.dart';
-import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/download.dart';
@@ -59,7 +51,6 @@ import 'package:vx/utils/geodata.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
-import 'package:vx/common/const.dart';
 import 'package:vx/common/file.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/utils/permission.dart';
@@ -102,8 +93,7 @@ class XConfigHelper {
   final Downloader _downloader;
   final GeoDataHelper _geoDataHelper;
   final XApiClient _xApiClient;
-
-  late DatabaseProvider _databaseProvider;
+  final DatabaseProvider _databaseProvider;
 
   /// Return outbound handlers to use
   ///
@@ -152,7 +142,7 @@ class XConfigHelper {
         _persistentStateRepo.enableDebugLog) {
       final dir = _persistentStateRepo.enableDebugLog
           ? await getDebugTunnelLogDir()
-          : await getTunnelLogDir();
+          : getTunnelLogDir();
       config.redirectStdErr = join((dir).path, await getLogFileName());
       // config.redirectStdErr = '/var/root/Library/Group Containers/K4FDLB3LLD.com.5vnetwork.x.system/Library/Application Support/v.log';
     }
@@ -833,10 +823,6 @@ class XConfigHelper {
       for (final appTag in rule.allTags) {
         await prepareAppSet(appTag, notFoundThrow: false);
       }
-    }
-
-    if (proxyDnsDomainSet != null) {
-      greatDomainSets.add(proxyDnsDomainSet);
     }
 
     // dns rules

@@ -131,7 +131,7 @@ class OpenSourceSoftwareNoticeScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           children: [
-            Gap(10),
+            const Gap(10),
             FilledButton(
               onPressed: () {
                 launchUrl(Uri.parse(githubRepositoryUrl));

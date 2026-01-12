@@ -14,7 +14,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -25,7 +24,6 @@ import 'package:sqlite3/sqlite3.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/app/x_controller.dart';
 import 'package:vx/auth/auth_bloc.dart';
-import 'package:vx/auth/auth_provider.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/data/database_provider.dart';
 import 'package:vx/data/sync.dart';
@@ -49,7 +47,7 @@ class BackupSerevice extends ChangeNotifier {
         _storage = storage,
         _prefHelper = prefHelper,
         databaseProvider = databaseProvider,
-        _syncService = syncService {}
+        _syncService = syncService;
   final AuthBloc _authProvider;
   final SharedPreferences _prefHelper;
   final FlutterSecureStorage _storage;
@@ -220,7 +218,7 @@ class BackupSerevice extends ChangeNotifier {
 
       // Open the database and vacuum it
       final backupDb = sqlite3.open(dbFileToRestore.path);
-      final tmpDb = '${tmpLocation}.db';
+      final tmpDb = '$tmpLocation.db';
       backupDb
         ..execute('VACUUM INTO ?', [tmpDb])
         ..dispose();

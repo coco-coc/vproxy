@@ -15,13 +15,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:pasteboard/pasteboard.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:vx/app/outbound/add.dart';
 import 'package:gap/gap.dart';
 import 'package:vx/app/settings/contact.dart';
 import 'package:vx/l10n/app_localizations.dart';
-import 'package:vx/main.dart';
 
 class Welcome extends StatelessWidget {
   const Welcome({super.key});
@@ -115,7 +112,7 @@ class Welcome extends StatelessWidget {
                   width: 16,
                   height: 16,
                 ),
-                label: Text(' X')),
+                label: const Text(' X')),
             OutlinedButton.icon(
               label: Text(AppLocalizations.of(context)!.email),
               onPressed: () {

@@ -1,15 +1,8 @@
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vx/data/database.dart';
-import 'package:drift/drift.dart';
 import 'package:drift_dev/api/migrations_native.dart';
 import 'generated/schema.dart';
 
-import 'generated/schema_v1.dart' as v1;
-import 'generated/schema_v2.dart' as v2;
-import 'generated/schema_v3.dart' as v3;
-import 'generated/schema_v4.dart' as v4;
 import 'generated/schema_v5.dart' as v5;
 
 void main() {
@@ -28,7 +21,7 @@ void main() {
     // Run the migration and verify that it adds the name column.
     final db = v5.DatabaseAtV5(schema.newConnection());
 
-    final statement =
+    const statement =
         'INSERT INTO "subscriptions" ("name", "link", "website", "description", "last_update", "last_success_update") VALUES (?, ?, ?, ?, ?, ?)';
     final args = [1, 'https://1', 'https://1', 'https://1', 0, 0];
     await db.customInsert(statement,

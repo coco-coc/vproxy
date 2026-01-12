@@ -19,13 +19,10 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path/path.dart';
 import 'package:tm/protos/app/api/api.pb.dart';
 import 'package:tm/tm.dart';
-import 'package:vx/main.dart';
 import 'package:vx/utils/compress.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/mac.dart';

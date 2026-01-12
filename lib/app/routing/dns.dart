@@ -15,22 +15,18 @@
 
 import 'dart:async';
 
-import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tm/protos/protos/dns.pb.dart';
 import 'package:vx/app/log/log_page.dart';
-import 'package:vx/app/routing/default.dart';
-import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
 import 'package:vx/widgets/form_dialog.dart';
-import 'package:vx/xconfig_helper.dart';
 
 class DnsServersWidget extends StatefulWidget {
   const DnsServersWidget({super.key});
@@ -73,10 +69,6 @@ class _DnsServersWidgetState extends State<DnsServersWidget>
   late DnsRepo _dnsRepo;
   StreamSubscription? _dnsServersSubscription;
 
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   bool get wantKeepAlive => true;
@@ -305,7 +297,7 @@ Widget _getDnsServerWidget(BuildContext context, DnsServer server) {
 }
 
 class _FakeDns extends StatelessWidget {
-  const _FakeDns({super.key, required this.fakeDnsServer});
+  const _FakeDns({required this.fakeDnsServer});
   final FakeDnsServer fakeDnsServer;
   @override
   Widget build(BuildContext context) {
@@ -338,7 +330,7 @@ class _FakeDns extends StatelessWidget {
 
 class _PlainTlsDnsServer extends StatelessWidget {
   const _PlainTlsDnsServer(
-      {super.key, required this.addresses, this.useDefaultDns});
+      {required this.addresses, this.useDefaultDns});
   final Iterable<String> addresses;
   final bool? useDefaultDns;
 

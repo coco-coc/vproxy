@@ -50,7 +50,7 @@ class OutboundHandlerCard extends StatelessWidget {
       elevation: isSelected ? 8 : 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: isSelected ? BorderSide(color: XBlue, width: 2) : BorderSide.none,
+        side: isSelected ? const BorderSide(color: XBlue, width: 2) : BorderSide.none,
       ),
       child: Container(
         padding: const EdgeInsets.all(16),

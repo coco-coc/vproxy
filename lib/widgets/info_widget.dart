@@ -23,7 +23,7 @@ class InfoDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Icon(Icons.info_outline_rounded),
+      title: const Icon(Icons.info_outline_rounded),
       scrollable: true,
       content: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 400),

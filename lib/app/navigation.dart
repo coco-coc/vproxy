@@ -16,11 +16,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:vx/app/start_close_button.dart';
-import 'package:vx/app/top_bar.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/data/sync.dart';
 import 'package:vx/l10n/app_localizations.dart';
@@ -182,9 +180,9 @@ class _MyNavigationRailState extends State<MyNavigationRail> {
                       icon: Icon(Icons.file_copy)),
                   IconButton(
                       onPressed: () async {
-                        (await getTunnelLogDir()).delete(recursive: true);
+                        (getTunnelLogDir()).delete(recursive: true);
                       },
-                      icon: Icon(Icons.delete))
+                      icon: const Icon(Icons.delete))
                 ],
               )
             : Platform.isMacOS

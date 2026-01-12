@@ -15,7 +15,6 @@
 
 import 'dart:io';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:drift/drift.dart' hide Column;
 import 'package:drift/native.dart';
 import 'package:drift/remote.dart';
@@ -35,18 +34,13 @@ import 'package:vx/app/routing/repo.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/routing/selector_widget.dart';
 import 'package:vx/app/x_controller.dart';
-import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/common/config.dart';
-import 'package:vx/common/extension.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/theme.dart';
 import 'package:vx/utils/logger.dart';
-import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
-import 'package:vx/utils/ui.dart';
-import 'package:vx/widgets/pro_promotion.dart';
 
 TextStyle getChipTextStyle(BuildContext context) {
   return Theme.of(context).textTheme.labelLarge!.copyWith(
@@ -87,7 +81,7 @@ class _LogPageState extends State<LogPage> {
               icon: const Icon(Icons.clear_rounded),
               onPressed: () {
                 _searchController.clear();
-                context.read<LogBloc>().add(SubstringChangedEvent(""));
+                context.read<LogBloc>().add(const SubstringChangedEvent(""));
               },
             ),
             builder: (context, child) {
@@ -480,7 +474,7 @@ class _LogListState extends State<LogList> {
     } else {
       // tag is just a single handler id
       tagWidget = FutureBuilder(
-        future: context.read<OutboundRepo>().getHandlerById(int.parse(tag!)),
+        future: context.read<OutboundRepo>().getHandlerById(int.parse(tag)),
         builder: (context, snapshot) {
           return Text(snapshot.data?.name ?? tag,
               style: Theme.of(context).textTheme.bodyLarge);
@@ -494,7 +488,7 @@ class _LogListState extends State<LogList> {
                   color: XBlue,
                   fontWeight: FontWeight.w500,
                 )),
-        Gap(10),
+        const Gap(10),
         Expanded(
             child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -1330,7 +1324,7 @@ class _LogListState extends State<LogList> {
           backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           label: name != null
               ? ConstrainedBox(
-                  constraints: BoxConstraints(minWidth: 30),
+                  constraints: const BoxConstraints(minWidth: 30),
                   child: Text(
                     name,
                     overflow: TextOverflow.clip,

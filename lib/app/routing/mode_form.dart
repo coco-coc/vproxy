@@ -26,18 +26,15 @@ import 'package:tm/protos/protos/router.pb.dart';
 import 'package:vx/app/log/log_page.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/routing/add_dialog.dart';
-import 'package:vx/app/routing/dns.dart';
 import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/common/config.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/data/database_provider.dart';
-import 'package:vx/main.dart';
 import 'package:vx/widgets/form_dialog.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/widgets/text_divider.dart';
-import 'package:vx/xconfig_helper.dart';
 
 enum OutboundType {
   node,
@@ -1524,14 +1521,14 @@ class _AllConditionState extends State<AllCondition> {
               }),
           const Gap(5),
           CheckboxListTile(
-              value: !widget.rule!.skipSniff,
+              value: !widget.rule.skipSniff,
               title: Text(
                   AppLocalizations.of(context)!.sniffDomainForIpConnection,
                   style: Theme.of(context).textTheme.labelMedium!.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       )),
               onChanged: (v) {
-                widget.rule!.skipSniff = !(v ?? false);
+                widget.rule.skipSniff = !(v ?? false);
                 setState(() {
                   widget.onChanged();
                 });

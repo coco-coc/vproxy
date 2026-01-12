@@ -16,22 +16,15 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:archive/archive_io.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/auth/auth_bloc.dart';
-import 'package:vx/auth/auth_provider.dart';
-import 'package:vx/main.dart';
-import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/download.dart';
 import 'package:vx/utils/logger.dart';
-import 'package:vx/utils/path.dart';
 
 class AdsProvider with ChangeNotifier {
   AdsProvider(

@@ -18,7 +18,6 @@ import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/l10n/app_localizations.dart';
-import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
 
 class SystemProxySetting extends StatefulWidget {
@@ -87,7 +86,7 @@ class _SystemProxySettingState extends State<SystemProxySetting> {
                   onSelected: (_) {
                     _toggleDynamicSystemProxyPorts(true);
                   }),
-              Gap(10),
+              const Gap(10),
               ChoiceChip(
                   label: Text(AppLocalizations.of(context)!.staticPorts),
                   selected: !_dynamicSystemProxyPorts,
@@ -96,13 +95,13 @@ class _SystemProxySettingState extends State<SystemProxySetting> {
                   })
             ],
           ),
-          Gap(10),
+          const Gap(10),
           if (!_dynamicSystemProxyPorts)
             Row(
               children: [
                 Expanded(
                   child: TextField(
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'SOCKS',
                       ),
@@ -110,10 +109,10 @@ class _SystemProxySettingState extends State<SystemProxySetting> {
                       controller: _socksPortController,
                       onChanged: _toggleSocksPort),
                 ),
-                Gap(10),
+                const Gap(10),
                 Expanded(
                   child: TextField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'HTTP',
                     ),

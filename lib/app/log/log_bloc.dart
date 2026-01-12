@@ -22,13 +22,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:installed_apps/index.dart';
 import 'package:lru_cache/lru_cache.dart';
-import 'package:path/path.dart' as path;
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/app/userlogger/config.pb.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/routing/mode_form.dart';
-import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/app/x_controller.dart';
 import 'package:vx/common/circuler_buffer.dart';
@@ -116,10 +114,6 @@ class LogBloc extends Bloc<LogEvent, LogState> {
     return;
   }
 
-  @override
-  Future<void> close() {
-    return super.close();
-  }
 
   void _onInitialEvent(
       LogBlocInitialEvent event, Emitter<LogState> emit) async {
@@ -328,6 +322,7 @@ class LogBloc extends Bloc<LogEvent, LogState> {
     } else if (state.filter.show(log)) {
       return state.copyWith(logs: state.logs..add(log));
     }
+    return null;
   }
 
   void _onDirectPressedEvent(DirectPressedEvent event, Emitter<LogState> emit) {
@@ -499,11 +494,11 @@ class SessionInfo extends XLog {
       fallbackTag: fallbackTag ?? this.fallbackTag,
       fallbackHandlerName: fallbackHandlerName ?? this.fallbackHandlerName,
       handlerName: handlerName ?? this.handlerName,
-      inboundTag: inboundTag ?? this.inboundTag,
-      network: network ?? this.network,
-      sniffProtocol: sniffProtocol ?? this.sniffProtocol,
-      source: source ?? this.source,
-      routeRuleMatched: routeRuleMatched ?? this.routeRuleMatched,
+      inboundTag: inboundTag ?? inboundTag,
+      network: network ?? network,
+      sniffProtocol: sniffProtocol ?? sniffProtocol,
+      source: source ?? source,
+      routeRuleMatched: routeRuleMatched ?? routeRuleMatched,
       icon: icon ?? this.icon,
     );
   }

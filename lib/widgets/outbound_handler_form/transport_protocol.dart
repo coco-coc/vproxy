@@ -88,7 +88,7 @@ class _TransportProtocolTcpState extends State<_TransportProtocolTcp>
       children: [
         DropdownMenu<String?>(
           initialSelection: _headerType,
-          label: Text('Header Type'),
+          label: const Text('Header Type'),
           dropdownMenuEntries: const [
             DropdownMenuEntry(value: null, label: 'None'),
             DropdownMenuEntry(value: 'http', label: 'HTTP'),

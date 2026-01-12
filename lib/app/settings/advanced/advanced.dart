@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,15 +24,7 @@ import 'package:vx/app/x_controller.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:vx/app/settings/advanced/proxy_share.dart';
-import 'package:vx/auth/auth_bloc.dart';
-import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
-import 'package:vx/utils/auto_update_service.dart';
-import 'package:vx/utils/logger.dart';
-import 'package:vx/widgets/circular_progress_indicator.dart';
-import 'package:vx/widgets/divider.dart';
-import 'package:vx/widgets/pro_promotion.dart';
-import 'package:vx/xconfig_helper.dart';
 
 class AdvancedScreen extends StatelessWidget {
   const AdvancedScreen({super.key, this.showAppBar = true});

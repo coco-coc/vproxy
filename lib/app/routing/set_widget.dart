@@ -16,8 +16,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:drift/drift.dart' hide Column;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -397,7 +395,7 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
             physics: const NeverScrollableScrollPhysics(),
             children: [
               ..._domainSets.map((e) {
-                final cannotDelete =
+                const cannotDelete =
                     false /* e.name == blackListProxy ||
                     e.name == whiteListDirect ||
                     e.name == proxyAllDirect ||
@@ -766,7 +764,7 @@ class _IPSetWidgetState extends State<IPSetWidget> {
             physics: const NeverScrollableScrollPhysics(),
             children: [
               ..._ipSets.map((e) {
-                final cannotDel =
+                const cannotDel =
                     false /* e.name == blackListProxy ||
                     e.name == whiteListDirect ||
                     e.name == proxyAllDirect */
@@ -1015,7 +1013,7 @@ class WrapChoiceChip extends StatelessWidget {
               onPressed: onEdit,
               child: Text(AppLocalizations.of(context)!.edit),
             ),
-          if (onDelete != null && onEdit != null) Divider(),
+          if (onDelete != null && onEdit != null) const Divider(),
           if (onDelete != null)
             MenuItemButton(
               onPressed: onDelete,
@@ -1151,7 +1149,7 @@ class _AppSetFormState extends State<AppSetForm> {
                 border: const OutlineInputBorder()),
           ),
           const Gap(5),
-          TextDivider(text: 'Clash Rules'),
+          const TextDivider(text: 'Clash Rules'),
           const Gap(5),
           ClashRule(clashRuleUrls: _clashRuleUrls)
         ],

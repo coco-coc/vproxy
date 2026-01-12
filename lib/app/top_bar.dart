@@ -16,25 +16,16 @@
 import 'dart:io';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/layout_provider.dart';
 import 'package:vx/app/x_controller.dart';
-import 'package:vx/theme.dart';
-import 'package:vx/widgets/ad.dart';
-import 'package:vx/auth/auth_bloc.dart';
-import 'package:vx/auth/auth_provider.dart';
 import 'package:vx/data/sync.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
-import 'package:vx/utils/debug.dart';
 import 'package:vx/utils/logger.dart';
-import 'package:vx/utils/path.dart';
 import 'package:vx/utils/upload_log.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -91,7 +82,7 @@ class TopBar extends StatelessWidget {
                       height: 24,
                     )),
               ),
-            Expanded(child: SizedBox()),
+            const Expanded(child: SizedBox()),
             if (!isProduction())
               IconButton(
                   onPressed: () async {
@@ -125,7 +116,7 @@ class TopBar extends StatelessWidget {
           ),
           Expanded(
               child: MoveWindow(
-            child: SizedBox(),
+            child: const SizedBox(),
           )),
           if (!isProduction())
             TextButton(
@@ -140,7 +131,7 @@ class TopBar extends StatelessWidget {
                 onPressed: () {
                   context.push('/setting');
                 },
-                icon: Icon(Icons.settings_rounded)),
+                icon: const Icon(Icons.settings_rounded)),
           IconButton(
               onPressed: () {
                 Scaffold.of(context).openEndDrawer();
