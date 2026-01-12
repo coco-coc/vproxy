@@ -35,16 +35,6 @@ VX (之前叫Vproxy)
 
 > 带Pro为付费功能
 
-> 一些用户误认为VX是一个VPN软件。VX只是一个代理客户端，类似于小火箭，Clash，V2rayN，不提供节点
-
-## About LICENCE
-
-We retain all rights to our source code and no one may reproduce, distribute, or
-create derivative works from our work.
-
-## 关于开源
-
-目前，VX的Flutter部分（本仓库）的源代码是公开的，它所使用的VX内核的是开源的。但是，为了防止盗版软件的出现，连接Flutter部分和内核部分的一个Flutter组件目前是闭源的。它会在VX用户数量更多后开源。
 
 ## 面向机场主的深度链接说明
 

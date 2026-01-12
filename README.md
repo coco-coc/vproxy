@@ -36,19 +36,6 @@ VX (formerly known as Vproxy) is a cross-platform proxy client built on top of
 
 > **Note**: Most features are free, but some are available to paid users only.
 
-## About LICENCE
-
-We retain all rights to our source code and no one may reproduce, distribute, or
-create derivative works from our work.
-
-## About Open Source
-
-Currently, the flutter part of our app (this repo) is source code available, and
-the VX-core that powers the app is open-source. However, to prevent pirated
-softwares, there is a flutter plugin that connects the flutter part with the
-vx-core is currently close-source. It will be open-source when our app becomes
-more popular.
-
 ## Deep Linking (For airport owners)
 
 ### Format 1: Base64 Encoded Subscription URL
