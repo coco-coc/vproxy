@@ -5,7 +5,9 @@ import 'dart:math';
 import 'package:drift/drift.dart' hide Column;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/data/sync.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
@@ -50,10 +52,12 @@ class _AddEditServerDialogState extends State<AddEditServerDialog> {
   bool _loading = true;
   SshServerSecureStorage _serverSecureStorage = SshServerSecureStorage();
   final _serverPubKeyController = TextEditingController();
+  late final FlutterSecureStorage storage;
 
   @override
   void initState() {
     super.initState();
+    storage = context.read<FlutterSecureStorage>();
     _nameController.text = widget.server?.name ?? '';
     _serverAddressController.text = widget.server?.address ?? '';
     _authMethod = widget.server?.authMethod ?? AuthMethod.password;
@@ -96,6 +100,7 @@ class _AddEditServerDialogState extends State<AddEditServerDialog> {
   void _save(BuildContext context) async {
     final syncService = context.read<SyncService>();
     bool? allGood = _formKey.currentState?.validate();
+    final database = context.read<DatabaseProvider>().database;
 
     if ((_authMethod == AuthMethod.sshKey) &&
         _serverSecureStorage.sshKey == null &&
@@ -408,6 +413,7 @@ class _SshKeyCredentialGetterState extends State<SshKeyCredentialGetter> {
   void initState() {
     super.initState();
     Future(() async {
+      final database = context.read<DatabaseProvider>().database;
       _commonSshKeys = await database.select(database.commonSshKeys).get();
       setState(() {});
     });

@@ -17,6 +17,7 @@ import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/common/config.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/data/database.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/main.dart';
 import 'package:vx/widgets/form_dialog.dart';
 import 'package:vx/l10n/app_localizations.dart';
@@ -141,7 +142,13 @@ class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
         });
       }
     });
-    database.managers.handlerSelectors.get().then((l) {
+    context
+        .read<DatabaseProvider>()
+        .database
+        .managers
+        .handlerSelectors
+        .get()
+        .then((l) {
       _selectors = l;
       if (_outboundType == OutboundType.selector) {
         setState(() {
@@ -616,7 +623,13 @@ class _DnsRuleFormState extends State<DnsRuleForm> with FormDataGetter {
           .firstOrNull;
     }
     _updateNontrivial();
-    database.managers.dnsServers.get().then((l) {
+    context
+        .read<DatabaseProvider>()
+        .database
+        .managers
+        .dnsServers
+        .get()
+        .then((l) {
       _dnsServers = [/* ...defaultDnsServers */ ...l];
       setState(() {
         _selectedDnsServer ??=
@@ -1109,6 +1122,7 @@ class _DomainSetPickerState extends State<DomainSetPicker> {
   @override
   void initState() {
     super.initState();
+    final database = context.read<DatabaseProvider>().database;
     _getGreatDomainSetsFuture = database.managers.greatDomainSets.get();
     _getAtomicDomainSetsFuture = database.managers.atomicDomainSets.get();
   }
@@ -1191,6 +1205,7 @@ class _IPConditionState extends State<IPCondition> {
   @override
   void initState() {
     super.initState();
+    final database = context.read<DatabaseProvider>().database;
     _getGreatIpSetsFuture = database.managers.greatIpSets.get();
     _getAtomicIpSetsFuture = database.managers.atomicIpSets.get();
   }
@@ -1528,6 +1543,7 @@ class _AppConditionState extends State<AppCondition> {
   @override
   void initState() {
     super.initState();
+    final database = context.read<DatabaseProvider>().database;
     _getAppSetsFuture = database.managers.appSets.get();
   }
 

@@ -11,6 +11,7 @@ import 'package:gap/gap.dart';
 import 'package:installed_apps/index.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
 import 'package:tm/protos/protos/router.pb.dart';
 import 'package:vx/app/log/log_page.dart';
@@ -21,6 +22,7 @@ import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/app/routing/selector_widget.dart';
 import 'package:vx/app/routing/set_widget.dart';
+import 'package:vx/app/x_controller.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/common/config.dart';
@@ -28,8 +30,10 @@ import 'package:vx/common/extension.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/main.dart' hide App;
 import 'package:vx/l10n/app_localizations.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/theme.dart';
 import 'package:vx/utils/desktop_installed_apps.dart';
+import 'package:vx/utils/xapi_client.dart';
 import 'package:vx/widgets/form_dialog.dart';
 import 'package:vx/widgets/pro_icon.dart';
 import 'package:vx/widgets/pro_promotion.dart';
@@ -76,7 +80,7 @@ class _RoutePageState extends State<RoutePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _advancedMode = context.read<AuthBloc>().state.pro &&
-        persistentStateRepo.advanceRouteMode;
+        context.read<SharedPreferences>().advanceRouteMode;
     _tabController = TabController(length: 4, vsync: this);
   }
 
@@ -95,7 +99,7 @@ class _RoutePageState extends State<RoutePage> with TickerProviderStateMixin {
     setState(() {
       _advancedMode = !_advancedMode;
     });
-    persistentStateRepo.setAdvanceRouteMode(_advancedMode);
+    context.read<SharedPreferences>().setAdvanceRouteMode(_advancedMode);
   }
 
   @override

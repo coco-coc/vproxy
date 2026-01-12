@@ -5,6 +5,7 @@ import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide RouterConfig;
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/protos/dns.pb.dart';
 import 'package:vx/app/layout_provider.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
@@ -13,6 +14,7 @@ import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/routing/default_mode_dialog.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/auth/auth_bloc.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +29,7 @@ import 'package:vx/common/common.dart';
 import 'package:vx/common/config.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/random.dart';
 import 'package:vx/utils/ui.dart';
 import 'package:vx/widgets/form_dialog.dart';
@@ -77,7 +80,8 @@ class _ModeWidgetState extends State<ModeWidget>
       _customRouteModes = value;
       if (_selected == null) {
         _selected = _customRouteModes
-            .where((e) => e.name == persistentStateRepo.routingMode)
+            .where(
+                (e) => e.name == context.read<SharedPreferences>().routingMode)
             .firstOrNull;
         if (_selected == null) {
           _selected = _customRouteModes.firstOrNull;
@@ -103,7 +107,8 @@ class _ModeWidgetState extends State<ModeWidget>
     final selectedMode = await showDefaultRouteModeDialog(context);
     if (selectedMode != null) {
       // Insert the selected default route mode
-      await insertDefaultRouteMode(al, selectedMode);
+      await insertDefaultRouteMode(
+          al, selectedMode, context.read<DatabaseProvider>().database);
     }
   }
 
@@ -125,7 +130,9 @@ class _ModeWidgetState extends State<ModeWidget>
       if (name.$2 != null) {
         config.routerConfig.rules.addAll(name.$2!.displayRouterRules(al: al));
         config.dnsRules.rules.addAll(name.$2!.dnsRules(al: al));
-        insertDefaultRouteMode(al, name.$2!, setsOnly: true);
+        insertDefaultRouteMode(
+            al, name.$2!, context.read<DatabaseProvider>().database,
+            setsOnly: true);
       }
       try {
         await _routeRepo.addCustomRouteMode(config);
@@ -136,9 +143,7 @@ class _ModeWidgetState extends State<ModeWidget>
   }
 
   Future<void> _onDelete(CustomRouteMode e) async {
-    await database.managers.customRouteModes
-        .filter((f) => f.name(e.name))
-        .delete();
+    await context.read<RouteRepo>().removeCustomRouteMode(e.id);
     setState(() {
       _customRouteModes.remove(e);
       if (_selected == e) {

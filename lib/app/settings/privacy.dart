@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vx/app/settings/setting.dart';
 import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/logger.dart';
+import 'package:vx/utils/upload_log.dart';
 
 const String privacyPolicyUrl = 'https://vx.5vnetwork.com/privacy';
 const String termOfServiceUrl = 'https://vx.5vnetwork.com/terms';
@@ -25,7 +29,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   @override
   void initState() {
     super.initState();
-    _shareLog = persistentStateRepo.shareLog;
+    _shareLog = context.read<SharedPreferences>().shareLog;
   }
 
   @override
@@ -65,7 +69,10 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                             setState(() {
                               _shareLog = value;
                             });
-                            setShareLog(_shareLog);
+                            setShareLog(
+                                _shareLog,
+                                context.read<SharedPreferences>(),
+                                context.read<LogUploadService>());
                           }),
               ],
             ),
@@ -80,5 +87,17 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> setShareLog(bool value, SharedPreferences pref,
+      LogUploadService logUploadService) async {
+    pref.setShareLog(value);
+    if (value) {
+      await startShareLog();
+      logUploadService.start();
+    } else {
+      await stopShareLog();
+      logUploadService.stopPeriodicUpload();
+    }
   }
 }

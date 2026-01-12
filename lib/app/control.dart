@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:collection/collection.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vector_graphics/vector_graphics_compat.dart';
 import 'package:vx/app/blocs/inbound.dart';
@@ -596,10 +597,12 @@ class FakeDns extends StatelessWidget {
                         scale: 0.8,
                         child: StatefulBuilder(builder: (ctx, setState) {
                           return Switch(
-                              value: persistentStateRepo.fakeDns,
+                              value: context.read<SharedPreferences>().fakeDns,
                               onChanged: (value) async {
                                 setState(() {
-                                  persistentStateRepo.setFakeDns(value);
+                                  context
+                                      .read<SharedPreferences>()
+                                      .setFakeDns(value);
                                 });
                                 try {
                                   await context

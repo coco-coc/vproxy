@@ -88,3 +88,7 @@ Filename: "{app}\service_install.exe"; \
     Parameters: "remove"; \
     Flags: waituntilterminated runhidden
 
+[UninstallDelete]
+Type: filesandordirs; Name: "{userappdata}\com.5vnetwork\vx"
+Type: filesandordirs; Name: "{localappdata}\com.5vnetwork\vx"
+

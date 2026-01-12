@@ -550,6 +550,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "8.1.6"
+  flutter_common:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: fdb6f91bca019736aceeb3600d224ae2ba825ad9
+      url: "https://github.com/5vnetwork/flutter_common.git"
+    source: git
+    version: "0.0.1"
   flutter_driver:
     dependency: transitive
     description: flutter
@@ -2083,5 +2092,5 @@ packages:
     source: hosted
     version: "0.2.4"
 sdks:
-  dart: ">=3.8.1 <4.0.0"
+  dart: ">=3.10.1 <4.0.0"
   flutter: ">=3.32.0"

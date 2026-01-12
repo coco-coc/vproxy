@@ -13,6 +13,7 @@ import 'package:pasteboard/pasteboard.dart';
 import 'package:tm/protos/protos/outbound.pb.dart';
 import 'package:vx/app/outbound/add_chain_handler.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
+import 'package:vx/utils/xapi_client.dart';
 import 'package:vx/widgets/outbound_handler_form/outbound_handler_form.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/app/outbound/subscription_bloc.dart';
@@ -273,7 +274,7 @@ Future<void> getNodesFromUrls(String data, BuildContext context,
         return;
       } else {
         // decode as urls
-        final result = await xApiClient.decode(data);
+        final result = await context.read<XApiClient>().decode(data);
         String group = defaultGroupName;
         final t = await showStringForm(context,
             title: AppLocalizations.of(context)!.addToGroup,

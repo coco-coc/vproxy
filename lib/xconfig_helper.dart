@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:installed_apps/index.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
 import 'package:tm/protos/google/protobuf/any.pb.dart';
 import 'package:tm/protos/common/net/net.pb.dart';
@@ -34,9 +35,11 @@ import 'package:vx/app/routing/selector_widget.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/data/database.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
+import 'package:vx/utils/download.dart';
 import 'package:vx/utils/geodata.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
@@ -62,17 +65,30 @@ class ConfigException implements Exception {
 /// Helper to generate configs of X.
 /// To store latest config in app group container for macos
 class XConfigHelper {
-  XConfigHelper(
-      {required OutboundRepo outboundRepo,
-      required PrefHelper psr,
-      required AuthBloc authBloc})
-      : _outboundRepo = outboundRepo,
+  XConfigHelper({
+    required OutboundRepo outboundRepo,
+    required SharedPreferences psr,
+    required AuthBloc authBloc,
+    required Downloader downloader,
+    required GeoDataHelper geoDataHelper,
+    required XApiClient xApiClient,
+    required DatabaseProvider databaseProvider,
+  })  : _outboundRepo = outboundRepo,
         _persistentStateRepo = psr,
-        _authBloc = authBloc;
+        _authBloc = authBloc,
+        _downloader = downloader,
+        _geoDataHelper = geoDataHelper,
+        _xApiClient = xApiClient,
+        _databaseProvider = databaseProvider;
   // final _outboundHandlerGroupBox = store.box<OHTag>();
   final OutboundRepo _outboundRepo;
-  final PrefHelper _persistentStateRepo;
+  final SharedPreferences _persistentStateRepo;
   final AuthBloc _authBloc;
+  final Downloader _downloader;
+  final GeoDataHelper _geoDataHelper;
+  final XApiClient _xApiClient;
+
+  late DatabaseProvider _databaseProvider;
 
   /// Return outbound handlers to use
   ///
@@ -107,7 +123,7 @@ class XConfigHelper {
       grpc: await _getGrpcConfig(certBytes: certBytes),
       dispatcher: _getDispatcherConfig(),
       subscription: isPkg ? null : await _getSubscriptionConfig(),
-      dbPath: isPkg ? null : await getDbPath(),
+      dbPath: isPkg ? null : await getDbPath(_persistentStateRepo),
       serviceSecret: dbSecretAndPort?.$1,
       servicePort: dbSecretAndPort?.$2,
       defaultNicMonitor: true,
@@ -177,6 +193,7 @@ class XConfigHelper {
     final config = DispatcherConfig(
       fallbackToProxy: _persistentStateRepo.fallbackToProxy,
       fallbackToDomain: _persistentStateRepo.fallbackRetryDomain,
+      ipv6UseDomain: _persistentStateRepo.changeIpv6ToDomain,
       sniff: _persistentStateRepo.sniff,
     );
     return config;
@@ -213,7 +230,7 @@ class XConfigHelper {
 
     if (Platform.isWindows) {
       try {
-        await makeWinTunAvailable();
+        await makeWinTunAvailable(_downloader);
       } catch (e) {
         throw ConfigException('Wintun.dll download failed: $e');
       }
@@ -231,7 +248,9 @@ class XConfigHelper {
       }
       if (directAppSetUsed) {
         // blackListApps.add(androidPackageNme);
-        final apps = await database.select(database.apps).get();
+        final apps = await _databaseProvider.database
+            .select(_databaseProvider.database.apps)
+            .get();
         final futures = <Future>[];
         for (final app in apps) {
           if (app.appSetName == directAppSetName &&
@@ -384,7 +403,8 @@ class XConfigHelper {
           config = _persistentStateRepo.manualSelectorConfig;
           selectors.add(config);
         } else {
-          config = await database.getSelectorConfig(rule.selectorTag);
+          config = await _databaseProvider.database
+              .getSelectorConfig(rule.selectorTag);
           if (config != null) {
             selectors.add(config);
           }
@@ -461,7 +481,8 @@ class XConfigHelper {
         //   DnsRuleConfig(dnsServerName: XConfigHelper.dnsServerDirect),
         // ]);
       } else {
-        final customRouteMode = await database.managers.customRouteModes
+        final customRouteMode = await _databaseProvider
+            .database.managers.customRouteModes
             .filter((e) => e.name.equals(routeMode))
             .getSingle();
         config.dnsRules.addAll(customRouteMode.dnsRules.rules);
@@ -491,7 +512,8 @@ class XConfigHelper {
             //     ),
             //   ));
             // } else {
-            final dnsServer = await database.managers.dnsServers
+            final dnsServer = await _databaseProvider
+                .database.managers.dnsServers
                 .filter((e) => e.name.equals(rule.dnsServerName))
                 .getSingleOrNull();
             if (dnsServer == null) {
@@ -504,7 +526,9 @@ class XConfigHelper {
         }
       }
     }
-    final dnsRecords = await (database.select(database.dnsRecords)).get();
+    final dnsRecords = await (_databaseProvider.database
+            .select(_databaseProvider.database.dnsRecords))
+        .get();
     config.records.addAll(dnsRecords.map((e) => e.dnsRecord));
     return config;
   }
@@ -559,7 +583,8 @@ class XConfigHelper {
           rootLocalizations()?.freeUserCannotUseCustomRoutingMode ??
               '免费用户无法使用自定义路由模式。请选择一个默认路由模式。您可以在路由界面添加默认路由模式。');
     }
-    final ruleConfig = await database.managers.customRouteModes
+    final ruleConfig = await _databaseProvider
+        .database.managers.customRouteModes
         .filter((e) => e.name.equals(mode))
         .getSingle();
     routerConfig = RouterConfig(
@@ -601,7 +626,8 @@ class XConfigHelper {
           atomicDomainSets.any((e) => e.name == setName)) {
         return (null, null);
       }
-      final atomicSet = await ((database.select(database.atomicDomainSets))
+      final atomicSet = await ((_databaseProvider.database
+              .select(_databaseProvider.database.atomicDomainSets))
             ..where((s) => s.name.equals(setName)))
           .getSingleOrNull();
       if (atomicSet != null) {
@@ -629,7 +655,8 @@ class XConfigHelper {
           clashUrlsSet.add(url);
           config.clashFiles.add(await getClashRulesPath(url));
         }
-        final domains = await (database.select(database.geoDomains)
+        final domains = await (_databaseProvider.database
+                .select(_databaseProvider.database.geoDomains)
               ..where((t) => t.domainSetName.equals(setName)))
             .get();
         config.domains.addAll(domains.map((e) => e.geoDomain));
@@ -638,7 +665,8 @@ class XConfigHelper {
       // great domain set
       final retAtomic = <AtomicDomainSetConfig>[];
       final retGreat = <GreatDomainSetConfig>[];
-      final greatSet = await ((database.select(database.greatDomainSets))
+      final greatSet = await ((_databaseProvider.database
+              .select(_databaseProvider.database.greatDomainSets))
             ..where(
                 (s) => s.name.equals(setName) | s.oppositeName.equals(setName)))
           .getSingleOrNull();
@@ -671,7 +699,8 @@ class XConfigHelper {
 
     Future<void> addAtomicIpSet(String setName,
         {bool notFoundThrow = true}) async {
-      final atomicSet = await ((database.select(database.atomicIpSets))
+      final atomicSet = await ((_databaseProvider.database
+              .select(_databaseProvider.database.atomicIpSets))
             ..where((s) => s.name.equals(setName)))
           .getSingleOrNull();
       if (atomicSet != null) {
@@ -700,7 +729,8 @@ class XConfigHelper {
           config.clashFiles.add(await getClashRulesPath(url));
         }
 
-        final cidrs = await (database.select(database.cidrs)
+        final cidrs = await (_databaseProvider.database
+                .select(_databaseProvider.database.cidrs)
               ..where((t) => t.ipSetName.equals(setName)))
             .get();
         config.cidrs.addAll(cidrs.map((e) => e.cidr));
@@ -719,7 +749,8 @@ class XConfigHelper {
           atomicIpSets.any((e) => e.name == dstIpTag)) {
         return;
       }
-      final greatSet = await ((database.select(database.greatIpSets))
+      final greatSet = await ((_databaseProvider.database
+              .select(_databaseProvider.database.greatIpSets))
             ..where((s) => s.name.equals(dstIpTag)))
           .getSingleOrNull();
       if (greatSet != null) {
@@ -740,7 +771,8 @@ class XConfigHelper {
       if (appSets.any((e) => e.name == appTag)) {
         return;
       }
-      final appSet = await ((database.select(database.appSets))
+      final appSet = await ((_databaseProvider.database
+              .select(_databaseProvider.database.appSets))
             ..where((s) => s.name.equals(appTag)))
           .getSingleOrNull();
       if (appSet == null) {
@@ -749,7 +781,8 @@ class XConfigHelper {
         }
         return;
       }
-      final apps = await (database.select(database.apps)
+      final apps = await (_databaseProvider.database
+              .select(_databaseProvider.database.apps)
             ..where((s) => s.appSetName.equals(appTag)))
           .get();
       final appSetConfig =
@@ -814,21 +847,21 @@ class XConfigHelper {
       final geoSiteFile = File(geoSitePath);
       final geoIPFile = File(geoIPPath);
       if (!geoSiteFile.existsSync() || !geoIPFile.existsSync()) {
-        futures.add(geoDataHelper.downloadAndProcessGeo());
+        futures.add(_geoDataHelper.downloadAndProcessGeo());
       }
     }
     for (final url in clashUrlsSet) {
       final path = await getClashRulesPath(url);
       final file = File(path);
       if (!file.existsSync()) {
-        futures.add(downloader.downloadProxyFirst(url, path));
+        futures.add(_downloader.downloadProxyFirst(url, path));
       }
     }
     for (final url in geoUrlsSet) {
       final path = await getGeoUrlPath(url);
       final file = File(path);
       if (!file.existsSync()) {
-        futures.add(downloader.downloadProxyFirst(url, path));
+        futures.add(_downloader.downloadProxyFirst(url, path));
       }
     }
     if (futures.isNotEmpty) {
@@ -846,7 +879,7 @@ class XConfigHelper {
     }
 
     if (isPkg) {
-      await pkgConvertGeoConfig(geoConfig);
+      await pkgConvertGeoConfig(_xApiClient, geoConfig);
     }
 
     return (routerConfig, geoConfig);
@@ -889,7 +922,8 @@ class XConfigHelper {
   }
 
   /// TODO: optimize
-  static Future<void> pkgConvertGeoConfig(GeoConfig geoConfig) async {
+  static Future<void> pkgConvertGeoConfig(
+      XApiClient xApiClient, GeoConfig geoConfig) async {
     // final futures = <Future>[];
     for (final atomicDomainSet in geoConfig.atomicDomainSets) {
       if (atomicDomainSet.hasGeosite()) {
@@ -1047,16 +1081,16 @@ class XConfigHelper {
   //       ]);
   //   }
 
-  //   // final customDirectDomains = await (database.select(database.geoDomains)
+  //   // final customDirectDomains = await (_databaseProvider.database.select(_databaseProvider.database.geoDomains)
   //   //       ..where((t) => t.domainSetName.equals(customDirect)))
   //   //     .get();
-  //   // final customProxyDomains = await (database.select(database.geoDomains)
+  //   // final customProxyDomains = await (_databaseProvider.database.select(_databaseProvider.database.geoDomains)
   //   //       ..where((t) => t.domainSetName.equals(customProxy)))
   //   //     .get();
-  //   // final customDirectCidrs = await (database.select(database.cidrs)
+  //   // final customDirectCidrs = await (_databaseProvider.database.select(_databaseProvider.database.cidrs)
   //   //       ..where((t) => t.ipSetName.equals(customDirect)))
   //   //     .get();
-  //   // final customProxyCidrs = await (database.select(database.cidrs)
+  //   // final customProxyCidrs = await (_databaseProvider.database.select(_databaseProvider.database.cidrs)
   //   //       ..where((t) => t.ipSetName.equals(customProxy)))
   //   //     .get();
   //   config.atomicDomainSets.add(AtomicDomainSetConfig(
@@ -1076,10 +1110,10 @@ class XConfigHelper {
   //     // cidrs: customProxyCidrs.map((e) => e.cidr),
   //   ));
   //   // app sets
-  //   // final directApps = await (database.select(database.apps)
+  //   // final directApps = await (_databaseProvider.database.select(_databaseProvider.database.apps)
   //   //       ..where((t) => t.appSetName.equals(direct)))
   //   //     .get();
-  //   // final proxyApps = await (database.select(database.apps)
+  //   // final proxyApps = await (_databaseProvider.database.select(_databaseProvider.database.apps)
   //   //       ..where((t) => t.appSetName.equals(proxy)))
   //   //     .get();
   //   config.appSets.add(AppSetConfig(

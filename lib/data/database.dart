@@ -12,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:path/path.dart';
 import 'package:protobuf/protobuf.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/common/net/net.pb.dart';
 import 'package:tm/protos/protos/geo.pb.dart';
 import 'package:tm/protos/protos/outbound.pb.dart';
@@ -39,6 +40,7 @@ import 'package:vx/data/sync.dart';
 import 'package:vx/data/sync.pb.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
 import 'package:vx/utils/random.dart';
@@ -73,18 +75,22 @@ part 'custom_row_class.dart';
   DnsServers,
 ])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase({QueryExecutor? executor, QueryInterceptor? interceptor})
-      : super(executor ?? _openConnection(interceptor));
+  AppDatabase(
+      {required String path,
+      QueryExecutor? executor,
+      QueryInterceptor? interceptor})
+      : super(executor ?? _openConnection(path, interceptor));
 
   @override
   int get schemaVersion => 8;
 
-  static QueryExecutor _openConnection(QueryInterceptor? interceptor) {
+  static QueryExecutor _openConnection(
+      String path, QueryInterceptor? interceptor) {
     // the LazyDatabase util lets us find the right location for the file async.
     return LazyDatabase(() async {
       // put the database file, called db.sqlite here, into the documents folder
       // for your app.
-      final file = File(await getDbPath());
+      final file = File(path);
 
       // Also work around limitations on old Android versions
       if (Platform.isAndroid) {
@@ -122,166 +128,6 @@ class AppDatabase extends _$AppDatabase {
     await into(outboundHandlerGroups).insert(
         const OutboundHandlerGroupsCompanion(name: Value(defaultGroupName)),
         mode: InsertMode.insertOrIgnore);
-    // add sets
-    // domain
-    // await into(atomicDomainSets).insert(
-    //     const AtomicDomainSetsCompanion(name: Value(customDirect)),
-    //     mode: InsertMode.insertOrIgnore);
-    // await into(atomicDomainSets).insert(
-    //     const AtomicDomainSetsCompanion(name: Value(customProxy)),
-    //     mode: InsertMode.insertOrIgnore);
-    // await into(atomicDomainSets).insert(
-    //     AtomicDomainSetsCompanion(
-    //       name: const Value(gfw),
-    //       geositeConfig: Value(GeositeConfig(codes: ['gfw'])),
-    //     ),
-    //     mode: InsertMode.insertOrIgnore);
-    // await into(atomicDomainSets).insert(
-    //     AtomicDomainSetsCompanion(
-    //       name: const Value(cn),
-    //       useBloomFilter:
-    //           Platform.isIOS ? const Value(true) : const Value.absent(),
-    //       geositeConfig:
-    //           Value(GeositeConfig(codes: ['cn', 'apple-cn', 'tld-cn'])),
-    //     ),
-    //     mode: InsertMode.insertOrReplace);
-    // await into(atomicDomainSets).insert(
-    //     AtomicDomainSetsCompanion(
-    //       name: const Value(cnGames),
-    //       geositeConfig: Value(
-    //           GeositeConfig(codes: ['category-games'], attributes: ['cn'])),
-    //     ),
-    //     mode: InsertMode.insertOrReplace);
-    // await into(atomicDomainSets).insertOnConflictUpdate(
-    //   AtomicDomainSetsCompanion(
-    //     name: const Value(private),
-    //     geositeConfig: Value(GeositeConfig(codes: ['private'])),
-    //   ),
-    // );
-    // // ip
-    // await into(atomicIpSets).insert(
-    //     const AtomicIpSetsCompanion(name: Value(customDirect)),
-    //     mode: InsertMode.insertOrReplace);
-    // await into(atomicIpSets).insert(
-    //     const AtomicIpSetsCompanion(name: Value(customProxy)),
-    //     mode: InsertMode.insertOrReplace);
-    // await into(atomicIpSets).insert(
-    //     AtomicIpSetsCompanion(
-    //       name: const Value(gfw),
-    //       geoIpConfig: Value(GeoIPConfig(
-    //         codes: ['telegram', 'google', 'facebook', 'twitter', "tor"],
-    //       )),
-    //     ),
-    //     mode: InsertMode.insertOrReplace);
-    // await into(atomicIpSets).insert(
-    //     AtomicIpSetsCompanion(
-    //       name: const Value(cn),
-    //       geoIpConfig: Value(GeoIPConfig(codes: ['cn'])),
-    //     ),
-    //     mode: InsertMode.insertOrReplace);
-    // await into(atomicIpSets).insert(
-    //     AtomicIpSetsCompanion(
-    //       name: const Value(private),
-    //       geoIpConfig: Value(GeoIPConfig(codes: ['private'])),
-    //     ),
-    //     mode: InsertMode.insertOrReplace);
-    // // great domain sets
-    // await into(greatDomainSets).insert(
-    //     GreatDomainSetsCompanion(
-    //       name: const Value(blackListProxy),
-    //       oppositeName: const Value(blackListDirect),
-    //       set: Value(GreatDomainSetConfig(
-    //         name: blackListProxy,
-    //         oppositeName: blackListDirect,
-    //         inNames: [gfw, customProxy],
-    //         exNames: [customDirect],
-    //       )),
-    //     ),
-    //     mode: InsertMode.insertOrReplace);
-    // await into(greatDomainSets).insert(
-    //     GreatDomainSetsCompanion(
-    //       name: const Value(whiteListDirect),
-    //       oppositeName: const Value(whiteListProxy),
-    //       set: Value(GreatDomainSetConfig(
-    //         name: whiteListDirect,
-    //         oppositeName: whiteListProxy,
-    //         inNames: [private, cn, cnGames, customDirect],
-    //         exNames: [customProxy, if (Platform.isIOS) gfwWithoutCustomDirect],
-    //       )),
-    //     ),
-    //     mode: InsertMode.insertOrReplace);
-    // if (Platform.isIOS) {
-    //   await into(greatDomainSets).insert(
-    //       GreatDomainSetsCompanion(
-    //         name: const Value(gfwWithoutCustomDirect),
-    //         set: Value(GreatDomainSetConfig(
-    //           name: gfwWithoutCustomDirect,
-    //           inNames: [
-    //             gfw,
-    //           ],
-    //           exNames: [customDirect],
-    //         )),
-    //       ),
-    //       mode: InsertMode.insertOrReplace);
-    // }
-    // await into(greatDomainSets).insert(
-    //     GreatDomainSetsCompanion(
-    //       name: const Value(proxyAllDirect),
-    //       oppositeName: const Value(proxyAllProxy),
-    //       set: Value(GreatDomainSetConfig(
-    //         name: proxyAllDirect,
-    //         oppositeName: proxyAllProxy,
-    //         inNames: [private, customDirect],
-    //         exNames: [customProxy],
-    //       )),
-    //     ),
-    //     mode: InsertMode.insertOrReplace);
-    // // great ip sets
-    // await into(greatIpSets).insert(
-    //     GreatIpSetsCompanion(
-    //       name: const Value(blackListProxy),
-    //       greatIpSetConfig: Value(GreatIPSetConfig(
-    //         name: blackListProxy,
-    //         inNames: [gfw, customProxy],
-    //         exNames: [customDirect],
-    //       )),
-    //     ),
-    //     mode: InsertMode.insertOrReplace);
-    // await into(greatIpSets).insert(
-    //     GreatIpSetsCompanion(
-    //       name: const Value(whiteListDirect),
-    //       greatIpSetConfig: Value(GreatIPSetConfig(
-    //         name: whiteListDirect,
-    //         // oppositeName: internalProxySetName,
-    //         inNames: [cn, private, customDirect],
-    //         exNames: [customProxy],
-    //       )),
-    //     ),
-    //     mode: InsertMode.insertOrReplace);
-    // await into(greatIpSets).insert(
-    //     GreatIpSetsCompanion(
-    //       name: const Value(proxyAllDirect),
-    //       greatIpSetConfig: Value(GreatIPSetConfig(
-    //         name: proxyAllDirect,
-    //         // oppositeName: internalProxySetName,
-    //         inNames: [private, customDirect],
-    //         exNames: [customProxy],
-    //       )),
-    //     ),
-    //     mode: InsertMode.insertOrReplace);
-    // // app sets
-    // await into(appSets).insert(
-    //     const AppSetsCompanion(
-    //       name: Value(proxy),
-    //     ),
-    //     mode: InsertMode.insertOrReplace);
-    // await into(appSets).insert(
-    //     const AppSetsCompanion(
-    //       name: Value(directAppSetName),
-    //     ),
-    //     mode: InsertMode.insertOrReplace);
-    // persistentStateRepo.setDatabaseInitialized(true);
-    // }
     // proxy selector
     await into(handlerSelectors).insert(
         HandlerSelectorsCompanion(
@@ -371,7 +217,7 @@ class AppDatabase extends _$AppDatabase {
         if (kDebugMode) {
           // This check pulls in a fair amount of code that's not needed
           // anywhere else, so we recommend only doing it in debug builds.
-          // await validateDatabaseSchema();
+          await validateDatabaseSchema();
         }
 
         // Ensure triggers exist (in case of upgrade from old version)
@@ -765,14 +611,270 @@ class AppDatabase extends _$AppDatabase {
   }
 
   TableInfo<Table, Object?>? getTableByName(String tableName) {
-    for (final table in database.allTables) {
+    for (final table in allTables) {
       if (table.actualTableName == tableName) {
         return table;
       }
     }
     return null;
   }
+
+  SyncService? syncService;
+  Future<Row> updateById<T extends TableInfo<Table, Row>, Row>(
+      T table, int id, Insertable<Row> data) async {
+    final columnsByName = table.columnsByName;
+    final stmt = update(table)
+      ..where((tbl) {
+        final idColumn = columnsByName['id'];
+
+        if (idColumn == null) {
+          throw ArgumentError.value(
+              this, 'this', 'Must be a table with an id column');
+        }
+
+        if (idColumn.type != DriftSqlType.int) {
+          throw ArgumentError('Column `id` is not an integer');
+        }
+
+        return idColumn.equals(id);
+      });
+
+    if (columnsByName.containsKey('updated_at') &&
+        table.actualTableName != 'outbound_handlers') {
+      data = (data as dynamic).copyWith(updatedAt: Value(DateTime.now()));
+    }
+    final rows = await stmt.writeReturning(data);
+    if (syncService?.enable ?? false) {
+      syncService!.sqlOperation(SqlOperation(
+        type: SQLType.UPDATE,
+        table: table.actualTableName,
+        rows: [jsonEncode((rows.single as dynamic).toJson())],
+      ));
+    }
+    return rows.single;
+  }
+
+  Future<Row> updateName<T extends TableInfo<Table, Row>, Row>(
+      T table, String name, Insertable<Row> data) async {
+    final columnsByName = table.columnsByName;
+    final stmt = update(table)
+      ..where((tbl) {
+        final idColumn = columnsByName['name'];
+
+        if (idColumn == null) {
+          throw ArgumentError.value(
+              this, 'this', 'Must be a table with an name column');
+        }
+
+        if (idColumn.type != DriftSqlType.string) {
+          throw ArgumentError('Column `name` is not a string');
+        }
+
+        return idColumn.equals(name);
+      });
+    if (columnsByName.containsKey('updated_at')) {
+      data = (data as dynamic).copyWith(updatedAt: Value(DateTime.now()));
+    }
+    final rows = await stmt.writeReturning(data);
+    if (syncService?.enable ?? false) {
+      syncService!.sqlOperation(SqlOperation(
+        type: SQLType.UPDATE,
+        table: table.actualTableName,
+        rows: [jsonEncode((rows.single as dynamic).toJson())],
+      ));
+    }
+    return rows.single;
+  }
+
+  Future<void> transactionInsert<T extends TableInfo<Table, Row>, Row>(
+      T table, List<Insertable<Row>> datas) async {
+    final rows = <Row>[];
+    await transaction(() async {
+      for (var data in datas) {
+        final row = await into(table).insertReturning(data);
+        rows.add(row);
+      }
+    });
+    if (syncService?.enable ?? false) {
+      syncService!.sqlOperation(SqlOperation(
+        type: SQLType.INSERT,
+        table: table.actualTableName,
+        rows: rows.map((e) => jsonEncode((e as dynamic).toJson())).toList(),
+      ));
+    }
+  }
+
+  Future<Row> insertReturning<T extends TableInfo<Table, Row>, Row>(
+    T table,
+    Insertable<Row> data, {
+    InsertMode? mode,
+  }) async {
+    final stmt = into(table);
+    final row = await stmt.insertReturning(data, mode: mode);
+    if (syncService?.enable ?? false) {
+      syncService!.sqlOperation(SqlOperation(
+        type: SQLType.INSERT,
+        table: table.actualTableName,
+        rows: [jsonEncode((row as dynamic).toJson())],
+      ));
+    }
+    return row;
+  }
+
+  Future<void> deleteById<T extends TableInfo<Table, Row>, Row>(
+      T table, List<int> ids) async {
+    final columnsByName = table.columnsByName;
+    for (var id in ids) {
+      final stmt = delete(table)
+        ..where((tbl) {
+          final idColumn = columnsByName['id'];
+          if (idColumn == null) {
+            throw ArgumentError.value(
+                this, 'this', 'Must be a table with an id column');
+          }
+          if (idColumn.type != DriftSqlType.int) {
+            throw ArgumentError('Column `id` is not an integer');
+          }
+          return idColumn.equals(id);
+        });
+      await stmt.go();
+    }
+    if (syncService?.enable ?? false) {
+      syncService!.sqlOperation(SqlOperation(
+        type: SQLType.DELETE,
+        table: table.actualTableName,
+        ids: ids.map((e) => Int64(e)).toList(),
+      ));
+    }
+  }
+
+  Future<void> deleteByName<T extends TableInfo<Table, Row>, Row>(
+      T table, String name) async {
+    final columnsByName = table.columnsByName;
+    final stmt = delete(table)
+      ..where((tbl) {
+        final idColumn = columnsByName['name'];
+        if (idColumn == null) {
+          throw ArgumentError.value(
+              this, 'this', 'Must be a table with an name column');
+        }
+        if (idColumn.type != DriftSqlType.string) {
+          throw ArgumentError('Column `name` is not a string');
+        }
+        return idColumn.equals(name);
+      });
+    await stmt.go();
+    if (syncService?.enable ?? false) {
+      syncService!.sqlOperation(SqlOperation(
+        type: SQLType.DELETE,
+        table: table.actualTableName,
+        names: [name],
+      ));
+    }
+  }
 }
+
+// class SyncAppDatabase extends AppDatabase {
+//   SyncAppDatabase(
+//       {required super.path,
+//       QueryExecutor? executor,
+//       super.interceptor,
+//       required this.syncService})
+//       : super(
+//             executor:
+//                 executor ?? AppDatabase._openConnection(path, interceptor));
+//   SyncService syncService;
+
+//   @override
+//   Future<Row> updateById<T extends TableInfo<Table, Row>, Row>(
+//       T table, int id, Insertable<Row> data) async {
+//     final row = await super.updateById(table, id, data);
+//     if (syncService.enable) {
+//       syncService.sqlOperation(SqlOperation(
+//         type: SQLType.UPDATE,
+//         table: table.actualTableName,
+//         rows: [jsonEncode((row as dynamic).toJson())],
+//       ));
+//     }
+//     return row;
+//   }
+
+//   @override
+//   Future<Row> updateName<T extends TableInfo<Table, Row>, Row>(
+//       T table, String name, Insertable<Row> data) async {
+//     final row = await super.updateName(table, name, data);
+//     if (syncService.enable) {
+//       syncService.sqlOperation(SqlOperation(
+//         type: SQLType.UPDATE,
+//         table: table.actualTableName,
+//         rows: [jsonEncode((row as dynamic).toJson())],
+//       ));
+//     }
+//     return row;
+//   }
+
+//   @override
+//   Future<void> transactionInsert<T extends TableInfo<Table, Row>, Row>(
+//       T table, List<Insertable<Row>> datas) async {
+//     final rows = <Row>[];
+//     await transaction(() async {
+//       for (var data in datas) {
+//         final row = await into(table).insertReturning(data);
+//         rows.add(row);
+//       }
+//     });
+//     if (syncService.enable) {
+//       syncService.sqlOperation(SqlOperation(
+//         type: SQLType.INSERT,
+//         table: table.actualTableName,
+//         rows: rows.map((e) => jsonEncode((e as dynamic).toJson())).toList(),
+//       ));
+//     }
+//   }
+
+//   @override
+//   Future<Row> insertReturning<T extends TableInfo<Table, Row>, Row>(
+//     T table,
+//     Insertable<Row> data, {
+//     InsertMode? mode,
+//   }) async {
+//     final row = await super.insertReturning(table, data, mode: mode);
+//     if (syncService.enable) {
+//       syncService.sqlOperation(SqlOperation(
+//         type: SQLType.INSERT,
+//         table: table.actualTableName,
+//         rows: [jsonEncode((row as dynamic).toJson())],
+//       ));
+//     }
+//     return row;
+//   }
+
+//   @override
+//   Future<void> deleteById<T extends TableInfo<Table, Row>, Row>(
+//       T table, List<int> ids) async {
+//     await super.deleteById(table, ids);
+//     if (syncService.enable) {
+//       syncService.sqlOperation(SqlOperation(
+//         type: SQLType.DELETE,
+//         table: table.actualTableName,
+//         ids: ids.map((e) => Int64(e)).toList(),
+//       ));
+//     }
+//   }
+
+//   @override
+//   Future<void> deleteByName<T extends TableInfo<Table, Row>, Row>(
+//       T table, String name) async {
+//     await super.deleteByName(table, name);
+//     if (syncService.enable) {
+//       syncService.sqlOperation(SqlOperation(
+//         type: SQLType.DELETE,
+//         table: table.actualTableName,
+//         names: [name],
+//       ));
+//     }
+//   }
+// }
 
 @UseRowClass(OutboundHandler)
 class OutboundHandlers extends Table with TableMixin {
@@ -1240,163 +1342,6 @@ class DnsServerConverter extends TypeConverter<dns.DnsServerConfig, Uint8List> {
   Uint8List toSql(dns.DnsServerConfig fromDart) => fromDart.writeToBuffer();
 }
 
-extension SyncExtension on DatabaseConnectionUser {
-  Future<Row> syncUpdateId<T extends TableInfo<Table, Row>, Row>(
-      T table, int id, Insertable<Row> data) async {
-    final columnsByName = table.columnsByName;
-    final stmt = update(table)
-      ..where((tbl) {
-        final idColumn = columnsByName['id'];
-
-        if (idColumn == null) {
-          throw ArgumentError.value(
-              this, 'this', 'Must be a table with an id column');
-        }
-
-        if (idColumn.type != DriftSqlType.int) {
-          throw ArgumentError('Column `id` is not an integer');
-        }
-
-        return idColumn.equals(id);
-      });
-
-    if (columnsByName.containsKey('updated_at') &&
-        table.actualTableName != 'outbound_handlers') {
-      data = (data as dynamic).copyWith(updatedAt: Value(DateTime.now()));
-    }
-    final rows = await stmt.writeReturning(data);
-    if (syncService.enable) {
-      syncService.sqlOperation(SqlOperation(
-        type: SQLType.UPDATE,
-        table: table.actualTableName,
-        rows: [jsonEncode((rows.single as dynamic).toJson())],
-      ));
-    }
-    return rows.single;
-  }
-
-  Future<Row> syncUpdateName<T extends TableInfo<Table, Row>, Row>(
-      T table, String name, Insertable<Row> data) async {
-    final columnsByName = table.columnsByName;
-    final stmt = update(table)
-      ..where((tbl) {
-        final idColumn = columnsByName['name'];
-
-        if (idColumn == null) {
-          throw ArgumentError.value(
-              this, 'this', 'Must be a table with an name column');
-        }
-
-        if (idColumn.type != DriftSqlType.string) {
-          throw ArgumentError('Column `name` is not a string');
-        }
-
-        return idColumn.equals(name);
-      });
-    if (columnsByName.containsKey('updated_at')) {
-      data = (data as dynamic).copyWith(updatedAt: Value(DateTime.now()));
-    }
-    final rows = await stmt.writeReturning(data);
-    if (syncService.enable) {
-      syncService.sqlOperation(SqlOperation(
-        type: SQLType.UPDATE,
-        table: table.actualTableName,
-        rows: [jsonEncode((rows.single as dynamic).toJson())],
-      ));
-    }
-    return rows.single;
-  }
-
-  Future<void> transactionInsertSync<T extends TableInfo<Table, Row>, Row>(
-    T table,
-    List<Insertable<Row>> datas,
-  ) async {
-    final rows = <Row>[];
-    await database.transaction(() async {
-      for (var data in datas) {
-        final row = await database.into(table).insertReturning(data);
-        rows.add(row);
-      }
-    });
-    if (syncService.enable) {
-      syncService.sqlOperation(SqlOperation(
-        type: SQLType.INSERT,
-        table: table.actualTableName,
-        rows: rows.map((e) => jsonEncode((e as dynamic).toJson())).toList(),
-      ));
-    }
-  }
-
-  Future<Row> syncInsertReturning<T extends TableInfo<Table, Row>, Row>(
-    T table,
-    Insertable<Row> data, {
-    InsertMode? mode,
-  }) async {
-    final stmt = into(table);
-    final row = await stmt.insertReturning(data, mode: mode);
-    if (syncService.enable) {
-      syncService.sqlOperation(SqlOperation(
-        type: SQLType.INSERT,
-        table: table.actualTableName,
-        rows: [jsonEncode((row as dynamic).toJson())],
-      ));
-    }
-    return row;
-  }
-
-  Future<void> syncDeleteId<T extends TableInfo<Table, Row>, Row>(
-      T table, List<int> ids) async {
-    final columnsByName = table.columnsByName;
-    for (var id in ids) {
-      final stmt = delete(table)
-        ..where((tbl) {
-          final idColumn = columnsByName['id'];
-          if (idColumn == null) {
-            throw ArgumentError.value(
-                this, 'this', 'Must be a table with an id column');
-          }
-          if (idColumn.type != DriftSqlType.int) {
-            throw ArgumentError('Column `id` is not an integer');
-          }
-          return idColumn.equals(id);
-        });
-      await stmt.go();
-    }
-    if (syncService.enable) {
-      syncService.sqlOperation(SqlOperation(
-        type: SQLType.DELETE,
-        table: table.actualTableName,
-        ids: ids.map((e) => Int64(e)).toList(),
-      ));
-    }
-  }
-
-  Future<void> syncDeleteName<T extends TableInfo<Table, Row>, Row>(
-      T table, String name) async {
-    final columnsByName = table.columnsByName;
-    final stmt = delete(table)
-      ..where((tbl) {
-        final idColumn = columnsByName['name'];
-        if (idColumn == null) {
-          throw ArgumentError.value(
-              this, 'this', 'Must be a table with an name column');
-        }
-        if (idColumn.type != DriftSqlType.string) {
-          throw ArgumentError('Column `name` is not a string');
-        }
-        return idColumn.equals(name);
-      });
-    await stmt.go();
-    if (syncService.enable) {
-      syncService.sqlOperation(SqlOperation(
-        type: SQLType.DELETE,
-        table: table.actualTableName,
-        names: [name],
-      ));
-    }
-  }
-}
-
 abstract class ToJson {
   Map<String, dynamic> toJson({ValueSerializer? serializer});
 }
@@ -1407,12 +1352,13 @@ mixin TableMixin on Table {
       dateTime().nullable().clientDefault(() => DateTime.now())();
 }
 
-Future<void> insertDefault(BuildContext context) async {
+Future<void> insertDefault(
+    BuildContext context, SharedPreferences pref, AppDatabase database) async {
   final al = AppLocalizations.of(context)!;
   final xbloc = context.read<ProxySelectorBloc>();
 
   try {
-    if (!persistentStateRepo.databaseInitialized) {
+    if (!pref.databaseInitialized) {
       final country = getUserCountryFromLocale();
       final defaultModes = <DefaultRouteMode>[];
       if (country == 'CN') {
@@ -1428,16 +1374,16 @@ Future<void> insertDefault(BuildContext context) async {
       }
       defaultModes.add(DefaultRouteMode.proxyAll);
       for (var mode in defaultModes) {
-        await insertDefaultRouteMode(al, mode);
+        await insertDefaultRouteMode(al, mode, database);
       }
-      if (persistentStateRepo.routingMode == null) {
-        persistentStateRepo.setRoutingMode(al.proxyAll);
+      if (pref.routingMode == null) {
+        pref.setRoutingMode(al.proxyAll);
         final mode = await ((database.select(database.customRouteModes))
               ..where((tbl) => tbl.name.equals(al.proxyAll)))
             .getSingle();
         xbloc.add(RoutingModeSelectionChangeEvent(mode));
       }
-      persistentStateRepo.setDatabaseInitialized(true);
+      pref.setDatabaseInitialized(true);
     }
     // check if custom direct, custom proxy set, direct app set and proxy app set exists
     // domain set
@@ -1497,7 +1443,8 @@ Future<void> insertDefault(BuildContext context) async {
   }
 }
 
-Future<void> insertDefaultRouteMode(AppLocalizations al, DefaultRouteMode mode,
+Future<void> insertDefaultRouteMode(
+    AppLocalizations al, DefaultRouteMode mode, AppDatabase database,
     {bool setsOnly = false}) async {
   await database.transaction(() async {
     if (!setsOnly) {

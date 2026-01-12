@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
 import 'package:tm/protos/protos/geo.pb.dart';
 import 'package:vx/app/routing/mode_widget.dart';
@@ -8,6 +9,7 @@ import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/routing/mode_form.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/data/database.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/path.dart';
 import 'package:vx/widgets/form_dialog.dart';
@@ -182,6 +184,7 @@ class _GreatIpSetFormState extends State<GreatIpSetForm> with FormDataGetter {
       _greatIpSetConfig.mergeFromMessage(widget.ipSetConfig!);
       _nameController.text = _greatIpSetConfig.name;
     }
+    final database = context.read<DatabaseProvider>().database;
     database.managers.atomicIpSets.get().then((value) {
       _atomicIpSetConfigs = value;
       setState(() {});
@@ -401,7 +404,11 @@ class _SmallDomainSetFormState extends State<SmallDomainSetForm>
       _geositeAttributes
           .addAll(widget.atomicDomainSet!.geositeConfig?.attributes ?? []);
       _clashRuleUrls.addAll(widget.atomicDomainSet!.clashRuleUrls ?? []);
-      database.managers.geoDomains
+      context
+          .read<DatabaseProvider>()
+          .database
+          .managers
+          .geoDomains
           .filter((e) => e.domainSetName.name(widget.atomicDomainSet!.name))
           .get()
           .then((value) {
@@ -729,7 +736,11 @@ class _SmallIpSetFormState extends State<SmallIpSetForm> with FormDataGetter {
       _geoIpCodes.addAll(widget.atomicIpSet!.geoIpConfig?.codes ?? []);
       _inverse = widget.atomicIpSet!.inverse;
       _clashRuleUrls.addAll(widget.atomicIpSet!.clashRuleUrls ?? []);
-      database.managers.cidrs
+      context
+          .read<DatabaseProvider>()
+          .database
+          .managers
+          .cidrs
           .filter((e) => e.ipSetName.name(widget.atomicIpSet!.name))
           .get()
           .then((value) {

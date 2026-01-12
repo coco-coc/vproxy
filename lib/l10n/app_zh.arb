@@ -614,7 +614,7 @@
   "dnsRuleNameProxyAllProxy": "全局模式代理域名",
   "dnsRuleNameDefaultDirect": "其余",
   "routerRules": "路由规则",
-  "dnsRuleDesc": "对于每一个DNS请求，DNS规则从上到下依次进行匹配，一旦匹配成功，该规则所指定的DNS服务器将被用来处理该DNS请求。如果没有规则匹配，该DNS请求将被忽略。",
+  "dnsRuleDesc": "对于每一个DNS请求，DNS规则从上到下依次进行匹配，一旦匹配成功，该规则所指定的DNS服务器将被用来处理该DNS请求。如果没有规则匹配，返回空的DNS结果。",
   "dnsServer": "DNS服务器",
   "howDnsRuleMatch": "当所有条件成立或该规则没有任何条件启用时，规则匹配。",
   "selectAtleastOneDnsServer": "请选择一个DNS服务器",
@@ -664,6 +664,8 @@
       }
     }
   },
+  "changeIpv6ToDomain": "将IPv6改为域名",
+  "changeIpv6ToDomainDesc": "如果匹配到的节点不支持IPv6，而目标地址是IPv6并且嗅探到了域名，则将目标地址改为域名。",
   "pingTestMethod": "延迟测试方式",
   "pingReal": "真延迟",
   "pingRealDesc": "拿到结果所需的时间",
@@ -870,7 +872,7 @@
   "vxNotInstalled": "VX-core未安装",
   "howToUseVX": "关于VX的使用方法，请查看我们的YouTube频道",
   "welcome": "欢迎使用VX",
-  "sourceCodeAvailable": "VX客户端的源代码已公开于Github，并且它由Github Actions自动构建与发布",
+  "sourceCodeAvailable": "VX客户端已开源，并且它由Github Actions自动构建与发布",
   "vxSourceCode": "VX客户端源代码",
   "vxCoreSourceCode": "VX内核源代码",
   "windowsUpdateNotice1": "如果您从2.x.x版本更新到此应用，为了保留您的数据库和偏好设置，请关闭应用，重命名以下文件夹：",

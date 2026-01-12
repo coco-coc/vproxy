@@ -4,7 +4,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 import 'package:tm/protos/app/api/api.pb.dart';
 import 'package:tm/protos/common/net/net.pb.dart';
 import 'package:tm/protos/google/protobuf/any.pb.dart';
@@ -37,12 +39,18 @@ import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/geoip.dart';
 import 'package:vx/utils/logger.dart';
+import 'package:vx/utils/xapi_client.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
 import 'package:vx/widgets/outbound_handler_form/outbound_handler_form.dart';
 
 part 'deploy.dart';
 
 class Deployer with ChangeNotifier {
+  late XApiClient xApiClient;
+  Deployer({
+    required XApiClient xApiClient,
+  }) : xApiClient = xApiClient;
+
   /// Set of servers that are under deployment
   final deploying = <int>{};
 
@@ -69,7 +77,8 @@ class Deployer with ChangeNotifier {
 }
 
 extension SshServerX on SshServer {
-  Future<SshServerSecureStorage> secureStorage() async {
+  Future<SshServerSecureStorage> secureStorage(
+      FlutterSecureStorage storage) async {
     final json = await storage.read(key: storageKey);
     if (json == null) {
       throw Exception('Storage not found');

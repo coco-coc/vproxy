@@ -14,6 +14,11 @@ class DeployResult {
 
 abstract class QuickDeployOption {
   abstract final int id;
+  final XApiClient xApiClient;
+  QuickDeployOption({
+    required this.xApiClient,
+  });
+
   String getTitle(BuildContext context);
   String getSummary(BuildContext context);
   String getDetails(BuildContext context);
@@ -27,6 +32,12 @@ abstract class QuickDeployOption {
 }
 
 class BasicQuickDeploy extends QuickDeployOption {
+  final FlutterSecureStorage storage;
+  BasicQuickDeploy({
+    required this.storage,
+    required super.xApiClient,
+  });
+
   @override
   final int id = 1;
   @override
@@ -92,7 +103,7 @@ class BasicQuickDeploy extends QuickDeployOption {
         await rootBundle.loadString('assets/configs/1_hysteria.yaml');
     final uuid = const Uuid().v4();
 
-    final secureStorage = await server.secureStorage();
+    final secureStorage = await server.secureStorage(storage);
 
     xrayConfig = xrayConfig.replaceAll('__VMESS_PORT__', vmessPorts);
     xrayConfig = xrayConfig.replaceAll('__SS_PORT__', ssPorts);
@@ -179,6 +190,9 @@ enum Option2TransportProtocol {
 }
 
 class MasqueradeQuickDeploy extends QuickDeployOption {
+  MasqueradeQuickDeploy({
+    required super.xApiClient,
+  });
   @override
   final int id = 2;
   @override
@@ -563,7 +577,9 @@ class _RealiScannerState extends State<RealiScanner> {
                 _running = true;
               });
               try {
-                _results = await xApiClient.realiTLScanner(widget.destination);
+                _results = await context
+                    .read<XApiClient>()
+                    .realiTLScanner(widget.destination);
               } catch (e) {
                 snack(e.toString());
               } finally {
@@ -620,6 +636,10 @@ class _RealiScannerState extends State<RealiScanner> {
 }
 
 class AllInOneQuickDeploy extends QuickDeployOption {
+  AllInOneQuickDeploy({
+    required super.xApiClient,
+  });
+
   @override
   final int id = 3;
   @override
@@ -646,6 +666,7 @@ class AllInOneQuickDeploy extends QuickDeployOption {
     return AllInOneForm(deploy: this, destination: destination!);
   }
 
+  @override
   Future<DeployResult> deploy(SshServer server) async {
     final websocketPath = '/' + const Uuid().v4();
     final xhttpPath = '/' + const Uuid().v4();

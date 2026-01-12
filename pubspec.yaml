@@ -112,6 +112,9 @@ dependencies:
   # liquid_glass_renderer: ^0.1.1-dev.10
   # flutter_sparkle:
   #   path: ../flutter_sparkle
+  flutter_common:
+    git:
+      url: https://github.com/5vnetwork/flutter_common.git
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.3

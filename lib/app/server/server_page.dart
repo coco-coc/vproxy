@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,7 @@ import 'package:vx/app/server/ssh_keys_screen.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/data/database.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/widgets/ad.dart';
 import 'package:vx/widgets/pro_promotion.dart';
@@ -108,6 +110,7 @@ class _ServersState extends State<Servers> {
   }
 
   void _subscribe() {
+    final database = context.read<DatabaseProvider>().database;
     _serverSubscription =
         database.select(database.sshServers).watch().listen((l) {
       setState(() {
@@ -284,7 +287,10 @@ class ServerCard extends StatelessWidget {
           leadingIcon: const Icon(Icons.delete_outline),
           onPressed: () async {
             try {
-              await storage.delete(key: server.storageKey);
+              await context
+                  .read<FlutterSecureStorage>()
+                  .delete(key: server.storageKey);
+              final database = context.read<DatabaseProvider>().database;
               await database.delete(database.sshServers).delete(server);
             } catch (e) {
               logger.d('delete server error', error: e);
@@ -319,7 +325,8 @@ class ServerCard extends StatelessWidget {
                   server.address,
                   maxLines: 1,
                 ),
-                trailing: showStatus ? ServerActionButtons(server: server) : null,
+                trailing:
+                    showStatus ? ServerActionButtons(server: server) : null,
                 contentPadding: const EdgeInsets.only(left: 16, right: 8),
                 leading: server.country != null && server.country!.isNotEmpty
                     ? SvgPicture(

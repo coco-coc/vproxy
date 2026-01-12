@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/settings/setting.dart';
 import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
@@ -24,7 +26,7 @@ class LanguagePage extends StatelessWidget {
             groupValue:
                 Language.fromCode(Localizations.localeOf(context).languageCode),
             onChanged: (value) {
-              persistentStateRepo.setLanguage(value);
+              context.read<SharedPreferences>().setLanguage(value);
               // change locale
               App.of(context)?.setLocale(value?.locale);
             },
@@ -38,7 +40,7 @@ class LanguagePage extends StatelessWidget {
             groupValue:
                 Language.fromCode(Localizations.localeOf(context).languageCode),
             onChanged: (value) {
-              persistentStateRepo.setLanguage(value);
+              context.read<SharedPreferences>().setLanguage(value);
               // change locale
               App.of(context)?.setLocale(value?.locale);
             },

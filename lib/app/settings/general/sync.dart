@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/app/settings/setting.dart';
@@ -9,6 +11,7 @@ import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/data/sync.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/backup_service.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
@@ -72,7 +75,10 @@ class __BackupState extends State<_Backup> {
         _latestBackup = value;
       });
     });
-    storage.read(key: 'backupPassword').then((value) {
+    context
+        .read<FlutterSecureStorage>()
+        .read(key: 'backupPassword')
+        .then((value) {
       setState(() {
         _passwordController.text = value ?? '';
         _password = value;
@@ -87,7 +93,9 @@ class __BackupState extends State<_Backup> {
   }
 
   void _setPassword(String value) {
-    storage.write(key: 'backupPassword', value: value);
+    context
+        .read<FlutterSecureStorage>()
+        .write(key: 'backupPassword', value: value);
     setState(() {
       _password = value;
       _errorText = null;
@@ -152,12 +160,11 @@ class __BackupState extends State<_Backup> {
                   onPressed: () async {
                     try {
                       final appState = App.of(context);
-                      final dbHelper = context.read<DbHelper>();
                       final outBloc = context.read<OutboundBloc>();
                       await backupService.restoreBackup();
                       snack(rootLocalizations()!.restoreDbSuccess);
                       appState?.rebuildAllChildren();
-                      dbHelper.reset();
+                      // to stop query stream and relisten
                       outBloc.add(InitialEvent());
                     } catch (e) {
                       logger.e("restoreBackup", error: e);
@@ -177,7 +184,8 @@ class __BackupState extends State<_Backup> {
               Gap(10),
               FilledButton.tonal(
                   style: FilledButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.errorContainer,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.errorContainer,
                   ),
                   onPressed: () async {
                     try {
@@ -248,11 +256,12 @@ class __SyncState extends State<_Sync> {
   @override
   void initState() {
     super.initState();
-    _cloudSync = persistentStateRepo.cloudSync;
-    _nodeSub = persistentStateRepo.syncNodeSub;
-    _route = persistentStateRepo.syncRoute;
-    _server = persistentStateRepo.syncServer;
-    _selector = persistentStateRepo.syncSelectorSetting;
+    final pref = context.read<SharedPreferences>();
+    _cloudSync = pref.cloudSync;
+    _nodeSub = pref.syncNodeSub;
+    _route = pref.syncRoute;
+    _server = pref.syncServer;
+    _selector = pref.syncSelectorSetting;
     _syncService = context.read<SyncService>();
     _passwordController.text = _syncService.password ?? '';
   }
@@ -363,7 +372,7 @@ class __SyncState extends State<_Sync> {
                         setState(() {
                           _nodeSub = value;
                         });
-                        persistentStateRepo.setSyncNodeSub(value);
+                        context.read<SharedPreferences>().setSyncNodeSub(value);
                         context.read<SyncService>().reset();
                       })
                 ],
@@ -379,7 +388,9 @@ class __SyncState extends State<_Sync> {
                         setState(() {
                           _route = value;
                         });
-                        persistentStateRepo.setSyncRuleDnsSet(value);
+                        context
+                            .read<SharedPreferences>()
+                            .setSyncRuleDnsSet(value);
                         context.read<SyncService>().reset();
                       })
                 ],
@@ -395,7 +406,9 @@ class __SyncState extends State<_Sync> {
                         setState(() {
                           _selector = value;
                         });
-                        persistentStateRepo.setSyncSelectorSetting(value);
+                        context
+                            .read<SharedPreferences>()
+                            .setSyncSelectorSetting(value);
                         context.read<SyncService>().reset();
                       })
                 ],
@@ -411,7 +424,7 @@ class __SyncState extends State<_Sync> {
                         setState(() {
                           _server = value;
                         });
-                        persistentStateRepo.setSyncServer(value);
+                        context.read<SharedPreferences>().setSyncServer(value);
                         context.read<SyncService>().reset();
                       })
                 ],

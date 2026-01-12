@@ -19,6 +19,7 @@ import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/routing/selector_widget.dart';
+import 'package:vx/app/x_controller.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/common/config.dart';
@@ -731,8 +732,8 @@ class _LogListState extends State<LogList> {
                     final metrics = notification.metrics;
                     // Dismiss when scrolling down at the top
                     // scrollDelta > 0 means scrolling down (content moving up)
-                    if (metrics.pixels <= 0 && 
-                        notification.scrollDelta != null && 
+                    if (metrics.pixels <= 0 &&
+                        notification.scrollDelta != null &&
                         notification.scrollDelta! > 0) {
                       Navigator.of(ctx).pop();
                       return true;
@@ -753,10 +754,12 @@ class _LogListState extends State<LogList> {
                               (isDirect
                                   ? AppLocalizations.of(context)!.addToProxy
                                   : AppLocalizations.of(context)!.addToDirect),
-                              style:
-                                  Theme.of(context).textTheme.titleLarge!.copyWith(
-                                        fontWeight: FontWeight.w500,
-                                      )),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .copyWith(
+                                    fontWeight: FontWeight.w500,
+                                  )),
                         ),
                       SafeArea(child: child),
                     ],
@@ -855,6 +858,7 @@ class _LogListState extends State<LogList> {
                 onPressed: domainAdded
                     ? null
                     : () async {
+                        final xController = context.read<XController>();
                         // check if dst is an ip
                         final d = Domain(
                           type: Domain_Type.Full,
@@ -914,6 +918,7 @@ class _LogListState extends State<LogList> {
                     ? null
                     : () async {
                         try {
+                          final xController = context.read<XController>();
                           // check if dst is an ip
                           final domain = isDomain(destination);
                           if (domain) {

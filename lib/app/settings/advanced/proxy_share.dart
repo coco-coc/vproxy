@@ -2,9 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vx/app/x_controller.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 
 class ProxyShareSettingScreen extends StatefulWidget {
   const ProxyShareSettingScreen({super.key, this.fullscreen = true});
@@ -23,11 +27,12 @@ class _ProxyShareSettingScreenState extends State<ProxyShareSettingScreen> {
   bool _proxyShare = false;
   @override
   void initState() {
-    _proxyShare = persistentStateRepo.proxyShare;
+    _proxyShare = context.read<SharedPreferences>().proxyShare;
     // TODO: implement initState
-    _listenAddressController.text = persistentStateRepo.proxyShareListenAddress;
+    _listenAddressController.text =
+        context.read<SharedPreferences>().proxyShareListenAddress;
     _listenPortController.text =
-        persistentStateRepo.proxyShareListenPort.toString();
+        context.read<SharedPreferences>().proxyShareListenPort.toString();
     super.initState();
   }
 
@@ -41,14 +46,12 @@ class _ProxyShareSettingScreenState extends State<ProxyShareSettingScreen> {
 
   void _save() async {
     if (_formKey.currentState!.validate()) {
-      persistentStateRepo.setProxyShare(_proxyShare);
-      persistentStateRepo
-          .setProxyShareListenAddress(_listenAddressController.text);
-      persistentStateRepo
-          .setProxyShareListenPort(int.parse(_listenPortController.text));
-      persistentStateRepo.setSocksUdpaccociateAddress(_socksUdpAccocisate.text);
-      // notify xController
-      xController.onSystemProxyChange();
+      final pref = context.read<SharedPreferences>();
+      pref.setProxyShare(_proxyShare);
+      pref.setProxyShareListenAddress(_listenAddressController.text);
+      pref.setProxyShareListenPort(int.parse(_listenPortController.text));
+      pref.setSocksUdpaccociateAddress(_socksUdpAccocisate.text);
+      context.read<XController>().onSystemProxyChange();
       if (mounted) {
         Navigator.of(context).pop();
       }

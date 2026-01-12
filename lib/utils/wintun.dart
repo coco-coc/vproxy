@@ -6,16 +6,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vx/utils/download.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/common/os.dart';
-import 'package:vx/main.dart';
 import 'package:vx/utils/path.dart';
 import 'package:archive/archive_io.dart';
 
 const String wintunDownloadLink =
     'https://www.wintun.net/builds/wintun-0.14.1.zip';
 
-Future<void> makeWinTunAvailable() async {
+Future<void> makeWinTunAvailable(Downloader downloader) async {
+  if (!Platform.isWindows) {
+    return;
+  }
   final wintunDir = Directory(await getWintunDir());
   final arch = getCpuArch();
   logger.d('CPU Architecture: $arch');
@@ -38,7 +42,6 @@ Future<void> makeWinTunAvailable() async {
     logger.d('Wintun DLL downloaded and extracted to $dllPath');
   }
 }
-
 
 Future<void> installWindowsService() async {
   if (kDebugMode) {

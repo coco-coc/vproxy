@@ -3,13 +3,16 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/protos/tun.pb.dart';
 import 'package:vx/app/settings/advanced/system_proxy.dart';
+import 'package:vx/app/x_controller.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:vx/app/settings/advanced/proxy_share.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/auto_update_service.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
@@ -83,15 +86,15 @@ class _SniffSettingState extends State<SniffSetting> {
   @override
   void initState() {
     super.initState();
-    _sniffing = persistentStateRepo.sniff;
+    _sniffing = context.read<SharedPreferences>().sniff;
   }
 
   void _toggleSniffing(bool value) {
-    persistentStateRepo.setSniff(value);
+    context.read<SharedPreferences>().setSniff(value);
     setState(() {
       _sniffing = value;
     });
-    xController.restart();
+    context.read<XController>().restart();
   }
 
   @override
@@ -128,27 +131,39 @@ class FallbackSetting extends StatefulWidget {
 class _FallbackSettingState extends State<FallbackSetting> {
   bool _fallbackToProxy = false;
   bool _fallbackRetryDomain = false;
+  bool _changeIpv6ToDomain = false;
+
   @override
   void initState() {
     super.initState();
-    _fallbackToProxy = persistentStateRepo.fallbackToProxy;
-    _fallbackRetryDomain = persistentStateRepo.fallbackRetryDomain;
+    final pref = context.read<SharedPreferences>();
+    _fallbackToProxy = pref.fallbackToProxy;
+    _fallbackRetryDomain = pref.fallbackRetryDomain;
+    _changeIpv6ToDomain = pref.changeIpv6ToDomain;
   }
 
   void _toggleFallbackToProxy(bool value) {
-    persistentStateRepo.setFallbackToProxy(value);
+    context.read<SharedPreferences>().setFallbackToProxy(value);
     setState(() {
       _fallbackToProxy = value;
     });
-    xController.restart();
+    context.read<XController>().restart();
   }
 
   void _toggleFallbackRetryDomain(bool value) {
-    persistentStateRepo.setFallbackRetryDomain(value);
+    context.read<SharedPreferences>().setFallbackRetryDomain(value);
     setState(() {
       _fallbackRetryDomain = value;
     });
-    xController.restart();
+    context.read<XController>().restart();
+  }
+
+  void _toggleChangeIpv6ToDomain(bool value) {
+    context.read<SharedPreferences>().setChangeIpv6ToDomain(value);
+    setState(() {
+      _changeIpv6ToDomain = value;
+    });
+    context.read<XController>().restart();
   }
 
   @override
@@ -190,7 +205,24 @@ class _FallbackSettingState extends State<FallbackSetting> {
           Text(AppLocalizations.of(context)!.fallbackRetryDomainDesc,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ))
+                  )),
+          const Gap(10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(AppLocalizations.of(context)!.changeIpv6ToDomain,
+                  style: Theme.of(context).textTheme.bodyLarge),
+              Switch(
+                value: _changeIpv6ToDomain,
+                onChanged: _toggleChangeIpv6ToDomain,
+              ),
+            ],
+          ),
+          const Gap(5),
+          Text(AppLocalizations.of(context)!.changeIpv6ToDomainDesc,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  )),
         ],
       ),
     );
@@ -210,7 +242,7 @@ class _TunIpv6SettingsState extends State<TunIpv6Settings> {
   @override
   void initState() {
     super.initState();
-    _tun46Setting = persistentStateRepo.tun46Setting;
+    _tun46Setting = context.read<SharedPreferences>().tun46Setting;
   }
 
   @override
@@ -236,12 +268,13 @@ class _TunIpv6SettingsState extends State<TunIpv6Settings> {
                   label: AppLocalizations.of(context)!.dependsOnDefaultNic),
             ],
             onSelected: (value) {
-              persistentStateRepo
+              context
+                  .read<SharedPreferences>()
                   .setTun46Setting(value ?? TunConfig_TUN46Setting.DYNAMIC);
               setState(() {
                 _tun46Setting = value ?? TunConfig_TUN46Setting.DYNAMIC;
               });
-              xController.restart();
+              context.read<XController>().restart();
             }),
         const Gap(10),
         if (_tun46Setting == TunConfig_TUN46Setting.DYNAMIC)
@@ -273,7 +306,7 @@ class _RejectQuicHysteriaSettingState extends State<RejectQuicHysteriaSetting> {
   @override
   void initState() {
     super.initState();
-    _rejectQuicHysteria = persistentStateRepo.rejectQuicHysteria;
+    _rejectQuicHysteria = context.read<SharedPreferences>().rejectQuicHysteria;
   }
 
   @override
@@ -289,11 +322,11 @@ class _RejectQuicHysteriaSettingState extends State<RejectQuicHysteriaSetting> {
           Switch(
             value: _rejectQuicHysteria,
             onChanged: (value) {
-              persistentStateRepo.setRejectQuicHysteria(value);
+              context.read<SharedPreferences>().setRejectQuicHysteria(value);
               setState(() {
                 _rejectQuicHysteria = value;
               });
-              xController.restart();
+              context.read<XController>().restart();
             },
           ),
         ],

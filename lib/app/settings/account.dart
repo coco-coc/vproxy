@@ -5,14 +5,17 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:uuid/uuid.dart';
+import 'package:vx/app/settings/privacy.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/auth/auth_provider.dart';
-import 'package:vx/auth/sign_in_page.dart';
+import 'package:flutter_common/auth/auth_provider.dart';
+import 'package:flutter_common/auth/sign_in_page.dart';
 import 'package:vx/main.dart';
 import 'package:vx/theme.dart';
 import 'package:vx/utils/activate.dart';
@@ -59,6 +62,7 @@ class _AccountPageState extends State<AccountPage> {
       if (token == null) {
         throw 'No Token';
       }
+      final storage = context.read<FlutterSecureStorage>();
       String? uniqueId = await storage.read(key: uniqueIdKey);
       if (uniqueId == null) {
         uniqueId = const Uuid().v4();
@@ -85,6 +89,24 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
+  bool get _showGoogle {
+    if (!Platform.isWindows) {
+      return true;
+    }
+    return !isRunningAsAdmin;
+  }
+
+  bool get _showMicrosoft {
+    if (!Platform.isWindows) {
+      return true;
+    }
+    return !isRunningAsAdmin;
+  }
+
+  bool get _showApple {
+    return (Platform.isMacOS && appFlavor != 'pkg') || Platform.isIOS;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,8 +116,21 @@ class _AccountPageState extends State<AccountPage> {
       body: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
           if (state.user == null) {
-            return const Center(
-              child: SignInPage(),
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SignInPage(
+                    showGoogle: _showGoogle,
+                    showMicrosoft: _showMicrosoft,
+                    showApple: _showApple,
+                    termOfServiceUrl: termOfServiceUrl,
+                    privacyPolicyUrl: privacyPolicyUrl,
+                  ),
+                  Text(AppLocalizations.of(context)!.newUserProTrial,
+                      style: Theme.of(context).textTheme.bodySmall),
+                ],
+              ),
             );
           }
           return Padding(

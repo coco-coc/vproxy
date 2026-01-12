@@ -4,10 +4,12 @@ import 'dart:typed_data';
 import 'package:archive/archive_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:tm/protos/app/api/api.pbgrpc.dart';
+import 'package:tm/protos/protos/outbound.pb.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/path.dart';
+import 'package:vx/utils/xapi_client.dart';
 
 /// download content from url, save them to [dest] file
 Future<void> directDownloadToFile(String url, String dest,
@@ -56,7 +58,8 @@ Future<Uint8List> directDownloadMemory(String url,
 /// Download something and record traffic usage
 class Downloader {
   final OutboundRepo outboundRepo;
-  Downloader(this.outboundRepo);
+  final XApiClient xApiClient;
+  Downloader(this.outboundRepo, this.xApiClient);
 
   /// download from multiple urls, return the first successful one
   Future<void> downloadMulti(List<String> urls, String dest) async {
@@ -116,10 +119,13 @@ class Downloader {
       logger.d("plain download failed: $e", stackTrace: StackTrace.current);
     }
 
-    final configs = handlersToHandlerConfig(await outboundRepo.getHandlers(
-        usable: true, orderBySpeed1MBDesc: true));
-    await xApiClient.download(
-        DownloadRequest(url: url, handlers: configs.sublist(0, 5), dest: dest));
+    List<HandlerConfig> configs = handlersToHandlerConfig(await outboundRepo
+        .getHandlers(usable: true, orderBySpeed1MBDesc: true));
+    if (configs.length >= 5) {
+      configs = configs.sublist(0, 5);
+    }
+    await xApiClient
+        .download(DownloadRequest(url: url, handlers: configs, dest: dest));
   }
 
   Future<Uint8List> downloadMemory(String url) async {

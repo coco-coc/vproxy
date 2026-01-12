@@ -44,8 +44,8 @@ void main() {
       
       // Setup AuthProvider user stream
       userController = BehaviorSubject<my.User?>.seeded(null);
-      when(mockAuthProvider.user).thenAnswer((_) => userController.stream);
-      when(mockAuthProvider.currentUser).thenReturn(null);
+      when(mockAuthProvider.sessionStreams).thenAnswer((_) => userController.stream);
+      when(mockAuthProvider.currentSession).thenReturn(null);
       
       // Setup SharedPreferences mock to use in-memory map
       when(mockSharedPreferences.getInt(any)).thenAnswer((invocation) {

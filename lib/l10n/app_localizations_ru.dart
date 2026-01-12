@@ -1510,6 +1510,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get fallbackToProxySetting => 'При сбое прямого соединения используется резервный прокси-сервер. Будет использован узел, выбранный селектором «Прокси». Если селектор не существует, будет выбран случайный узел.';
 
   @override
+  String get changeIpv6ToDomain => 'Change IPv6 to Domain';
+
+  @override
+  String get changeIpv6ToDomainDesc => 'If the matched node does not support IPv6, but the target address is IPv6, and the domain is sniffed, change target address to the domain.';
+
+  @override
   String get installAsWinService => 'Добавить VX в службу Windows';
 
   @override
@@ -2101,7 +2107,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get welcome => 'Welcome to VX';
 
   @override
-  String get sourceCodeAvailable => 'VX is a source-available proxy client powered by open-source vx-core.';
+  String get sourceCodeAvailable => 'VX is a open-source proxy client powered by vx-core.';
 
   @override
   String get vxSourceCode => 'Source Code of VX';

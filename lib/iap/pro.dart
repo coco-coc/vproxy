@@ -7,14 +7,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:in_app_purchase/in_app_purchase.dart'; // Add this import
-import 'package:vx/auth/auth_provider.dart';
-import 'package:vx/auth/user.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:vx/common/common.dart';
 import 'package:http/http.dart' as http;
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/utils/logger.dart';
+import 'package:flutter_common/auth/auth_provider.dart';
 
-import '../main.dart'; // And this import
 import './iap.dart';
 
 const proLifetime = 'vproxy_pro_lifetime';
@@ -78,7 +77,7 @@ class ProPurchases extends ChangeNotifier {
   String? userId;
   IAPState state;
   late StreamSubscription<List<PurchaseDetails>> _subscription; // Add this line
-  late StreamSubscription<User?> _userSubscription;
+  late StreamSubscription<Session?> _userSubscription;
   List<PurchasableProduct> products = [];
   final iapConnection = IAPConnection.instance;
   final AuthProvider authProvider;
@@ -104,10 +103,12 @@ class ProPurchases extends ChangeNotifier {
 
   ProPurchases(this.authProvider)
       : state = IAPStateWithoutPurchaseDetail(storeState: StoreState.loading) {
-    _userSubscription = authProvider.user.listen((user) async {
-      if (user != null && state is IAPStateWithPurchaseDetail) {
+    _userSubscription = authProvider.sessionStreams.listen((session) async {
+      if (session != null && state is IAPStateWithPurchaseDetail) {
         final stateWithPurchaseDetail = state as IAPStateWithPurchaseDetail;
-        if (stateWithPurchaseDetail.verifyFailed != null) {
+        if (stateWithPurchaseDetail.verifyFailed != null &&
+            stateWithPurchaseDetail.verifyFailed!.message
+                .contains('userId is null')) {
           await _verifyAndFulfill(stateWithPurchaseDetail);
         }
       }
@@ -145,13 +146,13 @@ class ProPurchases extends ChangeNotifier {
     if (purchaseDetails.status == PurchaseStatus.purchased ||
         purchaseDetails.status == PurchaseStatus.restored) {
       // if restored, and current user is already lifetime pro, skip verification
-      if (purchaseDetails.status == PurchaseStatus.restored &&
-          authProvider.currentUser?.lifetimePro == true) {
-        if (purchaseDetails.pendingCompletePurchase) {
-          await iapConnection.completePurchase(purchaseDetails);
-        }
-        return;
-      }
+      // if (purchaseDetails.status == PurchaseStatus.restored &&
+      //     authBloc.state.user?.lifetimePro == true) {
+      //   if (purchaseDetails.pendingCompletePurchase) {
+      //     await iapConnection.completePurchase(purchaseDetails);
+      //   }
+      //   return;
+      // }
       await _verifyAndFulfill(stateWithPurchaseDetail);
     } else if (purchaseDetails.status == PurchaseStatus.canceled) {
       if (purchaseDetails.pendingCompletePurchase) {
@@ -225,14 +226,14 @@ class ProPurchases extends ChangeNotifier {
 
   Future<bool> _verifyPurchase(PurchaseDetails purchaseDetails) async {
     final url = Uri.parse(dartBackendUrl);
-    final userId = this.userId ?? authProvider.currentUser?.id;
+    final userId = this.userId ?? authProvider.currentSession?.user.id;
     if (userId == null) {
       throw Exception('userId is null');
     }
     final headers = {
       'Content-type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': 'Bearer ${supabase.auth.currentSession?.accessToken}',
+      'Authorization': 'Bearer ${authProvider.currentSession?.accessToken}',
     };
     final response = await http.post(
       url,

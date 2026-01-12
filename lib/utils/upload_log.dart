@@ -15,6 +15,7 @@ import 'package:vx/utils/compress.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/mac.dart';
 import 'package:vx/utils/path.dart';
+import 'package:vx/utils/xapi_client.dart';
 
 part 'upload_log.g.dart';
 
@@ -30,16 +31,19 @@ class LogUploadService {
     required Directory flutterLogDir,
     required Directory tunnelLogDir,
     required String secret,
+    required XApiClient xApiClient,
   })  : _flutterLogDir = flutterLogDir,
         _tunnelLogDir = tunnelLogDir,
         _uploadUrl = uploadUrl,
-        _secret = secret;
+        _secret = secret,
+        _xApiClient = xApiClient;
 
   Timer? _uploadTimer;
   final Directory _flutterLogDir;
   final Directory _tunnelLogDir;
   final String _uploadUrl;
   final String _secret;
+  final XApiClient _xApiClient;
 
   /// Initialize the log upload service with configuration
   Future<void> start() async {
@@ -338,7 +342,7 @@ class LogUploadService {
     //       const Duration(seconds: 30),
     //       onTimeout: () => throw TimeoutException('Upload timeout'),
     //     );
-    await xApiClient.uploadLog(UploadLogRequest(
+    await _xApiClient.uploadLog(UploadLogRequest(
         ca: utf8.encode(serverCA),
         url: _uploadUrl,
         secret: generateHMAC_SHA256(

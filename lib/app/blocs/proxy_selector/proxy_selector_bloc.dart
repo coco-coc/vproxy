@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/protos/dns.pb.dart';
 import 'package:tm/protos/protos/geo.pb.dart';
 import 'package:tm/protos/protos/router.pb.dart';
@@ -17,6 +18,7 @@ import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/auth/auth_provider.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/data/database.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/utils/logger.dart';
@@ -29,20 +31,22 @@ part 'tm_event.dart';
 
 class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
   ProxySelectorBloc(
-      {required PrefHelper sp,
+      {required SharedPreferences pref,
       required XController xConfigController,
+      required DatabaseProvider databaseProvider,
       required AuthBloc authBloc})
-      : _pref = sp,
+      : _pref = pref,
         _xController = xConfigController,
+        _databaseProvider = databaseProvider,
         super(ProxySelectorState(
-          routeMode: sp.routingMode,
-          showProxySelector: sp.routingMode is DefaultRouteMode ? true : null,
+          routeMode: pref.routingMode,
+          showProxySelector: pref.routingMode is DefaultRouteMode ? true : null,
           proxySelectorEnabled: authBloc.state.pro,
-          proxySelectorMode: sp.proxySelectorMode,
+          proxySelectorMode: pref.proxySelectorMode,
           manualNodeSetting: ManualNodeSetting(
-            nodeMode: sp.proxySelectorManualMode,
-            balanceStrategy: sp.proxySelectorManualMultipleBalanceStrategy,
-            landHandlers: sp.proxySelectorManualLandHandlers,
+            nodeMode: pref.proxySelectorManualMode,
+            balanceStrategy: pref.proxySelectorManualMultipleBalanceStrategy,
+            landHandlers: pref.proxySelectorManualLandHandlers,
           ),
         )) {
     on<XBlocInitialEvent>(_initial);
@@ -56,8 +60,9 @@ class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
     on<ManualModeLandHandlersChangeEvent>(_manualModeLandHandlersChange);
     on<AutoNodeSelectorConfigChangeEvent>(_autoNodeSelectorConfigChange);
   }
-  final PrefHelper _pref;
+  final SharedPreferences _pref;
   final XController _xController;
+  final DatabaseProvider _databaseProvider;
 
   // @override
   // void onTransition(Transition<TmEvent, XState> transition) {
@@ -71,7 +76,8 @@ class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
     final rm = _pref.routingMode;
     if (rm != null) {
       try {
-        final customRouteMode = await database.managers.customRouteModes
+        final customRouteMode = await _databaseProvider
+            .database.managers.customRouteModes
             .filter((e) => e.name(rm))
             .getSingleOrNull();
         if (customRouteMode != null) {
@@ -86,8 +92,8 @@ class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
     }
 
     try {
-      final proxySelectorConfig =
-          await database.getSelectorConfig(defaultProxySelectorTag);
+      final proxySelectorConfig = await _databaseProvider.database
+          .getSelectorConfig(defaultProxySelectorTag);
       assert(proxySelectorConfig != null);
       emit(state.copyWith(autoNodeSetting: proxySelectorConfig));
     } catch (e) {
@@ -184,8 +190,8 @@ class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
       //     const RoutingModeSelectionChangeEvent(DefaultRouteMode.black), emit);
       _pref.setRoutingMode(null);
       emit(state.copyWith(routeMode: null, showProxySelector: false));
-      if (xController.status == XStatus.connected) {
-        await xController.stop();
+      if (_xController.status == XStatus.connected) {
+        await _xController.stop();
       }
     }
   }

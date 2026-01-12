@@ -21,7 +21,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 import 'package:tm/tm.dart';
-import 'package:uuid/uuid.dart';
 import 'package:vx/app/blocs/inbound.dart';
 import 'package:vx/app/home/home.dart';
 import 'package:vx/app/start_close_button.dart';
@@ -46,6 +45,7 @@ import 'package:vx/common/bloc_observer.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/common/extension.dart';
 import 'package:vx/data/ads_provider.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/data/sync.dart';
 import 'package:vx/iap/pro.dart';
 import 'package:flutter/cupertino.dart';
@@ -63,12 +63,13 @@ import 'package:vx/app/log/log_page.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/utils/activate.dart';
 import 'package:vx/utils/backup_service.dart';
-import 'package:vx/utils/device.dart';
-import 'package:vx/utils/github_release.dart';
 import 'package:vx/utils/node_test_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:vx/utils/random.dart';
 import 'package:vx/utils/root.dart';
+import 'package:flutter_common/auth/auth_provider.dart';
+import 'package:flutter_common/l10n/app_localizations.dart' as xv_localizations;
+import 'package:flutter_common/services/auto_update.dart';
 import 'firebase_options.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/common/serial.dart';
@@ -96,11 +97,6 @@ part 'desktop_tray.dart';
 part 'router.dart';
 
 void main() async {
-  await _init();
-  runApp(const App());
-}
-
-Future<void> _init() async {
   final startTime = DateTime.now();
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -115,142 +111,26 @@ Future<void> _init() async {
     );
   }
 
-  await _initPref();
-  SnowflakeId.setMachineId(persistentStateRepo.machineId);
-  await initLogger();
-
-  // local notification
-  // flutterLocalNotificationsPlugin
-  //     .resolvePlatformSpecificImplementation<
-  //         AndroidFlutterLocalNotificationsPlugin>()
-  //     ?.requestNotificationsPermission();
-
-  // set fcm enabled
-  if (Platform.isAndroid) {
-    GooglePlayServicesAvailability availability = await GoogleApiAvailability
-        .instance
-        .checkGooglePlayServicesAvailability();
-    googleApiAvailable = availability == GooglePlayServicesAvailability.success;
-    fcmEnabled = googleApiAvailable;
-  } else if (Platform.isIOS || Platform.isMacOS) {
-    fcmEnabled = true;
-  }
-  print('fcmEnabled: $fcmEnabled');
-
-  // fcm
-  if (fcmEnabled) {
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    if (Platform.isAndroid) {
-      // Android applications are not required to request permission.
-      // enable foreground notification
-      androidChannel = const AndroidNotificationChannel(
-        'high_importance_channel', // id
-        'High Importance Notifications', // title
-        description:
-            'This channel is used for important notifications.', // description
-        importance: Importance.defaultImportance,
-        enableVibration: false,
-        showBadge: false,
-        playSound: false,
-      );
-      try {
-        await flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin>()
-            ?.createNotificationChannel(androidChannel);
-      } catch (e) {
-        logger.e('createNotificationChannel', error: e);
-      }
-    } else if (Platform.isIOS || Platform.isMacOS) {
-      // You may set the permission requests to "provisional" which allows the user to choose what type
-      // of notifications they would like to receive once the user receives a notification.
-      try {
-        final notificationSettings = await FirebaseMessaging.instance
-            .requestPermission(provisional: true);
-        logger.d('FCM permission: ${notificationSettings.authorizationStatus}');
-      } catch (e) {
-        logger.e('requestPermission', error: e);
-      }
-      try {
-        await FirebaseMessaging.instance
-            .setForegroundNotificationPresentationOptions(
-          alert: true, // Required to display a heads up notification
-          badge: true,
-          sound: true,
-        );
-      } catch (e) {
-        logger.e('setForegroundNotificationPresentationOptions', error: e);
-      }
-    }
-    if (!isProduction()) {
-      FirebaseMessaging.instance.getToken().then((token) {
-        print('FCM token: $token');
-      }).catchError((err) {
-        print('Error getting FCM token: $err');
-      });
-      FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
-        // TODO: If necessary send token to application server.
-        logger.d('FCM token: $fcmToken');
-        // Note: This callback is fired at each app startup and whenever a new
-        // token is generated.
-      }).onError((err) {
-        // Error getting token.
-        logger.e('Error getting FCM token', error: err);
-      });
-      if (Platform.isIOS || Platform.isMacOS) {
-        // For apple platforms, ensure the APNS token is available before making any FCM plugin API calls
-        final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
-        if (apnsToken != null) {
-          // APNS token is available, make FCM plugin API requests...
-          logger.d('APNS token: $apnsToken');
-        } else {
-          logger.d('APNS token is not available');
-        }
-      }
-    }
-  }
-
-  await Supabase.initialize(
-    authOptions: FlutterAuthClientOptions(detectSessionInUri: !kDebugMode),
-    headers: Platform.isWindows
-        ? {
-            'X-Supabase-Client-Platform-Version': 'Windows',
-          }
-        : null,
-    url: false
-        ? 'http://127.0.0.1:14572'
-        : 'https://qgewguqxyteoowbxeofi.supabase.co',
-    anonKey: false
-        ? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0'
-        : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZXdndXF4eXRlb293Ynhlb2ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2OTc2ODAsImV4cCI6MjA2NzI3MzY4MH0.UmaVdCukolvrboBhEDhgvXVVbxKZSV0r1TDjlozq0TI',
-  );
-
-  if (Platform.isWindows) {
-    try {
-      PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      launchAtStartup.setup(
-        appName: packageInfo.appName,
-        appPath: Platform.resolvedExecutable,
-        // Set packageName parameter to support MSIX.
-        packageName: packageInfo.packageName,
-      );
-      if (persistentStateRepo.startOnBoot &&
-          !await launchAtStartup.isEnabled()) {
-        await launchAtStartup.enable();
-      }
-    } catch (e) {
-      logger.e('Error setting up launch at startup', error: e);
-    }
-  }
+  final pref = await SharedPreferences.getInstance();
+  SnowflakeId.setMachineId(pref.machineId);
 
   resourceDirectory = await resourceDir();
-  print('resourceDirectory: ${resourceDirectory.path}');
-  storage = const FlutterSecureStorage();
+  cacheDirectory = await getCacheDir();
+  version = (await PackageInfo.fromPlatform()).version;
+  logger.d('resourceDirectory: ${resourceDirectory.path}');
+
+  initRouter(pref); // Initialize router after preferences are loaded
+  await initLogger(pref);
+  await initNotification();
+  await initSupabase();
+  await setStartOnBoot(pref);
 
   bool isActivated = false;
+  AppDatabase? database;
+  FlutterSecureStorage storage = const FlutterSecureStorage();
   await Future.wait([
-    _initDatabase(),
-    _initWindow(),
+    _initDatabase(pref).then((value) => database = value),
+    _initWindow(pref),
     Future(() async {
       if (Platform.isWindows) {
         isRunningAsAdmin = await windowsHostApi!.isRunningAsAdmin();
@@ -276,85 +156,219 @@ Future<void> _init() async {
     }),
   ]);
 
-  // outbound repo
-  _outboundRepo = OutboundRepo(database);
-  //  sync service
-  syncService = SyncService(
-      deviceId: await getUniqueDeviceId(),
-      prefHelper: persistentStateRepo,
-      storage: storage,
-      outboundRepo: _outboundRepo,
-      authProvider: authProvider);
+  final authProvider = SupabaseAuth(
+      webClientId: webClientId,
+      iosClientId: iosClientId,
+      loginCallbackUrl: 'vx://login-callback/');
+  final proPurchases = Platform.isWindows || Platform.isLinux
+      ? null
+      : ProPurchases(authProvider);
 
-  authBloc = AuthBloc(authProvider, isActivated);
-  xConfigHelper = XConfigHelper(
-    outboundRepo: _outboundRepo,
-    psr: persistentStateRepo,
-    authBloc: authBloc,
-  );
-
-  geoDataHelper = GeoDataHelper(
-      downloader: downloader,
-      psr: persistentStateRepo,
-      xApiClient: xApiClient,
-      resouceDirPath: resourceDirectory.path,
-      databaseHelper: dbHelper);
-  _prepare();
-
-  subUpdater = AutoSubscriptionUpdater(
-      pref: persistentStateRepo, api: xApiClient, outboundRepo: _outboundRepo);
-
-  // Initialize auto-update service
-  if (androidApkRelease ||
-      (Platform.isWindows && !isStore) ||
-      Platform.isLinux) {
-    autoUpdateService = AutoUpdateService(
-        prefHelper: persistentStateRepo,
-        currentVersion: (await PackageInfo.fromPlatform()).version,
-        downloader: downloader,
-        checkForUpdate: GitHubReleaseService.checkForUpdates);
-  }
-
-  xController = XController(
-    xConfigHelper: xConfigHelper,
-    pref: persistentStateRepo,
-    autoSubscriptionUpdater: subUpdater,
-  );
   if (kDebugMode) {
     Bloc.observer = const AppBlocObserver();
   }
-  xApiClient.init();
-  if (Platform.isWindows) {
-    MessageFlutterApi.setUp(xController);
-  }
-
   logger
       .d("App start time: ${DateTime.now().difference(startTime).inSeconds}s");
+
+  final githubAssetName = await assetName();
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => DatabaseProvider(database: database!),
+        ),
+        Provider(
+            create: (ctx) => XApiClient(pref, storage)..init(), lazy: false),
+        Provider.value(value: proPurchases),
+        Provider.value(value: authProvider),
+        Provider.value(value: pref),
+        Provider.value(value: storage),
+        Provider(
+          create: (ctx) =>
+              OutboundRepo(databaseProvider: ctx.read<DatabaseProvider>()),
+        ),
+        ProxyProvider<DatabaseProvider, DbHelper>(
+          create: (ctx) =>
+              DbHelper(databaseProvider: ctx.read<DatabaseProvider>()),
+          update: (ctx, databaseProvider, dbHelper) =>
+              DbHelper(databaseProvider: databaseProvider),
+        ),
+        Provider(
+          create: (context) {
+            final downloader = Downloader(
+                context.read<OutboundRepo>(), context.read<XApiClient>());
+            makeWinTunAvailable(downloader);
+            return downloader;
+          },
+        ),
+        BlocProvider(create: (ctx) => AuthBloc(authProvider, isActivated)),
+        Provider<LogUploadService>(
+            lazy: false,
+            create: (ctx) {
+              final logUploadService = LogUploadService(
+                  flutterLogDir: getFlutterLogDir(),
+                  tunnelLogDir: getTunnelLogDir(),
+                  secret: logKey,
+                  xApiClient: ctx.read<XApiClient>(),
+                  uploadUrl: kDebugMode
+                      ? 'https://127.0.0.1:11111/api/upload-logs'
+                      : 'https://vproxybackend.5vnetwork.com:443/api/upload-logs');
+              if (pref.shareLog) {
+                logUploadService.start();
+              }
+              return logUploadService;
+            }),
+        ChangeNotifierProvider(
+          create: (ctx) => AutoSubscriptionUpdater(
+              pref: pref,
+              api: ctx.read<XApiClient>(),
+              outboundRepo: ctx.read<OutboundRepo>(),
+              databaseProvider: ctx.read<DatabaseProvider>()),
+        ),
+        Provider(
+            lazy: false,
+            create: (ctx) => GeoDataHelper(
+                downloader: ctx.read<Downloader>(),
+                pref: pref,
+                xApiClient: ctx.read<XApiClient>(),
+                databaseHelper: ctx.read<DbHelper>(),
+                resouceDirPath: resourceDirectory.path)
+              ..makeGeoDataAvailable()
+              ..geoFilesFridayUpdate()),
+        Provider(
+            create: (ctx) => XConfigHelper(
+                outboundRepo: ctx.read<OutboundRepo>(),
+                psr: pref,
+                downloader: ctx.read<Downloader>(),
+                authBloc: ctx.read<AuthBloc>(),
+                geoDataHelper: ctx.read<GeoDataHelper>(),
+                databaseProvider: ctx.read<DatabaseProvider>(),
+                xApiClient: ctx.read<XApiClient>())),
+        Provider(
+          create: (ctx) {
+            final controller = XController(
+                xConfigHelper: ctx.read<XConfigHelper>(),
+                pref: pref,
+                xApiClient: ctx.read<XApiClient>(),
+                logUploadService: ctx.read<LogUploadService>(),
+                databaseProvider: ctx.read<DatabaseProvider>(),
+                autoSubscriptionUpdater: ctx.read<AutoSubscriptionUpdater>());
+            if (Platform.isWindows) {
+              MessageFlutterApi.setUp(controller);
+            }
+            return controller;
+          },
+          lazy: false,
+        ),
+        ChangeNotifierProvider(
+          create: (ctx) {
+            final dp = ctx.read<DatabaseProvider>();
+            final ss = SyncService(
+                deviceId: pref.uniqueDeviceId,
+                prefHelper: pref,
+                storage: storage,
+                authBloc: ctx.read<AuthBloc>(),
+                databaseProvider: dp);
+            dp.database.syncService = ss;
+            return ss;
+          },
+        ),
+        BlocProvider(
+            create: (ctx) => StartCloseCubit(
+                pref: pref,
+                xController: ctx.read<XController>(),
+                authBloc: ctx.read<AuthBloc>())),
+        ChangeNotifierProvider<AdsProvider>(
+            create: (ctx) => AdsProvider(
+                adsDirectory: path.join(resourceDirectory.path, 'ads'),
+                sharedPreferences: pref,
+                authBloc: ctx.read<AuthBloc>(),
+                downloader: ctx.read<Downloader>())),
+        ProxyProvider<DatabaseProvider, SetRepo>(
+            create: (ctx) => ctx.read<DbHelper>(),
+            update: (ctx, databaseProvider, dbHelper) => ctx.read<DbHelper>()),
+        ProxyProvider<DatabaseProvider, RouteRepo>(
+            create: (ctx) => ctx.read<DbHelper>(),
+            update: (ctx, databaseProvider, dbHelper) => ctx.read<DbHelper>()),
+        ProxyProvider<DatabaseProvider, DnsRepo>(
+            create: (ctx) => ctx.read<DbHelper>(),
+            update: (ctx, databaseProvider, dbHelper) => ctx.read<DbHelper>()),
+        ProxyProvider<DatabaseProvider, SelectorRepo>(
+            create: (ctx) => ctx.read<DbHelper>(),
+            update: (ctx, databaseProvider, dbHelper) => ctx.read<DbHelper>()),
+        BlocProvider(
+            create: (ctx) => InboundCubit(pref, ctx.read<XController>())),
+        ChangeNotifierProvider<RealtimeSpeedNotifier>(
+            create: (ctx) => RealtimeSpeedNotifier(
+                controller: ctx.read<XController>(),
+                outboundRepo: ctx.read<OutboundRepo>())),
+        Provider<MyLayout>(create: (_) => MyLayout()),
+        if (androidApkRelease ||
+            (Platform.isWindows && !isStore) ||
+            Platform.isLinux)
+          ChangeNotifierProvider(
+              lazy: false,
+              create: (ctx) {
+                final a = AutoUpdateService(
+                    pref: pref,
+                    downloader: ctx.read<Downloader>().download,
+                    currentVersion: version,
+                    assetName: githubAssetName,
+                    repository: '5vnetwork/vx',
+                    exitCurrentApp: () {
+                      return exitCurrentApp(ctx.read<XController>());
+                    },
+                    cacheDir: cacheDirectory);
+                a.addListener(a.getListener(rootNavigationKey));
+                return a;
+              }),
+        ChangeNotifierProvider(
+            create: (ctx) => BackupSerevice(
+                authProvider: ctx.read<AuthBloc>(),
+                prefHelper: pref,
+                storage: storage,
+                databaseProvider: ctx.read<DatabaseProvider>(),
+                xController: ctx.read<XController>(),
+                xApiClient: ctx.read<XApiClient>(),
+                syncService: ctx.read<SyncService>())),
+        ChangeNotifierProvider(
+            create: (ctx) => Deployer(
+                  xApiClient: ctx.read<XApiClient>(),
+                )),
+        BlocProvider(
+            lazy: false,
+            create: (ctx) => LogBloc(
+                pref: pref,
+                xController: ctx.read<XController>(),
+                outboundRepo: ctx.read<OutboundRepo>())),
+        BlocProvider(
+            create: (ctx) => ProxySelectorBloc(
+                  pref: pref,
+                  databaseProvider: ctx.read<DatabaseProvider>(),
+                  xConfigController: ctx.read<XController>(),
+                  authBloc: ctx.read<AuthBloc>(),
+                )..add(XBlocInitialEvent())),
+      ],
+      child: const App(),
+    ),
+  );
 }
 
 // const IAdIdManager adIdManager = TestAdIdManager();
 
 // global variables
 // late final Store store;
-// TODO: use repo to do CRUD, remove global [database]
-late AppDatabase database;
-final DbHelper dbHelper = DbHelper();
-late final SharedPreferences pref;
 late final Directory resourceDirectory;
-late final FlutterSecureStorage storage;
-late final PrefHelper persistentStateRepo;
-late final AutoSubscriptionUpdater subUpdater;
-late final XController xController;
-late final SyncService syncService;
-late final OutboundRepo _outboundRepo;
-NodeTestService? nodeTestService;
+late final String cacheDirectory;
+late final String version;
 final bool enableFirebase = !Platform.isWindows && !Platform.isLinux;
 bool googleApiAvailable = false;
 bool fcmEnabled = false;
 late final AndroidNotificationChannel androidChannel;
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
-bool demo = bool.fromEnvironment('DEMO');
+late final SupabaseClient supabase;
+bool demo = const bool.fromEnvironment('DEMO');
 
 // late final Directory appCache;
 final WindowsHostApi? windowsHostApi =
@@ -364,45 +378,8 @@ final DarwinHostApi? darwinHostApi =
     Platform.isIOS || Platform.isMacOS ? DarwinHostApi() : null;
 final AndroidHostApi? androidHostApi =
     Platform.isAndroid ? AndroidHostApi() : null;
-// Router
-final ValueNotifier<RoutingConfig> myRoutingConfig =
-    ValueNotifier<RoutingConfig>(
-  const RoutingConfig(
-    routes: <RouteBase>[],
-  ),
-);
-GlobalKey<NavigatorState> rootNavigationKey = GlobalKey<NavigatorState>();
-GoRouter _router = GoRouter.routingConfig(
-    debugLogDiagnostics: true,
-    initialLocation: persistentStateRepo.initialLocation,
-    navigatorKey: rootNavigationKey,
-    routingConfig: myRoutingConfig)
-  ..routerDelegate.addListener(() {
-    try {
-      final location = _router.routeInformationProvider.value.uri.toString();
-      // Only save if location is valid and not empty
-      if (location.isNotEmpty && location != '/') {
-        logger.d('set initial location: $location');
-        persistentStateRepo.setInitialLocation(location);
-      }
-    } catch (e) {
-      // Ignore errors during initialization
-    }
-  });
-// final globalKey = GlobalKey();
-final downloader = Downloader(_outboundRepo);
-late final GeoDataHelper geoDataHelper;
-final authProvider = SupabaseAuth();
-late final AuthBloc authBloc;
-late final XConfigHelper xConfigHelper;
-final xApiClient = XApiClient();
-final appLinks = AppLinks();
-LogUploadService? logUploadService;
-final supabase = Supabase.instance.client;
-final proPurchases =
-    Platform.isWindows || Platform.isLinux ? null : ProPurchases(authProvider);
+
 final isAdPlatforms = Platform.isAndroid || Platform.isIOS;
-AutoUpdateService? autoUpdateService;
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -417,14 +394,21 @@ class App extends StatefulWidget {
 class _AppState extends State<App> with WidgetsBindingObserver {
   Locale? _locale;
   ThemeMode? _themeMode;
+  // AppLifecycleListener must be kept alive to receive lifecycle events
+  // ignore: unused_field
   late final AppLifecycleListener _listener;
+  final appLinks = AppLinks();
+  late final SyncService syncService;
 
   void setLocale(Locale? value) async {
     setState(() {
       _locale = value;
     });
     try {
-      await insertDefault(rootNavigationKey.currentContext!);
+      await insertDefault(
+          rootNavigationKey.currentContext!,
+          context.read<SharedPreferences>(),
+          context.read<DatabaseProvider>().database);
     } catch (e) {
       logger.e('Error inserting default', error: e);
       snack(rootLocalizations()?.insertDefaultError(e.toString()));
@@ -443,19 +427,20 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     setState(() {});
   }
 
-  late final OutboundBloc outboundBloc;
-  late final SubscriptionBloc subBloc;
-
   @override
   void initState() {
     super.initState();
+    syncService = context.read<SyncService>();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       if (fatalErrorMessage != null) {
         dialog(fatalErrorMessage!);
         fatalErrorMessage = null;
       } else {
         try {
-          await insertDefault(rootNavigationKey.currentContext!);
+          await insertDefault(
+              rootNavigationKey.currentContext!,
+              context.read<SharedPreferences>(),
+              context.read<DatabaseProvider>().database);
         } catch (e) {
           logger.e('Error inserting default', error: e);
           snack(rootLocalizations()?.insertDefaultError(e.toString()));
@@ -463,72 +448,18 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       }
     });
 
-    if (persistentStateRepo.initialLaunch) {
-      persistentStateRepo.setInitialLaunch();
+    final pref = context.read<SharedPreferences>();
+    if (pref.initialLaunch) {
+      pref.setInitialLaunch();
       androidHostApi?.requestAddTile();
     }
-    _locale = persistentStateRepo.language?.locale;
-    _themeMode = persistentStateRepo.themeMode;
+    _locale = pref.language?.locale;
+    _themeMode = pref.themeMode;
     WidgetsBinding.instance.addObserver(this);
     if (Platform.isWindows && !isRunningAsAdmin) {
       _register('vx');
     }
     appLinks.uriLinkStream.listen(handlerAppLinks);
-    outboundBloc = OutboundBloc(
-      _outboundRepo,
-      xController,
-      subUpdater,
-      authBloc,
-    )..add(InitialEvent());
-    syncService.outboundBloc = outboundBloc;
-    subBloc = SubscriptionBloc(_outboundRepo, subUpdater);
-
-    // Initialize node test service
-    nodeTestService = NodeTestService(
-      outboundRepo: _outboundRepo,
-      outboundBloc: outboundBloc,
-      prefHelper: persistentStateRepo,
-    );
-    if (persistentStateRepo.autoTestNodes) {
-      nodeTestService!.start();
-    }
-    // auto update service
-    autoUpdateService?.addListener(() {
-      if (rootNavigationKey.currentContext == null) {
-        return;
-      }
-      final localInstaller = autoUpdateService!.hasLocalInstallerToInstall;
-      if (localInstaller != null) {
-        final version = localInstaller.version;
-        showDialog(
-          context: rootNavigationKey.currentContext!,
-          builder: (context) => AlertDialog(
-            title:
-                Text(rootLocalizations()!.newVersionDownloadedDialog(version)),
-            content: Text(localInstaller.newFeatures),
-            actions: [
-              OutlinedButton(
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                    autoUpdateService!.setSkipVersion(version);
-                  },
-                  child: Text(rootLocalizations()!.skipThisVersion)),
-              FilledButton.tonal(
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                    try {
-                      await autoUpdateService!.installLocalInstaller();
-                    } catch (e) {
-                      logger.e('Error installing update', error: e);
-                      snack(rootLocalizations()?.installFailed(e.toString()));
-                    }
-                  },
-                  child: Text(rootLocalizations()!.install)),
-            ],
-          ),
-        );
-      }
-    });
     if (fcmEnabled) {
       // fcm foreground messages
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -563,7 +494,6 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       // as initState() must not be async
       setupInteractedMessage();
     }
-
     _listener = AppLifecycleListener(
       // onShow: () => logger.d('show'),
       // onResume: () => logger.d('resume'),
@@ -575,7 +505,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       onExitRequested: () async {
         logger.d('exit requested');
         if (isPkg) {
-          await beforeExitCleanup();
+          await context.read<XController>().beforeExitCleanup();
         }
         return AppExitResponse.exit;
       },
@@ -628,8 +558,6 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    outboundBloc.close();
-    subBloc.close();
     super.dispose();
   }
 
@@ -637,7 +565,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     logger.d(state);
     if (state == AppLifecycleState.resumed) {
-      if (pref.getBool('shouldSync') ?? false) {
+      if (context.read<SharedPreferences>().getBool('shouldSync') ?? false) {
         syncService.sync();
       }
     }
@@ -650,7 +578,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       if (uri.path.startsWith('/sub://')) {
         final base64Content = uri.path.substring(7);
         final url = decodeBase64(base64Content);
-        subBloc.add(
+        context.read<SubscriptionBloc>().add(
             AddSubscriptionEvent(uri.queryParameters['remarks'] ?? '', url));
       }
     } else if (uri.host == 'install-config') {
@@ -660,7 +588,9 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         if (uri.queryParameters['name'] != null) {
           name = Uri.decodeComponent(uri.queryParameters['name']!);
         }
-        subBloc.add(AddSubscriptionEvent(name, decodedUrl));
+        context
+            .read<SubscriptionBloc>()
+            .add(AddSubscriptionEvent(name, decodedUrl));
       }
     } else if (uri.host == 'login-callback') {
       // Handle Supabase auth callback
@@ -686,64 +616,41 @@ class _AppState extends State<App> with WidgetsBindingObserver {
               )
           : null,
       routerConfig: _router,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: [
+        ...AppLocalizations.localizationsDelegates,
+        ...xv_localizations.AppLocalizations.localizationsDelegates,
+      ],
       supportedLocales: AppLocalizations.supportedLocales,
     );
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<AdsProvider>(
-            create: (ctx) => AdsProvider(
-                adsDirectory: path.join(resourceDirectory.path, 'ads'),
-                sharedPreferences: pref,
-                authBloc: authBloc,
-                downloader: downloader)),
-        Provider<XApiClient>.value(value: xApiClient),
-        ChangeNotifierProvider.value(value: dbHelper),
-        ChangeNotifierProvider<SetRepo>.value(value: dbHelper),
-        ChangeNotifierProvider<RouteRepo>.value(value: dbHelper),
-        RepositoryProvider.value(value: _outboundRepo),
-        ChangeNotifierProvider<DnsRepo>.value(value: dbHelper),
-        ChangeNotifierProvider<SelectorRepo>.value(value: dbHelper),
-        Provider<XController>.value(value: xController),
-        BlocProvider(
-            create: (ctx) => InboundCubit(persistentStateRepo, xController)),
-        ChangeNotifierProvider<RealtimeSpeedNotifier>(
-            create: (ctx) => RealtimeSpeedNotifier(
-                controller: xController, outboundRepo: _outboundRepo)),
-        Provider<MyLayout>(create: (_) => MyLayout()),
-        ChangeNotifierProvider.value(value: proPurchases),
-        Provider<AuthProvider>.value(value: authProvider),
-        ChangeNotifierProvider.value(value: syncService),
-        BlocProvider(
-            create: (ctx) => StartCloseCubit(
-                pref: persistentStateRepo,
-                xController: xController,
-                authBloc: authBloc)),
-        ChangeNotifierProvider(
-            create: (ctx) => BackupSerevice(
-                authProvider: authProvider, prefHelper: persistentStateRepo)),
-        BlocProvider.value(value: authBloc),
-        BlocProvider.value(
-          value: outboundBloc,
-        ),
-        BlocProvider.value(
-          value: subBloc,
-        ),
-        ChangeNotifierProvider(create: (ctx) => Deployer()),
-        BlocProvider(
-            lazy: false,
-            create: (ctx) =>
-                LogBloc(sp: persistentStateRepo, outboundRepo: _outboundRepo)),
-        BlocProvider(
-            create: (ctx) => ProxySelectorBloc(
-                  sp: persistentStateRepo,
-                  xConfigController: xController,
-                  authBloc: authBloc,
-                )..add(XBlocInitialEvent())),
-        ChangeNotifierProvider.value(value: autoUpdateService),
-      ],
-      child: Builder(builder: (context) {
-        return BlocConsumer<AuthBloc, AuthState>(
+        providers: [
+          BlocProvider(
+            create: (ctx) {
+              final outboundBloc = OutboundBloc(
+                  ctx.read<OutboundRepo>(),
+                  ctx.read<XController>(),
+                  ctx.read<AutoSubscriptionUpdater>(),
+                  ctx.read<AuthBloc>(),
+                  ctx.read<SharedPreferences>(),
+                  ctx.read<XApiClient>())
+                ..add(InitialEvent());
+              ctx.read<SyncService>().outboundBloc = outboundBloc;
+              return outboundBloc;
+            },
+          ),
+          BlocProvider(
+            create: (ctx) => SubscriptionBloc(
+                ctx.read<OutboundRepo>(), ctx.read<AutoSubscriptionUpdater>()),
+          ),
+          Provider(
+              lazy: false,
+              create: (ctx) => NodeTestService(
+                    outboundRepo: ctx.read<OutboundRepo>(),
+                    outboundBloc: ctx.read<OutboundBloc>(),
+                    pref: ctx.read<SharedPreferences>(),
+                  )),
+        ],
+        child: BlocConsumer<AuthBloc, AuthState>(
           listenWhen: (previous, current) => previous.pro != current.pro,
           listener: (context, state) {
             context
@@ -763,41 +670,14 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                 if (constraints.isCompact) {
                   myRoutingConfig.value = compactRouteConfig;
                 } else {
-                  myRoutingConfig.value = largeScreenRouteConfig;
+                  myRoutingConfig.value =
+                      largeScreenRouteConfig(context.read<SharedPreferences>());
                 }
                 return app;
               },
             );
           },
-        );
-      }),
-    );
-  }
-}
-
-Future<void> beforeExitCleanup() async {
-  logger.d('beforeExitCleanup');
-  try {
-    if (Platform.isWindows &&
-        Tm.instance.state == TmStatus.connected &&
-        ((!isRunningAsAdmin &&
-            persistentStateRepo.inboundMode == InboundMode.tun))) {
-      // close the service
-      await xController.stop();
-    } else if (Tm.instance.state == TmStatus.connected && isPkg) {
-      await xController.stop();
-    } else if (Platform.isLinux &&
-        Tm.instance.state == TmStatus.connected &&
-        persistentStateRepo.inboundMode == InboundMode.tun) {
-      await xController.stop();
-    }
-    if (xController.systemProxySet) {
-      await xController.unsetSystemProxy();
-      xController.systemProxySet = false;
-    }
-  } catch (e) {
-    reportError("_beforeExitCleanup", e);
-    logger.e('_beforeExitCleanup', error: e);
+        ));
   }
 }
 
@@ -821,7 +701,7 @@ void dialog(String message) {
         ),
         FilledButton(
           onPressed: () {
-            exitCurrentApp();
+            exitCurrentApp(context.read<XController>());
           },
           child: Text(AppLocalizations.of(context)!.exit),
         ),
@@ -854,11 +734,9 @@ final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
 /// customize window
-Future<void> _initWindow() async {
+Future<void> _initWindow(SharedPreferences pref) async {
   if (desktopPlatforms) {
-    if (desktopPlatforms) {
-      await windowManager.ensureInitialized();
-    }
+    await windowManager.ensureInitialized();
     if (Platform.isMacOS) {
       await WindowManipulator.initialize();
 
@@ -885,48 +763,157 @@ Future<void> _initWindow() async {
         titleBarStyle: TitleBarStyle.hidden,
         alwaysOnTop: false,
         skipTaskbar: false,
-        size: Size(
-            persistentStateRepo.windowWidth, persistentStateRepo.windowHeight),
+        size: Size(pref.windowWidth, pref.windowHeight),
       );
       await windowManager.waitUntilReadyToShow(windowOptions, () async {
-        if (persistentStateRepo.windowX != null &&
-            persistentStateRepo.windowY != null) {
-          await windowManager.setPosition(Offset(
-              persistentStateRepo.windowX!, persistentStateRepo.windowY!));
+        if (pref.windowX != null && pref.windowY != null) {
+          await windowManager.setPosition(Offset(pref.windowX!, pref.windowY!));
         } else {
           await windowManager.center();
         }
         await windowManager.show();
       });
     } else {
-      if (persistentStateRepo.windowX != null &&
-          persistentStateRepo.windowY != null) {
-        await windowManager.setPosition(
-            Offset(persistentStateRepo.windowX!, persistentStateRepo.windowY!));
+      if (pref.windowX != null && pref.windowY != null) {
+        await windowManager.setPosition(Offset(pref.windowX!, pref.windowY!));
       } else {
         await windowManager.center();
       }
-      await windowManager.setSize(Size(
-          persistentStateRepo.windowWidth, persistentStateRepo.windowHeight));
+      await windowManager.setSize(Size(pref.windowWidth, pref.windowHeight));
     }
   }
 
   logger.d('window initialized');
 }
 
-/// download resources that are needed for VX to work in advance.
-void _prepare() async {
-  if (Platform.isWindows) {
-    makeWinTunAvailable();
-  }
-  // geo data
-  geoDataHelper.makeGeoDataAvailable();
-  geoDataHelper.geoFilesFridayUpdate();
+Future<void> initSupabase() async {
+  await Supabase.initialize(
+    authOptions: FlutterAuthClientOptions(detectSessionInUri: !kDebugMode),
+    headers: Platform.isWindows
+        ? {
+            'X-Supabase-Client-Platform-Version': 'Windows',
+          }
+        : null,
+    url: false
+        ? 'http://127.0.0.1:14572'
+        : 'https://qgewguqxyteoowbxeofi.supabase.co',
+    anonKey: false
+        ? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0'
+        : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZXdndXF4eXRlb293Ynhlb2ZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2OTc2ODAsImV4cCI6MjA2NzI3MzY4MH0.UmaVdCukolvrboBhEDhgvXVVbxKZSV0r1TDjlozq0TI',
+  );
+  supabase = Supabase.instance.client;
 }
 
-Future<void> _initPref() async {
-  pref = await SharedPreferences.getInstance();
-  persistentStateRepo = PrefHelper(pref: pref);
+Future<void> setStartOnBoot(SharedPreferences pref) async {
+  if (Platform.isWindows) {
+    try {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      launchAtStartup.setup(
+        appName: packageInfo.appName,
+        appPath: Platform.resolvedExecutable,
+        // Set packageName parameter to support MSIX.
+        packageName: packageInfo.packageName,
+      );
+      if (pref.startOnBoot && !await launchAtStartup.isEnabled()) {
+        await launchAtStartup.enable();
+      }
+    } catch (e) {
+      logger.e('Error setting up launch at startup', error: e);
+    }
+  }
+}
+
+Future<void> initNotification() async {
+  // local notification
+  // flutterLocalNotificationsPlugin
+  //     .resolvePlatformSpecificImplementation<
+  //         AndroidFlutterLocalNotificationsPlugin>()
+  //     ?.requestNotificationsPermission();
+
+  // set fcm enabled
+  if (Platform.isAndroid) {
+    GooglePlayServicesAvailability availability = await GoogleApiAvailability
+        .instance
+        .checkGooglePlayServicesAvailability();
+    googleApiAvailable = availability == GooglePlayServicesAvailability.success;
+    fcmEnabled = googleApiAvailable;
+  } else if (Platform.isIOS || Platform.isMacOS) {
+    fcmEnabled = true;
+  }
+  logger.d('fcmEnabled: $fcmEnabled');
+
+  // fcm
+  if (fcmEnabled) {
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    if (Platform.isAndroid) {
+      // Android applications are not required to request permission.
+      // enable foreground notification
+      androidChannel = const AndroidNotificationChannel(
+        'high_importance_channel', // id
+        'High Importance Notifications', // title
+        description:
+            'This channel is used for important notifications.', // description
+        importance: Importance.defaultImportance,
+        enableVibration: false,
+        showBadge: false,
+        playSound: false,
+      );
+      try {
+        await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.createNotificationChannel(androidChannel);
+      } catch (e) {
+        logger.e('createNotificationChannel', error: e);
+      }
+    } else if (Platform.isIOS || Platform.isMacOS) {
+      // You may set the permission requests to "provisional" which allows the user to choose what type
+      // of notifications they would like to receive once the user receives a notification.
+      try {
+        final notificationSettings = await FirebaseMessaging.instance
+            .requestPermission(provisional: true);
+        logger.d('FCM permission: ${notificationSettings.authorizationStatus}');
+      } catch (e) {
+        logger.e('requestPermission', error: e);
+      }
+      try {
+        await FirebaseMessaging.instance
+            .setForegroundNotificationPresentationOptions(
+          alert: true, // Required to display a heads up notification
+          badge: true,
+          sound: true,
+        );
+      } catch (e) {
+        logger.e('setForegroundNotificationPresentationOptions', error: e);
+      }
+    }
+    if (!isProduction()) {
+      FirebaseMessaging.instance.getToken().then((token) {
+        logger.d('FCM token: $token');
+      }).catchError((err) {
+        logger.e('Error getting FCM token', error: err);
+      });
+      FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
+        // TODO: If necessary send token to application server.
+        logger.d('FCM token: $fcmToken');
+        // Note: This callback is fired at each app startup and whenever a new
+        // token is generated.
+      }).onError((err) {
+        // Error getting token.
+        logger.e('Error getting FCM token', error: err);
+      });
+      if (Platform.isIOS || Platform.isMacOS) {
+        // For apple platforms, ensure the APNS token is available before making any FCM plugin API calls
+        final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+        if (apnsToken != null) {
+          // APNS token is available, make FCM plugin API requests...
+          logger.d('APNS token: $apnsToken');
+        } else {
+          logger.d('APNS token is not available');
+        }
+      }
+    }
+  }
 }
 
 @pragma('vm:entry-point')

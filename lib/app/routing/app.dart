@@ -105,7 +105,8 @@ class _AppWidgetState extends State<AppWidget> {
     );
     if (result != null) {
       try {
-        final response = await xApiClient
+        final response = await context
+            .read<XApiClient>()
             .parseClashRuleFile(result.files.first.bytes!.toList());
         await _setRepo.addApps(response.appIds
             .map((e) => App(

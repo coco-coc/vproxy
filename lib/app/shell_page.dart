@@ -7,6 +7,8 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pasteboard/pasteboard.dart';
 import 'package:path/path.dart' hide context;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/widgets/ad.dart';
 import 'package:vx/app/control.dart';
 
@@ -41,7 +43,7 @@ class _ShellPageState extends State<ShellPage> {
   @override
   void initState() {
     super.initState();
-    if (!persistentStateRepo.welcomeShown) {
+    if (!context.read<SharedPreferences>().welcomeShown) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         if (Platform.isWindows &&
             File(join(resourceDirectory.parent.path, 'vproxy')).existsSync()) {
@@ -119,7 +121,7 @@ class _ShellPageState extends State<ShellPage> {
                     ),
                   ],
                 ));
-        persistentStateRepo.setWelcomeShown(true);
+        context.read<SharedPreferences>().setWelcomeShown(true);
       });
     }
   }

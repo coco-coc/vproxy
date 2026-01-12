@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
@@ -236,7 +237,9 @@ class _ServerActionButtonsState extends State<ServerActionButtons> {
                     _isShuttingDown = true;
                   });
                   try {
-                    await xApiClient.shutdownServer(widget.server);
+                    await context
+                        .read<XApiClient>()
+                        .shutdownServer(widget.server);
                   } catch (e) {
                     logger.d('shutdown server error', error: e);
                   } finally {
@@ -271,7 +274,9 @@ class _ServerActionButtonsState extends State<ServerActionButtons> {
                     _isRestarting = true;
                   });
                   try {
-                    await xApiClient.restartServer(widget.server);
+                    await context
+                        .read<XApiClient>()
+                        .restartServer(widget.server);
                   } catch (e) {
                     logger.d('restart server error', error: e);
                   } finally {
@@ -303,12 +308,20 @@ class QuickDeploy extends StatefulWidget {
 }
 
 class _QuickDeployState extends State<QuickDeploy> {
-  final List<QuickDeployOption> options = [
-    AllInOneQuickDeploy(),
-    BasicQuickDeploy(),
-    MasqueradeQuickDeploy(),
-    // MasqueradeQuickDeployCDN(),
-  ];
+  final List<QuickDeployOption> options = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final xapiClient = context.read<XApiClient>();
+    final storage = context.read<FlutterSecureStorage>();
+    options.addAll([
+      AllInOneQuickDeploy(xApiClient: xapiClient),
+      BasicQuickDeploy(storage: storage, xApiClient: xapiClient),
+      MasqueradeQuickDeploy(xApiClient: xapiClient),
+    ]);
+  }
 
   void _showDetails(BuildContext context, QuickDeployOption option) async {
     final outboundBloc = context.read<OutboundBloc>();

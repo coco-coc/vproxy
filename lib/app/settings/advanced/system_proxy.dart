@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 
 class SystemProxySetting extends StatefulWidget {
   const SystemProxySetting({super.key});
@@ -16,28 +19,29 @@ class _SystemProxySettingState extends State<SystemProxySetting> {
   final _httpPortController = TextEditingController();
   @override
   void initState() {
-    _dynamicSystemProxyPorts = persistentStateRepo.dynamicSystemProxyPorts;
-    _socksPortController.text = persistentStateRepo.socksPort.toString();
-    _httpPortController.text = persistentStateRepo.httpPort.toString();
+    final pref = context.read<SharedPreferences>();
+    _dynamicSystemProxyPorts = pref.dynamicSystemProxyPorts;
+    _socksPortController.text = pref.socksPort.toString();
+    _httpPortController.text = pref.httpPort.toString();
     super.initState();
   }
 
   void _toggleDynamicSystemProxyPorts(bool value) {
-    persistentStateRepo.setDynamicSystemProxyPorts(value);
+    context.read<SharedPreferences>().setDynamicSystemProxyPorts(value);
     setState(() {
       _dynamicSystemProxyPorts = value;
     });
   }
 
   void _toggleSocksPort(String value) {
-    persistentStateRepo.setSocksPort(int.parse(value));
+    context.read<SharedPreferences>().setSocksPort(int.parse(value));
     setState(() {
       _socksPortController.text = value;
     });
   }
 
   void _toggleHttpPort(String value) {
-    persistentStateRepo.setHttpPort(int.parse(value));
+    context.read<SharedPreferences>().setHttpPort(int.parse(value));
     setState(() {
       _httpPortController.text = value;
     });

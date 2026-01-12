@@ -7,7 +7,12 @@ import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
 
 class DatabaseServer extends DbServiceBase {
-  DatabaseServer();
+  DatabaseServer({required this.database});
+
+  late AppDatabase database;
+  void setDatabase(AppDatabase database) {
+    this.database = database;
+  }
 
   @override
   Future<DbOutboundHandler> getHandler(
@@ -50,8 +55,8 @@ class DatabaseServer extends DbServiceBase {
     final rows = await query.get();
 
     final dbHandlers = rows
-        .map((row) =>
-            _convertToDbOutboundHandler(row.readTable(database.outboundHandlers)))
+        .map((row) => _convertToDbOutboundHandler(
+            row.readTable(database.outboundHandlers)))
         .toList();
     return DbHandlers(handlers: dbHandlers);
   }

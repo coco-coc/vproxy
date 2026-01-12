@@ -45,7 +45,7 @@ class CurrentNodes extends StatelessWidget {
         icon: Icons.outbound_outlined,
         child: StreamBuilder(
             stream:
-                context.read<OutboundRepo>().getHandlersStream(selected: true),
+                context.watch<OutboundRepo>().getHandlersStream(selected: true),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data!.isEmpty) {
@@ -146,7 +146,7 @@ class NodesHelper extends StatefulWidget {
 }
 
 class _NodesHelperState extends State<NodesHelper> {
-  NodesHelperSegment _selectedSegment = persistentStateRepo.nodesHelperSegment;
+  late NodesHelperSegment _selectedSegment;
   List<OutboundHandler> _handlers = [];
   StreamSubscription<List<OutboundHandler>>? _handlerStream;
   late OutboundRepo outboundRepo;
@@ -154,6 +154,7 @@ class _NodesHelperState extends State<NodesHelper> {
   @override
   void initState() {
     super.initState();
+    _selectedSegment = context.read<SharedPreferences>().nodesHelperSegment;
   }
 
   @override

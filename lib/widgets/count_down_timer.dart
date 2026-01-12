@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:vx/l10n/app_localizations.dart';
 
 class CountdownTimer extends StatefulWidget {
   final int startSeconds;

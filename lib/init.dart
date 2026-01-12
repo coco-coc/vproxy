@@ -1,8 +1,10 @@
 part of 'main.dart';
 
-Future<void> _initDatabase({QueryInterceptor? interceptor}) async {
+Future<AppDatabase?> _initDatabase(SharedPreferences pref,
+    {QueryInterceptor? interceptor}) async {
   try {
-    database = AppDatabase(interceptor: interceptor);
+    final path = await getDbPath(pref);
+    return AppDatabase(path: path, interceptor: interceptor);
   } catch (e) {
     logger.e('Error initializing database', error: e);
     reportError("init database", e);

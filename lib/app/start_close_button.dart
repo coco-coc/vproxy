@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path/path.dart' as path;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/app/x_controller.dart';
@@ -26,7 +27,7 @@ enum StartCloseButtonSize {
 
 class StartCloseCubit extends Cubit<XStatus> {
   StartCloseCubit({
-    required PrefHelper pref,
+    required SharedPreferences pref,
     required XController xController,
     required AuthBloc authBloc,
   })  : _pref = pref,
@@ -42,7 +43,7 @@ class StartCloseCubit extends Cubit<XStatus> {
     });
   }
 
-  final PrefHelper _pref;
+  final SharedPreferences _pref;
   final XController _xController;
   late final StreamSubscription<XStatus> _statusSubscription;
   final AuthBloc _authBloc;

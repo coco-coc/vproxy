@@ -6,8 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/path.dart';
 import 'package:vx/utils/upload_log.dart';
 
@@ -99,24 +101,6 @@ Future<void> startShareLog() async {
     reportLogger.e("Isolate.errorListener",
         stackTrace: errorAndStacktrace.last, error: errorAndStacktrace.first);
   }).sendPort);
-
-  logUploadService = LogUploadService(
-      flutterLogDir: await getFlutterLogDir(),
-      tunnelLogDir: await getTunnelLogDir(),
-      secret: logKey,
-      uploadUrl: kDebugMode
-          ? 'https://127.0.0.1:11111/api/upload-logs'
-          : 'https://vproxybackend.5vnetwork.com:443/api/upload-logs');
-  logUploadService!.start();
-}
-
-Future<void> setShareLog(bool value) async {
-  persistentStateRepo.setShareLog(value);
-  if (value) {
-    await startShareLog();
-  } else {
-    await stopShareLog();
-  }
 }
 
 Future<void> reportError(String message, dynamic error) async {
@@ -135,32 +119,27 @@ Future<void> stopShareLog() async {
   // } else {
   // FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
   // }
-  logUploadService?.stopPeriodicUpload();
-  logUploadService = null;
 }
 
-Future<void> initLogger() async {
+Future<void> initLogger(SharedPreferences pref) async {
   if (isProduction()) {
-    if (persistentStateRepo.shareLog == true) {
+    if (pref.shareLog == true) {
       await startShareLog();
-    } else {
-      await stopShareLog();
     }
   } else {
     final redirectStdErr = !kDebugMode && (Platform.isIOS || Platform.isMacOS);
 
     if (redirectStdErr) {
-      final logDirPath = await getFlutterLogDir().then((value) => value.path);
+      final logDirPath = getFlutterLogDir().path;
       logger.d("redirectStdErr: $logDirPath");
       await darwinHostApi!.redirectStdErr(join(logDirPath, "redirect.txt"));
     }
     await setDebugLoggerDev();
-    // In debug mode, output to both console and file
   }
 }
 
 Future<void> setDebugLoggerDev() async {
-  final logDirPath = await getFlutterLogDir().then((value) => value.path);
+  final logDirPath = getFlutterLogDir().path;
   logger = Logger(
     filter: ProductionFilter(),
     printer: SimplePrinter(
@@ -201,7 +180,7 @@ Future<void> setReportLogger() async {
     level: Level.error,
     output: AdvancedFileOutput(
       writeImmediately: [Level.error],
-      path: await getFlutterLogDir().then((value) => value.path),
+      path: getFlutterLogDir().path,
       latestFileName: 'latest.txt',
       fileNameFormatter: (DateTime date) {
         return '${date.year}-${date.month}-${date.day}.txt';
@@ -211,7 +190,7 @@ Future<void> setReportLogger() async {
 }
 
 Future<void> setDebugLoggerProduction() async {
-  final logDirPath = await getFlutterLogDir().then((value) => value.path);
+  final logDirPath = getFlutterLogDir().path;
   logger = Logger(
     filter: ProductionFilter(),
     printer: SimplePrinter(printTime: true),

@@ -2626,7 +2626,7 @@ abstract class AppLocalizations {
   /// No description provided for @dnsRuleDesc.
   ///
   /// In en, this message translates to:
-  /// **'For each DNS request, rules are matched one by one starting from the top. If a rule matches, the following rule will not be considered. The dns server specified by the rule will be used to handle the dns query'**
+  /// **'For each DNS request, rules are matched one by one starting from the top. If a rule matches, the following rule will not be considered. The dns server specified by the rule will be used to handle the dns query. If no rule matches, return empty DNS result.'**
   String get dnsRuleDesc;
 
   /// No description provided for @dnsServer.
@@ -2802,6 +2802,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'When a direct connection failed, fallback to use proxy. The node selected by the \"Proxy\" selector will be used, if the selector does not exist, a random nodes will be selected'**
   String get fallbackToProxySetting;
+
+  /// No description provided for @changeIpv6ToDomain.
+  ///
+  /// In en, this message translates to:
+  /// **'Change IPv6 to Domain'**
+  String get changeIpv6ToDomain;
+
+  /// No description provided for @changeIpv6ToDomainDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'If the matched node does not support IPv6, but the target address is IPv6, and the domain is sniffed, change target address to the domain.'**
+  String get changeIpv6ToDomainDesc;
 
   /// No description provided for @installAsWinService.
   ///
@@ -3976,7 +3988,7 @@ abstract class AppLocalizations {
   /// No description provided for @sourceCodeAvailable.
   ///
   /// In en, this message translates to:
-  /// **'VX is a source-available proxy client powered by open-source vx-core.'**
+  /// **'VX is a open-source proxy client powered by vx-core.'**
   String get sourceCodeAvailable;
 
   /// No description provided for @vxSourceCode.

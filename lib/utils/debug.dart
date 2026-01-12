@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
@@ -73,9 +74,9 @@ void saveLogToApplicationDocumentsDir() async {
   }
 }
 
-Future<void> clearDatabase() async {
+Future<void> clearDatabase(String dbPath) async {
   if (kDebugMode) {
-    final dbFile = File(await getDbPath());
+    final dbFile = File(dbPath);
     if (await dbFile.exists()) {
       try {
         await dbFile.delete();

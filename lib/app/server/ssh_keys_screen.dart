@@ -6,11 +6,13 @@ import 'package:drift/native.dart';
 import 'package:drift/remote.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:vx/app/layout_provider.dart';
 import 'package:vx/app/server/add_ssh_key.dart';
 import 'package:vx/auth/auth_bloc.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/data/sync.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/data/database.dart';
@@ -41,6 +43,7 @@ class _SshKeysState extends State<SshKeys> {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     _subscription?.cancel();
+    final database = context.watch<DatabaseProvider>().database;
     _subscription =
         database.select(database.commonSshKeys).watch().listen((event) {
       setState(() {
@@ -65,6 +68,8 @@ class _SshKeysState extends State<SshKeys> {
           FilledButton.tonalIcon(
             onPressed: () async {
               final syncService = context.read<SyncService>();
+              final database = context.read<DatabaseProvider>().database;
+              final storage = context.read<FlutterSecureStorage>();
               final fullScreen =
                   Provider.of<MyLayout>(context, listen: false).isCompact;
               late final AddSshKeyForm? form;
@@ -133,8 +138,13 @@ class _SshKeysState extends State<SshKeys> {
                                     onPressed: () async {
                                       final syncService =
                                           context.read<SyncService>();
-                                      await storage.delete(
-                                          key: "common_ssh_key_${e.name}");
+                                      final database = context
+                                          .read<DatabaseProvider>()
+                                          .database;
+                                      await context
+                                          .read<FlutterSecureStorage>()
+                                          .delete(
+                                              key: "common_ssh_key_${e.name}");
                                       (database.delete(database.commonSshKeys)
                                             ..where((t) => t.id.equals(e.id)))
                                           .go();

@@ -4,11 +4,13 @@ import 'package:drift/drift.dart' hide Column;
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/app/api/api.pbgrpc.dart';
 import 'package:tm/protos/protos/outbound.pb.dart';
 import 'package:tm/tm.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/data/database.dart';
@@ -35,12 +37,14 @@ class MySubscription extends Subscription implements NodeGroup {
 /// Notify its liseners when subscriptions are updated
 class AutoSubscriptionUpdater with ChangeNotifier {
   AutoSubscriptionUpdater(
-      {required PrefHelper pref,
+      {required SharedPreferences pref,
       required XApiClient api,
-      required OutboundRepo outboundRepo})
+      required OutboundRepo outboundRepo,
+      required DatabaseProvider databaseProvider})
       : _pref = pref,
         _apiClient = api,
-        _outRepo = outboundRepo {
+        _outRepo = outboundRepo,
+        _databaseProvider = databaseProvider {
     if (_pref.autoUpdate && Tm.instance.state == TmStatus.disconnected) {
       startAutoUpdate();
     }
@@ -54,14 +58,16 @@ class AutoSubscriptionUpdater with ChangeNotifier {
     });
   }
 
-  final PrefHelper _pref;
+  final SharedPreferences _pref;
   final XApiClient _apiClient;
   final OutboundRepo _outRepo;
+  final DatabaseProvider _databaseProvider;
 
   Timer? timer;
 
   Future<DateTime> _getLastUpdate() async {
     // get the subscription with the smallest lastUpdate
+    final database = _databaseProvider.database;
     final sub = await ((database.select(database.subscriptions)
           ..orderBy([(t) => OrderingTerm(expression: t.lastUpdate)])
           ..limit(1))
@@ -183,6 +189,7 @@ class AutoSubscriptionUpdater with ChangeNotifier {
     notifyListeners();
     // since write to database happens on the golang side. Without this,
     // watch stream on the subscriptions table will not be updated.
+    final database = _databaseProvider.database;
     database.notifyUpdates(
         {TableUpdate.onTable(database.subscriptions, kind: UpdateKind.update)});
   }

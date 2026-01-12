@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/common/const.dart';
@@ -25,14 +26,14 @@ Future<void> writeStaticGeo() async {
 
 class GeoDataHelper {
   final Downloader downloader;
-  final PrefHelper psr;
+  final SharedPreferences pref;
   final XApiClient xApiClient;
   final DbHelper databaseHelper;
   final String resouceDirPath;
 
   GeoDataHelper(
       {required this.downloader,
-      required this.psr,
+      required this.pref,
       required this.xApiClient,
       required this.databaseHelper,
       required this.resouceDirPath});
@@ -57,7 +58,7 @@ class GeoDataHelper {
       ];
       await Future.wait(tasks);
       await xApiClient.processGeoFiles();
-      psr.setLastGeoUpdate(DateTime.now());
+      pref.setLastGeoUpdate(DateTime.now());
       _completer!.complete();
     } catch (e) {
       logger.e('downloadAndProcessGeo error', error: e);
@@ -148,7 +149,7 @@ class GeoDataHelper {
     final now = DateTime.now();
 
     // Check if we already updated today
-    final lastUpdate = psr.lastGeoUpdate;
+    final lastUpdate = pref.lastGeoUpdate;
     final hasUpdated = lastUpdate != null &&
         now.difference(lastUpdate) < const Duration(days: 1);
 

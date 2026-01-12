@@ -6,11 +6,14 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/protos/outbound.pb.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
+import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/auth/auth_provider.dart';
 import 'package:vx/data/database.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/data/ssh_server.dart';
 import 'package:vx/data/sync.pb.dart';
 import 'package:vx/main.dart' hide App;
@@ -35,12 +38,12 @@ class SyncService with ChangeNotifier {
   final Duration _uploadBatchDelay = const Duration(seconds: 1);
   bool _isUploading = false;
 
-  final PrefHelper prefHelper;
-  final OutboundRepo outboundRepo;
+  final SharedPreferences prefHelper;
   OutboundBloc? outboundBloc;
   FlutterSecureStorage storage;
+  final DatabaseProvider databaseProvider;
   bool enable = false;
-  final AuthProvider authProvider;
+  final AuthBloc authBloc;
   StreamSubscription? _userSubscription;
   String? password;
 
@@ -48,22 +51,23 @@ class SyncService with ChangeNotifier {
   Timer? _periodicSyncTimer;
   final Duration _periodicSyncInterval = const Duration(minutes: 5);
 
-  SyncService(
-      {required this.deviceId,
-      required this.prefHelper,
-      required this.storage,
-      required this.authProvider,
-      required this.outboundRepo}) {
+  SyncService({
+    required this.deviceId,
+    required this.prefHelper,
+    required this.storage,
+    required this.authBloc,
+    required this.databaseProvider,
+  }) {
     logger.i('SyncService initialized with deviceId: $deviceId');
 
-    _userSubscription = authProvider.user.listen((user) {
+    _userSubscription = authBloc.stream.listen((user) {
       reset();
     });
   }
 
   void reset() async {
     logger.d('reset');
-    enable = ((authProvider.currentUser?.pro ?? false) &&
+    enable = ((authBloc.state.user?.pro ?? false) &&
         (prefHelper.syncNodeSub ||
             prefHelper.syncRoute ||
             prefHelper.syncServer ||
@@ -210,7 +214,7 @@ class SyncService with ChangeNotifier {
         'deviceId': deviceId,
         'data': _getSyncData(SyncOperations(operations: operationsToUpload))
       };
-      print(body);
+      logger.d(body);
       if (fcmToken != null) {
         body['fcmToken'] = fcmToken!;
       }
@@ -228,19 +232,6 @@ class SyncService with ChangeNotifier {
       _isUploading = false;
     }
   }
-
-  Future<void> addHandler(List<HandlerConfig> handlers, {String? group}) async {
-    return _uploadSyncOperation(SyncOperation(
-        time: Int64(DateTime.now().millisecondsSinceEpoch),
-        addHandler: AddHandler(
-            handlers: handlers.map((e) => e.writeToBuffer()).toList(),
-            group: group)));
-  }
-
-  // Future<void> uploadSqlQuery(SqlQuery query) async {
-  //   return _uploadSyncOperation(SyncOperation(
-  //       time: Int64(DateTime.now().millisecondsSinceEpoch), sqlQuery: query));
-  // }
 
   Future<void> sqlOperation(SqlOperation operation) async {
     if (_shouldSync(operation.table)) {
@@ -385,7 +376,8 @@ class SyncService with ChangeNotifier {
   }
 
   Future<void> _applyOperation(SyncOperation operation) async {
-    if (operation.hasAddHandler()) {
+    final database = databaseProvider.database;
+    /* if (operation.hasAddHandler()) {
       final result = await outboundRepo.insertHandlersWithGroup(
           operation.addHandler.handlers
               .map((e) => HandlerConfig.fromBuffer(e))
@@ -393,13 +385,16 @@ class SyncService with ChangeNotifier {
           groupName: operation.addHandler.group.isEmpty
               ? defaultGroupName
               : operation.addHandler.group);
-      print(result);
-    } else if (operation.hasSqlQuery()) {
+      logger.d(result);
+    } else */
+    if (operation.hasSqlQuery()) {
       await _applySqlQuery(operation.sqlQuery);
     } else if (operation.hasSqlOperation()) {
       await _applySqlOperation(operation.sqlOperation);
       if (operation.sqlOperation.table == 'outbound_handlers') {
         outboundBloc?.add(SyncEvent());
+        database.markTablesUpdated(
+            {database.subscriptions, database.outboundHandlerGroups});
       } else if (operation.sqlOperation.table.contains('selector')) {
         database.notifyUpdates({
           TableUpdate.onTable(database.handlerSelectors,
@@ -414,6 +409,7 @@ class SyncService with ChangeNotifier {
   }
 
   Future<void> _applyServerOperation(ServerOperation operation) async {
+    final database = databaseProvider.database;
     if (_shouldSync('ssh_servers')) {
       if (operation.type == ServerOperation_Type.ADD) {
         await database
@@ -439,6 +435,7 @@ class SyncService with ChangeNotifier {
 
   Future<void> _applyCommonSshKeyOperation(
       CommonSshKeyOperation operation) async {
+    final database = databaseProvider.database;
     if (_shouldSync('common_ssh_keys')) {
       if (operation.type == CommonSshKeyOperation_Type.ADD) {
         await database
@@ -498,6 +495,7 @@ class SyncService with ChangeNotifier {
   }
 
   Future<void> _applySqlOperation(SqlOperation operation) async {
+    final database = databaseProvider.database;
     if (_shouldSync(operation.table)) {
       logger.d('Applying sql operation: ${operation.table}');
       final table = database.getTableByName(operation.table)!;
@@ -622,6 +620,7 @@ class SyncService with ChangeNotifier {
 
   // //TODO: use transaction?
   Future<void> _applySqlQuery(SqlQuery query) async {
+    final database = databaseProvider.database;
     if (enable) {
       // interceptor.pause = true;
       logger

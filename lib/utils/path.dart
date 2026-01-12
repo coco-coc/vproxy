@@ -5,8 +5,10 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/logger.dart';
 
 final macPkg = Platform.isMacOS && appFlavor == 'pkg';
@@ -29,16 +31,9 @@ Future<Directory> resourceDir() async {
   throw UnimplementedError("Unsupported platform");
 }
 
-Future<String> getDbPath() async {
-  final dbName = persistentStateRepo.dbName;
+Future<String> getDbPath(SharedPreferences pref) async {
+  final dbName = pref.dbName;
   return join(resourceDirectory.path, dbName);
-  // if (Platform.isMacOS || Platform.isIOS) {
-  //   return join(resourceDirectory.path, "x_database.sqlite");
-  // }
-  // if (Platform.isWindows || Platform.isAndroid) {
-  //   return join((await resourceDir()).path, "x_database.sqlite");
-  // }
-  // throw UnimplementedError("Unsupported platform");
 }
 
 Future<String> dbVacuumDest() async {
@@ -50,16 +45,16 @@ Future<String> tempFilePath() async {
       await getCacheDir(), DateTime.now().microsecondsSinceEpoch.toString());
 }
 
-Future<Directory> getFlutterLogDir() async {
-  final dir = Directory(join((await resourceDir()).path, "flutter_logs"));
+Directory getFlutterLogDir() {
+  final dir = Directory(join(resourceDirectory.path, "flutter_logs"));
   if (!dir.existsSync()) {
     dir.createSync(recursive: true);
   }
   return dir;
 }
 
-Future<Directory> getTunnelLogDir() async {
-  final dir = Directory(join((await resourceDir()).path, "tunnel_logs"));
+Directory getTunnelLogDir() {
+  final dir = Directory(join(resourceDirectory.path, "tunnel_logs"));
   if (!dir.existsSync()) {
     dir.createSync(recursive: true);
   }

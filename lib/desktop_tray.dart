@@ -42,7 +42,7 @@ class _DesktopTrayState extends State<DesktopTray>
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
     if (kDebugMode) {
-      print(menuItem.toJson());
+      logger.d(menuItem.toJson());
     }
   }
 
@@ -50,11 +50,11 @@ class _DesktopTrayState extends State<DesktopTray>
   // on windows this seems to be called when the app is exited
   @override
   void onWindowClose() async {
-    print('onWindowClose');
+    logger.d('onWindowClose');
     if (Platform.isWindows) {
-      await beforeExitCleanup();
+      await context.read<XController>().beforeExitCleanup();
     } else if (Platform.isLinux) {
-      await exitCurrentApp();
+      await exitCurrentApp(context.read<XController>());
       return;
     }
     await windowManager.hide();
@@ -67,16 +67,16 @@ class _DesktopTrayState extends State<DesktopTray>
   void onWindowMove() async {
     final position = await windowManager.getPosition();
     logger.d('window move x: ${position.dx}, y: ${position.dy}');
-    persistentStateRepo.setWindowX(position.dx);
-    persistentStateRepo.setWindowY(position.dy);
+    context.read<SharedPreferences>().setWindowX(position.dx);
+    context.read<SharedPreferences>().setWindowY(position.dy);
   }
 
   @override
   void onWindowResize() async {
     final size = await windowManager.getSize();
     // logger.d('window resize width: ${size.width}, height: ${size.height}');
-    persistentStateRepo.setWindowWidth(size.width);
-    persistentStateRepo.setWindowHeight(size.height);
+    context.read<SharedPreferences>().setWindowWidth(size.width);
+    context.read<SharedPreferences>().setWindowHeight(size.height);
   }
 
   Future<void> _setIcon(XStatus status) async {
@@ -107,7 +107,7 @@ class _DesktopTrayState extends State<DesktopTray>
 
   void _initTray() async {
     // await _setIcon();
-    xController.statusStream().listen((status) async {
+    context.read<XController>().statusStream().listen((status) async {
       await _setIcon(status);
       await _updateMenu(status);
     });
@@ -118,7 +118,7 @@ class _DesktopTrayState extends State<DesktopTray>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _updateMenu(xController.status);
+    _updateMenu(context.read<XController>().status);
   }
 
   Future<void> _updateMenu(XStatus status) async {
@@ -184,7 +184,7 @@ class _DesktopTrayState extends State<DesktopTray>
             key: 'quit',
             label: AppLocalizations.of(context)!.quit,
             onClick: (menuItem) async {
-              await exitCurrentApp();
+              await exitCurrentApp(context.read<XController>());
             },
           ),
         ],
@@ -198,9 +198,9 @@ class _DesktopTrayState extends State<DesktopTray>
   }
 }
 
-Future<void> exitCurrentApp() async {
+Future<void> exitCurrentApp(XController xController) async {
   if (desktopPlatforms) {
-    await beforeExitCleanup();
+    await xController.beforeExitCleanup();
     await trayManager.destroy();
     await windowManager.destroy();
   } else {

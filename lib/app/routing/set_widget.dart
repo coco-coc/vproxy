@@ -17,6 +17,7 @@ import 'package:vx/common/common.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
+import 'package:vx/utils/geodata.dart';
 import 'package:vx/widgets/form_dialog.dart';
 import 'package:vx/widgets/info_widget.dart';
 import 'package:vx/widgets/text_divider.dart';
@@ -112,7 +113,9 @@ class _SetWidgetState extends State<SetWidget>
                                 name: setName,
                                 inverse: false,
                                 clashRuleUrls: clashRuleUrls));
-                            geoDataHelper.makeGeoDataAvailable();
+                            context
+                                .read<GeoDataHelper>()
+                                .makeGeoDataAvailable();
                           } catch (e) {
                             snack(e.toString());
                           }
@@ -226,7 +229,7 @@ class _AppSetWidgetState extends State<AppSetWidget> {
         await repo.updateAppSet(appSet.name,
             clashRuleUrls: newAppSet.clashRuleUrls);
       }
-      geoDataHelper.makeGeoDataAvailable();
+      context.read<GeoDataHelper>().makeGeoDataAvailable();
     }
   }
 
@@ -652,7 +655,7 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
       //     }
       //   }
       // });
-      geoDataHelper.makeGeoDataAvailable();
+      context.read<GeoDataHelper>().makeGeoDataAvailable();
     }
   }
 }
@@ -967,7 +970,7 @@ class _IPSetWidgetState extends State<IPSetWidget> {
           geoUrl: config.geoUrl,
         );
       }
-      geoDataHelper.makeGeoDataAvailable();
+      context.read<GeoDataHelper>().makeGeoDataAvailable();
     }
   }
 }

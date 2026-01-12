@@ -11,6 +11,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/protos/outbound.pb.dart';
 import 'package:vx/app/outbound/add.dart';
 import 'package:vx/app/outbound/add_chain_handler.dart';
@@ -27,6 +28,7 @@ import 'package:vx/common/extension.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/app/layout_provider.dart';
 import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/theme.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/utils/logger.dart';
@@ -1072,8 +1074,8 @@ enum Col {
 
   Widget headerWidget(BuildContext context, {bool sorting = false}) {
     final compact = MediaQuery.sizeOf(context).width < 600;
-    final showIcon =
-        compact || (persistentStateRepo.language?.aiTranslated ?? false);
+    final showIcon = compact ||
+        (context.read<SharedPreferences>().language?.aiTranslated ?? false);
     switch (this) {
       case Col.select:
         return const SizedBox();

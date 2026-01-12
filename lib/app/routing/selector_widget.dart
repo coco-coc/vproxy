@@ -6,6 +6,7 @@ import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/routing/repo.dart';
+import 'package:vx/app/x_controller.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
@@ -88,7 +89,7 @@ class _SelectorWidgetState extends State<SelectorWidget> {
       //     .into(database.handlerSelectors)
       //     .insert(data, mode: InsertMode.insertOrIgnore);
       selectorRepo.addSelector(hs);
-      xController.selectorSelectStrategyOrLandhandlerChange(hs);
+      context.read<XController>().selectorSelectStrategyOrLandhandlerChange(hs);
     }
   }
 
@@ -154,16 +155,20 @@ class _SelectorWidgetState extends State<SelectorWidget> {
                             SelectorConfigWidget(
                               config: _configs[index],
                               onFilterChange: () {
-                                xController
+                                context
+                                    .read<XController>()
                                     .selectorFilterChange(_configs[index]);
                               },
                               onBalanceStrategyChange: () {
-                                xController.selectorBalancingStrategyChange(
-                                    _configs[index].tag,
-                                    _configs[index].balanceStrategy);
+                                context
+                                    .read<XController>()
+                                    .selectorBalancingStrategyChange(
+                                        _configs[index].tag,
+                                        _configs[index].balanceStrategy);
                               },
                               onStrategyOrLandHandlersChange: () {
-                                xController
+                                context
+                                    .read<XController>()
                                     .selectorSelectStrategyOrLandhandlerChange(
                                         _configs[index]);
                               },
@@ -179,7 +184,9 @@ class _SelectorWidgetState extends State<SelectorWidget> {
                               await context
                                   .read<SelectorRepo>()
                                   .removeSelector(_configs[index].tag);
-                              xController.selectorRemove(_configs[index].tag);
+                              context
+                                  .read<XController>()
+                                  .selectorRemove(_configs[index].tag);
                               _configs.removeAt(index);
                               setState(() {});
                             },

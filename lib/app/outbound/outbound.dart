@@ -3,10 +3,11 @@ import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
+import 'package:vx/utils/xapi_client.dart';
 
 /// Test usability of [handler], update it if the result conflicts with
 /// the current value, return the updated handler if successful
-Future<OutboundHandler?> testHandler(
+Future<OutboundHandler?> testHandler(XApiClient xApiClient,
     OutboundHandler handler, OutboundRepo outboundRepo) async {
   try {
     final res = await xApiClient

@@ -6,9 +6,11 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grpc/grpc.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/app/api/api.pbgrpc.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
 import 'package:tm/protos/common/log/log.pbenum.dart';
@@ -41,7 +43,11 @@ class XApiClient {
   late ApiClient _xApiClient;
   final Completer<void> _completer = Completer();
 
-  XApiClient();
+  XApiClient(SharedPreferences pref, FlutterSecureStorage storage)
+      : _pref = pref,
+        _storage = storage;
+  final SharedPreferences _pref;
+  final FlutterSecureStorage _storage;
 
   /// Must be called before using this client
   Future<void> init() async {
@@ -79,7 +85,7 @@ class XApiClient {
         }
         final config = ApiServerConfig(
             logLevel: logLevel.value,
-            dbPath: await getDbPath(),
+            dbPath: await getDbPath(_pref),
             listenAddr: listenAddress,
             bindToDefaultNic:
                 (Platform.isIOS || Platform.isMacOS || Platform.isLinux),
@@ -134,7 +140,7 @@ class XApiClient {
             final config = ApiServerConfig(
                 logLevel:
                     kDebugMode ? LogLevel.DEBUG.value : LogLevel.ERROR.value,
-                dbPath: await getDbPath(),
+                dbPath: await getDbPath(_pref),
                 // bindToDefaultNic: true,
                 listenAddr: listenAddress,
                 tunName: XConfigHelper.tunName,
@@ -310,7 +316,7 @@ class XApiClient {
   }
 
   Future<ServerSshConfig> _sshServerToServerSshConfig(SshServer server) async {
-    final serverSecureStorageJson = await storage.read(key: server.storageKey);
+    final serverSecureStorageJson = await _storage.read(key: server.storageKey);
     if (serverSecureStorageJson == null) {
       throw Exception('Auth secret not found');
     }
@@ -326,7 +332,7 @@ class XApiClient {
       } else {
         assert(serverSecureStorage.globalSshKeyName != null &&
             serverSecureStorage.globalSshKeyName!.isNotEmpty);
-        final commonSshKeySecureStorageJson = await storage.read(
+        final commonSshKeySecureStorageJson = await _storage.read(
             key: 'common_ssh_key_${serverSecureStorage.globalSshKeyName}');
         if (commonSshKeySecureStorageJson == null) {
           throw Exception('Common ssh key not found');
@@ -360,7 +366,7 @@ class XApiClient {
         sshKeyPassphrase: passphrase,
       )));
       serverSecureStorage.pubKey = base64Encode(response.publicKey);
-      storage.write(
+      _storage.write(
           key: server.storageKey,
           value: jsonEncode(serverSecureStorage.toJson()));
       serverPubKey = response.publicKey;
@@ -536,7 +542,7 @@ class XApiClient {
 
   Future<void> openDb() async {
     await _completer.future;
-    await _xApiClient.openDb(OpenDbRequest(path: await getDbPath()));
+    await _xApiClient.openDb(OpenDbRequest(path: await getDbPath(_pref)));
   }
 
   Future<ToUrlResponse> toUrl(List<OutboundHandlerConfig> configs) async {

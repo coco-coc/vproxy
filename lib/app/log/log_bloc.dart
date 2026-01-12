@@ -9,11 +9,13 @@ import 'package:installed_apps/index.dart';
 import 'package:lru_cache/lru_cache.dart';
 import 'package:path/path.dart' as path;
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/app/userlogger/config.pb.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/routing/mode_form.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
+import 'package:vx/app/x_controller.dart';
 import 'package:vx/common/circuler_buffer.dart';
 import 'package:tm/tm.dart';
 import 'package:vx/common/net.dart';
@@ -29,13 +31,17 @@ part 'log_state.dart';
 const int maxLogSize = 1000;
 
 class LogBloc extends Bloc<LogEvent, LogState> {
-  LogBloc({required PrefHelper sp, required OutboundRepo outboundRepo})
-      : _pref = sp,
+  LogBloc(
+      {required SharedPreferences pref,
+      required OutboundRepo outboundRepo,
+      required XController xController})
+      : _pref = pref,
         _outboundRepo = outboundRepo,
+        _xController = xController,
         super(LogState(
-            enableLog: sp.enableLog,
-            showApp: sp.showApp,
-            showHandler: sp.showHandler,
+            enableLog: pref.enableLog,
+            showApp: pref.showApp,
+            showHandler: pref.showHandler,
             logs: CircularBuffer<XLog>(maxSize: maxLogSize),
             filter: const LogFilter(
                 showDirect: true, showProxy: true, errorOnly: false))) {
@@ -81,13 +87,14 @@ class LogBloc extends Bloc<LogEvent, LogState> {
     add(const LogBlocInitialEvent());
   }
 
-  final PrefHelper _pref;
+  final SharedPreferences _pref;
   final Tm _tm = Tm.instance;
   ResponseStream<UserLogMessage>? _logStream;
   // all collected logs, not logs being shown. Logsbeing shown are subset of _logs.
   late final CircularBuffer<XLog> _logs;
   final LruCache<String, Uint8List> _appIconCache = LruCache(1000);
   late final OutboundRepo _outboundRepo;
+  final XController _xController;
 
   @override
   void onTransition(Transition<LogEvent, LogState> transition) {
@@ -130,9 +137,9 @@ class LogBloc extends Bloc<LogEvent, LogState> {
   }
 
   void _onAppPressedEvent(AppPressedEvent event, Emitter<LogState> emit) {
-    persistentStateRepo.setShowApp(event.showApp);
+    _pref.setShowApp(event.showApp);
     emit(state.copyWith(showApp: event.showApp));
-    xController.toggleAppIdLogging(event.showApp);
+    _xController.toggleAppIdLogging(event.showApp);
   }
 
   void _onHandlerPressedEvent(
@@ -160,7 +167,7 @@ class LogBloc extends Bloc<LogEvent, LogState> {
   Future<void> _subscribe() async {
     logger.d('subscribing to log stream');
     try {
-      _logStream ??= await xController.userLogStream();
+      _logStream ??= await _xController.userLogStream();
     } catch (e) {
       logger.e('subscribe error: $e');
       snack(e.toString());
@@ -362,7 +369,7 @@ class LogBloc extends Bloc<LogEvent, LogState> {
         _subscribe();
       } else {
         _disconnectLogStream();
-        await xController.stopUserLogging();
+        await _xController.stopUserLogging();
       }
     }
   }

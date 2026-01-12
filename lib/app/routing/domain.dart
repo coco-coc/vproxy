@@ -64,7 +64,7 @@ class _AtomicDomainSetWidgetState extends State<AtomicDomainSetWidget> {
         builder: (context) => const AddDialog(domain: true));
     if (result != null && result is Domain) {
       await domainRepo.addGeoDomain(widget.domainSetName, result);
-      xController.addGeoDomain(widget.domainSetName, result);
+      context.read<XController>().addGeoDomain(widget.domainSetName, result);
     } else if (result != null && result is PbList<Domain>) {
       await domainRepo.bulkAddGeoDomain(widget.domainSetName, result);
     }
@@ -77,7 +77,8 @@ class _AtomicDomainSetWidgetState extends State<AtomicDomainSetWidget> {
     );
     if (result != null) {
       try {
-        final response = await xApiClient
+        final response = await context
+            .read<XApiClient>()
             .parseClashRuleFile(result.files.first.bytes!.toList());
         await domainRepo.bulkAddGeoDomain(
             widget.domainSetName, response.domains);
@@ -89,7 +90,9 @@ class _AtomicDomainSetWidgetState extends State<AtomicDomainSetWidget> {
 
   void _onDeleteDomain(GeoDomain domain) {
     domainRepo.removeGeoDomain(domain);
-    xController.removeGeoDomain(widget.domainSetName, domain.geoDomain);
+    context
+        .read<XController>()
+        .removeGeoDomain(widget.domainSetName, domain.geoDomain);
   }
 
   List<Widget> _buildWrapChildrenForDomains(BuildContext context) {

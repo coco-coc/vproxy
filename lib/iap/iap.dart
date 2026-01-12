@@ -13,25 +13,3 @@ class IAPConnection {
   }
 }
 
-class ProductData {
-  final String productId;
-  final ProductType type;
-
-  const ProductData(this.productId, this.type);
-}
-
-enum ProductType {
-  subscription,
-  nonSubscription,
-}
-
-const productDataMap = {
-  'vproxy_pro_lifetime': ProductData(
-    'vproxy_pro_lifetime',
-    ProductType.nonSubscription,
-  ),
-  'vproxy_pro_android': ProductData(
-    'vproxy_pro_android',
-    ProductType.nonSubscription,
-  ),
-};

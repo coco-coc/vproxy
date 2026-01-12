@@ -5,10 +5,14 @@ import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/tm.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vx/app/outbound/outbound_page.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
+import 'package:vx/app/outbound/subscription.dart';
+import 'package:vx/app/x_controller.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/qr.dart';
 import 'package:vx/widgets/ad.dart';
 import 'package:vx/app/outbound/add.dart';
@@ -85,8 +89,9 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
   @override
   void initState() {
-    _autoUpdate = persistentStateRepo.autoUpdate;
-    _selectedIndex = _intervals.indexOf(persistentStateRepo.updateInterval);
+    _autoUpdate = context.read<SharedPreferences>().autoUpdate;
+    _selectedIndex =
+        _intervals.indexOf(context.read<SharedPreferences>().updateInterval);
     _updateAllButton = BlocSelector<SubscriptionBloc, SubscriptionState, bool>(
         selector: (state) => state.updatingAll,
         builder: (ctx, updating) {
@@ -210,13 +215,13 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         setState(() {
           _autoUpdate = value;
         });
-        persistentStateRepo.setAutoUpdate(value);
-        xController.setSubscriptionAutoUpdate(value);
+        context.read<SharedPreferences>().setAutoUpdate(value);
+        context.read<XController>().setSubscriptionAutoUpdate(value);
         if (Tm.instance.state == TmStatus.disconnected) {
           if (value) {
-            subUpdater.startAutoUpdate();
+            context.read<AutoSubscriptionUpdater>().startAutoUpdate();
           } else {
-            subUpdater.stopAutoUpdate();
+            context.read<AutoSubscriptionUpdater>().stopAutoUpdate();
           }
         }
       },
@@ -236,9 +241,15 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         });
       },
       onChangeEnd: (value) async {
-        persistentStateRepo.setUpdateInterval(_intervals[_selectedIndex]);
-        xController.setSubscriptionInterval(_intervals[_selectedIndex]);
-        subUpdater.onIntervalChange(_intervals[_selectedIndex]);
+        context
+            .read<SharedPreferences>()
+            .setUpdateInterval(_intervals[_selectedIndex]);
+        context
+            .read<XController>()
+            .setSubscriptionInterval(_intervals[_selectedIndex]);
+        context
+            .read<AutoSubscriptionUpdater>()
+            .onIntervalChange(_intervals[_selectedIndex]);
       },
     );
     final sliderValue = SizedBox(
@@ -385,7 +396,6 @@ class SubscriptionData {
             RegExp(r'到期[：:]\s*(?:不过期|(\d{4})年(\d{1,2})月(\d{1,2})日)')
                 .firstMatch(description);
         if (chineseExpirationMatch != null) {
-
           // Check if it's "不过期" (no expiration) - group 1 will be null
           if (chineseExpirationMatch.group(1) != null) {
             final year = chineseExpirationMatch.group(1);

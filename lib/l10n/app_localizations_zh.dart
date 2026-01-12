@@ -1362,7 +1362,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get routerRules => '路由规则';
 
   @override
-  String get dnsRuleDesc => '对于每一个DNS请求，DNS规则从上到下依次进行匹配，一旦匹配成功，该规则所指定的DNS服务器将被用来处理该DNS请求。如果没有规则匹配，该DNS请求将被忽略。';
+  String get dnsRuleDesc => '对于每一个DNS请求，DNS规则从上到下依次进行匹配，一旦匹配成功，该规则所指定的DNS服务器将被用来处理该DNS请求。如果没有规则匹配，返回空的DNS结果。';
 
   @override
   String get dnsServer => 'DNS服务器';
@@ -1458,6 +1458,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get fallbackToProxySetting => '如果直连失败，使用节点重试。如果“代理选择器”存在，它选择的节点将被使用。如果它不存在，将随机选取一个正在使用的节点。';
+
+  @override
+  String get changeIpv6ToDomain => '将IPv6改为域名';
+
+  @override
+  String get changeIpv6ToDomainDesc => '如果匹配到的节点不支持IPv6，而目标地址是IPv6并且嗅探到了域名，则将目标地址改为域名。';
 
   @override
   String get installAsWinService => '添加VX进Windows Service';
@@ -2051,7 +2057,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get welcome => '欢迎使用VX';
 
   @override
-  String get sourceCodeAvailable => 'VX客户端的源代码已公开于Github，并且它由Github Actions自动构建与发布';
+  String get sourceCodeAvailable => 'VX客户端已开源，并且它由Github Actions自动构建与发布';
 
   @override
   String get vxSourceCode => 'VX客户端源代码';

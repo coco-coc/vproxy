@@ -7,7 +7,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/layout_provider.dart';
+import 'package:vx/app/x_controller.dart';
 import 'package:vx/theme.dart';
 import 'package:vx/widgets/ad.dart';
 import 'package:vx/auth/auth_bloc.dart';
@@ -78,14 +80,9 @@ class TopBar extends StatelessWidget {
             if (!isProduction())
               IconButton(
                   onPressed: () async {
-                    logUploadService ??= LogUploadService(
-                      flutterLogDir: await getFlutterLogDir(),
-                      tunnelLogDir: await getTunnelLogDir(),
-                      secret: '1234567890',
-                      uploadUrl: 'https://127.0.0.1:11111/api/upload-logs',
-                    );
-                    await logUploadService!.performUpload();
-                    logUploadService!.stopPeriodicUpload();
+                    final logUploadService = context.read<LogUploadService>();
+                    await logUploadService.performUpload();
+                    logUploadService.stopPeriodicUpload();
                   },
                   icon: const Icon(Icons.upload)),
             IconButton(
@@ -118,13 +115,8 @@ class TopBar extends StatelessWidget {
           if (!isProduction())
             TextButton(
               onPressed: () async {
-                logUploadService ??= LogUploadService(
-                  flutterLogDir: await getFlutterLogDir(),
-                  tunnelLogDir: await getTunnelLogDir(),
-                  uploadUrl: 'http://127.0.0.1:11111/api/upload-logs',
-                  secret: logKey,
-                );
-                logUploadService?.performUpload();
+                final logUploadService = context.read<LogUploadService>();
+                await logUploadService.performUpload();
               },
               child: const Text("Upload"),
             ),
@@ -229,7 +221,7 @@ class WindowButtons extends StatelessWidget {
         IconButton(
             onPressed: () async {
               if (Platform.isLinux) {
-                await exitCurrentApp();
+                await exitCurrentApp(context.read<XController>());
               } else {
                 await windowManager.hide();
               }

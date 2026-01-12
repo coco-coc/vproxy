@@ -7,15 +7,16 @@ import 'package:gap/gap.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/settings/general/language.dart';
 import 'package:vx/app/settings/general/sync.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/main.dart';
-import 'package:vx/utils/auto_update_service.dart';
-import 'package:vx/utils/github_release.dart';
+import 'package:vx/utils/node_test_service.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
+import 'package:flutter_common/services/auto_update.dart';
 // import 'package:flutter_sparkle/flutter_sparkle.dart';
 
 class GeneralSettingPage extends StatelessWidget {
@@ -150,7 +151,7 @@ class _PingModeSettingState extends State<PingModeSetting> {
   @override
   void initState() {
     super.initState();
-    _pingMode = persistentStateRepo.pingMode;
+    _pingMode = context.read<SharedPreferences>().pingMode;
   }
 
   @override
@@ -171,7 +172,9 @@ class _PingModeSettingState extends State<PingModeSetting> {
               DropdownMenuEntry(value: PingMode.Rtt, label: 'RTT'),
             ],
             onSelected: (value) {
-              persistentStateRepo.setPingMode(value ?? PingMode.Real);
+              context
+                  .read<SharedPreferences>()
+                  .setPingMode(value ?? PingMode.Real);
               setState(() {
                 _pingMode = value ?? PingMode.Real;
               });
@@ -200,7 +203,7 @@ class _ThemeModeSettingState extends State<ThemeModeSetting> {
   @override
   void initState() {
     super.initState();
-    _themeMode = persistentStateRepo.themeMode;
+    _themeMode = context.read<SharedPreferences>().themeMode;
   }
 
   @override
@@ -226,7 +229,9 @@ class _ThemeModeSettingState extends State<ThemeModeSetting> {
                   label: AppLocalizations.of(context)!.system),
             ],
             onSelected: (value) {
-              persistentStateRepo.setThemeMode(value ?? ThemeMode.system);
+              context
+                  .read<SharedPreferences>()
+                  .setThemeMode(value ?? ThemeMode.system);
               App.of(context)?.setThemeMode(value);
               setState(() {
                 _themeMode = value ?? ThemeMode.system;
@@ -291,9 +296,8 @@ class AutoUpdateSettings extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 10),
                 child: TextButton(
                   onPressed: () async {
-                    final result = await GitHubReleaseService.checkForUpdates(
+                    final result = await autoUpdateService.checkForUpdates(
                       (await PackageInfo.fromPlatform()).version,
-                      await AutoUpdateService.assetName(),
                     );
                     if (result == null) {
                       snack(AppLocalizations.of(context)!.noNewVersion);
@@ -325,7 +329,7 @@ class _StartOnBootSettingState extends State<StartOnBootSetting> {
   @override
   void initState() {
     super.initState();
-    _startOnBoot = persistentStateRepo.startOnBoot;
+    _startOnBoot = context.read<SharedPreferences>().startOnBoot;
   }
 
   @override
@@ -341,7 +345,7 @@ class _StartOnBootSettingState extends State<StartOnBootSetting> {
             Switch(
               value: _startOnBoot,
               onChanged: (value) async {
-                persistentStateRepo.setStartOnBoot(value);
+                context.read<SharedPreferences>().setStartOnBoot(value);
                 setState(() {
                   _startOnBoot = value;
                 });
@@ -377,7 +381,7 @@ class _AlwaysOnSettingState extends State<AlwaysOnSetting> {
   @override
   void initState() {
     super.initState();
-    _alwaysOn = persistentStateRepo.alwaysOn;
+    _alwaysOn = context.read<SharedPreferences>().alwaysOn;
   }
 
   @override
@@ -393,7 +397,7 @@ class _AlwaysOnSettingState extends State<AlwaysOnSetting> {
             Switch(
               value: _alwaysOn,
               onChanged: (value) {
-                persistentStateRepo.setAlwaysOn(value);
+                context.read<SharedPreferences>().setAlwaysOn(value);
                 setState(() {
                   _alwaysOn = !_alwaysOn;
                 });
@@ -425,9 +429,9 @@ class _NodeTestSettingsState extends State<NodeTestSettings> {
   @override
   void initState() {
     super.initState();
-    _autoTestNodes = persistentStateRepo.autoTestNodes;
-    _intervalController =
-        TextEditingController(text: '${persistentStateRepo.nodeTestInterval}');
+    _autoTestNodes = context.read<SharedPreferences>().autoTestNodes;
+    _intervalController = TextEditingController(
+        text: '${context.read<SharedPreferences>().nodeTestInterval}');
   }
 
   @override
@@ -452,14 +456,12 @@ class _NodeTestSettingsState extends State<NodeTestSettings> {
             Switch(
               value: _autoTestNodes,
               onChanged: (value) {
-                persistentStateRepo.setAutoTestNodes(value);
+                context.read<SharedPreferences>().setAutoTestNodes(value);
                 setState(() {
                   _autoTestNodes = value;
                 });
                 // Restart the service if it exists
-                if (nodeTestService != null) {
-                  nodeTestService!.restart();
-                }
+                context.read<NodeTestService>().restart();
               },
             ),
           ],
@@ -484,10 +486,10 @@ class _NodeTestSettingsState extends State<NodeTestSettings> {
             onChanged: (event) {
               final parsedValue = int.tryParse(_intervalController.text);
               if (parsedValue != null && parsedValue >= 0) {
-                persistentStateRepo.setNodeTestInterval(parsedValue);
-                if (nodeTestService != null) {
-                  nodeTestService!.restart();
-                }
+                context
+                    .read<SharedPreferences>()
+                    .setNodeTestInterval(parsedValue);
+                context.read<NodeTestService>().restart();
               }
             },
           ),

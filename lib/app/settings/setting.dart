@@ -7,6 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/home/home.dart';
 import 'package:vx/app/settings/ads.dart';
 import 'package:vx/app/settings/debug.dart';
@@ -378,7 +379,10 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
             icon: Icon(Icons.file_copy),
           ),
           IconButton(
-            onPressed: clearDatabase,
+            onPressed: () async {
+              final dbPath = await getDbPath(context.read<SharedPreferences>());
+              clearDatabase(dbPath);
+            },
             icon: Icon(Icons.delete),
           ),
           TextButton(
@@ -390,7 +394,8 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
                 Directory(dstDir).createSync(recursive: true);
               }
               final newFile =
-                  await File(await getDbPath()).copy(join(dstDir, "db.sqlite"));
+                  await File(await getDbPath(context.read<SharedPreferences>()))
+                      .copy(join(dstDir, "db.sqlite"));
               print('copied, ${newFile.path}');
             },
             child: Text('Copy Database'),
