@@ -111,11 +111,12 @@ class _ModeWidgetState extends State<ModeWidget>
 
   Future<void> _onDefaultRouteModeTap() async {
     final al = AppLocalizations.of(context)!;
+    final dp = context.read<DatabaseProvider>();
     final selectedMode = await showDefaultRouteModeDialog(context);
     if (selectedMode != null) {
       // Insert the selected default route mode
       await insertDefaultRouteMode(
-          al, selectedMode, context.read<DatabaseProvider>().database);
+          al, selectedMode, dp.database);
     }
   }
 
@@ -124,7 +125,7 @@ class _ModeWidgetState extends State<ModeWidget>
       showProPromotionDialog(context);
       return;
     }
-
+    final dp = context.read<DatabaseProvider>();
     final al = AppLocalizations.of(context)!;
     final name = await showDialog<(String, DefaultRouteMode?)?>(
         context: context, builder: (context) => const RouteConfigForm());
@@ -138,7 +139,7 @@ class _ModeWidgetState extends State<ModeWidget>
         config.routerConfig.rules.addAll(name.$2!.displayRouterRules(al: al));
         config.dnsRules.rules.addAll(name.$2!.dnsRules(al: al));
         insertDefaultRouteMode(
-            al, name.$2!, context.read<DatabaseProvider>().database,
+            al, name.$2!, dp.database,
             setsOnly: true);
       }
       try {
@@ -150,6 +151,7 @@ class _ModeWidgetState extends State<ModeWidget>
   }
 
   Future<void> _onDelete(CustomRouteMode e) async {
+    final bloc = context.read<ProxySelectorBloc>();
     await context.read<RouteRepo>().removeCustomRouteMode(e.id);
     setState(() {
       _customRouteModes.remove(e);
@@ -157,7 +159,7 @@ class _ModeWidgetState extends State<ModeWidget>
         _selected = _customRouteModes.firstOrNull;
       }
     });
-    context.read<ProxySelectorBloc>().add(CustomRouteModeDeleteEvent(e));
+    bloc.add(CustomRouteModeDeleteEvent(e));
   }
 
   @override
@@ -572,7 +574,6 @@ class _StandardModeDnsRulesState extends State<_StandardModeDnsRules> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 
@@ -1216,8 +1217,7 @@ class _RouterConfigWidgetState extends State<RouterConfigWidget> {
 }
 
 class _CustomModeDnsRules extends StatefulWidget {
-  const _CustomModeDnsRules(
-      {required this.routeMode, required this.onUpdate});
+  const _CustomModeDnsRules({required this.routeMode, required this.onUpdate});
   final CustomRouteMode routeMode;
   final Function(CustomRouteMode) onUpdate;
   @override

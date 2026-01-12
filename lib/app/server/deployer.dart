@@ -60,8 +60,8 @@ part 'deploy.dart';
 class Deployer with ChangeNotifier {
   late XApiClient xApiClient;
   Deployer({
-    required XApiClient xApiClient,
-  }) : xApiClient = xApiClient;
+    required this.xApiClient,
+  });
 
   /// Set of servers that are under deployment
   final deploying = <int>{};

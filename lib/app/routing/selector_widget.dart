@@ -75,6 +75,7 @@ class _SelectorWidgetState extends State<SelectorWidget> {
 
   void _onAdd() async {
     final selectorRepo = Provider.of<SelectorRepo>(context, listen: false);
+    final controller = context.read<XController>();
     final name = await showStringForm(context,
         title: AppLocalizations.of(context)!.addSelector,
         helperText: AppLocalizations.of(context)!.selectorNameDuplicate);
@@ -100,7 +101,7 @@ class _SelectorWidgetState extends State<SelectorWidget> {
       //     .into(database.handlerSelectors)
       //     .insert(data, mode: InsertMode.insertOrIgnore);
       selectorRepo.addSelector(hs);
-      context.read<XController>().selectorSelectStrategyOrLandhandlerChange(hs);
+      controller.selectorSelectStrategyOrLandhandlerChange(hs);
     }
   }
 
@@ -192,12 +193,11 @@ class _SelectorWidgetState extends State<SelectorWidget> {
                         top: 5,
                         child: IconButton(
                             onPressed: () async {
+                              final controller = context.read<XController>();
                               await context
                                   .read<SelectorRepo>()
                                   .removeSelector(_configs[index].tag);
-                              context
-                                  .read<XController>()
-                                  .selectorRemove(_configs[index].tag);
+                              controller.selectorRemove(_configs[index].tag);
                               _configs.removeAt(index);
                               setState(() {});
                             },
@@ -573,7 +573,6 @@ class _SelectorFilterState extends State<_SelectorFilter> {
 
   @override
   Widget build(BuildContext context) {
-    print('build ${widget.config.filter.writeToJson()}');
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(
@@ -982,7 +981,8 @@ class _LandHandlerSelectState extends State<LandHandlerSelect> {
                           onTap: () {
                             controller.isOpen
                                 ? controller.close()
-                                : controller.open(position: const Offset(0, 26));
+                                : controller.open(
+                                    position: const Offset(0, 26));
                           },
                           child: snapshot.data == null
                               ? Chip(

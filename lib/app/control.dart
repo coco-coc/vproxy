@@ -164,7 +164,6 @@ class _RouteState extends State<Route> {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<ProxySelectorBloc>();
     return Card(
       elevation: 0,
       color: Theme.of(context).colorScheme.surfaceContainer,
