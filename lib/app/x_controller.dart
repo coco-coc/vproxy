@@ -1,18 +1,32 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
 import 'dart:io';
-import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vx/app/routing/default.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/utils/os.dart';
 import 'package:vx/utils/process.dart';
 import 'package:vx/utils/system_proxy.dart';
-import 'package:vx/utils/system_shutdown_notifier.dart';
 import 'package:grpc/grpc.dart';
 import 'package:flutter/foundation.dart';
-import 'package:installed_apps/index.dart';
-import 'package:path/path.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:system_proxy/messages.g.dart';
@@ -21,16 +35,13 @@ import 'package:tm/protos/app/clientgrpc/grpc.pbgrpc.dart';
 import 'package:tm/protos/app/userlogger/config.pb.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
 import 'package:tm/protos/protos/client.pb.dart';
-import 'package:tm/protos/protos/dns.pb.dart';
 import 'package:tm/protos/protos/router.pb.dart';
 import 'package:tm/protos/protos/sysproxy.pb.dart';
 import 'package:tm/protos/protos/tls/certificate.pb.dart';
 import 'package:tm/tm.dart';
 import 'package:uuid/uuid.dart';
-import 'package:vx/app/outbound/outbound.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/app/outbound/subscription.dart';
-import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/common/common.dart';
@@ -42,8 +53,9 @@ import 'package:vx/data/database.dart';
 import 'package:vx/main.dart' hide App;
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/path.dart';
+import 'package:vx/utils/upload_log.dart';
 import 'package:vx/utils/wintun.dart';
-import 'package:vx/widgets/form_dialog.dart';
+import 'package:vx/utils/xapi_client.dart';
 import 'package:vx/xconfig_helper.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/app/windows_host_api.g.dart';
@@ -53,7 +65,11 @@ import 'package:vx/app/windows_host_api.g.dart';
 class XController implements MessageFlutterApi {
   final XConfigHelper _xConfigHelper;
   final _tm = Tm.instance;
-  final PrefHelper _pref;
+  final SharedPreferences _pref;
+  final LogUploadService? _logUploadService;
+  final XApiClient _xApiClient;
+  final AutoSubscriptionUpdater _autoSubscriptionUpdater;
+  final DatabaseProvider _databaseProvider;
 
   OutboundBloc? outboundBloc;
   // windows only
@@ -62,12 +78,19 @@ class XController implements MessageFlutterApi {
   bool systemProxySet = false;
   bool dnsBlocked = false;
 
-  XController(
-      {required XConfigHelper xConfigHelper,
-      required PrefHelper pref,
-      required AutoSubscriptionUpdater autoSubscriptionUpdater})
-      : _xConfigHelper = xConfigHelper,
-        _pref = pref {
+  XController({
+    required XConfigHelper xConfigHelper,
+    required SharedPreferences pref,
+    required AutoSubscriptionUpdater autoSubscriptionUpdater,
+    required XApiClient xApiClient,
+    required LogUploadService logUploadService,
+    required DatabaseProvider databaseProvider,
+  })  : _xConfigHelper = xConfigHelper,
+        _pref = pref,
+        _xApiClient = xApiClient,
+        _autoSubscriptionUpdater = autoSubscriptionUpdater,
+        _logUploadService = logUploadService,
+        _databaseProvider = databaseProvider {
     Tm.instance.stateStream.listen(_onTmStatusChange);
 
     // Set up shutdown notification handling on macOS
@@ -103,7 +126,7 @@ class XController implements MessageFlutterApi {
             rootLocalizations()?.disconnectedUnexpectedly(statusChange.error!));
         logger.e("disconnected!", error: statusChange.error);
         reportError("disconnected due to", statusChange.error!);
-        logUploadService?.performUpload();
+        _logUploadService?.performUpload();
       }
       if (_pref.connect && _pref.alwaysOn && !restarting) {
         start();
@@ -219,7 +242,7 @@ class XController implements MessageFlutterApi {
     String? sudoPassword;
 
     try {
-      _dbSecret = Uuid().v4();
+      _dbSecret = const Uuid().v4();
       logger.d("start");
       if (useTcpForGrpc) {
         _certificate = await getCertificate();
@@ -265,7 +288,7 @@ class XController implements MessageFlutterApi {
 
       if (Platform.isLinux &&
           _pref.inboundMode == InboundMode.tun &&
-          persistentStateRepo.showRpmNotice &&
+          _pref.showRpmNotice &&
           isRpm()) {
         final value = await showDialog(
             context: rootNavigationKey.currentContext!,
@@ -273,20 +296,20 @@ class XController implements MessageFlutterApi {
             builder: (ctx) {
               return AlertDialog(
                 content: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 400),
+                  constraints: const BoxConstraints(maxWidth: 400),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(rootLocalizations()!.rpmTunNotice),
-                      Gap(10),
+                      const Gap(10),
                       TextButton.icon(
                           onPressed: () {
                             launchUrl(Uri.parse(
                                 'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/6/html/security_guide/sect-security_guide-server_security-reverse_path_forwarding'));
                           },
                           label: Text(rootLocalizations()!.website),
-                          icon: Icon(Icons.link)),
-                      Gap(10),
+                          icon: const Icon(Icons.link)),
+                      const Gap(10),
                       StatefulBuilder(
                         builder: (context, setState) {
                           return Row(
@@ -325,7 +348,7 @@ class XController implements MessageFlutterApi {
                 ],
               );
             });
-        persistentStateRepo.setShowRpmNotice(false);
+        _pref.setShowRpmNotice(false);
         if (value == false) {
           _statusStreamCtrl.add(XStatus.disconnected);
           return;
@@ -341,7 +364,7 @@ class XController implements MessageFlutterApi {
             context: rootNavigationKey.currentContext!,
             barrierDismissible: false,
             builder: (ctx) {
-              return _SudoPasswordDialog();
+              return const _SudoPasswordDialog();
             });
         if (result != null) {
           sudoPassword = result.$1;
@@ -459,7 +482,7 @@ class XController implements MessageFlutterApi {
     } else if (Platform.isLinux) {
       await LinuxSystemProxy.setSystemProxy(sysConfig);
     } else if (isPkg) {
-      await xApiClient.setSystemProxy(sysConfig);
+      await _xApiClient.setSystemProxy(sysConfig);
     }
   }
 
@@ -506,6 +529,31 @@ class XController implements MessageFlutterApi {
     }
   }
 
+  Future<void> beforeExitCleanup() async {
+    logger.d('beforeExitCleanup');
+    try {
+      if (Platform.isWindows &&
+          Tm.instance.state == TmStatus.connected &&
+          ((!isRunningAsAdmin && _pref.inboundMode == InboundMode.tun))) {
+        // close the service
+        await stop();
+      } else if (Tm.instance.state == TmStatus.connected && isPkg) {
+        await stop();
+      } else if (Platform.isLinux &&
+          Tm.instance.state == TmStatus.connected &&
+          _pref.inboundMode == InboundMode.tun) {
+        await stop();
+      }
+      if (systemProxySet) {
+        await unsetSystemProxy();
+        systemProxySet = false;
+      }
+    } catch (e) {
+      reportError("_beforeExitCleanup", e);
+      logger.e('_beforeExitCleanup', error: e);
+    }
+  }
+
   Future<void> unsetSystemProxy() async {
     if (Platform.isWindows) {
       await SystemProxy.removeSystemProxy();
@@ -513,7 +561,7 @@ class XController implements MessageFlutterApi {
       await LinuxSystemProxy.unsetSystemProxy();
     } else {
       assert(isPkg);
-      await xApiClient.stopSystemProxy();
+      await _xApiClient.stopSystemProxy();
     }
   }
 
@@ -525,10 +573,10 @@ class XController implements MessageFlutterApi {
       ServiceCall call, ServiceMethod<dynamic, dynamic> method) {
     final metadata = call.clientMetadata;
     if (metadata == null) {
-      return GrpcError.unauthenticated('Missing metadata');
+      return const GrpcError.unauthenticated('Missing metadata');
     }
     if (metadata['secret'] != _dbSecret) {
-      return GrpcError.unauthenticated('Invalid credentials');
+      return const GrpcError.unauthenticated('Invalid credentials');
     }
     return null;
   }
@@ -538,7 +586,7 @@ class XController implements MessageFlutterApi {
       _dbServer!.shutdown();
     }
     _dbServer = Server.create(
-      services: [DatabaseServer()],
+      services: [DatabaseServer(database: _databaseProvider.database)],
       interceptors: [
         _grpcAuthInterceptor,
       ],
@@ -669,8 +717,9 @@ class XController implements MessageFlutterApi {
             if (m.hasHandlerError()) _onHandlerError(m.handlerError);
             if (m.hasHandlerBeingUsed()) _onHandlerUsing(m.handlerBeingUsed);
             if (m.hasHandlerUpdated()) _onHandlerUpdated(m.handlerUpdated);
-            if (m.hasSubscriptionUpdate())
+            if (m.hasSubscriptionUpdate()) {
               _onSubscriptionUpdate(m.subscriptionUpdate);
+            }
           },
           onDone: cancelCommuStream,
           onError: (e) async {
@@ -694,7 +743,7 @@ class XController implements MessageFlutterApi {
 
   void _onSubscriptionUpdate(SubscriptionUpdated subscriptionUpdate) {
     logger.d("subscription update");
-    subUpdater.onSubscriptionUpdated();
+    _autoSubscriptionUpdater.onSubscriptionUpdated();
   }
 
   void _onHandlerError(HandlerError handlerError) async {
@@ -757,6 +806,7 @@ class XController implements MessageFlutterApi {
       }
     }
 
+    final database = _databaseProvider.database;
     _atomicDomainSetsSub = database
         .select(database.atomicDomainSets)
         .watch()
@@ -874,7 +924,8 @@ class XController implements MessageFlutterApi {
     if (_pref.routingMode is DefaultRouteMode) {
       return [defaultProxySelectorTag];
     } else {
-      final customRouteMode = await database.managers.customRouteModes
+      final customRouteMode = await _databaseProvider
+          .database.managers.customRouteModes
           .filter((e) => e.name.equals(_pref.routingMode as String))
           .getSingleOrNull();
       if (customRouteMode != null) {
@@ -1128,7 +1179,7 @@ class XController implements MessageFlutterApi {
 }
 
 class _SudoPasswordDialog extends StatefulWidget {
-  const _SudoPasswordDialog({super.key});
+  const _SudoPasswordDialog();
 
   @override
   State<_SudoPasswordDialog> createState() => __SudoPasswordDialogState();
@@ -1141,7 +1192,8 @@ class __SudoPasswordDialogState extends State<_SudoPasswordDialog> {
   @override
   void initState() {
     super.initState();
-    _rememberPassword = persistentStateRepo.storeSudoPasswordInMemory;
+    _rememberPassword =
+        context.read<SharedPreferences>().storeSudoPasswordInMemory;
   }
 
   @override
@@ -1167,21 +1219,23 @@ class __SudoPasswordDialogState extends State<_SudoPasswordDialog> {
             },
             decoration: InputDecoration(
               labelText: AppLocalizations.of(context)!.sudoPassword,
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
             ),
           ),
-          Gap(10),
+          const Gap(10),
           Row(
             children: [
               Text(AppLocalizations.of(context)!.rememberPasswordInMemory),
-              Gap(10),
-              Spacer(),
+              const Gap(10),
+              const Spacer(),
               Switch(
                   value: _rememberPassword,
                   onChanged: (value) {
                     setState(() {
                       _rememberPassword = value;
-                      persistentStateRepo.setStoreSudoPasswordInMemory(value);
+                      context
+                          .read<SharedPreferences>()
+                          .setStoreSudoPasswordInMemory(value);
                     });
                   }),
             ],

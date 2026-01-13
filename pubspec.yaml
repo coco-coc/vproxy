@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archßive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 3.3.8+2030
+version: 3.3.8+2031
 
 environment:
   sdk: ">=3.3.4 <4.0.0"
@@ -112,6 +112,9 @@ dependencies:
   # liquid_glass_renderer: ^0.1.1-dev.10
   # flutter_sparkle:
   #   path: ../flutter_sparkle
+  flutter_common:
+    git:
+      url: https://github.com/5vnetwork/flutter_common.git
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.3

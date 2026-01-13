@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 part of 'deployer.dart';
 
 class DeployResult {
@@ -14,6 +29,11 @@ class DeployResult {
 
 abstract class QuickDeployOption {
   abstract final int id;
+  final XApiClient xApiClient;
+  QuickDeployOption({
+    required this.xApiClient,
+  });
+
   String getTitle(BuildContext context);
   String getSummary(BuildContext context);
   String getDetails(BuildContext context);
@@ -27,6 +47,12 @@ abstract class QuickDeployOption {
 }
 
 class BasicQuickDeploy extends QuickDeployOption {
+  final FlutterSecureStorage storage;
+  BasicQuickDeploy({
+    required this.storage,
+    required super.xApiClient,
+  });
+
   @override
   final int id = 1;
   @override
@@ -92,7 +118,7 @@ class BasicQuickDeploy extends QuickDeployOption {
         await rootBundle.loadString('assets/configs/1_hysteria.yaml');
     final uuid = const Uuid().v4();
 
-    final secureStorage = await server.secureStorage();
+    final secureStorage = await server.secureStorage(storage);
 
     xrayConfig = xrayConfig.replaceAll('__VMESS_PORT__', vmessPorts);
     xrayConfig = xrayConfig.replaceAll('__SS_PORT__', ssPorts);
@@ -179,6 +205,9 @@ enum Option2TransportProtocol {
 }
 
 class MasqueradeQuickDeploy extends QuickDeployOption {
+  MasqueradeQuickDeploy({
+    required super.xApiClient,
+  });
   @override
   final int id = 2;
   @override
@@ -208,6 +237,7 @@ class MasqueradeQuickDeploy extends QuickDeployOption {
   }
 
   // TODO: use ss for cdn since it is not encrypted
+  @override
   Future<DeployResult> deploy(SshServer server) async {
     var xrayConfig = await rootBundle.loadString('assets/configs/2_xray.json');
     final uuid = const Uuid().v4();
@@ -215,8 +245,8 @@ class MasqueradeQuickDeploy extends QuickDeployOption {
     final port = isProduction()
         ? '443'
         : generateUniqueNumbers(10, min: 1024, max: 49152)[0].toString();
-    final xhttpPath = '/' + const Uuid().v4();
-    final xhttpPathCdn = '/' + const Uuid().v4();
+    final xhttpPath = '/${const Uuid().v4()}';
+    final xhttpPathCdn = '/${const Uuid().v4()}';
     xrayConfig = xrayConfig.replaceAll('__PORT__', port);
     xrayConfig = xrayConfig.replaceAll('__SERVER_NAME__', destination!);
     // for cnd up and reality down
@@ -455,24 +485,24 @@ class _MasquerateQuickDeploySetState extends State<MasquerateQuickDeploySet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('将生成以下节点：'),
-        Gap(10),
-        Text('• Reality/XHTTP/VLESS packet-up'),
-        Gap(10),
-        Text('• Reality/XHTTP/VLESS stream-one'),
-        Gap(10),
-        Text('• Reality/XHTTP/VLESS stream-up'),
-        Gap(10),
-        Text('如果提供了CDN域名，则还会生成以下节点：'),
-        Gap(10),
-        Text('• TLS/XHTTP/VMess(CDN) packet-up'),
-        Gap(10),
-        Text('• TLS/XHTTP/VMess(CDN) stream-one'),
-        Gap(10),
-        Text('• TLS/XHTTP/VMess(CDN) stream-up'),
-        Gap(10),
-        Text('• TLS/XHTTP/VMess(CDN)上行 Reality下行'),
-        Gap(10),
+        const Text('将生成以下节点：'),
+        const Gap(10),
+        const Text('• Reality/XHTTP/VLESS packet-up'),
+        const Gap(10),
+        const Text('• Reality/XHTTP/VLESS stream-one'),
+        const Gap(10),
+        const Text('• Reality/XHTTP/VLESS stream-up'),
+        const Gap(10),
+        const Text('如果提供了CDN域名，则还会生成以下节点：'),
+        const Gap(10),
+        const Text('• TLS/XHTTP/VMess(CDN) packet-up'),
+        const Gap(10),
+        const Text('• TLS/XHTTP/VMess(CDN) stream-one'),
+        const Gap(10),
+        const Text('• TLS/XHTTP/VMess(CDN) stream-up'),
+        const Gap(10),
+        const Text('• TLS/XHTTP/VMess(CDN)上行 Reality下行'),
+        const Gap(10),
         TextFormField(
           controller: _destinationController,
           onChanged: (value) {
@@ -484,12 +514,12 @@ class _MasquerateQuickDeploySetState extends State<MasquerateQuickDeploySet> {
             }
             return null;
           },
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             border: OutlineInputBorder(),
             labelText: '目标网站',
           ),
         ),
-        Gap(2),
+        const Gap(2),
         RealiScanner(
           destination: widget.destination,
           onDestinationTap: (destination) {
@@ -512,7 +542,7 @@ class _MasquerateQuickDeploySetState extends State<MasquerateQuickDeploySet> {
               return null;
             },
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'XHTTP Port',
               border: OutlineInputBorder(),
             ),
@@ -525,7 +555,7 @@ class _MasquerateQuickDeploySetState extends State<MasquerateQuickDeploySet> {
             onChanged: (value) {
               widget.deploy.cdnDomain = value;
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'CDN 域名',
               helperText:
                   '可不填。CDN的SSL/TLS加密需设置为灵活（即CDN与代理服务器间不加密）。如果XHTTP端口不是80，需要在CDN那里配置规则',
@@ -563,7 +593,9 @@ class _RealiScannerState extends State<RealiScanner> {
                 _running = true;
               });
               try {
-                _results = await xApiClient.realiTLScanner(widget.destination);
+                _results = await context
+                    .read<XApiClient>()
+                    .realiTLScanner(widget.destination);
               } catch (e) {
                 snack(e.toString());
               } finally {
@@ -572,15 +604,15 @@ class _RealiScannerState extends State<RealiScanner> {
                 });
               }
             },
-            child: Text('运行RealiTLScanner'),
+            child: const Text('运行RealiTLScanner'),
           ),
         if (_running || _results.isNotEmpty)
           ConstrainedBox(
-            constraints: BoxConstraints(
+            constraints: const BoxConstraints(
               maxHeight: 300,
             ),
             child: _running
-                ? Center(
+                ? const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -620,6 +652,10 @@ class _RealiScannerState extends State<RealiScanner> {
 }
 
 class AllInOneQuickDeploy extends QuickDeployOption {
+  AllInOneQuickDeploy({
+    required super.xApiClient,
+  });
+
   @override
   final int id = 3;
   @override
@@ -640,16 +676,18 @@ class AllInOneQuickDeploy extends QuickDeployOption {
   int port = 443;
   String cdnDomain = '';
   String realityDomain = '';
+  @override
   bool disableOSFirewall = true;
   @override
   Widget getFormWidget(BuildContext context, {String? destination}) {
     return AllInOneForm(deploy: this, destination: destination!);
   }
 
+  @override
   Future<DeployResult> deploy(SshServer server) async {
-    final websocketPath = '/' + const Uuid().v4();
-    final xhttpPath = '/' + const Uuid().v4();
-    final httpUpgradePath = '/' + const Uuid().v4();
+    final websocketPath = '/${const Uuid().v4()}';
+    final xhttpPath = '/${const Uuid().v4()}';
+    final httpUpgradePath = '/${const Uuid().v4()}';
     final domain = generateRealisticDomain();
     final certResponse = await xApiClient.generateCert(domain);
     final (publicKey, privateKey) = await xApiClient.generateX25519KeyPair();
@@ -718,7 +756,7 @@ class AllInOneQuickDeploy extends QuickDeployOption {
               MultiProxyInboundConfig_Security(
                   domains: [realityDomain],
                   reality: RealityConfig(
-                      dest: '${realityDomain}:443',
+                      dest: '$realityDomain:443',
                       serverNames: [realityDomain],
                       privateKey:
                           base64Url.decode(base64Url.normalize(privateKey)),
@@ -806,7 +844,7 @@ class _AllInOneFormState extends State<AllInOneForm> {
           decoration:
               InputDecoration(labelText: AppLocalizations.of(context)!.port),
         ),
-        Gap(10),
+        const Gap(10),
         TextFormField(
           controller: _cdnDomainController,
           decoration: InputDecoration(
@@ -823,7 +861,7 @@ class _AllInOneFormState extends State<AllInOneForm> {
             return null;
           },
         ),
-        Gap(10),
+        const Gap(10),
         TextFormField(
           controller: _realityDomainController,
           decoration: InputDecoration(
@@ -839,7 +877,7 @@ class _AllInOneFormState extends State<AllInOneForm> {
             return null;
           },
         ),
-        Gap(2),
+        const Gap(2),
         RealiScanner(
           destination: widget.destination,
           onDestinationTap: (destination) {

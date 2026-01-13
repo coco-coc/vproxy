@@ -1,21 +1,38 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:vx/utils/download.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/common/os.dart';
-import 'package:vx/main.dart';
 import 'package:vx/utils/path.dart';
 import 'package:archive/archive_io.dart';
 
 const String wintunDownloadLink =
     'https://www.wintun.net/builds/wintun-0.14.1.zip';
 
-Future<void> makeWinTunAvailable() async {
+Future<void> makeWinTunAvailable(Downloader downloader) async {
+  if (!Platform.isWindows) {
+    return;
+  }
   final wintunDir = Directory(await getWintunDir());
   final arch = getCpuArch();
   logger.d('CPU Architecture: $arch');
@@ -38,7 +55,6 @@ Future<void> makeWinTunAvailable() async {
     logger.d('Wintun DLL downloaded and extracted to $dllPath');
   }
 }
-
 
 Future<void> installWindowsService() async {
   if (kDebugMode) {

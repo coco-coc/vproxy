@@ -31,7 +31,7 @@ void main() {
     late MockAuthProvider mockAuthProvider;
     late AdsProvider adsProvider;
     late BehaviorSubject<my.User?> userController;
-    final Map<String, dynamic> _prefsMap = {};
+    final Map<String, dynamic> prefsMap = {};
 
     setUp(() async {
       tempDir = Directory.systemTemp.createTempSync().path;
@@ -44,26 +44,26 @@ void main() {
       
       // Setup AuthProvider user stream
       userController = BehaviorSubject<my.User?>.seeded(null);
-      when(mockAuthProvider.user).thenAnswer((_) => userController.stream);
-      when(mockAuthProvider.currentUser).thenReturn(null);
+      when(mockAuthProvider.sessionStreams).thenAnswer((_) => userController.stream);
+      when(mockAuthProvider.currentSession).thenReturn(null);
       
       // Setup SharedPreferences mock to use in-memory map
       when(mockSharedPreferences.getInt(any)).thenAnswer((invocation) {
         final key = invocation.positionalArguments[0] as String;
-        return _prefsMap[key] as int?;
+        return prefsMap[key] as int?;
       });
       when(mockSharedPreferences.setInt(any, any)).thenAnswer((invocation) async {
         final key = invocation.positionalArguments[0] as String;
         final value = invocation.positionalArguments[1] as int;
-        _prefsMap[key] = value;
+        prefsMap[key] = value;
         return true;
       });
       when(mockSharedPreferences.clear()).thenAnswer((_) async {
-        _prefsMap.clear();
+        prefsMap.clear();
         return true;
       });
       
-      _prefsMap.clear();
+      prefsMap.clear();
     });
 
     tearDown(() {
@@ -538,7 +538,7 @@ void main() {
         // Verify the method was called at least once
         verify(mockSharedPreferences.setInt('lastAdsFetchTime', any)).called(greaterThanOrEqualTo(1));
         // Check the actual value was stored in our map
-        final lastFetch = _prefsMap['lastAdsFetchTime'] as int?;
+        final lastFetch = prefsMap['lastAdsFetchTime'] as int?;
         expect(lastFetch, isNotNull, reason: 'lastAdsFetchTime should be stored in preferences');
         final lastFetchTime = DateTime.fromMillisecondsSinceEpoch(lastFetch!);
         expect(lastFetchTime.isAfter(beforeFetch.subtract(const Duration(seconds: 1))), isTrue);
@@ -650,7 +650,7 @@ void main() {
         expect(adsProvider.adsLen, 1);
 
         // User becomes pro - should stop ads
-        final proUser = my.User(
+        const proUser = my.User(
           id: 'test-id',
           email: 'test@example.com',
           pro: true,
@@ -686,7 +686,7 @@ void main() {
         );
 
         // Start with pro user - this should trigger stop()
-        final proUser = my.User(
+        const proUser = my.User(
           id: 'test-id',
           email: 'test@example.com',
           pro: true,
@@ -698,7 +698,7 @@ void main() {
         expect(adsProvider.adsLen, 0);
 
         // User becomes non-pro - this should trigger start()
-        final nonProUser = my.User(
+        const nonProUser = my.User(
           id: 'test-id',
           email: 'test@example.com',
           pro: false,
@@ -734,7 +734,7 @@ void main() {
         );
 
         // Start with pro user - this should trigger stop()
-        final proUser = my.User(
+        const proUser = my.User(
           id: 'test-id',
           email: 'test@example.com',
           pro: true,

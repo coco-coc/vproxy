@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -7,15 +22,16 @@ import 'package:gap/gap.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/settings/general/language.dart';
 import 'package:vx/app/settings/general/sync.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/main.dart';
-import 'package:vx/utils/auto_update_service.dart';
-import 'package:vx/utils/github_release.dart';
+import 'package:vx/utils/node_test_service.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
+import 'package:flutter_common/services/auto_update.dart';
 // import 'package:flutter_sparkle/flutter_sparkle.dart';
 
 class GeneralSettingPage extends StatelessWidget {
@@ -78,13 +94,13 @@ class GeneralSettingPage extends StatelessWidget {
               const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Divider(),
+                  Divider(),
                   AutoUpdateSettings(),
                 ],
               ),
             const Divider(),
             const Padding(
-              padding: const EdgeInsets.only(
+              padding: EdgeInsets.only(
                   top: 10, bottom: 10, left: 16, right: 16),
               child: ThemeModeSetting(),
             ),
@@ -150,7 +166,7 @@ class _PingModeSettingState extends State<PingModeSetting> {
   @override
   void initState() {
     super.initState();
-    _pingMode = persistentStateRepo.pingMode;
+    _pingMode = context.read<SharedPreferences>().pingMode;
   }
 
   @override
@@ -160,7 +176,7 @@ class _PingModeSettingState extends State<PingModeSetting> {
       children: [
         Text(AppLocalizations.of(context)!.pingTestMethod,
             style: Theme.of(context).textTheme.bodyLarge),
-        Gap(10),
+        const Gap(10),
         DropdownMenu<PingMode>(
             initialSelection: _pingMode,
             requestFocusOnTap: false,
@@ -168,15 +184,17 @@ class _PingModeSettingState extends State<PingModeSetting> {
               DropdownMenuEntry(
                   value: PingMode.Real,
                   label: AppLocalizations.of(context)!.pingReal),
-              DropdownMenuEntry(value: PingMode.Rtt, label: 'RTT'),
+              const DropdownMenuEntry(value: PingMode.Rtt, label: 'RTT'),
             ],
             onSelected: (value) {
-              persistentStateRepo.setPingMode(value ?? PingMode.Real);
+              context
+                  .read<SharedPreferences>()
+                  .setPingMode(value ?? PingMode.Real);
               setState(() {
                 _pingMode = value ?? PingMode.Real;
               });
             }),
-        Gap(10),
+        const Gap(10),
         if (_pingMode == PingMode.Real)
           Text(AppLocalizations.of(context)!.pingRealDesc,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
@@ -200,7 +218,7 @@ class _ThemeModeSettingState extends State<ThemeModeSetting> {
   @override
   void initState() {
     super.initState();
-    _themeMode = persistentStateRepo.themeMode;
+    _themeMode = context.read<SharedPreferences>().themeMode;
   }
 
   @override
@@ -210,7 +228,7 @@ class _ThemeModeSettingState extends State<ThemeModeSetting> {
       children: [
         Text(AppLocalizations.of(context)!.themeMode,
             style: Theme.of(context).textTheme.bodyLarge),
-        Gap(10),
+        const Gap(10),
         DropdownMenu<ThemeMode>(
             initialSelection: _themeMode,
             requestFocusOnTap: false,
@@ -226,7 +244,9 @@ class _ThemeModeSettingState extends State<ThemeModeSetting> {
                   label: AppLocalizations.of(context)!.system),
             ],
             onSelected: (value) {
-              persistentStateRepo.setThemeMode(value ?? ThemeMode.system);
+              context
+                  .read<SharedPreferences>()
+                  .setThemeMode(value ?? ThemeMode.system);
               App.of(context)?.setThemeMode(value);
               setState(() {
                 _themeMode = value ?? ThemeMode.system;
@@ -291,9 +311,8 @@ class AutoUpdateSettings extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 10),
                 child: TextButton(
                   onPressed: () async {
-                    final result = await GitHubReleaseService.checkForUpdates(
+                    final result = await autoUpdateService.checkForUpdates(
                       (await PackageInfo.fromPlatform()).version,
-                      await AutoUpdateService.assetName(),
                     );
                     if (result == null) {
                       snack(AppLocalizations.of(context)!.noNewVersion);
@@ -325,7 +344,7 @@ class _StartOnBootSettingState extends State<StartOnBootSetting> {
   @override
   void initState() {
     super.initState();
-    _startOnBoot = persistentStateRepo.startOnBoot;
+    _startOnBoot = context.read<SharedPreferences>().startOnBoot;
   }
 
   @override
@@ -337,11 +356,11 @@ class _StartOnBootSettingState extends State<StartOnBootSetting> {
           children: [
             Text(AppLocalizations.of(context)!.startOnBoot,
                 style: Theme.of(context).textTheme.bodyLarge),
-            Expanded(child: SizedBox()),
+            const Expanded(child: SizedBox()),
             Switch(
               value: _startOnBoot,
               onChanged: (value) async {
-                persistentStateRepo.setStartOnBoot(value);
+                context.read<SharedPreferences>().setStartOnBoot(value);
                 setState(() {
                   _startOnBoot = value;
                 });
@@ -377,7 +396,7 @@ class _AlwaysOnSettingState extends State<AlwaysOnSetting> {
   @override
   void initState() {
     super.initState();
-    _alwaysOn = persistentStateRepo.alwaysOn;
+    _alwaysOn = context.read<SharedPreferences>().alwaysOn;
   }
 
   @override
@@ -389,11 +408,11 @@ class _AlwaysOnSettingState extends State<AlwaysOnSetting> {
           children: [
             Text(AppLocalizations.of(context)!.alwaysOn,
                 style: Theme.of(context).textTheme.bodyLarge),
-            Expanded(child: SizedBox()),
+            const Expanded(child: SizedBox()),
             Switch(
               value: _alwaysOn,
               onChanged: (value) {
-                persistentStateRepo.setAlwaysOn(value);
+                context.read<SharedPreferences>().setAlwaysOn(value);
                 setState(() {
                   _alwaysOn = !_alwaysOn;
                 });
@@ -425,9 +444,9 @@ class _NodeTestSettingsState extends State<NodeTestSettings> {
   @override
   void initState() {
     super.initState();
-    _autoTestNodes = persistentStateRepo.autoTestNodes;
-    _intervalController =
-        TextEditingController(text: '${persistentStateRepo.nodeTestInterval}');
+    _autoTestNodes = context.read<SharedPreferences>().autoTestNodes;
+    _intervalController = TextEditingController(
+        text: '${context.read<SharedPreferences>().nodeTestInterval}');
   }
 
   @override
@@ -452,14 +471,12 @@ class _NodeTestSettingsState extends State<NodeTestSettings> {
             Switch(
               value: _autoTestNodes,
               onChanged: (value) {
-                persistentStateRepo.setAutoTestNodes(value);
+                context.read<SharedPreferences>().setAutoTestNodes(value);
                 setState(() {
                   _autoTestNodes = value;
                 });
                 // Restart the service if it exists
-                if (nodeTestService != null) {
-                  nodeTestService!.restart();
-                }
+                context.read<NodeTestService>().restart();
               },
             ),
           ],
@@ -476,18 +493,18 @@ class _NodeTestSettingsState extends State<NodeTestSettings> {
             controller: _intervalController,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
-              labelText: '${AppLocalizations.of(context)!.interval}',
+              labelText: AppLocalizations.of(context)!.interval,
               suffixText: 'min',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
             ),
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             onChanged: (event) {
               final parsedValue = int.tryParse(_intervalController.text);
               if (parsedValue != null && parsedValue >= 0) {
-                persistentStateRepo.setNodeTestInterval(parsedValue);
-                if (nodeTestService != null) {
-                  nodeTestService!.restart();
-                }
+                context
+                    .read<SharedPreferences>()
+                    .setNodeTestInterval(parsedValue);
+                context.read<NodeTestService>().restart();
               }
             },
           ),

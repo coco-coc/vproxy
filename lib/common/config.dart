@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'package:flutter/material.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:tm/protos/google/protobuf/any.pb.dart';
@@ -5,13 +20,11 @@ import 'package:tm/protos/common/net/net.pb.dart';
 import 'package:tm/protos/protos/proxy/anytls.pb.dart';
 import 'package:tm/protos/protos/proxy/dokodemo.pb.dart';
 import 'package:tm/protos/protos/proxy/http.pb.dart';
-import 'package:tm/protos/protos/proxy/hysteria.pb.dart';
 import 'package:tm/protos/protos/proxy/shadowsocks.pb.dart';
 import 'package:tm/protos/protos/proxy/socks.pb.dart';
 import 'package:tm/protos/protos/proxy/trojan.pb.dart';
 import 'package:tm/protos/protos/proxy/vless.pb.dart';
 import 'package:tm/protos/protos/proxy/vmess.pb.dart';
-import 'package:tm/protos/protos/tls/tls.pb.dart';
 import 'package:vx/theme.dart';
 import 'package:vx/widgets/outbound_handler_form/outbound_handler_form.dart';
 

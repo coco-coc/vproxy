@@ -1,9 +1,25 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/common/const.dart';
@@ -25,14 +41,14 @@ Future<void> writeStaticGeo() async {
 
 class GeoDataHelper {
   final Downloader downloader;
-  final PrefHelper psr;
+  final SharedPreferences pref;
   final XApiClient xApiClient;
   final DbHelper databaseHelper;
   final String resouceDirPath;
 
   GeoDataHelper(
       {required this.downloader,
-      required this.psr,
+      required this.pref,
       required this.xApiClient,
       required this.databaseHelper,
       required this.resouceDirPath});
@@ -57,7 +73,7 @@ class GeoDataHelper {
       ];
       await Future.wait(tasks);
       await xApiClient.processGeoFiles();
-      psr.setLastGeoUpdate(DateTime.now());
+      pref.setLastGeoUpdate(DateTime.now());
       _completer!.complete();
     } catch (e) {
       logger.e('downloadAndProcessGeo error', error: e);
@@ -148,7 +164,7 @@ class GeoDataHelper {
     final now = DateTime.now();
 
     // Check if we already updated today
-    final lastUpdate = psr.lastGeoUpdate;
+    final lastUpdate = pref.lastGeoUpdate;
     final hasUpdated = lastUpdate != null &&
         now.difference(lastUpdate) < const Duration(days: 1);
 

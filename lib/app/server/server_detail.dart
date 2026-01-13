@@ -1,10 +1,24 @@
-import 'package:flutter/cupertino.dart';
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
-import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/app/server/deployer.dart';
 import 'package:vx/app/server/server_page.dart';
@@ -112,7 +126,7 @@ class _ServerDetailState extends State<ServerDetail> {
 }
 
 class _Overview extends StatefulWidget {
-  const _Overview({super.key, required this.server});
+  const _Overview({required this.server});
   final SshServer server;
 
   @override
@@ -186,7 +200,7 @@ class _OverviewState extends State<_Overview> {
 }
 
 class _VX extends StatelessWidget {
-  const _VX({super.key});
+  const _VX();
 
   @override
   Widget build(BuildContext context) {
@@ -236,7 +250,9 @@ class _ServerActionButtonsState extends State<ServerActionButtons> {
                     _isShuttingDown = true;
                   });
                   try {
-                    await xApiClient.shutdownServer(widget.server);
+                    await context
+                        .read<XApiClient>()
+                        .shutdownServer(widget.server);
                   } catch (e) {
                     logger.d('shutdown server error', error: e);
                   } finally {
@@ -271,7 +287,9 @@ class _ServerActionButtonsState extends State<ServerActionButtons> {
                     _isRestarting = true;
                   });
                   try {
-                    await xApiClient.restartServer(widget.server);
+                    await context
+                        .read<XApiClient>()
+                        .restartServer(widget.server);
                   } catch (e) {
                     logger.d('restart server error', error: e);
                   } finally {
@@ -303,12 +321,20 @@ class QuickDeploy extends StatefulWidget {
 }
 
 class _QuickDeployState extends State<QuickDeploy> {
-  final List<QuickDeployOption> options = [
-    AllInOneQuickDeploy(),
-    BasicQuickDeploy(),
-    MasqueradeQuickDeploy(),
-    // MasqueradeQuickDeployCDN(),
-  ];
+  final List<QuickDeployOption> options = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final xapiClient = context.read<XApiClient>();
+    final storage = context.read<FlutterSecureStorage>();
+    options.addAll([
+      AllInOneQuickDeploy(xApiClient: xapiClient),
+      BasicQuickDeploy(storage: storage, xApiClient: xapiClient),
+      MasqueradeQuickDeploy(xApiClient: xapiClient),
+    ]);
+  }
 
   void _showDetails(BuildContext context, QuickDeployOption option) async {
     final outboundBloc = context.read<OutboundBloc>();
@@ -550,7 +576,7 @@ class QuickDeployOptionDetial extends StatelessWidget {
         ),
         const Gap(16),
         option.getFormWidget(context, destination: destination),
-        Gap(10),
+        const Gap(10),
         StatefulBuilder(builder: (ctx, setState) {
           return SwitchListTile(
             title: Text(AppLocalizations.of(context)!.disableOSFirewall),

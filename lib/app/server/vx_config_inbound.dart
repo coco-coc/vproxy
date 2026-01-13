@@ -1,7 +1,22 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 part of 'vx_config.dart';
 
 class _Inbounds extends StatelessWidget {
-  const _Inbounds({super.key, required this.config});
+  const _Inbounds({required this.config});
   final ServerConfig config;
 
   Future<void> _onAddMulti(BuildContext context) async {
@@ -94,7 +109,7 @@ class _Inbounds extends StatelessWidget {
                 label: Text(AppLocalizations.of(context)!.add));
           },
         ),
-        Gap(10),
+        const Gap(10),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.only(right: 8.0),
@@ -194,7 +209,7 @@ class InboundCard extends StatelessWidget {
               inbound: config, multiInbound: multiConfig)),
           child: Text(AppLocalizations.of(context)!.addToNodes),
         ),
-        Divider(),
+        const Divider(),
         MenuItemButton(
           onPressed: () => context.read<VXBloc>().add(config != null
               ? VXRemoveInboundEvent(config!.tag)
@@ -212,7 +227,7 @@ class InboundCard extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -224,7 +239,7 @@ class InboundCard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              Gap(5),
+              const Gap(5),
               Text(
                 address,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -233,7 +248,7 @@ class InboundCard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              Gap(5),
+              const Gap(5),
               Text(
                 proxyProtocol,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -242,7 +257,7 @@ class InboundCard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              Gap(5),
+              const Gap(5),
               Text(
                 transportProtocol,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -251,7 +266,7 @@ class InboundCard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              Gap(5),
+              const Gap(5),
               Text(
                 securityProtocol,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -291,9 +306,9 @@ class InboundCard extends StatelessWidget {
     List<Any> protocols = [];
     if (config != null) {
       if (config!.hasProtocol()) {
-        protocols.add(config!.protocol!);
+        protocols.add(config!.protocol);
       } else {
-        protocols.addAll(config!.protocols!);
+        protocols.addAll(config!.protocols);
       }
     } else {
       protocols = multiConfig!.protocols;
@@ -332,9 +347,9 @@ class InboundCard extends StatelessWidget {
     if (config != null) {
       late String port;
       if (config!.port != 0) {
-        port = config!.port!.toString();
+        port = config!.port.toString();
       } else {
-        port = config!.ports!.join(',');
+        port = config!.ports.join(',');
       }
       String address = config!.address;
       if (address.isEmpty) {

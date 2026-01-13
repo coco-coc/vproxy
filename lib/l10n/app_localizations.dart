@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -2626,7 +2641,7 @@ abstract class AppLocalizations {
   /// No description provided for @dnsRuleDesc.
   ///
   /// In en, this message translates to:
-  /// **'For each DNS request, rules are matched one by one starting from the top. If a rule matches, the following rule will not be considered. The dns server specified by the rule will be used to handle the dns query'**
+  /// **'For each DNS request, rules are matched one by one starting from the top. If a rule matches, the following rule will not be considered. The dns server specified by the rule will be used to handle the dns query. If no rule matches, return empty DNS result.'**
   String get dnsRuleDesc;
 
   /// No description provided for @dnsServer.
@@ -2802,6 +2817,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'When a direct connection failed, fallback to use proxy. The node selected by the \"Proxy\" selector will be used, if the selector does not exist, a random nodes will be selected'**
   String get fallbackToProxySetting;
+
+  /// No description provided for @changeIpv6ToDomain.
+  ///
+  /// In en, this message translates to:
+  /// **'Change IPv6 to Domain'**
+  String get changeIpv6ToDomain;
+
+  /// No description provided for @changeIpv6ToDomainDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'If the matched node does not support IPv6, but the target address is IPv6, and the domain is sniffed, change target address to the domain.'**
+  String get changeIpv6ToDomainDesc;
 
   /// No description provided for @installAsWinService.
   ///
@@ -3976,7 +4003,7 @@ abstract class AppLocalizations {
   /// No description provided for @sourceCodeAvailable.
   ///
   /// In en, this message translates to:
-  /// **'VX is a source-available proxy client powered by open-source vx-core.'**
+  /// **'VX is a open-source proxy client powered by vx-core.'**
   String get sourceCodeAvailable;
 
   /// No description provided for @vxSourceCode.

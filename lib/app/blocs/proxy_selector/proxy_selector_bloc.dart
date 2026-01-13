@@ -1,48 +1,60 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
-import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tm/protos/protos/dns.pb.dart';
-import 'package:tm/protos/protos/geo.pb.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/protos/router.pb.dart';
 import 'package:tm/tm.dart';
 import 'package:vx/app/control.dart';
 import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/routing/routing_page.dart';
-import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/x_controller.dart';
 import 'package:vx/auth/auth_bloc.dart';
-import 'package:vx/auth/auth_provider.dart';
-import 'package:vx/common/common.dart';
 import 'package:vx/data/database.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/main.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:vx/xconfig_helper.dart';
 
 part 'tm_state.dart';
 part 'tm_event.dart';
 
 class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
   ProxySelectorBloc(
-      {required PrefHelper sp,
+      {required SharedPreferences pref,
       required XController xConfigController,
+      required DatabaseProvider databaseProvider,
       required AuthBloc authBloc})
-      : _pref = sp,
+      : _pref = pref,
         _xController = xConfigController,
+        _databaseProvider = databaseProvider,
         super(ProxySelectorState(
-          routeMode: sp.routingMode,
-          showProxySelector: sp.routingMode is DefaultRouteMode ? true : null,
+          routeMode: pref.routingMode,
+          showProxySelector: pref.routingMode is DefaultRouteMode ? true : null,
           proxySelectorEnabled: authBloc.state.pro,
-          proxySelectorMode: sp.proxySelectorMode,
+          proxySelectorMode: pref.proxySelectorMode,
           manualNodeSetting: ManualNodeSetting(
-            nodeMode: sp.proxySelectorManualMode,
-            balanceStrategy: sp.proxySelectorManualMultipleBalanceStrategy,
-            landHandlers: sp.proxySelectorManualLandHandlers,
+            nodeMode: pref.proxySelectorManualMode,
+            balanceStrategy: pref.proxySelectorManualMultipleBalanceStrategy,
+            landHandlers: pref.proxySelectorManualLandHandlers,
           ),
         )) {
     on<XBlocInitialEvent>(_initial);
@@ -56,8 +68,9 @@ class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
     on<ManualModeLandHandlersChangeEvent>(_manualModeLandHandlersChange);
     on<AutoNodeSelectorConfigChangeEvent>(_autoNodeSelectorConfigChange);
   }
-  final PrefHelper _pref;
+  final SharedPreferences _pref;
   final XController _xController;
+  final DatabaseProvider _databaseProvider;
 
   // @override
   // void onTransition(Transition<TmEvent, XState> transition) {
@@ -71,7 +84,8 @@ class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
     final rm = _pref.routingMode;
     if (rm != null) {
       try {
-        final customRouteMode = await database.managers.customRouteModes
+        final customRouteMode = await _databaseProvider
+            .database.managers.customRouteModes
             .filter((e) => e.name(rm))
             .getSingleOrNull();
         if (customRouteMode != null) {
@@ -86,8 +100,8 @@ class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
     }
 
     try {
-      final proxySelectorConfig =
-          await database.getSelectorConfig(defaultProxySelectorTag);
+      final proxySelectorConfig = await _databaseProvider.database
+          .getSelectorConfig(defaultProxySelectorTag);
       assert(proxySelectorConfig != null);
       emit(state.copyWith(autoNodeSetting: proxySelectorConfig));
     } catch (e) {
@@ -184,8 +198,8 @@ class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
       //     const RoutingModeSelectionChangeEvent(DefaultRouteMode.black), emit);
       _pref.setRoutingMode(null);
       emit(state.copyWith(routeMode: null, showProxySelector: false));
-      if (xController.status == XStatus.connected) {
-        await xController.stop();
+      if (_xController.status == XStatus.connected) {
+        await _xController.stop();
       }
     }
   }

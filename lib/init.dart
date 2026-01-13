@@ -1,12 +1,30 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 part of 'main.dart';
 
-Future<void> _initDatabase({QueryInterceptor? interceptor}) async {
+Future<AppDatabase?> _initDatabase(SharedPreferences pref,
+    {QueryInterceptor? interceptor}) async {
   try {
-    database = AppDatabase(interceptor: interceptor);
+    final path = await getDbPath(pref);
+    return AppDatabase(path: path, interceptor: interceptor);
   } catch (e) {
     logger.e('Error initializing database', error: e);
     reportError("init database", e);
   }
 
   logger.d('Database initialized');
+  return null;
 }

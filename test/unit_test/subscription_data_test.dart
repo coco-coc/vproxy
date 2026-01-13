@@ -169,7 +169,7 @@ void main() {
         const downloadBytes = 3 * 1024 * 1024 * 1024;
         const expireTimestamp = 1735689600; // 2025-01-01 00:00:00 UTC
 
-        final description =
+        const description =
             'upload=$uploadBytes; download=$downloadBytes; total=$totalBytes; expire=$expireTimestamp';
         final result = SubscriptionData.parse(description);
 
@@ -191,7 +191,7 @@ void main() {
         const downloadBytes = 30 * 1024 * 1024;
         const expireTimestamp = 1735689600;
 
-        final description =
+        const description =
             'upload=$uploadBytes; download=$downloadBytes; total=$totalBytes; expire=$expireTimestamp';
         final result = SubscriptionData.parse(description);
 
@@ -209,7 +209,7 @@ void main() {
         const downloadBytes = 300 * 1024;
         const expireTimestamp = 1735689600;
 
-        final description =
+        const description =
             'upload=$uploadBytes; download=$downloadBytes; total=$totalBytes; expire=$expireTimestamp';
         final result = SubscriptionData.parse(description);
 
@@ -226,7 +226,7 @@ void main() {
         const downloadBytes = 300 * 1024 * 1024 * 1024;
         const expireTimestamp = 1735689600;
 
-        final description =
+        const description =
             'upload=$uploadBytes; download=$downloadBytes; total=$totalBytes; expire=$expireTimestamp';
         final result = SubscriptionData.parse(description);
 
@@ -341,7 +341,7 @@ void main() {
         const downloadBytes = 20 * 1024 * 1024 * 1024 * 1024;
         const expireTimestamp = 1735689600;
 
-        final description =
+        const description =
             'upload=$uploadBytes; download=$downloadBytes; total=$totalBytes; expire=$expireTimestamp';
         final result = SubscriptionData.parse(description);
 

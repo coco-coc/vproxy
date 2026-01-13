@@ -79,8 +79,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          gh release download latest \
-            -R 5VNetwork/x \
+          gh release download build \
+            -R 5VNetwork/vx-core \
             -p "tm-macos.xcframework.zip"
           unzip tm-macos.xcframework.zip 
           mv tm.xcframework macos/tm.xcframework

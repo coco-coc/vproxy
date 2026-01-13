@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -20,7 +35,7 @@ void saveLogToApplicationDocumentsDir() async {
   }
 
   // copy tunnel logFile to dst dir
-  final tunnelLogDir = await getTunnelLogDir();
+  final tunnelLogDir = getTunnelLogDir();
   final dstTunnelLogDir = join(dstDir, "tunnel_logs");
   if (!Directory(dstTunnelLogDir).existsSync()) {
     Directory(dstTunnelLogDir).createSync(recursive: true);
@@ -44,7 +59,7 @@ void saveLogToApplicationDocumentsDir() async {
   );
 
   // copy flutterLogDir to ApplicationDocumentsDirectory
-  final flutterLogDir = await getFlutterLogDir();
+  final flutterLogDir = getFlutterLogDir();
   if (await flutterLogDir.exists()) {
     final dstFlutterLogDir = join(dstDir, "flutter_logs");
     if (!Directory(dstFlutterLogDir).existsSync()) {
@@ -73,9 +88,9 @@ void saveLogToApplicationDocumentsDir() async {
   }
 }
 
-Future<void> clearDatabase() async {
+Future<void> clearDatabase(String dbPath) async {
   if (kDebugMode) {
-    final dbFile = File(await getDbPath());
+    final dbFile = File(dbPath);
     if (await dbFile.exists()) {
       try {
         await dbFile.delete();

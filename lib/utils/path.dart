@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -5,8 +20,10 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/logger.dart';
 
 final macPkg = Platform.isMacOS && appFlavor == 'pkg';
@@ -29,16 +46,9 @@ Future<Directory> resourceDir() async {
   throw UnimplementedError("Unsupported platform");
 }
 
-Future<String> getDbPath() async {
-  final dbName = persistentStateRepo.dbName;
+Future<String> getDbPath(SharedPreferences pref) async {
+  final dbName = pref.dbName;
   return join(resourceDirectory.path, dbName);
-  // if (Platform.isMacOS || Platform.isIOS) {
-  //   return join(resourceDirectory.path, "x_database.sqlite");
-  // }
-  // if (Platform.isWindows || Platform.isAndroid) {
-  //   return join((await resourceDir()).path, "x_database.sqlite");
-  // }
-  // throw UnimplementedError("Unsupported platform");
 }
 
 Future<String> dbVacuumDest() async {
@@ -50,16 +60,16 @@ Future<String> tempFilePath() async {
       await getCacheDir(), DateTime.now().microsecondsSinceEpoch.toString());
 }
 
-Future<Directory> getFlutterLogDir() async {
-  final dir = Directory(join((await resourceDir()).path, "flutter_logs"));
+Directory getFlutterLogDir() {
+  final dir = Directory(join(resourceDirectory.path, "flutter_logs"));
   if (!dir.existsSync()) {
     dir.createSync(recursive: true);
   }
   return dir;
 }
 
-Future<Directory> getTunnelLogDir() async {
-  final dir = Directory(join((await resourceDir()).path, "tunnel_logs"));
+Directory getTunnelLogDir() {
+  final dir = Directory(join(resourceDirectory.path, "tunnel_logs"));
   if (!dir.existsSync()) {
     dir.createSync(recursive: true);
   }

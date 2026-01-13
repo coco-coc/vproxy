@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:io';
 import 'dart:isolate';
 
@@ -6,10 +21,10 @@ import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart';
-import 'package:vx/common/common.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/path.dart';
-import 'package:vx/utils/upload_log.dart';
 
 Future<String> getLogFileName() async {
   return "${(await PackageInfo.fromPlatform()).version}-${DateTime.now().toString().replaceAll(':', '_')}.txt";
@@ -99,24 +114,6 @@ Future<void> startShareLog() async {
     reportLogger.e("Isolate.errorListener",
         stackTrace: errorAndStacktrace.last, error: errorAndStacktrace.first);
   }).sendPort);
-
-  logUploadService = LogUploadService(
-      flutterLogDir: await getFlutterLogDir(),
-      tunnelLogDir: await getTunnelLogDir(),
-      secret: logKey,
-      uploadUrl: kDebugMode
-          ? 'https://127.0.0.1:11111/api/upload-logs'
-          : 'https://vproxybackend.5vnetwork.com:443/api/upload-logs');
-  logUploadService!.start();
-}
-
-Future<void> setShareLog(bool value) async {
-  persistentStateRepo.setShareLog(value);
-  if (value) {
-    await startShareLog();
-  } else {
-    await stopShareLog();
-  }
 }
 
 Future<void> reportError(String message, dynamic error) async {
@@ -135,32 +132,27 @@ Future<void> stopShareLog() async {
   // } else {
   // FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
   // }
-  logUploadService?.stopPeriodicUpload();
-  logUploadService = null;
 }
 
-Future<void> initLogger() async {
+Future<void> initLogger(SharedPreferences pref) async {
   if (isProduction()) {
-    if (persistentStateRepo.shareLog == true) {
+    if (pref.shareLog == true) {
       await startShareLog();
-    } else {
-      await stopShareLog();
     }
   } else {
     final redirectStdErr = !kDebugMode && (Platform.isIOS || Platform.isMacOS);
 
     if (redirectStdErr) {
-      final logDirPath = await getFlutterLogDir().then((value) => value.path);
+      final logDirPath = getFlutterLogDir().path;
       logger.d("redirectStdErr: $logDirPath");
       await darwinHostApi!.redirectStdErr(join(logDirPath, "redirect.txt"));
     }
     await setDebugLoggerDev();
-    // In debug mode, output to both console and file
   }
 }
 
 Future<void> setDebugLoggerDev() async {
-  final logDirPath = await getFlutterLogDir().then((value) => value.path);
+  final logDirPath = getFlutterLogDir().path;
   logger = Logger(
     filter: ProductionFilter(),
     printer: SimplePrinter(
@@ -201,7 +193,7 @@ Future<void> setReportLogger() async {
     level: Level.error,
     output: AdvancedFileOutput(
       writeImmediately: [Level.error],
-      path: await getFlutterLogDir().then((value) => value.path),
+      path: getFlutterLogDir().path,
       latestFileName: 'latest.txt',
       fileNameFormatter: (DateTime date) {
         return '${date.year}-${date.month}-${date.day}.txt';
@@ -211,7 +203,7 @@ Future<void> setReportLogger() async {
 }
 
 Future<void> setDebugLoggerProduction() async {
-  final logDirPath = await getFlutterLogDir().then((value) => value.path);
+  final logDirPath = getFlutterLogDir().path;
   logger = Logger(
     filter: ProductionFilter(),
     printer: SimplePrinter(printTime: true),

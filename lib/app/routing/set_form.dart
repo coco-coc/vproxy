@@ -1,6 +1,21 @@
-import 'package:file_picker/file_picker.dart';
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
 import 'package:tm/protos/protos/geo.pb.dart';
 import 'package:vx/app/routing/mode_widget.dart';
@@ -8,8 +23,7 @@ import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/routing/mode_form.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/data/database.dart';
-import 'package:vx/main.dart';
-import 'package:vx/utils/path.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/widgets/form_dialog.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/widgets/text_divider.dart';
@@ -182,6 +196,7 @@ class _GreatIpSetFormState extends State<GreatIpSetForm> with FormDataGetter {
       _greatIpSetConfig.mergeFromMessage(widget.ipSetConfig!);
       _nameController.text = _greatIpSetConfig.name;
     }
+    final database = context.read<DatabaseProvider>().database;
     database.managers.atomicIpSets.get().then((value) {
       _atomicIpSetConfigs = value;
       setState(() {});
@@ -401,7 +416,11 @@ class _SmallDomainSetFormState extends State<SmallDomainSetForm>
       _geositeAttributes
           .addAll(widget.atomicDomainSet!.geositeConfig?.attributes ?? []);
       _clashRuleUrls.addAll(widget.atomicDomainSet!.clashRuleUrls ?? []);
-      database.managers.geoDomains
+      context
+          .read<DatabaseProvider>()
+          .database
+          .managers
+          .geoDomains
           .filter((e) => e.domainSetName.name(widget.atomicDomainSet!.name))
           .get()
           .then((value) {
@@ -465,7 +484,7 @@ class _SmallDomainSetFormState extends State<SmallDomainSetForm>
                 subtitle: Text(AppLocalizations.of(context)!.useBloomFilterDesc,
                     style: Theme.of(context).textTheme.bodySmall)),
             const Gap(5),
-            TextDivider(text: 'GeoSite'),
+            const TextDivider(text: 'GeoSite'),
             const Gap(5),
             TextFormField(
               controller: _geositeUrlController,
@@ -487,7 +506,7 @@ class _SmallDomainSetFormState extends State<SmallDomainSetForm>
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
             ),
-            Gap(5),
+            const Gap(5),
             Wrap(
               spacing: 5,
               runSpacing: 5,
@@ -500,7 +519,7 @@ class _SmallDomainSetFormState extends State<SmallDomainSetForm>
                       }))
                   .toList(),
             ),
-            Gap(5),
+            const Gap(5),
             Row(
               children: [
                 Expanded(
@@ -513,24 +532,24 @@ class _SmallDomainSetFormState extends State<SmallDomainSetForm>
                     labelText: 'GeoSite Code',
                   ),
                 )),
-                Gap(10),
+                const Gap(10),
                 IconButton.filledTonal(
                     onPressed: () {
                       _geositeCodes.add(_geositeCodeController.text);
                       _geositeCodeController.clear();
                       setState(() {});
                     },
-                    icon: Icon(Icons.add_rounded)),
+                    icon: const Icon(Icons.add_rounded)),
               ],
             ),
-            Gap(10),
+            const Gap(10),
             Text(
               'GeoSite Attributes',
               style: Theme.of(context).textTheme.labelSmall!.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
             ),
-            Gap(5),
+            const Gap(5),
             Wrap(
               spacing: 5,
               runSpacing: 5,
@@ -543,7 +562,7 @@ class _SmallDomainSetFormState extends State<SmallDomainSetForm>
                       }))
                   .toList(),
             ),
-            Gap(5),
+            const Gap(5),
             Row(
               children: [
                 Expanded(
@@ -556,18 +575,18 @@ class _SmallDomainSetFormState extends State<SmallDomainSetForm>
                     labelText: 'GeoSite Attribute',
                   ),
                 )),
-                Gap(10),
+                const Gap(10),
                 IconButton.filledTonal(
                     onPressed: () {
                       _geositeAttributes.add(_geositeAttributeController.text);
                       _geositeAttributeController.clear();
                       setState(() {});
                     },
-                    icon: Icon(Icons.add_rounded)),
+                    icon: const Icon(Icons.add_rounded)),
               ],
             ),
             const Gap(5),
-            TextDivider(text: 'Clash Rules'),
+            const TextDivider(text: 'Clash Rules'),
             const Gap(5),
             ClashRule(clashRuleUrls: _clashRuleUrls),
             const Gap(10),
@@ -578,7 +597,7 @@ class _SmallDomainSetFormState extends State<SmallDomainSetForm>
               spacing: 10,
               children: buildWrapChildrenForDomains(context, _domains, null),
             ),
-            Gap(10),
+            const Gap(10),
           ],
         ),
       ),
@@ -658,7 +677,7 @@ class _ClashRuleState extends State<ClashRule> {
                 return null;
               },
             )),
-            Gap(10),
+            const Gap(10),
             Padding(
               padding: const EdgeInsets.only(top: 2),
               child: IconButton.filledTonal(
@@ -673,7 +692,7 @@ class _ClashRuleState extends State<ClashRule> {
                     _clashRuleUrlController.clear();
                     setState(() {});
                   },
-                  icon: Icon(Icons.add_rounded)),
+                  icon: const Icon(Icons.add_rounded)),
             ),
           ],
         ),
@@ -712,6 +731,7 @@ class _SmallIpSetFormState extends State<SmallIpSetForm> with FormDataGetter {
           filepath: _geoIpFilePathController.text,
           codes: _geoIpCodes,
         ),
+        geoUrl: _geoUrlController.text,
       );
     }
     return null;
@@ -728,7 +748,11 @@ class _SmallIpSetFormState extends State<SmallIpSetForm> with FormDataGetter {
       _geoIpCodes.addAll(widget.atomicIpSet!.geoIpConfig?.codes ?? []);
       _inverse = widget.atomicIpSet!.inverse;
       _clashRuleUrls.addAll(widget.atomicIpSet!.clashRuleUrls ?? []);
-      database.managers.cidrs
+      context
+          .read<DatabaseProvider>()
+          .database
+          .managers
+          .cidrs
           .filter((e) => e.ipSetName.name(widget.atomicIpSet!.name))
           .get()
           .then((value) {
@@ -778,9 +802,9 @@ class _SmallIpSetFormState extends State<SmallIpSetForm> with FormDataGetter {
                     ),
               ),
             ),
-            Gap(5),
-            TextDivider(text: 'GeoIP'),
-            Gap(5),
+            const Gap(5),
+            const TextDivider(text: 'GeoIP'),
+            const Gap(5),
             TextFormField(
               controller: _geoUrlController,
               decoration: InputDecoration(
@@ -794,14 +818,14 @@ class _SmallIpSetFormState extends State<SmallIpSetForm> with FormDataGetter {
                     ),
               ),
             ),
-            Gap(5),
+            const Gap(5),
             Text(
               'GeoIP Codes',
               style: Theme.of(context).textTheme.labelSmall!.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
             ),
-            Gap(5),
+            const Gap(5),
             Wrap(
               spacing: 5,
               runSpacing: 5,
@@ -814,7 +838,7 @@ class _SmallIpSetFormState extends State<SmallIpSetForm> with FormDataGetter {
                       }))
                   .toList(),
             ),
-            Gap(5),
+            const Gap(5),
             Row(
               children: [
                 Expanded(
@@ -827,7 +851,7 @@ class _SmallIpSetFormState extends State<SmallIpSetForm> with FormDataGetter {
                     labelText: 'GeoIP Code',
                   ),
                 )),
-                Gap(10),
+                const Gap(10),
                 IconButton.filledTonal(
                     onPressed: () {
                       if (_geoIpCodeController.text.isEmpty) {
@@ -837,11 +861,11 @@ class _SmallIpSetFormState extends State<SmallIpSetForm> with FormDataGetter {
                       _geoIpCodeController.clear();
                       setState(() {});
                     },
-                    icon: Icon(Icons.add_rounded)),
+                    icon: const Icon(Icons.add_rounded)),
               ],
             ),
             const Gap(5),
-            TextDivider(text: 'Clash Rules'),
+            const TextDivider(text: 'Clash Rules'),
             const Gap(5),
             ClashRule(clashRuleUrls: _clashRuleUrls),
             const Gap(10),
@@ -923,7 +947,7 @@ class _ClashRuleSetState extends State<ClashRuleSet> with FormDataGetter {
                     ),
               ),
             ),
-            Gap(10),
+            const Gap(10),
             ClashRule(clashRuleUrls: _clashRuleUrls),
           ],
         ),

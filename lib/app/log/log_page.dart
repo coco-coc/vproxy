@@ -1,6 +1,20 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:io';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:drift/drift.dart' hide Column;
 import 'package:drift/native.dart';
 import 'package:drift/remote.dart';
@@ -19,18 +33,14 @@ import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/routing/selector_widget.dart';
-import 'package:vx/auth/auth_bloc.dart';
+import 'package:vx/app/x_controller.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/common/config.dart';
-import 'package:vx/common/extension.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/theme.dart';
 import 'package:vx/utils/logger.dart';
-import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
-import 'package:vx/utils/ui.dart';
-import 'package:vx/widgets/pro_promotion.dart';
 
 TextStyle getChipTextStyle(BuildContext context) {
   return Theme.of(context).textTheme.labelLarge!.copyWith(
@@ -71,7 +81,7 @@ class _LogPageState extends State<LogPage> {
               icon: const Icon(Icons.clear_rounded),
               onPressed: () {
                 _searchController.clear();
-                context.read<LogBloc>().add(SubstringChangedEvent(""));
+                context.read<LogBloc>().add(const SubstringChangedEvent(""));
               },
             ),
             builder: (context, child) {
@@ -464,7 +474,7 @@ class _LogListState extends State<LogList> {
     } else {
       // tag is just a single handler id
       tagWidget = FutureBuilder(
-        future: context.read<OutboundRepo>().getHandlerById(int.parse(tag!)),
+        future: context.read<OutboundRepo>().getHandlerById(int.parse(tag)),
         builder: (context, snapshot) {
           return Text(snapshot.data?.name ?? tag,
               style: Theme.of(context).textTheme.bodyLarge);
@@ -478,7 +488,7 @@ class _LogListState extends State<LogList> {
                   color: XBlue,
                   fontWeight: FontWeight.w500,
                 )),
-        Gap(10),
+        const Gap(10),
         Expanded(
             child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -731,8 +741,8 @@ class _LogListState extends State<LogList> {
                     final metrics = notification.metrics;
                     // Dismiss when scrolling down at the top
                     // scrollDelta > 0 means scrolling down (content moving up)
-                    if (metrics.pixels <= 0 && 
-                        notification.scrollDelta != null && 
+                    if (metrics.pixels <= 0 &&
+                        notification.scrollDelta != null &&
                         notification.scrollDelta! > 0) {
                       Navigator.of(ctx).pop();
                       return true;
@@ -753,10 +763,12 @@ class _LogListState extends State<LogList> {
                               (isDirect
                                   ? AppLocalizations.of(context)!.addToProxy
                                   : AppLocalizations.of(context)!.addToDirect),
-                              style:
-                                  Theme.of(context).textTheme.titleLarge!.copyWith(
-                                        fontWeight: FontWeight.w500,
-                                      )),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .copyWith(
+                                    fontWeight: FontWeight.w500,
+                                  )),
                         ),
                       SafeArea(child: child),
                     ],
@@ -855,6 +867,7 @@ class _LogListState extends State<LogList> {
                 onPressed: domainAdded
                     ? null
                     : () async {
+                        final xController = context.read<XController>();
                         // check if dst is an ip
                         final d = Domain(
                           type: Domain_Type.Full,
@@ -914,6 +927,7 @@ class _LogListState extends State<LogList> {
                     ? null
                     : () async {
                         try {
+                          final xController = context.read<XController>();
                           // check if dst is an ip
                           final domain = isDomain(destination);
                           if (domain) {
@@ -1310,7 +1324,7 @@ class _LogListState extends State<LogList> {
           backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           label: name != null
               ? ConstrainedBox(
-                  constraints: BoxConstraints(minWidth: 30),
+                  constraints: const BoxConstraints(minWidth: 30),
                   child: Text(
                     name,
                     overflow: TextOverflow.clip,

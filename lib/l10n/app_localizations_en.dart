@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
@@ -1412,7 +1427,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get routerRules => 'Router Rules';
 
   @override
-  String get dnsRuleDesc => 'For each DNS request, rules are matched one by one starting from the top. If a rule matches, the following rule will not be considered. The dns server specified by the rule will be used to handle the dns query';
+  String get dnsRuleDesc => 'For each DNS request, rules are matched one by one starting from the top. If a rule matches, the following rule will not be considered. The dns server specified by the rule will be used to handle the dns query. If no rule matches, return empty DNS result.';
 
   @override
   String get dnsServer => 'DNS Server';
@@ -1508,6 +1523,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fallbackToProxySetting => 'When a direct connection failed, fallback to use proxy. The node selected by the \"Proxy\" selector will be used, if the selector does not exist, a random nodes will be selected';
+
+  @override
+  String get changeIpv6ToDomain => 'Change IPv6 to Domain';
+
+  @override
+  String get changeIpv6ToDomainDesc => 'If the matched node does not support IPv6, but the target address is IPv6, and the domain is sniffed, change target address to the domain.';
 
   @override
   String get installAsWinService => 'Add VX to Windows Service';
@@ -2101,7 +2122,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcome => 'Welcome to VX';
 
   @override
-  String get sourceCodeAvailable => 'VX is a source-available proxy client powered by open-source vx-core.';
+  String get sourceCodeAvailable => 'VX is a open-source proxy client powered by vx-core.';
 
   @override
   String get vxSourceCode => 'Source Code of VX';

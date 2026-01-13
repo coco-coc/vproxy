@@ -324,7 +324,7 @@ class MockAuthProvider extends _i1.Mock implements _i7.AuthProvider {
   }
 
   @override
-  _i4.Stream<_i8.User?> get user => (super.noSuchMethod(
+  _i4.Stream<_i8.User?> get sessionStreams => (super.noSuchMethod(
         Invocation.getter(#user),
         returnValue: _i4.Stream<_i8.User?>.empty(),
       ) as _i4.Stream<_i8.User?>);

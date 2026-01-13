@@ -1,7 +1,24 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/l10n/app_localizations.dart';
-import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 
 class SystemProxySetting extends StatefulWidget {
   const SystemProxySetting({super.key});
@@ -16,28 +33,29 @@ class _SystemProxySettingState extends State<SystemProxySetting> {
   final _httpPortController = TextEditingController();
   @override
   void initState() {
-    _dynamicSystemProxyPorts = persistentStateRepo.dynamicSystemProxyPorts;
-    _socksPortController.text = persistentStateRepo.socksPort.toString();
-    _httpPortController.text = persistentStateRepo.httpPort.toString();
+    final pref = context.read<SharedPreferences>();
+    _dynamicSystemProxyPorts = pref.dynamicSystemProxyPorts;
+    _socksPortController.text = pref.socksPort.toString();
+    _httpPortController.text = pref.httpPort.toString();
     super.initState();
   }
 
   void _toggleDynamicSystemProxyPorts(bool value) {
-    persistentStateRepo.setDynamicSystemProxyPorts(value);
+    context.read<SharedPreferences>().setDynamicSystemProxyPorts(value);
     setState(() {
       _dynamicSystemProxyPorts = value;
     });
   }
 
   void _toggleSocksPort(String value) {
-    persistentStateRepo.setSocksPort(int.parse(value));
+    context.read<SharedPreferences>().setSocksPort(int.parse(value));
     setState(() {
       _socksPortController.text = value;
     });
   }
 
   void _toggleHttpPort(String value) {
-    persistentStateRepo.setHttpPort(int.parse(value));
+    context.read<SharedPreferences>().setHttpPort(int.parse(value));
     setState(() {
       _httpPortController.text = value;
     });
@@ -68,7 +86,7 @@ class _SystemProxySettingState extends State<SystemProxySetting> {
                   onSelected: (_) {
                     _toggleDynamicSystemProxyPorts(true);
                   }),
-              Gap(10),
+              const Gap(10),
               ChoiceChip(
                   label: Text(AppLocalizations.of(context)!.staticPorts),
                   selected: !_dynamicSystemProxyPorts,
@@ -77,13 +95,13 @@ class _SystemProxySettingState extends State<SystemProxySetting> {
                   })
             ],
           ),
-          Gap(10),
+          const Gap(10),
           if (!_dynamicSystemProxyPorts)
             Row(
               children: [
                 Expanded(
                   child: TextField(
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'SOCKS',
                       ),
@@ -91,10 +109,10 @@ class _SystemProxySettingState extends State<SystemProxySetting> {
                       controller: _socksPortController,
                       onChanged: _toggleSocksPort),
                 ),
-                Gap(10),
+                const Gap(10),
                 Expanded(
                   child: TextField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'HTTP',
                     ),

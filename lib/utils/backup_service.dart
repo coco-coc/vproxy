@@ -1,33 +1,63 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
-import 'package:vx/auth/auth_provider.dart';
+import 'package:vx/app/x_controller.dart';
+import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/data/database.dart';
+import 'package:vx/data/database_provider.dart';
+import 'package:vx/data/sync.dart';
 import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/file.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
+import 'package:vx/utils/xapi_client.dart';
 
 class BackupSerevice extends ChangeNotifier {
   BackupSerevice(
-      {required AuthProvider authProvider, required PrefHelper prefHelper})
+      {required AuthBloc authProvider,
+      required SharedPreferences prefHelper,
+      required FlutterSecureStorage storage,
+      required DatabaseProvider databaseProvider,
+      required this.xController,
+      required this.xApiClient,
+      required SyncService syncService})
       : _authProvider = authProvider,
-        _prefHelper = prefHelper {
-    // if (_prefHelper.autoBackup) {
-    //   startPeriodicBackup();
-    // }
-  }
-  final AuthProvider _authProvider;
-  final PrefHelper _prefHelper;
+        _storage = storage,
+        _prefHelper = prefHelper,
+        databaseProvider = databaseProvider,
+        _syncService = syncService;
+  final AuthBloc _authProvider;
+  final SharedPreferences _prefHelper;
+  final FlutterSecureStorage _storage;
+  final XApiClient xApiClient;
+  final XController xController;
+  final DatabaseProvider databaseProvider;
+  final SyncService _syncService;
 
-  bool get canUpload => _authProvider.currentUser?.pro ?? false;
-  String get _userId => _authProvider.currentUser?.id ?? '';
+  bool get canUpload => _authProvider.state.user?.pro ?? false;
+  String get _userId => _authProvider.state.user?.id ?? '';
   bool uploading = false;
   bool restoring = false;
 
@@ -63,10 +93,10 @@ class BackupSerevice extends ChangeNotifier {
         await File(dst).delete();
       }
 
-      await database.customStatement('VACUUM INTO ?', [dst]);
+      await databaseProvider.database.customStatement('VACUUM INTO ?', [dst]);
 
       // Get backup password from secure storage
-      final password = await storage.read(key: 'backupPassword');
+      final password = await _storage.read(key: 'backupPassword');
 
       File fileToUpload = File(dst);
 
@@ -170,7 +200,7 @@ class BackupSerevice extends ChangeNotifier {
       File dbFileToRestore = tmpFile;
 
       // Try to decrypt the file if password is set
-      final password = await storage.read(key: 'backupPassword');
+      final password = await _storage.read(key: 'backupPassword');
       if (password != null && password.isNotEmpty) {
         try {
           final decryptedFile = await decryptFile(tmpFile, password);
@@ -188,7 +218,7 @@ class BackupSerevice extends ChangeNotifier {
 
       // Open the database and vacuum it
       final backupDb = sqlite3.open(dbFileToRestore.path);
-      final tmpDb = '${tmpLocation}.db';
+      final tmpDb = '$tmpLocation.db';
       backupDb
         ..execute('VACUUM INTO ?', [tmpDb])
         ..dispose();
@@ -201,28 +231,29 @@ class BackupSerevice extends ChangeNotifier {
       if (xController.status == XStatus.connected) {
         await xController.stop();
       }
-      await database.close(); // close the current database
+      await databaseProvider.database.close(); // close the current database
       await xApiClient.closeDb();
 
       late String newDbPath;
       if (Platform.isWindows) {
         // copy the new database file to the standard location
-        final newDbName = persistentStateRepo.dbName == 'x_database.sqlite'
+        final newDbName = _prefHelper.dbName == 'x_database.sqlite'
             ? '1.sqlite'
-            : '${int.parse(persistentStateRepo.dbName.split('.')[0]) + 1}.sqlite';
+            : '${int.parse(_prefHelper.dbName.split('.')[0]) + 1}.sqlite';
         newDbPath = join(resourceDirectory.path, newDbName);
-        print(newDbPath);
+        logger.d(newDbPath);
       } else {
-        newDbPath = await getDbPath();
+        newDbPath = await getDbPath(_prefHelper);
       }
 
       await tempDbFile.copy(newDbPath);
 
       if (Platform.isWindows) {
-        persistentStateRepo.setDbName(newDbPath.split('\\').last);
+        _prefHelper.setDbName(newDbPath.split('\\').last);
       }
 
-      database = AppDatabase();
+      databaseProvider.setDatabase(
+          AppDatabase(path: newDbPath)..syncService = _syncService);
       await xApiClient.openDb();
     } catch (e) {
       rethrow;
@@ -232,14 +263,18 @@ class BackupSerevice extends ChangeNotifier {
       unawaited(Future(() async {
         // remove old db
         // get all files ended with .sqlite
-        final currentDbPath = await getDbPath();
+        final currentDbPath = await getDbPath(_prefHelper);
         final sqliteFiles = resourceDirectory.listSync().where((e) {
           return e.path.endsWith('.sqlite') && e.path != currentDbPath;
         }).map((e) => File(e.path));
         filesToDelete.addAll(sqliteFiles);
         // delete the temporary database file
         for (final file in filesToDelete) {
-          file.delete();
+          try {
+            file.delete();
+          } catch (e) {
+            logger.e('Failed to delete file', error: e);
+          }
         }
       }));
     }

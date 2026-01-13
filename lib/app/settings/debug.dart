@@ -1,13 +1,32 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/settings/setting.dart';
+import 'package:vx/app/x_controller.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
 import 'package:vx/utils/upload_log.dart';
@@ -30,15 +49,15 @@ class _DebugLogPageState extends State<DebugLogPage> {
   @override
   void initState() {
     super.initState();
-    _debugLog = persistentStateRepo.enableDebugLog;
+    _debugLog = context.read<SharedPreferences>().enableDebugLog;
   }
 
   Future<void> _toggleDebugLog(bool value) async {
-    persistentStateRepo.setEnableDebugLog(value);
+    context.read<SharedPreferences>().setEnableDebugLog(value);
     setState(() {
       _debugLog = value;
     });
-    await xController.restart();
+    await context.read<XController>().restart();
     if (!value) {
       await unsetDebugLoggerProduction();
     } else {
@@ -60,11 +79,13 @@ class _DebugLogPageState extends State<DebugLogPage> {
                     count++;
                     if (count >= 10 && count < 20) {
                       snack('debug log enabled');
-                      persistentStateRepo.setEnableDebugLog(true);
+                      context.read<SharedPreferences>().setEnableDebugLog(true);
                       setDebugLoggerProduction();
                     } else if (count >= 20) {
                       snack('debug log disabled');
-                      persistentStateRepo.setEnableDebugLog(false);
+                      context
+                          .read<SharedPreferences>()
+                          .setEnableDebugLog(false);
                       unsetDebugLoggerProduction();
                     }
                   },
@@ -102,15 +123,10 @@ class _DebugLogPageState extends State<DebugLogPage> {
                             setState(() {
                               _uploading = true;
                             });
-                            logUploadService ??= LogUploadService(
-                                flutterLogDir: await getFlutterLogDir(),
-                                tunnelLogDir: await getTunnelLogDir(),
-                                secret: logKey,
-                                uploadUrl: isProduction()
-                                    ? 'https://vproxybackend.5vnetwork.com:443/api/upload-logs'
-                                    : 'http://127.0.0.1:11111/api/upload-logs');
+                            final logUploadService =
+                                context.read<LogUploadService>();
                             try {
-                              await logUploadService!.uploadDebugLog(
+                              await logUploadService.uploadDebugLog(
                                   reson ?? 'no reason provided');
                               snack('日志上传成功。谢谢您的反馈！');
                               // remove all debug log files
@@ -141,19 +157,19 @@ class _DebugLogPageState extends State<DebugLogPage> {
                                 downloadsDir = await getDownloadsDirectory();
                               }
                               final debugLogDir = await getDebugTunnelLogDir();
-                              final dstDir =
-                                  join(downloadsDir!.path, "vx_debug_logs");
+                              final dstDir = path.join(
+                                  downloadsDir!.path, "vx_debug_logs");
                               if (!Directory(dstDir).existsSync()) {
                                 Directory(dstDir).createSync(recursive: true);
                               }
                               for (final file
                                   in await debugLogDir.list().toList()) {
                                 if (file is File) {
-                                  final fileName = basename(file.path);
+                                  final fileName = path.basename(file.path);
                                   if (fileName.startsWith(".")) {
                                     continue;
                                   }
-                                  await file.copy(join(dstDir, fileName));
+                                  await file.copy(path.join(dstDir, fileName));
                                 }
                               }
                               rootScaffoldMessengerKey.currentState

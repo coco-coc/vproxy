@@ -1,21 +1,32 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
 
-import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tm/protos/protos/dns.pb.dart';
 import 'package:vx/app/log/log_page.dart';
-import 'package:vx/app/routing/default.dart';
-import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
 import 'package:vx/widgets/form_dialog.dart';
-import 'package:vx/xconfig_helper.dart';
 
 class DnsServersWidget extends StatefulWidget {
   const DnsServersWidget({super.key});
@@ -58,10 +69,6 @@ class _DnsServersWidgetState extends State<DnsServersWidget>
   late DnsRepo _dnsRepo;
   StreamSubscription? _dnsServersSubscription;
 
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   bool get wantKeepAlive => true;
@@ -290,7 +297,7 @@ Widget _getDnsServerWidget(BuildContext context, DnsServer server) {
 }
 
 class _FakeDns extends StatelessWidget {
-  const _FakeDns({super.key, required this.fakeDnsServer});
+  const _FakeDns({required this.fakeDnsServer});
   final FakeDnsServer fakeDnsServer;
   @override
   Widget build(BuildContext context) {
@@ -323,7 +330,7 @@ class _FakeDns extends StatelessWidget {
 
 class _PlainTlsDnsServer extends StatelessWidget {
   const _PlainTlsDnsServer(
-      {super.key, required this.addresses, this.useDefaultDns});
+      {required this.addresses, this.useDefaultDns});
   final Iterable<String> addresses;
   final bool? useDefaultDns;
 

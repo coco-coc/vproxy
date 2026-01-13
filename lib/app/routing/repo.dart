@@ -1,14 +1,28 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'package:drift/drift.dart';
-import 'package:flutter/foundation.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
 import 'package:tm/protos/protos/dns.pb.dart';
 import 'package:tm/protos/protos/geo.pb.dart';
 import 'package:tm/protos/protos/router.pb.dart';
 import 'package:vx/data/database.dart';
-import 'package:vx/main.dart' hide App;
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/utils/random.dart';
 
-abstract class SelectorRepo with ChangeNotifier {
+abstract class SelectorRepo {
   Future<void> addSelector(SelectorConfig selector);
   Future<void> removeSelector(String selectorName);
   Future<void> updateSelector(SelectorConfig selector);
@@ -26,7 +40,8 @@ abstract class SelectorRepo with ChangeNotifier {
   Stream<List<SelectorConfig>> getSelectorsStream();
 }
 
-abstract class RouteRepo with ChangeNotifier {
+abstract class RouteRepo {
+  Future<void> removeCustomRouteMode(int id);
   Stream<List<CustomRouteMode>> getCustomRouteModesStream();
   Future<List<CustomRouteMode>> getAllCustomRouteModes();
   Future<void> updateCustomRouteMode(int id,
@@ -34,7 +49,7 @@ abstract class RouteRepo with ChangeNotifier {
   Future<CustomRouteMode?> addCustomRouteMode(CustomRouteMode mode);
 }
 
-abstract class SetRepo with ChangeNotifier {
+abstract class SetRepo {
   Future<void> addGeoDomain(String domainSetName, Domain domain);
   Future<void> bulkAddGeoDomain(String domainSetName, List<Domain> domains);
   Stream<List<GeoDomain>> getGeoDomainsStream(String domainSetName);
@@ -48,7 +63,8 @@ abstract class SetRepo with ChangeNotifier {
   Future<void> updateAtomicDomainSet(String name,
       {GeositeConfig? geositeConfig,
       List<String>? clashRuleUrls,
-      bool? useBloomFilter});
+      bool? useBloomFilter,
+      String? geoUrl});
   Future<void> updateGreateDomainSet(String name,
       {GreatDomainSetConfig? greatDomainSet});
 
@@ -61,7 +77,7 @@ abstract class SetRepo with ChangeNotifier {
   Future<void> removeGreatIpSet(String ipSetName);
   Future<void> addAtomicIpSet(AtomicIpSet atomicIpSet);
   Future<void> updateAtomicIpSet(String name,
-      {GeoIPConfig? geoIpConfig, List<String>? clashRuleUrls});
+      {GeoIPConfig? geoIpConfig, List<String>? clashRuleUrls, String? geoUrl});
   Future<void> removeAtomicIpSet(String ipSetName);
   Stream<List<GreatIpSet>> getGreatIpSetsStream();
   Stream<List<AtomicIpSet>> getAtomicIpSetsStream();
@@ -77,7 +93,7 @@ abstract class SetRepo with ChangeNotifier {
   Stream<List<AppSet>> getAppSetsStream();
 }
 
-abstract class DnsRepo with ChangeNotifier {
+abstract class DnsRepo {
   Future<List<DnsServer>> getDnsServers();
   Future<DnsServer> addDnsServer(
       String dnsServerName, DnsServerConfig dnsServer);
@@ -87,74 +103,91 @@ abstract class DnsRepo with ChangeNotifier {
   Stream<List<DnsServer>> getDnsServersStream();
 }
 
-class DbHelper
-    with ChangeNotifier
-    implements SelectorRepo, RouteRepo, SetRepo, DnsRepo {
-  DbHelper();
+class DbHelper implements SelectorRepo, RouteRepo, SetRepo, DnsRepo {
+  DbHelper({required DatabaseProvider databaseProvider})
+      : _databaseProvider = databaseProvider;
 
-  reset() {
-    notifyListeners();
-  }
+  final DatabaseProvider _databaseProvider;
 
   Future<List<AtomicIpSet>> getAtomicIpSets() async {
-    return await database.managers.atomicIpSets.get();
+    return await _databaseProvider.database.managers.atomicIpSets.get();
   }
 
   Future<List<AtomicDomainSet>> getAtomicDomainSets() async {
-    return await database.managers.atomicDomainSets.get();
+    return await _databaseProvider.database.managers.atomicDomainSets.get();
   }
 
   Future<List<GreatDomainSet>> getGreatDomainSets() async {
-    return await database.managers.greatDomainSets.get();
+    return await _databaseProvider.database.managers.greatDomainSets.get();
   }
 
   Future<List<AppSet>> getAppSets() async {
-    return await database.managers.appSets.get();
+    return await _databaseProvider.database.managers.appSets.get();
   }
 
   @override
   Stream<List<DnsServer>> getDnsServersStream() {
-    return database.select(database.dnsServers).watch();
+    return _databaseProvider.database
+        .select(_databaseProvider.database.dnsServers)
+        .watch();
   }
 
   @override
   Stream<List<SelectorConfig>> getSelectorsStream() {
-    return database.select(database.handlerSelectors).watch().asyncMap((q) {
+    return _databaseProvider.database
+        .select(_databaseProvider.database.handlerSelectors)
+        .watch()
+        .asyncMap((q) {
       return Future.wait(q.map((e) {
-        return database.selectorToConfig(e);
+        return _databaseProvider.database.selectorToConfig(e);
       }));
     });
   }
 
   @override
+  Future<void> removeCustomRouteMode(int id) async {
+    await _databaseProvider.database
+        .deleteById(_databaseProvider.database.customRouteModes, [id]);
+  }
+
+  @override
   Stream<List<CustomRouteMode>> getCustomRouteModesStream() {
-    return database.select(database.customRouteModes).watch();
+    return _databaseProvider.database
+        .select(_databaseProvider.database.customRouteModes)
+        .watch();
   }
 
   @override
   Stream<List<GreatDomainSet>> getGreatDomainSetsStream() {
-    return database.select(database.greatDomainSets).watch();
+    return _databaseProvider.database
+        .select(_databaseProvider.database.greatDomainSets)
+        .watch();
   }
 
   @override
   Stream<List<AtomicDomainSet>> getAtomicDomainSetsStream() {
-    return database.select(database.atomicDomainSets).watch();
+    return _databaseProvider.database
+        .select(_databaseProvider.database.atomicDomainSets)
+        .watch();
   }
 
   @override
   Stream<List<AppSet>> getAppSetsStream() {
-    return database.select(database.appSets).watch();
+    return _databaseProvider.database
+        .select(_databaseProvider.database.appSets)
+        .watch();
   }
 
   @override
   Future<void> removeSelector(String selectorName) async {
-    await database.syncDeleteName(database.handlerSelectors, selectorName);
+    await _databaseProvider.database.deleteByName(
+        _databaseProvider.database.handlerSelectors, selectorName);
   }
 
   @override
   Future<void> updateSelector(SelectorConfig selector) async {
-    await database.syncUpdateName(
-      database.handlerSelectors,
+    await _databaseProvider.database.updateName(
+      _databaseProvider.database.handlerSelectors,
       selector.tag,
       HandlerSelectorsCompanion(config: Value(selector)),
     );
@@ -162,11 +195,11 @@ class DbHelper
 
   @override
   Future<void> addGreatIpSet(GreatIPSetConfig greatIpSet) async {
-    await database.syncInsertReturning(
-        database.greatIpSets,
+    await _databaseProvider.database.insertReturning(
+        _databaseProvider.database.greatIpSets,
         GreatIpSetsCompanion(
             name: Value(greatIpSet.name), greatIpSetConfig: Value(greatIpSet)));
-    // await database.managers.greatIpSets.create(
+    // await _databaseProvider.database.managers.greatIpSets.create(
     //     (o) => o(name: greatIpSet.name, greatIpSetConfig: greatIpSet),
     //     mode: InsertMode.insert);
   }
@@ -174,14 +207,14 @@ class DbHelper
   @override
   Future<void> updateGreatIpSet(String name,
       {GreatIPSetConfig? greatIpSet, String? newName}) async {
-    await database.syncUpdateName(
-        database.greatIpSets,
+    await _databaseProvider.database.updateName(
+        _databaseProvider.database.greatIpSets,
         name,
         GreatIpSetsCompanion(
             name: newName != null ? Value(newName) : const Value.absent(),
             greatIpSetConfig:
                 greatIpSet != null ? Value(greatIpSet) : const Value.absent()));
-    // await database.managers.greatIpSets
+    // await _databaseProvider.database.managers.greatIpSets
     //     .filter((f) => f.name.equals(name))
     //     .update((o) => o(
     //         name: newName != null ? Value(newName) : const Value.absent(),
@@ -191,39 +224,35 @@ class DbHelper
 
   @override
   Future<void> removeGreatIpSet(String ipSetName) async {
-    await database.syncDeleteName(database.greatIpSets, ipSetName);
-    // await database.managers.greatIpSets
+    await _databaseProvider.database
+        .deleteByName(_databaseProvider.database.greatIpSets, ipSetName);
+    // await _databaseProvider.database.managers.greatIpSets
     //     .filter((f) => f.name.equals(ipSetName))
     //     .delete();
   }
 
   @override
   Future<void> addAtomicIpSet(AtomicIpSet config) async {
-    await database.syncInsertReturning(
-      database.atomicIpSets,
+    await _databaseProvider.database.insertReturning(
+      _databaseProvider.database.atomicIpSets,
       AtomicIpSetsCompanion(
         name: Value(config.name),
         geoIpConfig: Value(config.geoIpConfig),
         clashRuleUrls: Value(config.clashRuleUrls),
+        geoUrl: Value(config.geoUrl),
       ),
       mode: InsertMode.insertOrReplace,
     );
-    // await database.managers.atomicIpSets.create(
-    //     (o) => o(
-    //           name: config.name,
-    //           geoIpConfig: Value(config.geoIpConfig),
-    //           clashRuleUrls: Value(config.clashRuleUrls),
-    //         ),
-    //     mode: InsertMode.insert);
   }
 
   @override
   Future<void> updateAtomicIpSet(String name,
       {GeoIPConfig? geoIpConfig,
       List<String>? clashRuleUrls,
-      String? newName}) async {
-    await database.syncUpdateName(
-      database.atomicIpSets,
+      String? newName,
+      String? geoUrl}) async {
+    await _databaseProvider.database.updateName(
+      _databaseProvider.database.atomicIpSets,
       name,
       AtomicIpSetsCompanion(
         name: newName != null ? Value(newName) : const Value.absent(),
@@ -231,23 +260,16 @@ class DbHelper
             geoIpConfig != null ? Value(geoIpConfig) : const Value.absent(),
         clashRuleUrls:
             clashRuleUrls != null ? Value(clashRuleUrls) : const Value.absent(),
+        geoUrl: geoUrl != null ? Value(geoUrl) : const Value.absent(),
       ),
     );
-    // await database.managers.atomicIpSets
-    //     .filter((f) => f.name.equals(name))
-    //     .update((o) => o(
-    //         name: newName != null ? Value(newName) : const Value.absent(),
-    //         geoIpConfig:
-    //             geoIpConfig != null ? Value(geoIpConfig) : const Value.absent(),
-    //         clashRuleUrls: clashRuleUrls != null
-    //             ? Value(clashRuleUrls)
-    //             : const Value.absent()));
   }
 
   @override
   Future<void> removeAtomicIpSet(String ipSetName) async {
-    await database.syncDeleteName(database.atomicIpSets, ipSetName);
-    // await database.managers.atomicIpSets
+    await _databaseProvider.database
+        .deleteByName(_databaseProvider.database.atomicIpSets, ipSetName);
+    // await _databaseProvider.database.managers.atomicIpSets
     //     .filter((f) => f.name.equals(ipSetName))
     //     .delete();
   }
@@ -258,9 +280,9 @@ class DbHelper
     //   name: Value(appSet.name),
     //   clashRuleUrls: Value(appSet.clashRuleUrls),
     // );
-    // await database.into(database.appSets).insertOnConflictUpdate(data);
-    await database.syncInsertReturning(
-      database.appSets,
+    // await _databaseProvider.database.into(_databaseProvider.database.appSets).insertOnConflictUpdate(data);
+    await _databaseProvider.database.insertReturning(
+      _databaseProvider.database.appSets,
       AppSetsCompanion(
         name: Value(appSet.name),
         clashRuleUrls: Value(appSet.clashRuleUrls),
@@ -271,8 +293,8 @@ class DbHelper
 
   @override
   Future<void> updateAppSet(String name, {List<String>? clashRuleUrls}) async {
-    await database.syncUpdateName(
-        database.appSets,
+    await _databaseProvider.database.updateName(
+        _databaseProvider.database.appSets,
         name,
         AppSetsCompanion(
             clashRuleUrls: clashRuleUrls != null
@@ -282,40 +304,44 @@ class DbHelper
 
   @override
   Future<void> removeAppSet(String appSetName) async {
-    await database.syncDeleteName(database.appSets, appSetName);
-    // await database.managers.appSets
+    await _databaseProvider.database
+        .deleteByName(_databaseProvider.database.appSets, appSetName);
+    // await _databaseProvider.database.managers.appSets
     //     .filter((f) => f.name.equals(appSetName))
     //     .delete();
   }
 
   @override
   Future<void> removeAtomicDomainSet(String domainSetName) async {
-    await database.syncDeleteName(database.atomicDomainSets, domainSetName);
-    // await database.managers.atomicDomainSets
+    await _databaseProvider.database.deleteByName(
+        _databaseProvider.database.atomicDomainSets, domainSetName);
+    // await _databaseProvider.database.managers.atomicDomainSets
     //     .filter((f) => f.name.equals(domainSetName))
     //     .delete();
   }
 
   @override
   Future<void> removeGreatDomainSet(String domainSetName) async {
-    // await database.managers.greatDomainSets
+    // await _databaseProvider.database.managers.greatDomainSets
     //     .filter((f) => f.name.equals(domainSetName))
     //     .delete();
-    await database.syncDeleteName(database.greatDomainSets, domainSetName);
+    await _databaseProvider.database.deleteByName(
+        _databaseProvider.database.greatDomainSets, domainSetName);
   }
 
   @override
   Future<void> addAtomicDomainSet(AtomicDomainSet config) async {
-    await database.syncInsertReturning(
-      database.atomicDomainSets,
+    await _databaseProvider.database.insertReturning(
+      _databaseProvider.database.atomicDomainSets,
       AtomicDomainSetsCompanion(
         name: Value(config.name),
         geositeConfig: Value(config.geositeConfig),
         clashRuleUrls: Value(config.clashRuleUrls),
         useBloomFilter: Value(config.useBloomFilter),
+        geoUrl: Value(config.geoUrl),
       ),
     );
-    // await database.managers.atomicDomainSets.create(
+    // await _databaseProvider.database.managers.atomicDomainSets.create(
     //     (o) => o(
     //         name: config.name,
     //         geositeConfig: Value(config.geositeConfig),
@@ -328,8 +354,9 @@ class DbHelper
   Future<void> updateAtomicDomainSet(String name,
       {GeositeConfig? geositeConfig,
       List<String>? clashRuleUrls,
-      bool? useBloomFilter}) async {
-    // await database.managers.atomicDomainSets
+      bool? useBloomFilter,
+      String? geoUrl}) async {
+    // await _databaseProvider.database.managers.atomicDomainSets
     //     .filter((f) => f.name.equals(name))
     //     .update((o) => o(
     //         name: newName != null ? Value(newName) : const Value.absent(),
@@ -342,8 +369,8 @@ class DbHelper
     //         useBloomFilter: useBloomFilter != null
     //             ? Value(useBloomFilter)
     //             : const Value.absent()));
-    await database.syncUpdateName(
-      database.atomicDomainSets,
+    await _databaseProvider.database.updateName(
+      _databaseProvider.database.atomicDomainSets,
       name,
       AtomicDomainSetsCompanion(
         geositeConfig:
@@ -353,20 +380,21 @@ class DbHelper
         useBloomFilter: useBloomFilter != null
             ? Value(useBloomFilter)
             : const Value.absent(),
+        geoUrl: geoUrl != null ? Value(geoUrl) : const Value.absent(),
       ),
     );
   }
 
   @override
   Future<void> addGreatDomainSet(GreatDomainSetConfig config) async {
-    // await database.managers.greatDomainSets.create(
+    // await _databaseProvider.database.managers.greatDomainSets.create(
     //     (o) => o(
     //         name: config.name,
     //         set: config,
     //         oppositeName: Value(config.oppositeName)),
     //     mode: InsertMode.insert);
-    await database.syncInsertReturning(
-      database.greatDomainSets,
+    await _databaseProvider.database.insertReturning(
+      _databaseProvider.database.greatDomainSets,
       GreatDomainSetsCompanion(
         name: Value(config.name),
         set: Value(config),
@@ -378,7 +406,7 @@ class DbHelper
   @override
   Future<void> updateGreateDomainSet(String name,
       {GreatDomainSetConfig? greatDomainSet}) async {
-    // await database.managers.greatDomainSets
+    // await _databaseProvider.database.managers.greatDomainSets
     //     .filter((f) => f.name.equals(name))
     //     .update((o) => o(
     //           name: newName != null ? Value(newName) : const Value.absent(),
@@ -389,8 +417,8 @@ class DbHelper
     //               ? Value(greatDomainSet)
     //               : const Value.absent(),
     //         ));
-    await database.syncUpdateName(
-      database.greatDomainSets,
+    await _databaseProvider.database.updateName(
+      _databaseProvider.database.greatDomainSets,
       name,
       GreatDomainSetsCompanion(
         oppositeName: greatDomainSet != null
@@ -406,7 +434,7 @@ class DbHelper
   // RouteRepo
   @override
   Future<List<CustomRouteMode>> getAllCustomRouteModes() async {
-    return await database.managers.customRouteModes.get();
+    return await _databaseProvider.database.managers.customRouteModes.get();
   }
 
   @override
@@ -418,10 +446,10 @@ class DbHelper
     //   dnsRules: Value(mode.dnsRules),
     // );
     // final ret = await database
-    //     .into(database.customRouteModes)
+    //     .into(_databaseProvider.database.customRouteModes)
     //     .insertReturningOrNull(data, mode: InsertMode.insertOrIgnore);
-    final ret = await database.syncInsertReturning(
-      database.customRouteModes,
+    final ret = await _databaseProvider.database.insertReturning(
+      _databaseProvider.database.customRouteModes,
       CustomRouteModesCompanion(
         id: Value(mode.id),
         name: Value(mode.name),
@@ -439,7 +467,7 @@ class DbHelper
     DnsRules? dnsRules,
     String? name,
   }) async {
-    // await database.managers.customRouteModes
+    // await _databaseProvider.database.managers.customRouteModes
     //     .filter((e) => e.id(id))
     //     .update((o) => o(
     //           routerConfig: routerConfig != null
@@ -449,8 +477,8 @@ class DbHelper
     //               dnsRules != null ? Value(dnsRules) : const Value.absent(),
     //           name: name != null ? Value(name) : const Value.absent(),
     //         ));
-    await database.syncUpdateId(
-      database.customRouteModes,
+    await _databaseProvider.database.updateById(
+      _databaseProvider.database.customRouteModes,
       id,
       CustomRouteModesCompanion(
         routerConfig:
@@ -464,21 +492,21 @@ class DbHelper
   // DnsRepo
   @override
   Future<List<DnsServer>> getDnsServers() async {
-    return await database.managers.dnsServers.get();
+    return await _databaseProvider.database.managers.dnsServers.get();
   }
 
   @override
   Future<void> updateDnsServer(DnsServer ds,
       {String? dnsServerName, DnsServerConfig? dnsServer}) async {
-    // await database.managers.dnsServers.filter((f) => f.id(ds.id)).update((o) =>
+    // await _databaseProvider.database.managers.dnsServers.filter((f) => f.id(ds.id)).update((o) =>
     //     o(
     //         name: dnsServerName != null
     //             ? Value(dnsServerName)
     //             : const Value.absent(),
     //         dnsServer:
     //             dnsServer != null ? Value(dnsServer) : const Value.absent()));
-    await database.syncUpdateId(
-      database.dnsServers,
+    await _databaseProvider.database.updateById(
+      _databaseProvider.database.dnsServers,
       ds.id,
       DnsServersCompanion(
         name:
@@ -495,9 +523,9 @@ class DbHelper
     //   name: Value(dnsServerName),
     //   dnsServer: Value(dnsServer),
     // );
-    // return await database.into(database.dnsServers).insertReturning(data);
-    return await database.syncInsertReturning(
-      database.dnsServers,
+    // return await _databaseProvider.database.into(_databaseProvider.database.dnsServers).insertReturning(data);
+    return await _databaseProvider.database.insertReturning(
+      _databaseProvider.database.dnsServers,
       DnsServersCompanion(
         id: Value(SnowflakeId.generate()),
         name: Value(dnsServerName),
@@ -508,15 +536,16 @@ class DbHelper
 
   @override
   Future<void> removeDnsServer(DnsServer ds) async {
-    // await database.managers.dnsServers.filter((f) => f.name(ds.name)).delete();
-    await database.syncDeleteName(database.dnsServers, ds.name);
+    // await _databaseProvider.database.managers.dnsServers.filter((f) => f.name(ds.name)).delete();
+    await _databaseProvider.database
+        .deleteByName(_databaseProvider.database.dnsServers, ds.name);
   }
 
   // GeoRepo
   @override
   Future<void> addGeoDomain(String setName, Domain d) async {
-    await database.syncInsertReturning(
-      database.geoDomains,
+    await _databaseProvider.database.insertReturning(
+      _databaseProvider.database.geoDomains,
       GeoDomainsCompanion(
         geoDomain: Value(d),
         domainSetName: Value(setName),
@@ -525,7 +554,7 @@ class DbHelper
     // final data =
     //     GeoDomainsCompanion(geoDomain: Value(d), domainSetName: Value(setName));
     // await database
-    //     .into(database.geoDomains)
+    //     .into(_databaseProvider.database.geoDomains)
     //     .insert(data, mode: InsertMode.insertOrIgnore);
     // } on DriftRemoteException catch (e) {
     //                       if (e.remoteCause is SqliteException &&
@@ -540,7 +569,8 @@ class DbHelper
 
   @override
   Stream<List<GeoDomain>> getGeoDomainsStream(String domainSetName) {
-    return (database.select(database.geoDomains)
+    return (_databaseProvider.database
+            .select(_databaseProvider.database.geoDomains)
           ..where((t) => t.domainSetName.equals(domainSetName)))
         .watch();
   }
@@ -548,15 +578,15 @@ class DbHelper
   @override
   Future<void> bulkAddGeoDomain(
       String domainSetName, List<Domain> domains) async {
-    await database.transactionInsertSync(
-        database.geoDomains,
+    await _databaseProvider.database.transactionInsert(
+        _databaseProvider.database.geoDomains,
         domains
             .map((e) => GeoDomainsCompanion(
                   geoDomain: Value(e),
                   domainSetName: Value(domainSetName),
                 ))
             .toList());
-    // await database.managers.geoDomains.bulkCreate((o) => [
+    // await _databaseProvider.database.managers.geoDomains.bulkCreate((o) => [
     //       ...domains.map((e) => o(
     //             geoDomain: e,
     //             domainSetName: domainSetName,
@@ -566,10 +596,11 @@ class DbHelper
 
   @override
   Future<void> removeGeoDomain(GeoDomain geoDomain) async {
-    // await (database.delete(database.geoDomains)
+    // await (_databaseProvider.database.delete(_databaseProvider.database.geoDomains)
     //       ..where((t) => t.id.equals(geoDomain.id)))
     //     .go();
-    await database.syncDeleteId(database.geoDomains, [geoDomain.id]);
+    await _databaseProvider.database
+        .deleteById(_databaseProvider.database.geoDomains, [geoDomain.id]);
   }
 
   @override
@@ -579,10 +610,10 @@ class DbHelper
     //   ipSetName: Value(ipSetName),
     // );
     // await database
-    //     .into(database.cidrs)
+    //     .into(_databaseProvider.database.cidrs)
     //     .insert(data, mode: InsertMode.insertOrIgnore);
-    await database.syncInsertReturning(
-      database.cidrs,
+    await _databaseProvider.database.insertReturning(
+      _databaseProvider.database.cidrs,
       CidrsCompanion(
         cidr: Value(cidr),
         ipSetName: Value(ipSetName),
@@ -592,19 +623,19 @@ class DbHelper
 
   @override
   Future<void> bulkAddCidr(String ipSetName, List<CIDR> cidrs) async {
-    // await database.transaction(() async {
+    // await _databaseProvider.database.transaction(() async {
     //   for (var cidr in cidrs) {
     //     final data = CidrsCompanion(
     //       ipSetName: Value(ipSetName),
     //       cidr: Value(cidr),
     //     );
     //     await database
-    //         .into(database.cidrs)
+    //         .into(_databaseProvider.database.cidrs)
     //         .insert(data, mode: InsertMode.insertOrIgnore);
     //   }
     // });
-    await database.transactionInsertSync(
-        database.cidrs,
+    await _databaseProvider.database.transactionInsert(
+        _databaseProvider.database.cidrs,
         cidrs
             .map((e) => CidrsCompanion(
                   ipSetName: Value(ipSetName),
@@ -615,14 +646,15 @@ class DbHelper
 
   @override
   Future<void> removeCidr(Cidr cidr) async {
-    // await (database.delete(database.cidrs)..where((t) => t.id.equals(cidr.id)))
+    // await (_databaseProvider.database.delete(_databaseProvider.database.cidrs)..where((t) => t.id.equals(cidr.id)))
     //     .go();
-    await database.syncDeleteId(database.cidrs, [cidr.id]);
+    await _databaseProvider.database
+        .deleteById(_databaseProvider.database.cidrs, [cidr.id]);
   }
 
   @override
   Stream<List<Cidr>> getCidrsStream(String ipSetName) {
-    return (database.select(database.cidrs)
+    return (_databaseProvider.database.select(_databaseProvider.database.cidrs)
           ..where((t) => t.ipSetName.equals(ipSetName)))
         .watch();
   }
@@ -631,8 +663,8 @@ class DbHelper
   Future<void> addApp(String appSetName, AppId app, {Uint8List? icon}) async {
     // only keyword type is synced
     if (app.type == AppId_Type.Keyword) {
-      await database.syncInsertReturning(
-        database.apps,
+      await _databaseProvider.database.insertReturning(
+        _databaseProvider.database.apps,
         AppsCompanion(
           appId: Value(app),
           appSetName: Value(appSetName),
@@ -644,23 +676,23 @@ class DbHelper
           appId: Value(app),
           appSetName: Value(appSetName),
           icon: icon != null ? Value(icon) : const Value.absent());
-      await database
-          .into(database.apps)
+      await _databaseProvider.database
+          .into(_databaseProvider.database.apps)
           .insert(data, mode: InsertMode.insertOrIgnore);
     }
   }
 
   @override
   Future<void> addApps(List<App> apps) async {
-    // await database.managers.apps.bulkCreate((o) => [
+    // await _databaseProvider.database.managers.apps.bulkCreate((o) => [
     //       ...apps.map((e) => o(
     //             appSetName: e.appSetName,
     //             appId: e.appId,
     //             icon: e.icon != null ? Value(e.icon!) : const Value.absent(),
     //           )),
     //     ]);
-    await database.transactionInsertSync(
-        database.apps,
+    await _databaseProvider.database.transactionInsert(
+        _databaseProvider.database.apps,
         apps
             .map((e) => AppsCompanion(
                   appSetName: Value(e.appSetName),
@@ -672,7 +704,7 @@ class DbHelper
 
   @override
   Stream<List<App>> getAppsStream(String appSetName) {
-    return (database.select(database.apps)
+    return (_databaseProvider.database.select(_databaseProvider.database.apps)
           ..where((t) => t.appSetName.equals(appSetName)))
         .watch()
         .map((query) => query.toList());
@@ -680,24 +712,27 @@ class DbHelper
 
   @override
   Future<List<App>> getApps(String appSetName) async {
-    return await (database.select(database.apps)
+    return await (_databaseProvider.database
+            .select(_databaseProvider.database.apps)
           ..where((t) => t.appSetName.equals(appSetName)))
         .get();
   }
 
   @override
   Future<void> removeApp(List<int> ids) async {
-    // await (database.delete(database.apps)..where((t) => t.id.equals(id))).go();
-    await database.syncDeleteId(database.apps, ids);
+    // await (_databaseProvider.database.delete(_databaseProvider.database.apps)..where((t) => t.id.equals(id))).go();
+    await _databaseProvider.database
+        .deleteById(_databaseProvider.database.apps, ids);
   }
 
   // SelectorRepo
   @override
   Future<List<SelectorConfig>> getAllSelectors() async {
-    final selectors = await database.managers.handlerSelectors.get();
+    final selectors =
+        await _databaseProvider.database.managers.handlerSelectors.get();
     final configs = <SelectorConfig>[];
     for (var selector in selectors) {
-      configs.add(await database.selectorToConfig(selector));
+      configs.add(await _databaseProvider.database.selectorToConfig(selector));
     }
     return configs;
   }
@@ -705,8 +740,8 @@ class DbHelper
   @override
   Future<void> addSubscriptionToSelector(
       String selectorName, int subscriptionId) async {
-    await database.syncInsertReturning(
-        database.selectorSubscriptionRelations,
+    await _databaseProvider.database.insertReturning(
+        _databaseProvider.database.selectorSubscriptionRelations,
         SelectorSubscriptionRelationsCompanion(
           id: Value(SnowflakeId.generate()),
           selectorName: Value(selectorName),
@@ -717,17 +752,18 @@ class DbHelper
   @override
   Future<void> removeSubscriptionFromSelector(
       String selectorName, int subscriptionId) async {
-    final relation =
-        await ((database.select(database.selectorSubscriptionRelations))
-              ..where((f) =>
-                  f.selectorName.equals(selectorName) &
-                  f.subscriptionId.equals(subscriptionId)))
-            .getSingleOrNull();
+    final relation = await ((_databaseProvider.database
+            .select(_databaseProvider.database.selectorSubscriptionRelations))
+          ..where((f) =>
+              f.selectorName.equals(selectorName) &
+              f.subscriptionId.equals(subscriptionId)))
+        .getSingleOrNull();
     if (relation != null) {
-      await database
-          .syncDeleteId(database.selectorSubscriptionRelations, [relation.id]);
+      await _databaseProvider.database.deleteById(
+          _databaseProvider.database.selectorSubscriptionRelations,
+          [relation.id]);
     }
-    // await (database.delete(database.selectorSubscriptionRelations)
+    // await (_databaseProvider.database.delete(_databaseProvider.database.selectorSubscriptionRelations)
     //       ..where((f) =>
     //           f.selectorName.equals(selectorName) &
     //           f.subscriptionId.equals(subscriptionId)))
@@ -738,13 +774,13 @@ class DbHelper
   Future<void> addHandlerGroupToSelector(
       String selectorName, String groupName) async {
     // await database
-    //     .into(database.selectorHandlerGroupRelations)
+    //     .into(_databaseProvider.database.selectorHandlerGroupRelations)
     //     .insert(SelectorHandlerGroupRelationsCompanion(
     //       selectorName: Value(selectorName),
     //       groupName: Value(groupName),
     //     ));
-    await database.syncInsertReturning(
-      database.selectorHandlerGroupRelations,
+    await _databaseProvider.database.insertReturning(
+      _databaseProvider.database.selectorHandlerGroupRelations,
       SelectorHandlerGroupRelationsCompanion(
         id: Value(SnowflakeId.generate()),
         selectorName: Value(selectorName),
@@ -756,17 +792,18 @@ class DbHelper
   @override
   Future<void> removeHandlerGroupFromSelector(
       String selectorName, String groupName) async {
-    final relation =
-        await ((database.select(database.selectorHandlerGroupRelations))
-              ..where((f) =>
-                  f.selectorName.equals(selectorName) &
-                  f.groupName.equals(groupName)))
-            .getSingleOrNull();
+    final relation = await ((_databaseProvider.database
+            .select(_databaseProvider.database.selectorHandlerGroupRelations))
+          ..where((f) =>
+              f.selectorName.equals(selectorName) &
+              f.groupName.equals(groupName)))
+        .getSingleOrNull();
     if (relation != null) {
-      await database
-          .syncDeleteId(database.selectorHandlerGroupRelations, [relation.id]);
+      await _databaseProvider.database.deleteById(
+          _databaseProvider.database.selectorHandlerGroupRelations,
+          [relation.id]);
     }
-    // await (database.delete(database.selectorHandlerGroupRelations)
+    // await (_databaseProvider.database.delete(_databaseProvider.database.selectorHandlerGroupRelations)
     //       ..where((f) =>
     //           f.selectorName.equals(selectorName) &
     //           f.groupName.equals(groupName)))
@@ -775,8 +812,8 @@ class DbHelper
 
   @override
   Future<void> addHandlerToSelector(String selectorName, int handlerId) async {
-    await database.syncInsertReturning(
-      database.selectorHandlerRelations,
+    await _databaseProvider.database.insertReturning(
+      _databaseProvider.database.selectorHandlerRelations,
       SelectorHandlerRelationsCompanion(
         id: Value(SnowflakeId.generate()),
         selectorName: Value(selectorName),
@@ -784,7 +821,7 @@ class DbHelper
       ),
     );
     // await database
-    //     .into(database.selectorHandlerRelations)
+    //     .into(_databaseProvider.database.selectorHandlerRelations)
     //     .insert(SelectorHandlerRelationsCompanion(
     //       selectorName: Value(selectorName),
     //       handlerId: Value(handlerId),
@@ -794,26 +831,27 @@ class DbHelper
   @override
   Future<void> removeHandlerFromSelector(
       String selectorName, int handlerId) async {
-    // await (database.delete(database.selectorHandlerRelations)
+    // await (_databaseProvider.database.delete(_databaseProvider.database.selectorHandlerRelations)
     //       ..where((f) =>
     //           f.selectorName.equals(selectorName) &
     //           f.handlerId.equals(handlerId)))
     //     .go();
-    final relation = await ((database.select(database.selectorHandlerRelations))
+    final relation = await ((_databaseProvider.database
+            .select(_databaseProvider.database.selectorHandlerRelations))
           ..where((f) =>
               f.selectorName.equals(selectorName) &
               f.handlerId.equals(handlerId)))
         .getSingleOrNull();
     if (relation != null) {
-      await database
-          .syncDeleteId(database.selectorHandlerRelations, [relation.id]);
+      await _databaseProvider.database.deleteById(
+          _databaseProvider.database.selectorHandlerRelations, [relation.id]);
     }
   }
 
   @override
   Future<void> addSelector(SelectorConfig selector) async {
-    await database.syncInsertReturning(
-      database.handlerSelectors,
+    await _databaseProvider.database.insertReturning(
+      _databaseProvider.database.handlerSelectors,
       HandlerSelectorsCompanion(
           name: Value(selector.tag), config: Value(selector)),
     );
@@ -821,11 +859,15 @@ class DbHelper
 
   @override
   Stream<List<GreatIpSet>> getGreatIpSetsStream() {
-    return database.select(database.greatIpSets).watch();
+    return _databaseProvider.database
+        .select(_databaseProvider.database.greatIpSets)
+        .watch();
   }
 
   @override
   Stream<List<AtomicIpSet>> getAtomicIpSetsStream() {
-    return database.select(database.atomicIpSets).watch();
+    return _databaseProvider.database
+        .select(_databaseProvider.database.atomicIpSets)
+        .watch();
   }
 }

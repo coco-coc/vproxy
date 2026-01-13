@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vx/app/outbound/subscription.dart';
 
 void main() {
   group('AutoSubscriptionUpdater', () {
@@ -48,7 +46,7 @@ void main() {
       expect(timer, isNotNull);
       
       // Simulate stopping the timer
-      timer?.cancel();
+      timer.cancel();
       timer = null;
       expect(timer, isNull);
     });
@@ -73,7 +71,7 @@ void main() {
       
       final now = DateTime.now();
       final lastUpdate = now.subtract(const Duration(minutes: 45)); // 45 minutes ago
-      final updateInterval = Duration(minutes: 30);
+      const updateInterval = Duration(minutes: 30);
       
       DateTime nextUpdate = lastUpdate.add(updateInterval);
       Duration initialDelay;
@@ -94,7 +92,7 @@ void main() {
       
       final now = DateTime.now();
       final lastUpdate = now.subtract(const Duration(minutes: 10));
-      final updateInterval = Duration(minutes: 30);
+      const updateInterval = Duration(minutes: 30);
       
       DateTime nextUpdate = lastUpdate.add(updateInterval);
       Duration initialDelay;

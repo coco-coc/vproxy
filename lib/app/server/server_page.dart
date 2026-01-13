@@ -1,10 +1,24 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +30,7 @@ import 'package:vx/app/server/ssh_keys_screen.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/data/database.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/widgets/ad.dart';
 import 'package:vx/widgets/pro_promotion.dart';
@@ -108,6 +123,7 @@ class _ServersState extends State<Servers> {
   }
 
   void _subscribe() {
+    final database = context.read<DatabaseProvider>().database;
     _serverSubscription =
         database.select(database.sshServers).watch().listen((l) {
       setState(() {
@@ -130,7 +146,7 @@ class _ServersState extends State<Servers> {
   }
 
   void _addServer() {
-    if (!context.read<AuthBloc>().state.pro && _servers.length >= 1) {
+    if (!context.read<AuthBloc>().state.pro && _servers.isNotEmpty) {
       showProPromotionDialog(context);
       return;
     }
@@ -284,7 +300,10 @@ class ServerCard extends StatelessWidget {
           leadingIcon: const Icon(Icons.delete_outline),
           onPressed: () async {
             try {
-              await storage.delete(key: server.storageKey);
+              await context
+                  .read<FlutterSecureStorage>()
+                  .delete(key: server.storageKey);
+              final database = context.read<DatabaseProvider>().database;
               await database.delete(database.sshServers).delete(server);
             } catch (e) {
               logger.d('delete server error', error: e);
@@ -319,7 +338,8 @@ class ServerCard extends StatelessWidget {
                   server.address,
                   maxLines: 1,
                 ),
-                trailing: showStatus ? ServerActionButtons(server: server) : null,
+                trailing:
+                    showStatus ? ServerActionButtons(server: server) : null,
                 contentPadding: const EdgeInsets.only(left: 16, right: 8),
                 leading: server.country != null && server.country!.isNotEmpty
                     ? SvgPicture(

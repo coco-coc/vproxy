@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:io';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
@@ -7,7 +22,8 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pasteboard/pasteboard.dart';
 import 'package:path/path.dart' hide context;
-import 'package:vx/widgets/ad.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/app/control.dart';
 
 import 'package:vx/app/start_close_button.dart';
@@ -15,12 +31,8 @@ import 'package:vx/app/top_bar.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/common/extension.dart';
 import 'package:vx/app/navigation.dart';
-import 'package:vx/data/sync.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
-import 'package:vx/utils/debug.dart';
-import 'package:vx/utils/logger.dart';
-import 'package:vx/utils/path.dart';
 import 'package:vx/widgets/divider.dart';
 import 'package:vx/widgets/no_node.dart';
 
@@ -41,7 +53,7 @@ class _ShellPageState extends State<ShellPage> {
   @override
   void initState() {
     super.initState();
-    if (!persistentStateRepo.welcomeShown) {
+    if (!context.read<SharedPreferences>().welcomeShown) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         if (Platform.isWindows &&
             File(join(resourceDirectory.parent.path, 'vproxy')).existsSync()) {
@@ -119,7 +131,7 @@ class _ShellPageState extends State<ShellPage> {
                     ),
                   ],
                 ));
-        persistentStateRepo.setWelcomeShown(true);
+        context.read<SharedPreferences>().setWelcomeShown(true);
       });
     }
   }
@@ -309,7 +321,7 @@ class _ShellPageState extends State<ShellPage> {
                         onPressed: () {
                           context.push('/setting');
                         },
-                        icon: Icon(Icons.settings_rounded)),
+                        icon: const Icon(Icons.settings_rounded)),
                     if (Platform.isMacOS) const SyncButton(),
                     Builder(builder: (context) {
                       return IconButton(

@@ -1,8 +1,23 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:path/path.dart' as path;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/app/x_controller.dart';
@@ -26,7 +41,7 @@ enum StartCloseButtonSize {
 
 class StartCloseCubit extends Cubit<XStatus> {
   StartCloseCubit({
-    required PrefHelper pref,
+    required SharedPreferences pref,
     required XController xController,
     required AuthBloc authBloc,
   })  : _pref = pref,
@@ -42,7 +57,7 @@ class StartCloseCubit extends Cubit<XStatus> {
     });
   }
 
-  final PrefHelper _pref;
+  final SharedPreferences _pref;
   final XController _xController;
   late final StreamSubscription<XStatus> _statusSubscription;
   final AuthBloc _authBloc;
@@ -72,7 +87,7 @@ class StartCloseCubit extends Cubit<XStatus> {
     final canStartError = _canStart();
     if (canStartError != null) {
       snack(rootLocalizations()?.startFailedWithReason(canStartError),
-          duration: Duration(seconds: 60));
+          duration: const Duration(seconds: 60));
       return;
     }
 

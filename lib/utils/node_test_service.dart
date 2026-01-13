@@ -1,4 +1,20 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/data/database.dart';
@@ -10,12 +26,16 @@ class NodeTestService {
   NodeTestService({
     required this.outboundRepo,
     required this.outboundBloc,
-    required this.prefHelper,
-  });
+    required this.pref,
+  }) {
+    if (pref.autoTestNodes) {
+      start();
+    }
+  }
 
   final OutboundRepo outboundRepo;
   final OutboundBloc outboundBloc;
-  final PrefHelper prefHelper;
+  final SharedPreferences pref;
 
   Timer? _timer;
   bool _isRunning = false;
@@ -32,13 +52,13 @@ class NodeTestService {
   }
 
   void _scheduleUpdate() {
-    if (!prefHelper.autoTestNodes) {
+    if (!pref.autoTestNodes) {
       return;
     }
 
-    Duration interval = Duration(minutes: prefHelper.nodeTestInterval);
+    Duration interval = Duration(minutes: pref.nodeTestInterval);
     late DateTime nextTestTime;
-    final lastTestTime = prefHelper.lastNodeTestTime;
+    final lastTestTime = pref.lastNodeTestTime;
     if (lastTestTime == null) {
       nextTestTime = DateTime.now();
     } else {
@@ -67,18 +87,18 @@ class NodeTestService {
   /// Restart the service (useful when settings change)
   void restart() {
     stop();
-    if (prefHelper.autoTestNodes) {
+    if (pref.autoTestNodes) {
       start();
     }
   }
 
   /// Check nodes and test those with old data
   Future<void> _checkAndTestNodes() async {
-    if (!prefHelper.autoTestNodes) {
+    if (!pref.autoTestNodes) {
       return;
     }
-    
-    prefHelper.setLastNodeTestTime(DateTime.now());
+
+    pref.setLastNodeTestTime(DateTime.now());
     try {
       final now = DateTime.now().millisecondsSinceEpoch ~/
           1000; // Unix timestamp in seconds

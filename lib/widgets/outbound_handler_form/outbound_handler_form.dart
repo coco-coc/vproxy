@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:convert/convert.dart';
@@ -11,7 +26,6 @@ import 'package:tm/protos/google/protobuf/any.pb.dart';
 import 'package:tm/protos/protos/inbound.pb.dart';
 import 'package:tm/protos/protos/proxy/anytls.pb.dart';
 import 'package:tm/protos/protos/proxy/dokodemo.pb.dart';
-import 'package:tm/protos/protos/proxy/dokodemo.pbjson.dart';
 import 'package:tm/protos/protos/proxy/http.pb.dart';
 import 'package:tm/protos/protos/proxy/hysteria.pb.dart';
 import 'package:tm/protos/protos/proxy/shadowsocks.pb.dart';
@@ -50,7 +64,6 @@ import 'package:tm/protos/transport/headers/tls/config.pb.dart' as tls_header;
 import 'package:tm/protos/transport/protocols/splithttp/config.pb.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:tm/protos/protos/tls/tls.pb.dart';
-import 'package:vx/utils/error.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/xapi_client.dart';
 import 'package:vx/widgets/add_button.dart';
@@ -157,7 +170,7 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
         case ProxyProtocolLabel.http:
           _httpConfig = any.unpackInto(_httpConfig);
         default:
-          throw Exception('Unexpected protocol: ${_selectedProtocolLabel}');
+          throw Exception('Unexpected protocol: $_selectedProtocolLabel');
       }
     }
   }
@@ -183,7 +196,7 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
       case ProxyProtocolLabel.http:
         protocol = Any.pack(_httpConfig);
       default:
-        throw Exception('Unexpected protocol: ${_selectedProtocolLabel}');
+        throw Exception('Unexpected protocol: $_selectedProtocolLabel');
       // _transportConfig.clear();
     }
     return OutboundHandlerConfig(
@@ -319,7 +332,7 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
             ),
             const Gap(10),
             DropdownMenu(
-                label: Text('Domain Strategy'),
+                label: const Text('Domain Strategy'),
                 initialSelection: _domainStrategy,
                 onSelected: (value) {
                   setState(() {

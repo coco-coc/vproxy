@@ -1,20 +1,33 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path/path.dart';
 import 'package:tm/protos/app/api/api.pb.dart';
 import 'package:tm/tm.dart';
-import 'package:vx/main.dart';
 import 'package:vx/utils/compress.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/mac.dart';
 import 'package:vx/utils/path.dart';
+import 'package:vx/utils/xapi_client.dart';
 
 part 'upload_log.g.dart';
 
@@ -30,16 +43,19 @@ class LogUploadService {
     required Directory flutterLogDir,
     required Directory tunnelLogDir,
     required String secret,
+    required XApiClient xApiClient,
   })  : _flutterLogDir = flutterLogDir,
         _tunnelLogDir = tunnelLogDir,
         _uploadUrl = uploadUrl,
-        _secret = secret;
+        _secret = secret,
+        _xApiClient = xApiClient;
 
   Timer? _uploadTimer;
   final Directory _flutterLogDir;
   final Directory _tunnelLogDir;
   final String _uploadUrl;
   final String _secret;
+  final XApiClient _xApiClient;
 
   /// Initialize the log upload service with configuration
   Future<void> start() async {
@@ -338,7 +354,7 @@ class LogUploadService {
     //       const Duration(seconds: 30),
     //       onTimeout: () => throw TimeoutException('Upload timeout'),
     //     );
-    await xApiClient.uploadLog(UploadLogRequest(
+    await _xApiClient.uploadLog(UploadLogRequest(
         ca: utf8.encode(serverCA),
         url: _uploadUrl,
         secret: generateHMAC_SHA256(

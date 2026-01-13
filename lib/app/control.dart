@@ -1,14 +1,26 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:io';
 
-import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:collection/collection.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:vector_graphics/vector_graphics_compat.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/blocs/inbound.dart';
 import 'package:vx/app/home/home.dart';
 import 'package:vx/app/routing/default.dart';
@@ -21,10 +33,7 @@ import 'package:vx/app/routing/repo.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:tm/protos/protos/router.pb.dart';
 import 'package:tm/protos/protos/router.pbenum.dart';
-import 'package:vx/app/log/log_bloc.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
-import 'package:vx/app/routing/routing_page.dart';
-import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/common/common.dart';
@@ -58,8 +67,8 @@ class ControlDrawer extends StatelessWidget {
       backgroundColor: Platform.isWindows
           ? Theme.of(context).colorScheme.surface
           : Theme.of(context).colorScheme.surface,
-      children: [
-        const Padding(
+      children: const [
+        Padding(
           padding: EdgeInsets.all(10),
           child: Control(),
         ),
@@ -100,7 +109,7 @@ class Control extends StatelessWidget {
                       ]);
                     });
               },
-              icon: Icon(Icons.help_outline_rounded)),
+              icon: const Icon(Icons.help_outline_rounded)),
         ),
         BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
           if (state.pro) {
@@ -155,7 +164,6 @@ class _RouteState extends State<Route> {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<ProxySelectorBloc>();
     return Card(
       elevation: 0,
       color: Theme.of(context).colorScheme.surfaceContainer,
@@ -543,21 +551,21 @@ class ManualModeCard extends StatelessWidget {
                 onAdd: (handlerId) {
                   context
                       .read<ProxySelectorBloc>()
-                      .add(ManualModeLandHandlersChangeEvent(
+                      .add(const ManualModeLandHandlersChangeEvent(
                           // [...r.landHandlers, handlerId]
                           ));
                 },
                 onRemove: (handlerId) {
                   context
                       .read<ProxySelectorBloc>()
-                      .add(ManualModeLandHandlersChangeEvent(
+                      .add(const ManualModeLandHandlersChangeEvent(
                           // r.landHandlers.where((e) => e != handlerId).toList()
                           ));
                 },
                 onReplace: (p0, p1) {
                   context
                       .read<ProxySelectorBloc>()
-                      .add(ManualModeLandHandlersChangeEvent(
+                      .add(const ManualModeLandHandlersChangeEvent(
                           // r.landHandlers.map((e) => e == p0 ? p1 : e).toList()
                           ));
                 },
@@ -596,10 +604,12 @@ class FakeDns extends StatelessWidget {
                         scale: 0.8,
                         child: StatefulBuilder(builder: (ctx, setState) {
                           return Switch(
-                              value: persistentStateRepo.fakeDns,
+                              value: context.read<SharedPreferences>().fakeDns,
                               onChanged: (value) async {
                                 setState(() {
-                                  persistentStateRepo.setFakeDns(value);
+                                  context
+                                      .read<SharedPreferences>()
+                                      .setFakeDns(value);
                                 });
                                 try {
                                   await context

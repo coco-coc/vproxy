@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
@@ -6,22 +21,21 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:grpc/grpc.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/app/api/api.pbgrpc.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
 import 'package:tm/protos/common/log/log.pbenum.dart';
-import 'package:tm/protos/protos/client.pb.dart';
 import 'package:tm/protos/protos/geo.pb.dart';
 import 'package:tm/protos/protos/inbound.pb.dart';
 import 'package:tm/protos/protos/outbound.pb.dart';
-import 'package:tm/protos/protos/router.pb.dart';
 import 'package:tm/protos/protos/server/server.pb.dart';
 import 'package:tm/protos/protos/sysproxy.pb.dart';
 import 'package:tm/tm.dart';
 import 'package:vx/app/server/add_server.dart';
-import 'package:vx/common/common.dart';
 import 'package:vx/data/ssh_server.dart';
 import 'package:vx/utils/cert.dart';
 import 'package:vx/utils/channel_credentials.dart';
@@ -31,7 +45,6 @@ import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/path.dart';
 import 'package:vx/utils/x_api_bindings_generated.dart';
-import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/utils/x_api_linux_bindings_generated.dart';
 import 'package:vx/xconfig_helper.dart';
 
@@ -41,7 +54,11 @@ class XApiClient {
   late ApiClient _xApiClient;
   final Completer<void> _completer = Completer();
 
-  XApiClient();
+  XApiClient(SharedPreferences pref, FlutterSecureStorage storage)
+      : _pref = pref,
+        _storage = storage;
+  final SharedPreferences _pref;
+  final FlutterSecureStorage _storage;
 
   /// Must be called before using this client
   Future<void> init() async {
@@ -79,7 +96,7 @@ class XApiClient {
         }
         final config = ApiServerConfig(
             logLevel: logLevel.value,
-            dbPath: await getDbPath(),
+            dbPath: await getDbPath(_pref),
             listenAddr: listenAddress,
             bindToDefaultNic:
                 (Platform.isIOS || Platform.isMacOS || Platform.isLinux),
@@ -134,7 +151,7 @@ class XApiClient {
             final config = ApiServerConfig(
                 logLevel:
                     kDebugMode ? LogLevel.DEBUG.value : LogLevel.ERROR.value,
-                dbPath: await getDbPath(),
+                dbPath: await getDbPath(_pref),
                 // bindToDefaultNic: true,
                 listenAddr: listenAddress,
                 tunName: XConfigHelper.tunName,
@@ -310,7 +327,7 @@ class XApiClient {
   }
 
   Future<ServerSshConfig> _sshServerToServerSshConfig(SshServer server) async {
-    final serverSecureStorageJson = await storage.read(key: server.storageKey);
+    final serverSecureStorageJson = await _storage.read(key: server.storageKey);
     if (serverSecureStorageJson == null) {
       throw Exception('Auth secret not found');
     }
@@ -326,7 +343,7 @@ class XApiClient {
       } else {
         assert(serverSecureStorage.globalSshKeyName != null &&
             serverSecureStorage.globalSshKeyName!.isNotEmpty);
-        final commonSshKeySecureStorageJson = await storage.read(
+        final commonSshKeySecureStorageJson = await _storage.read(
             key: 'common_ssh_key_${serverSecureStorage.globalSshKeyName}');
         if (commonSshKeySecureStorageJson == null) {
           throw Exception('Common ssh key not found');
@@ -360,7 +377,7 @@ class XApiClient {
         sshKeyPassphrase: passphrase,
       )));
       serverSecureStorage.pubKey = base64Encode(response.publicKey);
-      storage.write(
+      _storage.write(
           key: server.storageKey,
           value: jsonEncode(serverSecureStorage.toJson()));
       serverPubKey = response.publicKey;
@@ -536,7 +553,7 @@ class XApiClient {
 
   Future<void> openDb() async {
     await _completer.future;
-    await _xApiClient.openDb(OpenDbRequest(path: await getDbPath()));
+    await _xApiClient.openDb(OpenDbRequest(path: await getDbPath(_pref)));
   }
 
   Future<ToUrlResponse> toUrl(List<OutboundHandlerConfig> configs) async {

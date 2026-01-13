@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
@@ -7,6 +22,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/home/home.dart';
 import 'package:vx/app/settings/ads.dart';
 import 'package:vx/app/settings/debug.dart';
@@ -16,16 +32,13 @@ import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/app/settings/account.dart';
 import 'package:vx/app/settings/advanced/advanced.dart';
 import 'package:vx/app/settings/contact.dart';
-import 'package:vx/app/settings/general/language.dart';
 import 'package:vx/app/settings/open_source_software_notice_screen.dart';
 import 'package:vx/app/settings/privacy.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/auth/user.dart';
 import 'package:vx/main.dart';
-import 'package:vx/pref_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:vx/theme.dart';
 import 'package:vx/utils/debug.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
@@ -252,11 +265,11 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
       height: 5,
     ),
     if (context.watch<AuthBloc>().state.isActivated)
-      Align(
+      const Align(
         alignment: Alignment.centerLeft,
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 10.0, left: 5.0),
-          child: const ActivatedIcon(),
+          padding: EdgeInsets.only(bottom: 10.0, left: 5.0),
+          child: ActivatedIcon(),
         ),
       ),
     Row(
@@ -299,7 +312,7 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
         ),
       ],
     ),
-    SizedBox(
+    const SizedBox(
       height: 5,
     ),
     Row(
@@ -358,7 +371,7 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
         ),
       ],
     ),
-    Gap(5),
+    const Gap(5),
     Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: OutlinedButton.icon(
@@ -373,13 +386,16 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
     if (!isProduction())
       Row(
         children: [
-          IconButton(
+          const IconButton(
             onPressed: saveLogToApplicationDocumentsDir,
             icon: Icon(Icons.file_copy),
           ),
           IconButton(
-            onPressed: clearDatabase,
-            icon: Icon(Icons.delete),
+            onPressed: () async {
+              final dbPath = await getDbPath(context.read<SharedPreferences>());
+              clearDatabase(dbPath);
+            },
+            icon: const Icon(Icons.delete),
           ),
           TextButton(
             onPressed: () async {
@@ -390,22 +406,23 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
                 Directory(dstDir).createSync(recursive: true);
               }
               final newFile =
-                  await File(await getDbPath()).copy(join(dstDir, "db.sqlite"));
+                  await File(await getDbPath(context.read<SharedPreferences>()))
+                      .copy(join(dstDir, "db.sqlite"));
               print('copied, ${newFile.path}');
             },
-            child: Text('Copy Database'),
+            child: const Text('Copy Database'),
           ),
           TextButton(
             onPressed: () {
               context.read<AuthBloc>().unsetTestUser();
             },
-            child: Text('Unset'),
+            child: const Text('Unset'),
           ),
           TextButton(
             onPressed: () {
               context.read<AuthBloc>().setTestUser();
             },
-            child: Text('Set'),
+            child: const Text('Set'),
           ),
         ],
       ),
@@ -428,7 +445,7 @@ class CompactSettingScreen extends StatelessWidget {
                   onPressed: () {
                     context.pop();
                   },
-                  icon: Icon(Icons.arrow_back_rounded)),
+                  icon: const Icon(Icons.arrow_back_rounded)),
               automaticallyImplyLeading: true,
             )
           : null,
@@ -493,7 +510,7 @@ class Version extends StatelessWidget {
                     demo = true;
                     App.of(context)?.rebuildAllChildren();
                     if (Platform.isMacOS) {
-                      await windowManager.setSize(Size(1280, 800));
+                      await windowManager.setSize(const Size(1280, 800));
                     }
                     context.read<RealtimeSpeedNotifier>().demo();
                   }

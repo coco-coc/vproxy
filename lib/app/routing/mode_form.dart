@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -11,17 +26,15 @@ import 'package:tm/protos/protos/router.pb.dart';
 import 'package:vx/app/log/log_page.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/routing/add_dialog.dart';
-import 'package:vx/app/routing/dns.dart';
 import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/common/config.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/data/database.dart';
-import 'package:vx/main.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/widgets/form_dialog.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/widgets/text_divider.dart';
-import 'package:vx/xconfig_helper.dart';
 
 enum OutboundType {
   node,
@@ -141,7 +154,13 @@ class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
         });
       }
     });
-    database.managers.handlerSelectors.get().then((l) {
+    context
+        .read<DatabaseProvider>()
+        .database
+        .managers
+        .handlerSelectors
+        .get()
+        .then((l) {
       _selectors = l;
       if (_outboundType == OutboundType.selector) {
         setState(() {
@@ -616,7 +635,13 @@ class _DnsRuleFormState extends State<DnsRuleForm> with FormDataGetter {
           .firstOrNull;
     }
     _updateNontrivial();
-    database.managers.dnsServers.get().then((l) {
+    context
+        .read<DatabaseProvider>()
+        .database
+        .managers
+        .dnsServers
+        .get()
+        .then((l) {
       _dnsServers = [/* ...defaultDnsServers */ ...l];
       setState(() {
         _selectedDnsServer ??=
@@ -1109,6 +1134,7 @@ class _DomainSetPickerState extends State<DomainSetPicker> {
   @override
   void initState() {
     super.initState();
+    final database = context.read<DatabaseProvider>().database;
     _getGreatDomainSetsFuture = database.managers.greatDomainSets.get();
     _getAtomicDomainSetsFuture = database.managers.atomicDomainSets.get();
   }
@@ -1191,6 +1217,7 @@ class _IPConditionState extends State<IPCondition> {
   @override
   void initState() {
     super.initState();
+    final database = context.read<DatabaseProvider>().database;
     _getGreatIpSetsFuture = database.managers.greatIpSets.get();
     _getAtomicIpSetsFuture = database.managers.atomicIpSets.get();
   }
@@ -1494,14 +1521,14 @@ class _AllConditionState extends State<AllCondition> {
               }),
           const Gap(5),
           CheckboxListTile(
-              value: !widget.rule!.skipSniff,
+              value: !widget.rule.skipSniff,
               title: Text(
                   AppLocalizations.of(context)!.sniffDomainForIpConnection,
                   style: Theme.of(context).textTheme.labelMedium!.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       )),
               onChanged: (v) {
-                widget.rule!.skipSniff = !(v ?? false);
+                widget.rule.skipSniff = !(v ?? false);
                 setState(() {
                   widget.onChanged();
                 });
@@ -1528,6 +1555,7 @@ class _AppConditionState extends State<AppCondition> {
   @override
   void initState() {
     super.initState();
+    final database = context.read<DatabaseProvider>().database;
     _getAppSetsFuture = database.managers.appSets.get();
   }
 

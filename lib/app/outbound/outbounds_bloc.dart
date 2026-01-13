@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
@@ -5,12 +20,12 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/app/api/api.pb.dart';
 import 'package:tm/protos/protos/outbound.pb.dart';
 import 'package:tm/protos/protos/router.pb.dart';
 import 'package:tm/tm.dart';
 import 'package:vx/app/control.dart';
-import 'package:vx/app/outbound/outbound.dart';
 import 'package:vx/app/outbound/outbound_page.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/outbound/subscription.dart';
@@ -24,6 +39,7 @@ import 'package:vx/utils/logger.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
+import 'package:vx/utils/xapi_client.dart';
 
 // TODO: event limiter for verticalDragUpdate
 // TODO: Move test logic to statefulWidgets
@@ -34,13 +50,14 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
     this._xController,
     this._subscriptionUpdater,
     this._authBloc,
+    this._pref,
+    this._xApiClient,
   ) : super(OutboundState(
-            sortCol: persistentStateRepo.sortCol,
-            viewMode: persistentStateRepo.outboundViewMode == 'grid'
+            sortCol: _pref.sortCol,
+            viewMode: _pref.outboundViewMode == 'grid'
                 ? OutboundViewMode.grid
                 : OutboundViewMode.list,
-            smallScreenPreference:
-                persistentStateRepo.outboundTableSmallScreenPreference)) {
+            smallScreenPreference: _pref.outboundTableSmallScreenPreference)) {
     on<InitialEvent>(_initial);
     on<SyncEvent>(_sync);
     on<UserIsNotProEvent>(_onUserIsNotPro);
@@ -98,8 +115,12 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   }
   final OutboundRepo _outboundRepo;
   final XController _xController;
+  final XApiClient _xApiClient;
+
+  final SharedPreferences _pref;
   final AutoSubscriptionUpdater _subscriptionUpdater;
   final AuthBloc _authBloc;
+
   // late final StreamSubscription subscriptionChangeSub;
   // final _handlerBox = store.box<OutboundHandler>();
   // final _handlerGroupBox = store.box<OHTag>();
@@ -166,13 +187,12 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
         }
         return a.placeOnTop ? -1 : 1;
       });
-      final initial =
-          state.selected == null && persistentStateRepo.nodeGroup != null;
+      final initial = state.selected == null && _pref.nodeGroup != null;
       emit(state.copyWith(
           gs: allGroups,
           selected: initial
-              ? () => allGroups.firstWhereOrNull(
-                  (e) => e.name == persistentStateRepo.nodeGroup)
+              ? () =>
+                  allGroups.firstWhereOrNull((e) => e.name == _pref.nodeGroup)
               : null));
       if (initial) {
         emit(state.copyWith(
@@ -213,8 +233,7 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
     emit(state.copyWith(
       handlers: _sortHandlers(await _getHandlers(), state.sortCol),
     ));
-    database.markTablesUpdated(
-        {database.subscriptions, database.outboundHandlerGroups});
+
   }
 
   void _onOutboundModeSwitch(
@@ -303,7 +322,7 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   }
 
   void _sort(SortHandlersEvent e, Emitter<OutboundState> emit) {
-    persistentStateRepo.setSortCol(e.colSort);
+    _pref.setSortCol(e.colSort);
     final handlers = List<OutboundHandler>.from(state.handlers);
     emit(state.copyWith(
       handlers: _sortHandlers(handlers, e.colSort),
@@ -330,7 +349,7 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   Future<void> _onSelectedChange(
       SelectedGroupChangeEvent e, Emitter<OutboundState> emit) async {
     emit(state.copyWith(selected: () => e.selected));
-    persistentStateRepo.setNodeGroup(e.selected?.name);
+    _pref.setNodeGroup(e.selected?.name);
     emit(state.copyWith(
         handlers: _sortHandlers(await _getHandlers(), state.sortCol)));
   }
@@ -405,7 +424,7 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
     final unlockPro = _authBloc.state.pro;
     // single node mode
     if (!unlockPro ||
-        persistentStateRepo.proxySelectorManualMode ==
+        _pref.proxySelectorManualMode ==
             ProxySelectorManualNodeSelectionMode.single) {
       final currentlySelected = newList.indexWhere((h) => h.selected);
       if (currentlySelected >= 0 && currentlySelected != index) {
@@ -533,7 +552,7 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
     await _outboundRepo.removeHandlerGroup(e.group.name);
     if (e.group.name == state.selected?.name) {
       emit(state.copyWith(selected: () => null));
-      persistentStateRepo.setNodeGroup(null);
+      _pref.setNodeGroup(null);
     }
   }
 
@@ -564,7 +583,7 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
       speed: 0,
     );
 
-    final resStream = await xApiClient.speedTest(SpeedTestRequest(
+    final resStream = await _xApiClient.speedTest(SpeedTestRequest(
       handlers: handlersToBeTested.map((h) => h.toConfig()).toList(),
     ));
 
@@ -649,13 +668,13 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
     if (e.pingMode != null) {
       pingMode = e.pingMode!;
     } else {
-      pingMode = persistentStateRepo.pingMode;
+      pingMode = _pref.pingMode;
     }
 
     late final List<Future> futures;
     if (pingMode == PingMode.Real) {
       futures = handlersToBeTested
-          .map((h) => xApiClient
+          .map((h) => _xApiClient
                   .handlerUsable(HandlerUsableRequest(handler: h.toConfig()))
                   .then((res) {
                 _handlersUsableTesting.remove(h.id);
@@ -699,9 +718,9 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
 
         late Future<int> f;
         if (Tm.instance.state == TmStatus.connected) {
-          f = xController.rttTest(config.address, port);
+          f = _xController.rttTest(config.address, port);
         } else {
-          f = xApiClient.rtt(RttTestRequest(addr: config.address, port: port));
+          f = _xApiClient.rtt(RttTestRequest(addr: config.address, port: port));
         }
 
         return f.then((res) {
@@ -736,10 +755,10 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
       SubscriptionDeleteEvent e, Emitter<OutboundState> emit) async {
     if (state.selected?.name == e.sub.name) {
       emit(state.copyWith(selected: () => null));
-      persistentStateRepo.setNodeGroup(null);
+      _pref.setNodeGroup(null);
     }
     await _outboundRepo.removeSubscription(e.sub.id);
-    xController.subscriptionUpdated();
+    _xController.subscriptionUpdated();
     final handlers = _sortHandlers(await _getHandlers(), state.sortCol);
     emit(state.copyWith(handlers: handlers));
   }
@@ -884,22 +903,22 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
       showAddress: e.address,
     )));
     if (e.protocol != null) {
-      persistentStateRepo.setSmScreenShowProtocol(e.protocol!);
+      _pref.setSmScreenShowProtocol(e.protocol!);
     }
     if (e.usable != null) {
-      persistentStateRepo.setSmScreenShowOk(e.usable!);
+      _pref.setSmScreenShowOk(e.usable!);
     }
     if (e.ping != null) {
-      persistentStateRepo.setSmScreenShowLatency(e.ping!);
+      _pref.setSmScreenShowLatency(e.ping!);
     }
     if (e.speed != null) {
-      persistentStateRepo.setSmScreenShowSpeed(e.speed!);
+      _pref.setSmScreenShowSpeed(e.speed!);
     }
     if (e.active != null) {
-      persistentStateRepo.setSmScreenShowActive(e.active!);
+      _pref.setSmScreenShowActive(e.active!);
     }
     if (e.address != null) {
-      persistentStateRepo.setSmScreenShowAddress(e.address!);
+      _pref.setSmScreenShowAddress(e.address!);
     }
   }
 
@@ -908,7 +927,7 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
         ? OutboundViewMode.grid
         : OutboundViewMode.list;
     emit(state.copyWith(viewMode: newMode));
-    persistentStateRepo.setOutboundViewMode(newMode);
+    _pref.setOutboundViewMode(newMode);
   }
 
   void _onAddSelectedHandlersToGroup(

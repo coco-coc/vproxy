@@ -1,14 +1,30 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
-import 'package:vx/app/routing/repo.dart';
 import 'package:vx/app/settings/setting.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/data/sync.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/backup_service.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
@@ -52,7 +68,7 @@ class _SyncPageState extends State<SyncPage> {
 }
 
 class _Backup extends StatefulWidget {
-  const _Backup({super.key});
+  const _Backup();
 
   @override
   State<_Backup> createState() => __BackupState();
@@ -72,7 +88,10 @@ class __BackupState extends State<_Backup> {
         _latestBackup = value;
       });
     });
-    storage.read(key: 'backupPassword').then((value) {
+    context
+        .read<FlutterSecureStorage>()
+        .read(key: 'backupPassword')
+        .then((value) {
       setState(() {
         _passwordController.text = value ?? '';
         _password = value;
@@ -87,7 +106,9 @@ class __BackupState extends State<_Backup> {
   }
 
   void _setPassword(String value) {
-    storage.write(key: 'backupPassword', value: value);
+    context
+        .read<FlutterSecureStorage>()
+        .write(key: 'backupPassword', value: value);
     setState(() {
       _password = value;
       _errorText = null;
@@ -108,16 +129,14 @@ class __BackupState extends State<_Backup> {
               top: 10,
             ),
             child: Text(
-                AppLocalizations.of(context)!.currentBackup +
-                    ' ' +
-                    DateTime.parse(_latestBackup!.replaceAll('.db', ''))
+                '${AppLocalizations.of(context)!.currentBackup} ${DateTime.parse(_latestBackup!.replaceAll('.db', ''))
                         .toLocal()
                         .toString()
                         .split('.')
-                        .first,
+                        .first}',
                 style: Theme.of(context).textTheme.bodyMedium),
           ),
-        Gap(10),
+        const Gap(10),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
@@ -147,17 +166,16 @@ class __BackupState extends State<_Backup> {
                           ),
                         )
                       : Text(AppLocalizations.of(context)!.uploadDb)),
-              Gap(10),
+              const Gap(10),
               FilledButton(
                   onPressed: () async {
                     try {
                       final appState = App.of(context);
-                      final dbHelper = context.read<DbHelper>();
                       final outBloc = context.read<OutboundBloc>();
                       await backupService.restoreBackup();
                       snack(rootLocalizations()!.restoreDbSuccess);
                       appState?.rebuildAllChildren();
-                      dbHelper.reset();
+                      // to stop query stream and relisten
                       outBloc.add(InitialEvent());
                     } catch (e) {
                       logger.e("restoreBackup", error: e);
@@ -174,10 +192,11 @@ class __BackupState extends State<_Backup> {
                           ),
                         )
                       : Text(AppLocalizations.of(context)!.restoreDb)),
-              Gap(10),
+              const Gap(10),
               FilledButton.tonal(
                   style: FilledButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.errorContainer,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.errorContainer,
                   ),
                   onPressed: () async {
                     try {
@@ -195,7 +214,7 @@ class __BackupState extends State<_Backup> {
             ],
           ),
         ),
-        Gap(10),
+        const Gap(10),
         TextField(
           controller: _passwordController,
           obscureText: true,
@@ -209,12 +228,12 @@ class __BackupState extends State<_Backup> {
           },
           decoration: InputDecoration(
               errorText: _errorText,
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               labelText: AppLocalizations.of(context)!.password,
               helperText: AppLocalizations.of(context)!.backupPasswordDesc,
               helperMaxLines: 2),
         ),
-        Gap(5),
+        const Gap(5),
         Align(
           alignment: Alignment.centerRight,
           child: FilledButton(
@@ -229,7 +248,7 @@ class __BackupState extends State<_Backup> {
 }
 
 class _Sync extends StatefulWidget {
-  const _Sync({super.key});
+  const _Sync();
 
   @override
   State<_Sync> createState() => __SyncState();
@@ -248,11 +267,12 @@ class __SyncState extends State<_Sync> {
   @override
   void initState() {
     super.initState();
-    _cloudSync = persistentStateRepo.cloudSync;
-    _nodeSub = persistentStateRepo.syncNodeSub;
-    _route = persistentStateRepo.syncRoute;
-    _server = persistentStateRepo.syncServer;
-    _selector = persistentStateRepo.syncSelectorSetting;
+    final pref = context.read<SharedPreferences>();
+    _cloudSync = pref.cloudSync;
+    _nodeSub = pref.syncNodeSub;
+    _route = pref.syncRoute;
+    _server = pref.syncServer;
+    _selector = pref.syncSelectorSetting;
     _syncService = context.read<SyncService>();
     _passwordController.text = _syncService.password ?? '';
   }
@@ -274,11 +294,11 @@ class __SyncState extends State<_Sync> {
                 onSelected: (value) {},
                 label: Text(AppLocalizations.of(context)!.cloudSync),
                 selected: _cloudSync),
-            Gap(10),
+            const Gap(10),
             ChoiceChip(
                 label: Text(AppLocalizations.of(context)!.lanSync),
                 selected: !_cloudSync),
-            Expanded(child: SizedBox()),
+            const Expanded(child: SizedBox()),
             Consumer<SyncService>(
               builder: (context, syncService, child) {
                 if (syncService.syncing) {
@@ -293,19 +313,19 @@ class __SyncState extends State<_Sync> {
                           },
                     icon: syncService.syncing
                         ? smallCircularProgressIndicator
-                        : Icon(Icons.sync));
+                        : const Icon(Icons.sync));
               },
             )
           ],
         ),
-        Gap(10),
+        const Gap(10),
         Row(
           children: [
             Text('•',
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     )),
-            Gap(5),
+            const Gap(5),
             Expanded(
               child: Text(AppLocalizations.of(context)!.cloudSyncDesc1,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
@@ -314,7 +334,7 @@ class __SyncState extends State<_Sync> {
             ),
           ],
         ),
-        Gap(5),
+        const Gap(5),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -322,7 +342,7 @@ class __SyncState extends State<_Sync> {
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     )),
-            Gap(5),
+            const Gap(5),
             Expanded(
               child: Text(AppLocalizations.of(context)!.cloudSyncDesc2,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
@@ -331,7 +351,7 @@ class __SyncState extends State<_Sync> {
             ),
           ],
         ),
-        Gap(5),
+        const Gap(5),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -339,7 +359,7 @@ class __SyncState extends State<_Sync> {
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     )),
-            Gap(5),
+            const Gap(5),
             Expanded(
               child: Text(AppLocalizations.of(context)!.cloudSyncDesc3,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
@@ -352,7 +372,7 @@ class __SyncState extends State<_Sync> {
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Column(
             children: [
-              Gap(10),
+              const Gap(10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -363,12 +383,12 @@ class __SyncState extends State<_Sync> {
                         setState(() {
                           _nodeSub = value;
                         });
-                        persistentStateRepo.setSyncNodeSub(value);
+                        context.read<SharedPreferences>().setSyncNodeSub(value);
                         context.read<SyncService>().reset();
                       })
                 ],
               ),
-              Gap(10),
+              const Gap(10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -379,12 +399,14 @@ class __SyncState extends State<_Sync> {
                         setState(() {
                           _route = value;
                         });
-                        persistentStateRepo.setSyncRuleDnsSet(value);
+                        context
+                            .read<SharedPreferences>()
+                            .setSyncRuleDnsSet(value);
                         context.read<SyncService>().reset();
                       })
                 ],
               ),
-              Gap(10),
+              const Gap(10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -395,12 +417,14 @@ class __SyncState extends State<_Sync> {
                         setState(() {
                           _selector = value;
                         });
-                        persistentStateRepo.setSyncSelectorSetting(value);
+                        context
+                            .read<SharedPreferences>()
+                            .setSyncSelectorSetting(value);
                         context.read<SyncService>().reset();
                       })
                 ],
               ),
-              Gap(10),
+              const Gap(10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -411,7 +435,7 @@ class __SyncState extends State<_Sync> {
                         setState(() {
                           _server = value;
                         });
-                        persistentStateRepo.setSyncServer(value);
+                        context.read<SharedPreferences>().setSyncServer(value);
                         context.read<SyncService>().reset();
                       })
                 ],
@@ -419,7 +443,7 @@ class __SyncState extends State<_Sync> {
             ],
           ),
         ),
-        Gap(10),
+        const Gap(10),
         TextField(
           controller: _passwordController,
           obscureText: true,
@@ -433,12 +457,12 @@ class __SyncState extends State<_Sync> {
           },
           decoration: InputDecoration(
               errorText: _errorText,
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               labelText: AppLocalizations.of(context)!.password,
               helperText: AppLocalizations.of(context)!.syncPasswordDesc,
               helperMaxLines: 2),
         ),
-        Gap(5),
+        const Gap(5),
         Align(
           alignment: Alignment.centerRight,
           child: FilledButton(

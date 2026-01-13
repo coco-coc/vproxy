@@ -1,23 +1,31 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:io';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vx/app/layout_provider.dart';
-import 'package:vx/theme.dart';
-import 'package:vx/widgets/ad.dart';
-import 'package:vx/auth/auth_bloc.dart';
-import 'package:vx/auth/auth_provider.dart';
+import 'package:vx/app/x_controller.dart';
 import 'package:vx/data/sync.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
-import 'package:vx/utils/debug.dart';
 import 'package:vx/utils/logger.dart';
-import 'package:vx/utils/path.dart';
 import 'package:vx/utils/upload_log.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -74,18 +82,13 @@ class TopBar extends StatelessWidget {
                       height: 24,
                     )),
               ),
-            Expanded(child: SizedBox()),
+            const Expanded(child: SizedBox()),
             if (!isProduction())
               IconButton(
                   onPressed: () async {
-                    logUploadService ??= LogUploadService(
-                      flutterLogDir: await getFlutterLogDir(),
-                      tunnelLogDir: await getTunnelLogDir(),
-                      secret: '1234567890',
-                      uploadUrl: 'https://127.0.0.1:11111/api/upload-logs',
-                    );
-                    await logUploadService!.performUpload();
-                    logUploadService!.stopPeriodicUpload();
+                    final logUploadService = context.read<LogUploadService>();
+                    await logUploadService.performUpload();
+                    logUploadService.stopPeriodicUpload();
                   },
                   icon: const Icon(Icons.upload)),
             IconButton(
@@ -113,18 +116,13 @@ class TopBar extends StatelessWidget {
           ),
           Expanded(
               child: MoveWindow(
-            child: SizedBox(),
+            child: const SizedBox(),
           )),
           if (!isProduction())
             TextButton(
               onPressed: () async {
-                logUploadService ??= LogUploadService(
-                  flutterLogDir: await getFlutterLogDir(),
-                  tunnelLogDir: await getTunnelLogDir(),
-                  uploadUrl: 'http://127.0.0.1:11111/api/upload-logs',
-                  secret: logKey,
-                );
-                logUploadService?.performUpload();
+                final logUploadService = context.read<LogUploadService>();
+                await logUploadService.performUpload();
               },
               child: const Text("Upload"),
             ),
@@ -133,7 +131,7 @@ class TopBar extends StatelessWidget {
                 onPressed: () {
                   context.push('/setting');
                 },
-                icon: Icon(Icons.settings_rounded)),
+                icon: const Icon(Icons.settings_rounded)),
           IconButton(
               onPressed: () {
                 Scaffold.of(context).openEndDrawer();
@@ -229,7 +227,7 @@ class WindowButtons extends StatelessWidget {
         IconButton(
             onPressed: () async {
               if (Platform.isLinux) {
-                await exitCurrentApp();
+                await exitCurrentApp(context.read<XController>());
               } else {
                 await windowManager.hide();
               }

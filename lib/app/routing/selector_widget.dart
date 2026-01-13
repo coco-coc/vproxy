@@ -1,11 +1,25 @@
-import 'dart:async';
-import 'dart:ffi' hide Int64;
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import 'package:drift/drift.dart' hide Column;
+import 'dart:async';
+
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/routing/repo.dart';
+import 'package:vx/app/x_controller.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
@@ -18,10 +32,8 @@ import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/geoip.dart';
 import 'package:vx/utils/logger.dart';
-import 'package:vx/widgets/divider.dart';
 import 'package:vx/widgets/form_dialog.dart';
 import 'package:vx/widgets/info_widget.dart';
 
@@ -63,6 +75,7 @@ class _SelectorWidgetState extends State<SelectorWidget> {
 
   void _onAdd() async {
     final selectorRepo = Provider.of<SelectorRepo>(context, listen: false);
+    final controller = context.read<XController>();
     final name = await showStringForm(context,
         title: AppLocalizations.of(context)!.addSelector,
         helperText: AppLocalizations.of(context)!.selectorNameDuplicate);
@@ -88,7 +101,7 @@ class _SelectorWidgetState extends State<SelectorWidget> {
       //     .into(database.handlerSelectors)
       //     .insert(data, mode: InsertMode.insertOrIgnore);
       selectorRepo.addSelector(hs);
-      xController.selectorSelectStrategyOrLandhandlerChange(hs);
+      controller.selectorSelectStrategyOrLandhandlerChange(hs);
     }
   }
 
@@ -154,16 +167,20 @@ class _SelectorWidgetState extends State<SelectorWidget> {
                             SelectorConfigWidget(
                               config: _configs[index],
                               onFilterChange: () {
-                                xController
+                                context
+                                    .read<XController>()
                                     .selectorFilterChange(_configs[index]);
                               },
                               onBalanceStrategyChange: () {
-                                xController.selectorBalancingStrategyChange(
-                                    _configs[index].tag,
-                                    _configs[index].balanceStrategy);
+                                context
+                                    .read<XController>()
+                                    .selectorBalancingStrategyChange(
+                                        _configs[index].tag,
+                                        _configs[index].balanceStrategy);
                               },
                               onStrategyOrLandHandlersChange: () {
-                                xController
+                                context
+                                    .read<XController>()
                                     .selectorSelectStrategyOrLandhandlerChange(
                                         _configs[index]);
                               },
@@ -176,10 +193,11 @@ class _SelectorWidgetState extends State<SelectorWidget> {
                         top: 5,
                         child: IconButton(
                             onPressed: () async {
+                              final controller = context.read<XController>();
                               await context
                                   .read<SelectorRepo>()
                                   .removeSelector(_configs[index].tag);
-                              xController.selectorRemove(_configs[index].tag);
+                              controller.selectorRemove(_configs[index].tag);
                               _configs.removeAt(index);
                               setState(() {});
                             },
@@ -446,7 +464,6 @@ class _SelectorConfigWidgetState extends State<SelectorConfigWidget>
 
 class _SelectorFilter extends StatefulWidget {
   const _SelectorFilter({
-    super.key,
     required this.config,
     required this.selectorRepo,
     required this.onFilterChange,
@@ -556,7 +573,6 @@ class _SelectorFilterState extends State<_SelectorFilter> {
 
   @override
   Widget build(BuildContext context) {
-    print('build ${widget.config.filter.writeToJson()}');
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(
@@ -728,7 +744,7 @@ class _SelectorFilterState extends State<_SelectorFilter> {
                   menuChildren: [
                     for (var prefix in widget.config.filter.prefixes)
                       MenuItemButton(
-                        trailingIcon: Icon(Icons.delete_outline_rounded),
+                        trailingIcon: const Icon(Icons.delete_outline_rounded),
                         onPressed: () {
                           _onPrefixChange(prefix, false, setState0);
                         },
@@ -763,7 +779,7 @@ class _SelectorFilterState extends State<_SelectorFilter> {
                     for (var subString in widget.config.filter.subStrings)
                       MenuItemButton(
                         closeOnActivate: false,
-                        leadingIcon: Icon(Icons.delete_outline_rounded),
+                        leadingIcon: const Icon(Icons.delete_outline_rounded),
                         onPressed: () {
                           _onSubStringChange(subString, false, setState0);
                         },
@@ -965,7 +981,8 @@ class _LandHandlerSelectState extends State<LandHandlerSelect> {
                           onTap: () {
                             controller.isOpen
                                 ? controller.close()
-                                : controller.open(position: Offset(0, 26));
+                                : controller.open(
+                                    position: const Offset(0, 26));
                           },
                           child: snapshot.data == null
                               ? Chip(

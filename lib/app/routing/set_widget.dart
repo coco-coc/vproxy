@@ -1,8 +1,21 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
 import 'dart:io';
 
-import 'package:drift/drift.dart' hide Column;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -17,6 +30,7 @@ import 'package:vx/common/common.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
+import 'package:vx/utils/geodata.dart';
 import 'package:vx/widgets/form_dialog.dart';
 import 'package:vx/widgets/info_widget.dart';
 import 'package:vx/widgets/text_divider.dart';
@@ -112,7 +126,9 @@ class _SetWidgetState extends State<SetWidget>
                                 name: setName,
                                 inverse: false,
                                 clashRuleUrls: clashRuleUrls));
-                            geoDataHelper.makeGeoDataAvailable();
+                            context
+                                .read<GeoDataHelper>()
+                                .makeGeoDataAvailable();
                           } catch (e) {
                             snack(e.toString());
                           }
@@ -226,7 +242,7 @@ class _AppSetWidgetState extends State<AppSetWidget> {
         await repo.updateAppSet(appSet.name,
             clashRuleUrls: newAppSet.clashRuleUrls);
       }
-      geoDataHelper.makeGeoDataAvailable();
+      context.read<GeoDataHelper>().makeGeoDataAvailable();
     }
   }
 
@@ -379,7 +395,7 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
             physics: const NeverScrollableScrollPhysics(),
             children: [
               ..._domainSets.map((e) {
-                final cannotDelete =
+                const cannotDelete =
                     false /* e.name == blackListProxy ||
                     e.name == whiteListDirect ||
                     e.name == proxyAllDirect ||
@@ -639,6 +655,7 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
           geositeConfig: config.geositeConfig,
           clashRuleUrls: config.clashRuleUrls,
           useBloomFilter: config.useBloomFilter,
+          geoUrl: config.geoUrl,
         );
       }
       // setState(() {
@@ -651,7 +668,7 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
       //     }
       //   }
       // });
-      geoDataHelper.makeGeoDataAvailable();
+      context.read<GeoDataHelper>().makeGeoDataAvailable();
     }
   }
 }
@@ -747,7 +764,7 @@ class _IPSetWidgetState extends State<IPSetWidget> {
             physics: const NeverScrollableScrollPhysics(),
             children: [
               ..._ipSets.map((e) {
-                final cannotDel =
+                const cannotDel =
                     false /* e.name == blackListProxy ||
                     e.name == whiteListDirect ||
                     e.name == proxyAllDirect */
@@ -956,16 +973,6 @@ class _IPSetWidgetState extends State<IPSetWidget> {
         snack(AppLocalizations.of(context)!.setNameDuplicate);
         return;
       }
-      // setState(() {
-      //   if (set == null) {
-      //     _atomicIpSets.add(config);
-      //   } else {
-      //     final index = _atomicIpSets.indexWhere((e) => e.name == set.name);
-      //     if (index != -1) {
-      //       _atomicIpSets[index] = config;
-      //     }
-      //   }
-      // });
       if (set == null) {
         await repo.addAtomicIpSet(config);
       } else {
@@ -973,9 +980,10 @@ class _IPSetWidgetState extends State<IPSetWidget> {
           set.name,
           geoIpConfig: config.geoIpConfig,
           clashRuleUrls: config.clashRuleUrls,
+          geoUrl: config.geoUrl,
         );
       }
-      geoDataHelper.makeGeoDataAvailable();
+      context.read<GeoDataHelper>().makeGeoDataAvailable();
     }
   }
 }
@@ -1005,7 +1013,7 @@ class WrapChoiceChip extends StatelessWidget {
               onPressed: onEdit,
               child: Text(AppLocalizations.of(context)!.edit),
             ),
-          if (onDelete != null && onEdit != null) Divider(),
+          if (onDelete != null && onEdit != null) const Divider(),
           if (onDelete != null)
             MenuItemButton(
               onPressed: onDelete,
@@ -1141,7 +1149,7 @@ class _AppSetFormState extends State<AppSetForm> {
                 border: const OutlineInputBorder()),
           ),
           const Gap(5),
-          TextDivider(text: 'Clash Rules'),
+          const TextDivider(text: 'Clash Rules'),
           const Gap(5),
           ClashRule(clashRuleUrls: _clashRuleUrls)
         ],

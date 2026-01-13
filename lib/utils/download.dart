@@ -1,13 +1,29 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:archive/archive_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:tm/protos/app/api/api.pbgrpc.dart';
+import 'package:tm/protos/protos/outbound.pb.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/utils/logger.dart';
-import 'package:vx/main.dart';
 import 'package:vx/utils/path.dart';
+import 'package:vx/utils/xapi_client.dart';
 
 /// download content from url, save them to [dest] file
 Future<void> directDownloadToFile(String url, String dest,
@@ -56,7 +72,8 @@ Future<Uint8List> directDownloadMemory(String url,
 /// Download something and record traffic usage
 class Downloader {
   final OutboundRepo outboundRepo;
-  Downloader(this.outboundRepo);
+  final XApiClient xApiClient;
+  Downloader(this.outboundRepo, this.xApiClient);
 
   /// download from multiple urls, return the first successful one
   Future<void> downloadMulti(List<String> urls, String dest) async {
@@ -116,10 +133,13 @@ class Downloader {
       logger.d("plain download failed: $e", stackTrace: StackTrace.current);
     }
 
-    final configs = handlersToHandlerConfig(await outboundRepo.getHandlers(
-        usable: true, orderBySpeed1MBDesc: true));
-    await xApiClient.download(
-        DownloadRequest(url: url, handlers: configs.sublist(0, 5), dest: dest));
+    List<HandlerConfig> configs = handlersToHandlerConfig(await outboundRepo
+        .getHandlers(usable: true, orderBySpeed1MBDesc: true));
+    if (configs.length >= 5) {
+      configs = configs.sublist(0, 5);
+    }
+    await xApiClient
+        .download(DownloadRequest(url: url, handlers: configs, dest: dest));
   }
 
   Future<Uint8List> downloadMemory(String url) async {

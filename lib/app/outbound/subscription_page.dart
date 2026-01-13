@@ -1,19 +1,34 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/tm.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:vx/app/outbound/outbound_page.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
+import 'package:vx/app/outbound/subscription.dart';
+import 'package:vx/app/x_controller.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/qr.dart';
 import 'package:vx/widgets/ad.dart';
 import 'package:vx/app/outbound/add.dart';
 import 'package:vx/auth/auth_bloc.dart';
-import 'package:vx/data/ads_provider.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -22,11 +37,8 @@ import 'package:provider/provider.dart';
 import 'package:vx/app/layout_provider.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/app/outbound/subscription_bloc.dart';
-import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/common/common.dart';
-import 'package:vx/common/net.dart';
 import 'package:vx/data/database.dart';
-import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
 
 class SubscriptionPage extends StatefulWidget {
@@ -85,8 +97,9 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
   @override
   void initState() {
-    _autoUpdate = persistentStateRepo.autoUpdate;
-    _selectedIndex = _intervals.indexOf(persistentStateRepo.updateInterval);
+    _autoUpdate = context.read<SharedPreferences>().autoUpdate;
+    _selectedIndex =
+        _intervals.indexOf(context.read<SharedPreferences>().updateInterval);
     _updateAllButton = BlocSelector<SubscriptionBloc, SubscriptionState, bool>(
         selector: (state) => state.updatingAll,
         builder: (ctx, updating) {
@@ -210,13 +223,13 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         setState(() {
           _autoUpdate = value;
         });
-        persistentStateRepo.setAutoUpdate(value);
-        xController.setSubscriptionAutoUpdate(value);
+        context.read<SharedPreferences>().setAutoUpdate(value);
+        context.read<XController>().setSubscriptionAutoUpdate(value);
         if (Tm.instance.state == TmStatus.disconnected) {
           if (value) {
-            subUpdater.startAutoUpdate();
+            context.read<AutoSubscriptionUpdater>().startAutoUpdate();
           } else {
-            subUpdater.stopAutoUpdate();
+            context.read<AutoSubscriptionUpdater>().stopAutoUpdate();
           }
         }
       },
@@ -236,9 +249,15 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         });
       },
       onChangeEnd: (value) async {
-        persistentStateRepo.setUpdateInterval(_intervals[_selectedIndex]);
-        xController.setSubscriptionInterval(_intervals[_selectedIndex]);
-        subUpdater.onIntervalChange(_intervals[_selectedIndex]);
+        context
+            .read<SharedPreferences>()
+            .setUpdateInterval(_intervals[_selectedIndex]);
+        context
+            .read<XController>()
+            .setSubscriptionInterval(_intervals[_selectedIndex]);
+        context
+            .read<AutoSubscriptionUpdater>()
+            .onIntervalChange(_intervals[_selectedIndex]);
       },
     );
     final sliderValue = SizedBox(
@@ -385,7 +404,6 @@ class SubscriptionData {
             RegExp(r'到期[：:]\s*(?:不过期|(\d{4})年(\d{1,2})月(\d{1,2})日)')
                 .firstMatch(description);
         if (chineseExpirationMatch != null) {
-
           // Check if it's "不过期" (no expiration) - group 1 will be null
           if (chineseExpirationMatch.group(1) != null) {
             final year = chineseExpirationMatch.group(1);
@@ -648,7 +666,7 @@ class _SubScriptionListTileState extends State<SubScriptionListTile> {
                                       color: colorScheme.onSurface,
                                     ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           if (parsedData.expirationDate != null)
                             Row(
                               mainAxisSize: MainAxisSize.min,

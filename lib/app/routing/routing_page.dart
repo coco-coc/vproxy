@@ -1,8 +1,22 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:drift/drift.dart' hide Column;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -11,6 +25,7 @@ import 'package:gap/gap.dart';
 import 'package:installed_apps/index.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
 import 'package:tm/protos/protos/router.pb.dart';
 import 'package:vx/app/log/log_page.dart';
@@ -21,6 +36,7 @@ import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/app/routing/selector_widget.dart';
 import 'package:vx/app/routing/set_widget.dart';
+import 'package:vx/app/x_controller.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/common/config.dart';
@@ -28,11 +44,9 @@ import 'package:vx/common/extension.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/main.dart' hide App;
 import 'package:vx/l10n/app_localizations.dart';
-import 'package:vx/theme.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/desktop_installed_apps.dart';
-import 'package:vx/widgets/form_dialog.dart';
-import 'package:vx/widgets/pro_icon.dart';
-import 'package:vx/widgets/pro_promotion.dart';
+import 'package:vx/utils/xapi_client.dart';
 
 part 'ip.dart';
 
@@ -76,7 +90,7 @@ class _RoutePageState extends State<RoutePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _advancedMode = context.read<AuthBloc>().state.pro &&
-        persistentStateRepo.advanceRouteMode;
+        context.read<SharedPreferences>().advanceRouteMode;
     _tabController = TabController(length: 4, vsync: this);
   }
 
@@ -95,7 +109,7 @@ class _RoutePageState extends State<RoutePage> with TickerProviderStateMixin {
     setState(() {
       _advancedMode = !_advancedMode;
     });
-    persistentStateRepo.setAdvanceRouteMode(_advancedMode);
+    context.read<SharedPreferences>().setAdvanceRouteMode(_advancedMode);
   }
 
   @override

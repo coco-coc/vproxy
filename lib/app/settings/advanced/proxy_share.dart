@@ -1,10 +1,28 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vx/app/x_controller.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/l10n/app_localizations.dart';
-import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 
 class ProxyShareSettingScreen extends StatefulWidget {
   const ProxyShareSettingScreen({super.key, this.fullscreen = true});
@@ -23,11 +41,12 @@ class _ProxyShareSettingScreenState extends State<ProxyShareSettingScreen> {
   bool _proxyShare = false;
   @override
   void initState() {
-    _proxyShare = persistentStateRepo.proxyShare;
+    _proxyShare = context.read<SharedPreferences>().proxyShare;
     // TODO: implement initState
-    _listenAddressController.text = persistentStateRepo.proxyShareListenAddress;
+    _listenAddressController.text =
+        context.read<SharedPreferences>().proxyShareListenAddress;
     _listenPortController.text =
-        persistentStateRepo.proxyShareListenPort.toString();
+        context.read<SharedPreferences>().proxyShareListenPort.toString();
     super.initState();
   }
 
@@ -41,14 +60,12 @@ class _ProxyShareSettingScreenState extends State<ProxyShareSettingScreen> {
 
   void _save() async {
     if (_formKey.currentState!.validate()) {
-      persistentStateRepo.setProxyShare(_proxyShare);
-      persistentStateRepo
-          .setProxyShareListenAddress(_listenAddressController.text);
-      persistentStateRepo
-          .setProxyShareListenPort(int.parse(_listenPortController.text));
-      persistentStateRepo.setSocksUdpaccociateAddress(_socksUdpAccocisate.text);
-      // notify xController
-      xController.onSystemProxyChange();
+      final pref = context.read<SharedPreferences>();
+      pref.setProxyShare(_proxyShare);
+      pref.setProxyShareListenAddress(_listenAddressController.text);
+      pref.setProxyShareListenPort(int.parse(_listenPortController.text));
+      pref.setSocksUdpaccociateAddress(_socksUdpAccocisate.text);
+      context.read<XController>().onSystemProxyChange();
       if (mounted) {
         Navigator.of(context).pop();
       }

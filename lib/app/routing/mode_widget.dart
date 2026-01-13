@@ -1,10 +1,24 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:async';
 
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide RouterConfig;
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/protos/dns.pb.dart';
 import 'package:vx/app/layout_provider.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
@@ -13,27 +27,25 @@ import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/routing/default_mode_dialog.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/auth/auth_bloc.dart';
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:tm/protos/protos/router.pb.dart';
-import 'package:vx/app/log/log_page.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/routing/mode_form.dart';
-import 'package:vx/app/routing/set_form.dart';
 import 'package:vx/app/routing/set_widget.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
-import 'package:vx/common/common.dart';
 import 'package:vx/common/config.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/random.dart';
 import 'package:vx/utils/ui.dart';
 import 'package:vx/widgets/form_dialog.dart';
 import 'package:vx/widgets/info_widget.dart';
 import 'package:vx/widgets/pro_icon.dart';
 import 'package:vx/widgets/pro_promotion.dart';
-import 'package:vx/xconfig_helper.dart';
 
 class ModeWidget extends StatefulWidget {
   const ModeWidget({super.key, this.switchModeButton});
@@ -77,11 +89,10 @@ class _ModeWidgetState extends State<ModeWidget>
       _customRouteModes = value;
       if (_selected == null) {
         _selected = _customRouteModes
-            .where((e) => e.name == persistentStateRepo.routingMode)
+            .where(
+                (e) => e.name == context.read<SharedPreferences>().routingMode)
             .firstOrNull;
-        if (_selected == null) {
-          _selected = _customRouteModes.firstOrNull;
-        }
+        _selected ??= _customRouteModes.firstOrNull;
       } else {
         _selected = _customRouteModes
             .where((e) => e.name == _selected!.name)
@@ -100,10 +111,12 @@ class _ModeWidgetState extends State<ModeWidget>
 
   Future<void> _onDefaultRouteModeTap() async {
     final al = AppLocalizations.of(context)!;
+    final dp = context.read<DatabaseProvider>();
     final selectedMode = await showDefaultRouteModeDialog(context);
     if (selectedMode != null) {
       // Insert the selected default route mode
-      await insertDefaultRouteMode(al, selectedMode);
+      await insertDefaultRouteMode(
+          al, selectedMode, dp.database);
     }
   }
 
@@ -112,7 +125,7 @@ class _ModeWidgetState extends State<ModeWidget>
       showProPromotionDialog(context);
       return;
     }
-
+    final dp = context.read<DatabaseProvider>();
     final al = AppLocalizations.of(context)!;
     final name = await showDialog<(String, DefaultRouteMode?)?>(
         context: context, builder: (context) => const RouteConfigForm());
@@ -125,7 +138,9 @@ class _ModeWidgetState extends State<ModeWidget>
       if (name.$2 != null) {
         config.routerConfig.rules.addAll(name.$2!.displayRouterRules(al: al));
         config.dnsRules.rules.addAll(name.$2!.dnsRules(al: al));
-        insertDefaultRouteMode(al, name.$2!, setsOnly: true);
+        insertDefaultRouteMode(
+            al, name.$2!, dp.database,
+            setsOnly: true);
       }
       try {
         await _routeRepo.addCustomRouteMode(config);
@@ -136,16 +151,15 @@ class _ModeWidgetState extends State<ModeWidget>
   }
 
   Future<void> _onDelete(CustomRouteMode e) async {
-    await database.managers.customRouteModes
-        .filter((f) => f.name(e.name))
-        .delete();
+    final bloc = context.read<ProxySelectorBloc>();
+    await context.read<RouteRepo>().removeCustomRouteMode(e.id);
     setState(() {
       _customRouteModes.remove(e);
       if (_selected == e) {
         _selected = _customRouteModes.firstOrNull;
       }
     });
-    context.read<ProxySelectorBloc>().add(CustomRouteModeDeleteEvent(e));
+    bloc.add(CustomRouteModeDeleteEvent(e));
   }
 
   @override
@@ -281,7 +295,7 @@ class _ModeWidgetState extends State<ModeWidget>
                                 ]));
                       },
                       icon: const Icon(Icons.info_outline_rounded)),
-                  Gap(5),
+                  const Gap(5),
                   MenuAnchor(
                     menuChildren: [
                       MenuItemButton(
@@ -516,7 +530,7 @@ class UnmodifiableRouteConfig extends StatelessWidget {
 }
 
 class _StandardModeWidget extends StatelessWidget {
-  const _StandardModeWidget({super.key, required this.routeMode});
+  const _StandardModeWidget({required this.routeMode});
   final CustomRouteMode routeMode;
   @override
   Widget build(BuildContext context) {
@@ -535,7 +549,7 @@ class _StandardModeWidget extends StatelessWidget {
 }
 
 class _StandardModeDnsRules extends StatefulWidget {
-  const _StandardModeDnsRules({super.key, required this.routeMode});
+  const _StandardModeDnsRules({required this.routeMode});
   final CustomRouteMode routeMode;
   @override
   State<_StandardModeDnsRules> createState() => _StandardModeDnsRulesState();
@@ -560,7 +574,6 @@ class _StandardModeDnsRulesState extends State<_StandardModeDnsRules> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 
@@ -1204,8 +1217,7 @@ class _RouterConfigWidgetState extends State<RouterConfigWidget> {
 }
 
 class _CustomModeDnsRules extends StatefulWidget {
-  const _CustomModeDnsRules(
-      {super.key, required this.routeMode, required this.onUpdate});
+  const _CustomModeDnsRules({required this.routeMode, required this.onUpdate});
   final CustomRouteMode routeMode;
   final Function(CustomRouteMode) onUpdate;
   @override

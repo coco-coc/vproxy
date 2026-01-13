@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vx/l10n/app_localizations.dart';
@@ -73,7 +88,7 @@ class ContactScreen extends StatelessWidget {
                       width: 16,
                       height: 16,
                     ),
-                    label: Text(' X')),
+                    label: const Text(' X')),
                 const SizedBox(width: 10),
                 OutlinedButton.icon(
                     onPressed: () {
@@ -89,7 +104,7 @@ class ContactScreen extends StatelessWidget {
                     },
                     icon: Image.asset('assets/icons/youtube.png',
                         width: 24, height: 24),
-                    label: Text('Youtube')),
+                    label: const Text('Youtube')),
               ],
             ),
             const SizedBox(height: 10),

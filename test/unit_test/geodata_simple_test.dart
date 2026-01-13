@@ -107,7 +107,9 @@ void main() {
             .thenAnswer((_) async => [mockAtomicIpSet]);
 
         when(mockDownloader.download(any, any))
-            .thenAnswer((_) async {});
+            .thenAnswer((_) async {
+              return null;
+            });
 
         // Act
         await geoDataHelper.makeGeoDataAvailable();
@@ -250,7 +252,7 @@ void main() {
 
         final mockAtomicDomainSet = MockAtomicDomainSet();
         final mockAppSet = MockAppSet();
-        final duplicateUrl = 'https://example.com/duplicate.yaml';
+        const duplicateUrl = 'https://example.com/duplicate.yaml';
 
         when(mockAtomicDomainSet.clashRuleUrls)
             .thenReturn([duplicateUrl]);
@@ -265,7 +267,9 @@ void main() {
             .thenAnswer((_) async => []);
 
         when(mockDownloader.download(any, any))
-            .thenAnswer((_) async {});
+            .thenAnswer((_) async {
+              return null;
+            });
 
         // Act
         await geoDataHelper.makeGeoDataAvailable();
@@ -476,9 +480,9 @@ void main() {
 
     test('should handle null clash rule URLs gracefully', () {
       // Test the logic for handling null clash rule URLs
-      final List<String>? nullUrls = null;
-      final List<String>? emptyUrls = [];
-      final List<String>? validUrls = ['https://example.com/rules.yaml'];
+      const List<String>? nullUrls = null;
+      final List<String> emptyUrls = [];
+      final List<String> validUrls = ['https://example.com/rules.yaml'];
 
       // Test null handling
       final urls1 = <String>{};

@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 part of 'outbound_handler_form.dart';
 
 class _TransportProtocolTcp extends StatefulWidget {
@@ -73,7 +88,7 @@ class _TransportProtocolTcpState extends State<_TransportProtocolTcp>
       children: [
         DropdownMenu<String?>(
           initialSelection: _headerType,
-          label: Text('Header Type'),
+          label: const Text('Header Type'),
           dropdownMenuEntries: const [
             DropdownMenuEntry(value: null, label: 'None'),
             DropdownMenuEntry(value: 'http', label: 'HTTP'),

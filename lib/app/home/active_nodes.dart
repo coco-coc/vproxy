@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 part of 'home.dart';
 
 class Nodes extends StatelessWidget {
@@ -45,11 +60,11 @@ class CurrentNodes extends StatelessWidget {
         icon: Icons.outbound_outlined,
         child: StreamBuilder(
             stream:
-                context.read<OutboundRepo>().getHandlersStream(selected: true),
+                context.watch<OutboundRepo>().getHandlersStream(selected: true),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data!.isEmpty) {
-                  return Center(child: AddMenuAnchor(elevatedButton: true));
+                  return const Center(child: AddMenuAnchor(elevatedButton: true));
                 }
                 return ListView.separated(
                   physics: const ClampingScrollPhysics(),
@@ -87,7 +102,7 @@ class CurrentNodes extends StatelessWidget {
                   },
                 );
               }
-              return SizedBox();
+              return const SizedBox();
             }),
       ),
     );
@@ -104,7 +119,7 @@ class ActiveNodes extends StatelessWidget {
   Widget build(BuildContext context) {
     final realtime = context.watch<RealtimeSpeedNotifier>();
     if (realtime.nodeInfos.isEmpty) {
-      return SizedBox();
+      return const SizedBox();
     }
     return HomeCard(
         title: AppLocalizations.of(context)!.activeNodes,
@@ -146,7 +161,7 @@ class NodesHelper extends StatefulWidget {
 }
 
 class _NodesHelperState extends State<NodesHelper> {
-  NodesHelperSegment _selectedSegment = persistentStateRepo.nodesHelperSegment;
+  late NodesHelperSegment _selectedSegment;
   List<OutboundHandler> _handlers = [];
   StreamSubscription<List<OutboundHandler>>? _handlerStream;
   late OutboundRepo outboundRepo;
@@ -154,6 +169,7 @@ class _NodesHelperState extends State<NodesHelper> {
   @override
   void initState() {
     super.initState();
+    _selectedSegment = context.read<SharedPreferences>().nodesHelperSegment;
   }
 
   @override
@@ -346,7 +362,7 @@ class _NodeListItem extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.speed,
                     size: 14,
                     color: XBlue,

@@ -1,3 +1,18 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 part of 'outbound_handler_form.dart';
 
 /// config is modified directly. Some fields are saved when validating the form.
@@ -199,7 +214,7 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
             maxLines: 2,
             controller: _peerSHA256HashControlller,
             decoration: InputDecoration(
-                label: Text('SHA256(hex)'),
+                label: const Text('SHA256(hex)'),
                 helperText: AppLocalizations.of(context)!.verifyPeerCertDesc),
             validator: (value) {
               if (value != null && value.isNotEmpty) {
@@ -419,7 +434,7 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
             SwitchListTile(
               value: widget.config.noSNI,
               onChanged: (value) => setState(() => widget.config.noSNI = value),
-              title: Text('No SNI'),
+              title: const Text('No SNI'),
             ),
           ]),
         // Hidden FormField to trigger validation listener
@@ -789,8 +804,8 @@ class _CertificateCollectionState extends State<_CertificateCollection> {
           }),
           const Gap(10),
           if (_certControllers.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 10),
               child: Divider(),
             ),
           Row(
@@ -826,7 +841,7 @@ class _CertificateCollectionState extends State<_CertificateCollection> {
             ],
           ),
           const Gap(10),
-          TextDivider(text: 'OR'),
+          const TextDivider(text: 'OR'),
           const Gap(10),
           Align(
             alignment: Alignment.centerLeft,
@@ -950,7 +965,7 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
         TextFormField(
           controller: _serverNameController,
           decoration: InputDecoration(
-            label: Text(
+            label: const Text(
               'Server Name',
             ),
             helperText: AppLocalizations.of(context)!.clientOnly,
@@ -977,7 +992,7 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
         TextFormField(
           controller: _publicKeyController,
           maxLines: 2,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
               label: Text('Public Key(base64URL)'),
               errorMaxLines: 2,
               helperMaxLines: 2),
@@ -1003,7 +1018,7 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
               TextFormField(
                 controller: _privateKeyController,
                 maxLines: 2,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   label: Text('Private Key(base64URL)'),
                 ),
                 validator: (value) {
@@ -1039,7 +1054,7 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
         TextFormField(
           controller: _shortIdController,
           decoration: InputDecoration(
-              label: Text('Short ID(hex)'),
+              label: const Text('Short ID(hex)'),
               helperText: AppLocalizations.of(context)!.clientOnly),
           validator: (value) {
             value = value ?? '';
@@ -1142,6 +1157,7 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
                               return AppLocalizations.of(context)!
                                   .fieldRequired;
                             }
+                            return null;
                           },
                         ),
                       ),
@@ -1249,6 +1265,7 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
                                 return AppLocalizations.of(context)!
                                     .fieldRequired;
                               }
+                              return null;
                             },
                           ),
                         ),

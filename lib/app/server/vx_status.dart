@@ -1,6 +1,20 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tm/protos/app/api/api.pb.dart';
 import 'package:vx/app/server/vx_bloc.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/theme.dart';
@@ -46,36 +60,36 @@ class VXServiceStatus extends StatelessWidget {
               trailing: MenuAnchor(
                 menuChildren: [
                   MenuItemButton(
-                    leadingIcon: Icon(Icons.restart_alt_outlined),
+                    leadingIcon: const Icon(Icons.restart_alt_outlined),
                     onPressed: () {
                       context.read<VXBloc>().add(VXRestartEvent());
                     },
                     child: Text(AppLocalizations.of(context)!.restart),
                   ),
                   MenuItemButton(
-                    leadingIcon: Icon(Icons.stop_outlined),
+                    leadingIcon: const Icon(Icons.stop_outlined),
                     onPressed: () {
                       context.read<VXBloc>().add(VXStopEvent());
                     },
                     child: Text(AppLocalizations.of(context)!.stop),
                   ),
                   MenuItemButton(
-                    leadingIcon: Icon(Icons.play_arrow_outlined),
+                    leadingIcon: const Icon(Icons.play_arrow_outlined),
                     onPressed: () {
                       context.read<VXBloc>().add(VXStartEvent());
                     },
                     child: Text(AppLocalizations.of(context)!.start),
                   ),
                   MenuItemButton(
-                    leadingIcon: Icon(Icons.update_outlined),
+                    leadingIcon: const Icon(Icons.update_outlined),
                     onPressed: () {
                       context.read<VXBloc>().add(VXUpdateEvent());
                     },
                     child: Text(AppLocalizations.of(context)!.update),
                   ),
-                  Divider(),
+                  const Divider(),
                   MenuItemButton(
-                    leadingIcon: Icon(Icons.delete_outline),
+                    leadingIcon: const Icon(Icons.delete_outline),
                     onPressed: () {
                       context.read<VXBloc>().add(VXUninstallEvent());
                     },
@@ -87,7 +101,7 @@ class VXServiceStatus extends StatelessWidget {
                       onPressed: () {
                         controller.open();
                       },
-                      icon: Icon(Icons.more_vert));
+                      icon: const Icon(Icons.more_vert));
                 },
               ),
               contentPadding: const EdgeInsets.only(left: 16, right: 16),

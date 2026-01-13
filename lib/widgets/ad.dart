@@ -1,15 +1,26 @@
-import 'dart:async';
-import 'dart:io';
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:vx/auth/auth_bloc.dart';
 
-import 'dart:io';
 
 import 'package:vx/common/extension.dart';
 import 'package:vx/data/ads_provider.dart';
@@ -106,7 +117,7 @@ class AdWidget extends StatelessWidget {
             ),
             child: GestureDetector(
               onTap: () {
-                launchUrl(Uri.parse(ad!.website));
+                launchUrl(Uri.parse(ad.website));
               },
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
@@ -190,7 +201,7 @@ class AdWantedCard extends StatelessWidget {
               children: [
                 Icon(Icons.campaign,
                     size: 24, color: Theme.of(context).colorScheme.primary),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
                   AppLocalizations.of(context)!.adWanted,
                   style: TextStyle(

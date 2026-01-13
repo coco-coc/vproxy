@@ -1,6 +1,20 @@
+// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,12 +27,12 @@ import 'package:pasteboard/pasteboard.dart';
 import 'package:tm/protos/protos/outbound.pb.dart';
 import 'package:vx/app/outbound/add_chain_handler.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
+import 'package:vx/utils/xapi_client.dart';
 import 'package:vx/widgets/outbound_handler_form/outbound_handler_form.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/app/outbound/subscription_bloc.dart';
 import 'package:vx/app/outbound/subscription_page.dart';
 import 'package:vx/auth/auth_bloc.dart';
-import 'package:vx/data/database.dart';
 import 'package:vx/app/layout_provider.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
@@ -273,7 +287,7 @@ Future<void> getNodesFromUrls(String data, BuildContext context,
         return;
       } else {
         // decode as urls
-        final result = await xApiClient.decode(data);
+        final result = await context.read<XApiClient>().decode(data);
         String group = defaultGroupName;
         final t = await showStringForm(context,
             title: AppLocalizations.of(context)!.addToGroup,
