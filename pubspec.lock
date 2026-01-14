@@ -554,8 +554,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: HEAD
-      resolved-ref: fdb6f91bca019736aceeb3600d224ae2ba825ad9
+      ref: main
+      resolved-ref: cdcc4d3377f6d803942946fdb532341188262709
       url: "https://github.com/5vnetwork/flutter_common.git"
     source: git
     version: "0.0.1"

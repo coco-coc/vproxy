@@ -1,18 +1,3 @@
-// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
@@ -2039,6 +2024,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get autoTestNodesDesc => '定期测试节点';
 
   @override
+  String get autoUpdateGeoFiles => '自动更新地理位置文件';
+
+  @override
+  String get autoUpdateGeoFilesDesc => '按配置的间隔自动更新地理位置文件';
+
+  @override
+  String get geoUpdateInterval => '更新间隔';
+
+  @override
   String get interval => '间隔';
 
   @override
@@ -2154,4 +2148,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pleaseUseAnotherEmail => '不支持该邮箱，请使用其他邮箱';
+
+  @override
+  String dbError(String error) {
+    return '数据库出现问题: $error. 重启VX可能会有帮助。';
+  }
 }

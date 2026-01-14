@@ -57,6 +57,7 @@ import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/auth/auth_provider.dart';
 import 'package:vx/common/bloc_observer.dart';
 import 'package:vx/common/common.dart';
+import 'package:vx/common/const.dart';
 import 'package:vx/common/extension.dart';
 import 'package:vx/data/ads_provider.dart';
 import 'package:vx/data/database_provider.dart';
@@ -193,8 +194,8 @@ void main() async {
         ),
         Provider(
             create: (ctx) => XApiClient(pref, storage)..init(), lazy: false),
-        Provider.value(value: proPurchases),
-        Provider.value(value: authProvider),
+        ChangeNotifierProvider.value(value: proPurchases),
+        ChangeNotifierProvider<AuthProvider>.value(value: authProvider),
         Provider.value(value: pref),
         Provider.value(value: storage),
         Provider(
@@ -242,13 +243,16 @@ void main() async {
         Provider(
             lazy: false,
             create: (ctx) => GeoDataHelper(
-                downloader: ctx.read<Downloader>(),
-                pref: pref,
-                xApiClient: ctx.read<XApiClient>(),
-                databaseHelper: ctx.read<DbHelper>(),
-                resouceDirPath: resourceDirectory.path)
-              ..makeGeoDataAvailable()
-              ..geoFilesFridayUpdate()),
+                  downloader: ctx.read<Downloader>(),
+                  pref: pref,
+                  xApiClient: ctx.read<XApiClient>(),
+                  databaseHelper: ctx.read<DbHelper>(),
+                  resouceDirPath: resourceDirectory.path,
+                  geoSiteUrl: geositeUrls[0],
+                  geoIpUrl: geoipUrls[0],
+                )
+                  ..makeGeoDataAvailable()
+                  ..reset()),
         Provider(
             create: (ctx) => XConfigHelper(
                 outboundRepo: ctx.read<OutboundRepo>(),
@@ -707,7 +711,8 @@ void dialog(String message) {
     builder: (context) => AlertDialog(
       title: const Icon(Icons.error_outline_rounded),
       content: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 400), child: Text(message)),
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Text(message)),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
@@ -802,7 +807,8 @@ Future<void> _initWindow(SharedPreferences pref) async {
 
 Future<void> initSupabase() async {
   await Supabase.initialize(
-    authOptions: const FlutterAuthClientOptions(detectSessionInUri: !kDebugMode),
+    authOptions:
+        const FlutterAuthClientOptions(detectSessionInUri: !kDebugMode),
     headers: Platform.isWindows
         ? {
             'X-Supabase-Client-Platform-Version': 'Windows',

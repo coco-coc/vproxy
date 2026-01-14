@@ -839,6 +839,24 @@ extension PrefHelperExtension on SharedPreferences {
     setInt('lastNodeTestTime', time.millisecondsSinceEpoch);
   }
 
+  // Geo file auto-update settings
+  bool get autoUpdateGeoFiles {
+    return getBool('autoUpdateGeoFiles') ?? true;
+  }
+
+  void setAutoUpdateGeoFiles(bool enable) {
+    setBool('autoUpdateGeoFiles', enable);
+  }
+
+  // Update interval in days (default: 7 days)
+  int get geoUpdateInterval {
+    return getInt('geoUpdateInterval') ?? 7;
+  }
+
+  void setGeoUpdateInterval(int days) {
+    setInt('geoUpdateInterval', days);
+  }
+
   NodesHelperSegment get nodesHelperSegment {
     final segment = getInt('nodesHelperSegment');
     if (segment == null) return NodesHelperSegment.fastest;

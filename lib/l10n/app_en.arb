@@ -853,6 +853,9 @@
   "noData": "No data yet",
   "autoTestNodes": "Nodes Test",
   "autoTestNodesDesc": "Periodically test nodes",
+  "autoUpdateGeoFiles": "Auto Update Geo Files",
+  "autoUpdateGeoFilesDesc": "Automatically update geo files at the configured interval",
+  "geoUpdateInterval": "Update Interval",
   "interval": "Interval",
   "shareWithVXclient": "Share with VX clients",
   "shareWithOtherClients": "Share with Other Clients",
@@ -891,5 +894,13 @@
   "generateEchConfig": "Generate ECH Config",
   "echDomainDesc": "Outer ClientHello SNI",
   "restoreSuccessful": "Restore Successful",
-  "pleaseUseAnotherEmail": "Unsupported email, please use another email"
+  "pleaseUseAnotherEmail": "Unsupported email, please use another email",
+  "dbError": "Something wrong with database: {error}. Restart VX might help.",
+  "@dbError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

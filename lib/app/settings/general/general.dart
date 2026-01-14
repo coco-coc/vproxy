@@ -30,6 +30,7 @@ import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/node_test_service.dart';
+import 'package:vx/utils/geodata.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
 import 'package:flutter_common/services/auto_update.dart';
 // import 'package:flutter_sparkle/flutter_sparkle.dart';
@@ -109,6 +110,12 @@ class GeneralSettingPage extends StatelessWidget {
               padding:
                   EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
               child: PingModeSetting(),
+            ),
+            const Divider(),
+            const Padding(
+              padding:
+                  EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
+              child: GeoFileUpdateSettings(),
             ),
             const Divider(),
             const Padding(
@@ -425,6 +432,96 @@ class _AlwaysOnSettingState extends State<AlwaysOnSetting> {
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 )),
+      ],
+    );
+  }
+}
+
+class GeoFileUpdateSettings extends StatefulWidget {
+  const GeoFileUpdateSettings({super.key});
+
+  @override
+  State<GeoFileUpdateSettings> createState() => _GeoFileUpdateSettingsState();
+}
+
+class _GeoFileUpdateSettingsState extends State<GeoFileUpdateSettings> {
+  bool _autoUpdateGeoFiles = false;
+  late final TextEditingController _intervalController;
+
+  @override
+  void initState() {
+    super.initState();
+    _autoUpdateGeoFiles = context.read<SharedPreferences>().autoUpdateGeoFiles;
+    _intervalController = TextEditingController(
+        text: '${context.read<SharedPreferences>().geoUpdateInterval}');
+  }
+
+  @override
+  void dispose() {
+    _intervalController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                AppLocalizations.of(context)!.autoUpdateGeoFiles,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ),
+            Switch(
+              value: _autoUpdateGeoFiles,
+              onChanged: (value) {
+                context.read<SharedPreferences>().setAutoUpdateGeoFiles(value);
+                setState(() {
+                  _autoUpdateGeoFiles = value;
+                });
+                // Restart the service if it exists
+                context.read<GeoDataHelper>().reset();
+              },
+            ),
+          ],
+        ),
+        Text(
+          AppLocalizations.of(context)!.autoUpdateGeoFilesDesc,
+          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+        ),
+        if (_autoUpdateGeoFiles) ...[
+          const Gap(15),
+          TextField(
+            controller: _intervalController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.geoUpdateInterval,
+              suffixText: AppLocalizations.of(context)!.days,
+              helperText: 'Minimum: 1 day',
+              border: const OutlineInputBorder(),
+            ),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            onChanged: (event) {
+              final parsedValue = int.tryParse(_intervalController.text);
+              if (parsedValue != null && parsedValue >= 1) {
+                context
+                    .read<SharedPreferences>()
+                    .setGeoUpdateInterval(parsedValue);
+                context.read<GeoDataHelper>().reset();
+              } else if (parsedValue != null && parsedValue < 1) {
+                // Reset to minimum if user enters invalid value
+                _intervalController.text = '1';
+                context.read<SharedPreferences>().setGeoUpdateInterval(1);
+                context.read<GeoDataHelper>().reset();
+              }
+            },
+          ),
+        ],
       ],
     );
   }
