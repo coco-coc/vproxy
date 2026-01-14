@@ -1,18 +1,3 @@
-// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -3934,6 +3919,24 @@ abstract class AppLocalizations {
   /// **'Periodically test nodes'**
   String get autoTestNodesDesc;
 
+  /// No description provided for @autoUpdateGeoFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Update Geo Files'**
+  String get autoUpdateGeoFiles;
+
+  /// No description provided for @autoUpdateGeoFilesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically update geo files at the configured interval'**
+  String get autoUpdateGeoFilesDesc;
+
+  /// No description provided for @geoUpdateInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Interval'**
+  String get geoUpdateInterval;
+
   /// No description provided for @interval.
   ///
   /// In en, this message translates to:
@@ -4167,6 +4170,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unsupported email, please use another email'**
   String get pleaseUseAnotherEmail;
+
+  /// No description provided for @dbError.
+  ///
+  /// In en, this message translates to:
+  /// **'Something wrong with database: {error}. Restart VX might help.'**
+  String dbError(String error);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

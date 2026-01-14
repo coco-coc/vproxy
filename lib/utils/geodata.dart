@@ -15,7 +15,6 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
@@ -45,15 +44,20 @@ class GeoDataHelper {
   final XApiClient xApiClient;
   final DbHelper databaseHelper;
   final String resouceDirPath;
+  final String geoSiteUrl;
+  final String geoIpUrl;
 
   GeoDataHelper(
       {required this.downloader,
       required this.pref,
       required this.xApiClient,
       required this.databaseHelper,
-      required this.resouceDirPath});
+      required this.resouceDirPath,
+      required this.geoSiteUrl,
+      required this.geoIpUrl});
 
   Completer<void>? _completer;
+  Timer? _updateTimer;
 
   /// download geosite and geoip and update the last geo update time
   Future<void> downloadAndProcessGeo() async {
@@ -67,13 +71,12 @@ class GeoDataHelper {
       final dir = await resourceDir();
       final tasks = [
         downloader.downloadProxyFirst(
-            geositeUrls[0], join(dir.path, 'geosite.dat')),
+            geoSiteUrl, join(dir.path, 'geosite.dat')),
         downloader.downloadProxyFirst(
-            geoipUrls[0], join(dir.path, 'geoip.dat')),
+            geoIpUrl, join(dir.path, 'geoip.dat')),
       ];
       await Future.wait(tasks);
       await xApiClient.processGeoFiles();
-      pref.setLastGeoUpdate(DateTime.now());
       _completer!.complete();
     } catch (e) {
       logger.e('downloadAndProcessGeo error', error: e);
@@ -84,13 +87,13 @@ class GeoDataHelper {
     }
   }
 
-  Future<void> makeGeoDataAvailable() async {
+  Future<void> makeGeoDataAvailable({bool update = false}) async {
     logger.d('makeGeoDataAvailable');
     // check if there is geo data
     final dir = Directory(resouceDirPath);
     final geoSiteFile = File(join(dir.path, 'geoip.dat'));
     final geoIpFile = File(join(dir.path, 'geosite.dat'));
-    if (!geoSiteFile.existsSync() || !geoIpFile.existsSync()) {
+    if (!geoSiteFile.existsSync() || !geoIpFile.existsSync() || update) {
       await downloadAndProcessGeo();
     }
     // download all clash rule files and clean files that are not in the urls
@@ -120,13 +123,13 @@ class GeoDataHelper {
     final futures = <Future>[];
     for (final url in clashUrls) {
       final path = await getClashRulesPath(url);
-      if (!File(path).existsSync()) {
+      if (!File(path).existsSync() || update) {
         futures.add(downloader.download(url, path));
       }
     }
     for (final url in geoUrls) {
       final path = await getGeoUrlPath(url);
-      if (!File(path).existsSync()) {
+      if (!File(path).existsSync() || update) {
         futures.add(downloader.download(url, path));
       }
     }
@@ -149,59 +152,61 @@ class GeoDataHelper {
         file.deleteSync();
       }
     }
-    // else {
-    //   // check whether the geo data is outdated
-    //   final lastGeoUpdate = psr.lastGeoUpdate;
-    //   if (lastGeoUpdate == null ||
-    //       DateTime.now().difference(lastGeoUpdate) > Duration(days: 7)) {
-    //     await downloadGeo();
-    //   }
-    // }
+    pref.setLastGeoUpdate(DateTime.now());
   }
 
-  /// download geo files on friday once
-  void geoFilesFridayUpdate() {
-    final now = DateTime.now();
+  /// Start auto-update for geo files based on user preferences
+  /// Updates occur at the configured interval based on last update time
+  void reset() {
+    // Cancel any existing timer
+    _updateTimer?.cancel();
+    _updateTimer = null;
 
-    // Check if we already updated today
-    final lastUpdate = pref.lastGeoUpdate;
-    final hasUpdated = lastUpdate != null &&
-        now.difference(lastUpdate) < const Duration(days: 1);
-
-    // If it's Friday and we haven't updated today, download immediately
-    if (now.weekday == DateTime.friday && !hasUpdated) {
-      downloadAndProcessGeo();
+    // Check if auto-update is enabled
+    if (!pref.autoUpdateGeoFiles) {
+      logger.d('Geo file auto-update is disabled');
+      return;
     }
 
-    // Calculate next Friday midnight
-    final daysUntilFriday = (DateTime.friday - now.weekday) % 7;
-    final nextFriday = DateTime(
-      now.year,
-      now.month,
-      now.day + daysUntilFriday,
-      0, // hour
-      0, // minute
-      0, // second
-    );
+    final now = DateTime.now();
+    final updateIntervalDays = pref.geoUpdateInterval;
+    final lastUpdate = pref.lastGeoUpdate;
 
-    // If we've already passed Friday midnight, add 7 days
-    final targetDate = now.isAfter(nextFriday)
-        ? nextFriday.add(const Duration(days: 7))
-        : nextFriday;
+    DateTime nextUpdate;
 
-    final random = Random();
-    // Calculate duration until next Friday
-    final initialDelay =
-        targetDate.difference(now) + Duration(hours: random.nextInt(12));
+    if (lastUpdate == null) {
+      // No previous update - update immediately
+      logger.d('No previous geo file update, updating immediately');
+      makeGeoDataAvailable(update: true);
 
-    // Schedule initial timer
-    Timer(initialDelay, () {
-      downloadAndProcessGeo(); // Run update
+      // Schedule next update from now
+      nextUpdate = now.add(Duration(days: updateIntervalDays));
+    } else {
+      // Calculate next update based on last update time + interval
+      nextUpdate = lastUpdate.add(Duration(days: updateIntervalDays));
 
-      // Schedule subsequent updates every Friday
-      Timer.periodic(const Duration(days: 7), (_) {
-        downloadAndProcessGeo();
+      // If next update time has passed, update immediately
+      if (nextUpdate.isBefore(now) || nextUpdate.isAtSameMomentAs(now)) {
+        logger.d('Geo file update is overdue, updating immediately');
+        makeGeoDataAvailable(update: true);
+
+        // Schedule next update from now
+        nextUpdate = now.add(Duration(days: updateIntervalDays));
+      }
+    }
+
+    // Schedule the timer for the next update
+    final delay = nextUpdate.difference(now);
+    _updateTimer = Timer(delay, () {
+      makeGeoDataAvailable(update: true);
+
+      // After first update, schedule periodic updates at the configured interval
+      _updateTimer = Timer.periodic(Duration(days: updateIntervalDays), (_) {
+        makeGeoDataAvailable(update: true);
       });
     });
+
+    logger.d(
+        'Geo file auto-update scheduled: interval=$updateIntervalDays days, next update at ${nextUpdate.toIso8601String()} (in ${delay.inHours}h ${delay.inMinutes % 60}m)');
   }
 }

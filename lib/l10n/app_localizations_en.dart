@@ -1,18 +1,3 @@
-// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
@@ -2089,6 +2074,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get autoTestNodesDesc => 'Periodically test nodes';
 
   @override
+  String get autoUpdateGeoFiles => 'Auto Update Geo Files';
+
+  @override
+  String get autoUpdateGeoFilesDesc => 'Automatically update geo files at the configured interval';
+
+  @override
+  String get geoUpdateInterval => 'Update Interval';
+
+  @override
   String get interval => 'Interval';
 
   @override
@@ -2204,4 +2198,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pleaseUseAnotherEmail => 'Unsupported email, please use another email';
+
+  @override
+  String dbError(String error) {
+    return 'Something wrong with database: $error. Restart VX might help.';
+  }
 }

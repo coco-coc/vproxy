@@ -15,6 +15,8 @@
 
 import 'dart:async';
 
+import 'package:drift/native.dart';
+import 'package:drift/remote.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -96,6 +98,16 @@ class StartCloseCubit extends Cubit<XStatus> {
       await _xController.start();
     } on ConfigException catch (e) {
       snack(rootLocalizations()?.startFailedWithReason(e.message));
+    } on DriftRemoteException catch (e) {
+      if (e.remoteCause is SqliteException &&
+          (e.remoteCause as SqliteException).extendedResultCode == 5) {
+        snack(rootLocalizations()
+            ?.dbError(e.remoteCause.toString()));
+      } else {
+        logger.e('start error', error: e, stackTrace: StackTrace.current);
+        snack(rootLocalizations()
+            ?.startFailedWithReason(e.remoteCause.toString()));
+      }
     } catch (e) {
       logger.e('start error', error: e, stackTrace: StackTrace.current);
       snack(rootLocalizations()?.startFailedWithReason(e.toString()));
