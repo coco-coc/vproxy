@@ -440,6 +440,7 @@ class AppDatabase extends _$AppDatabase {
                   // outboundHandlers id column no longer auto increment
                   await m.alterTable(TableMigration(schema.outboundHandlers,
                       newColumns: [schema.outboundHandlers.updatedAt]));
+                  await m.addColumn(schema.outboundHandlers, schema.outboundHandlers.updatedAt);
                   // outboundHandlerGroups
                   await m.addColumn(schema.outboundHandlerGroups,
                       schema.outboundHandlerGroups.updatedAt);
