@@ -76,9 +76,9 @@ jobs:
         if: steps.cache-geo.outputs.cache-hit != 'true'
         shell: bash
         run: |
-          curl -O "https://download.5vnetwork.com/simplified_geoip.dat"
+          curl -O "https://github.com/5VNetwork/process-geo/releases/download/latest/simplified_geoip.dat"
           mv simplified_geoip.dat assets/geo/simplified_geoip.dat
-          curl -O "https://download.5vnetwork.com/simplified_geosite.dat"
+          curl -O "https://github.com/5VNetwork/process-geo/releases/download/latest/simplified_geosite.dat"
           mv simplified_geosite.dat assets/geo/simplified_geosite.dat
 
       - name: Download from release
@@ -253,9 +253,9 @@ jobs:
   #       if: steps.cache-geo.outputs.cache-hit != 'true'
   #       shell: bash
   #       run: |
-  #         curl -O "https://download.5vnetwork.com/simplified_geoip.dat"
+  #         curl -O "https://github.com/5VNetwork/process-geo/releases/download/latest/simplified_geoip.dat"
   #         mv simplified_geoip.dat assets/geo/simplified_geoip.dat
-  #         curl -O "https://download.5vnetwork.com/simplified_geosite.dat"
+  #         curl -O "https://github.com/5VNetwork/process-geo/releases/download/latest/simplified_geosite.dat"
   #         mv simplified_geosite.dat assets/geo/simplified_geosite.dat
 
   #     - name: Download from release
