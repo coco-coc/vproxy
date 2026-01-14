@@ -119,6 +119,7 @@ class RealtimeSpeedNotifier extends ChangeNotifier {
               .listen((event) {
             _process(event);
           });
+          logger.d("speed stream started");
         } catch (e) {
           logger.e("error starting speed stream", error: e);
         }
