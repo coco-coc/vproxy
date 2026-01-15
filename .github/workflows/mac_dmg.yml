@@ -127,21 +127,21 @@ jobs:
           LOG_KEY: ${{ secrets.LOG_KEY }}
         run: flutter build macos --dart-define=LOG_KEY=$LOG_KEY --flavor pkg --release --obfuscate --split-debug-info=symbols/darwin
 
-      - name: Set version
-        run: |
-          BUILD_NUMBER=$(grep '^version:' pubspec.yaml | sed 's/version: .*+\(.*\)/\1/')
-          VERSION_NAME=$(grep '^version:' pubspec.yaml | sed 's/version: \(.*\)+.*/\1/')
-          /usr/libexec/PlistBuddy -c  "Set :CFBundleShortVersionString $VERSION_NAME" \
-          "build/macos/Build/Products/Release-pkg/VX.app/Contents/Library/SystemExtensions/com.5vnetwork.x.system.se.systemextension/Contents/Info.plist"
-          /usr/libexec/PlistBuddy -c  "Set :CFBundleVersion $BUILD_NUMBER" \
-          "build/macos/Build/Products/Release-pkg/VX.app/Contents/Library/SystemExtensions/com.5vnetwork.x.system.se.systemextension/Contents/Info.plist"
-
       - name: Archive
         run: |
           cd macos
           xcodebuild -scheme pkg -workspace Runner.xcworkspace \
           -configuration Release-pkg -archivePath ./build/VX.xcarchive \
           -destination "generic/platform=macOS" archive
+
+      - name: Set version
+        run: |
+          BUILD_NUMBER=$(grep '^version:' pubspec.yaml | sed 's/version: .*+\(.*\)/\1/')
+          VERSION_NAME=$(grep '^version:' pubspec.yaml | sed 's/version: \(.*\)+.*/\1/')
+          /usr/libexec/PlistBuddy -c  "Set :CFBundleShortVersionString $VERSION_NAME" \
+          "macos/build/VX.xcarchive/Products/Applications/VX.app/Contents/Library/SystemExtensions/com.5vnetwork.x.system.se.systemextension/Contents/Info.plist"
+          /usr/libexec/PlistBuddy -c  "Set :CFBundleVersion $BUILD_NUMBER" \
+          "macos/build/VX.xcarchive/Products/Applications/VX.app/Contents/Library/SystemExtensions/com.5vnetwork.x.system.se.systemextension/Contents/Info.plist"
 
       - name: Sign
         run: |

@@ -121,6 +121,7 @@ class HomePage extends StatelessWidget {
                         return const Promotion();
                       }),
                     ),
+                    const Gap(60),
                   ],
                 );
               }
