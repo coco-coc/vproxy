@@ -23,6 +23,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/auth/auth_bloc.dart';
+import 'package:vx/common/common.dart';
 import 'package:vx/utils/download.dart';
 import 'package:vx/utils/logger.dart';
 
@@ -85,6 +86,9 @@ class AdsProvider with ChangeNotifier {
 
   /// Move to next ad that fits within constraints
   Ad? getNextAd({double? maxHeight, double? maxWidth}) {
+    if (Platform.isMacOS && !isPkg) {
+      return null;
+    }
     // If no ads to show, swap the queues
     if (_adsToShow.isEmpty) {
       if (_adsShown.isEmpty) return null; // No ads at all
