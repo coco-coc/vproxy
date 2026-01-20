@@ -22,7 +22,7 @@ import 'package:gap/gap.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:provider/provider.dart';
 import 'package:tm/protos/common/net/net.pb.dart';
-import 'package:tm/protos/google/protobuf/any.pb.dart';
+import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart';
 import 'package:tm/protos/protos/inbound.pb.dart';
 import 'package:tm/protos/protos/proxy/anytls.pb.dart';
 import 'package:tm/protos/protos/proxy/dokodemo.pb.dart';
