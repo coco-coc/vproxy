@@ -242,6 +242,8 @@ enum AdImageType {
   webp,
 }
 
+enum AdCategory { airportVpn, vps, others }
+
 class Ad {
   final String name;
   final String website;

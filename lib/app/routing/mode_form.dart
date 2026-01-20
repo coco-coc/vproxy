@@ -1635,6 +1635,16 @@ class _AppConditionState extends State<AppCondition> {
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5)),
                   ),
+                  validator: (value) {
+                    if (value != null && value.isNotEmpty) {
+                      widget.rule.appIds.add(AppId(
+                        value: value,
+                        type: _type,
+                      ));
+                      _appController.clear();
+                    }
+                    return null;
+                  },
                 ),
               ),
               const Gap(5),

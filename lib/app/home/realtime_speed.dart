@@ -118,6 +118,10 @@ class RealtimeSpeedNotifier extends ChangeNotifier {
           _speedStream = (await _controller.outboundStatsStream(_interval))
               .listen((event) {
             _process(event);
+          }, onDone: () {
+            logger.d("speed stream done");
+          }, onError: (e) {
+            logger.e("error in speed stream", error: e);
           });
           logger.d("speed stream started");
         } catch (e) {
