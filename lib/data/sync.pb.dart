@@ -1,18 +1,3 @@
-// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 // This is a generated file - do not edit.
 //
 // Generated from sync.proto.
@@ -23,7 +8,7 @@
 // ignore_for_file: constant_identifier_names
 // ignore_for_file: curly_braces_in_flow_control_structures
 // ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
 
 import 'dart:core' as $core;
 
@@ -37,11 +22,11 @@ export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
 export 'sync.pbenum.dart';
 
 enum SyncOperation_Type {
-  sqlQuery, 
-  addHandler, 
-  sqlOperation, 
-  serverOperation, 
-  commonSshKeyOperation, 
+  sqlQuery,
+  addHandler,
+  sqlOperation,
+  serverOperation,
+  commonSshKeyOperation,
   notSet
 }
 
@@ -60,38 +45,55 @@ class SyncOperation extends $pb.GeneratedMessage {
     if (addHandler != null) result.addHandler = addHandler;
     if (sqlOperation != null) result.sqlOperation = sqlOperation;
     if (serverOperation != null) result.serverOperation = serverOperation;
-    if (commonSshKeyOperation != null) result.commonSshKeyOperation = commonSshKeyOperation;
+    if (commonSshKeyOperation != null)
+      result.commonSshKeyOperation = commonSshKeyOperation;
     return result;
   }
 
   SyncOperation._();
 
-  factory SyncOperation.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory SyncOperation.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory SyncOperation.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SyncOperation.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static const $core.Map<$core.int, SyncOperation_Type> _SyncOperation_TypeByTag = {
-    10 : SyncOperation_Type.sqlQuery,
-    11 : SyncOperation_Type.addHandler,
-    12 : SyncOperation_Type.sqlOperation,
-    13 : SyncOperation_Type.serverOperation,
-    14 : SyncOperation_Type.commonSshKeyOperation,
-    0 : SyncOperation_Type.notSet
+  static const $core.Map<$core.int, SyncOperation_Type>
+      _SyncOperation_TypeByTag = {
+    10: SyncOperation_Type.sqlQuery,
+    11: SyncOperation_Type.addHandler,
+    12: SyncOperation_Type.sqlOperation,
+    13: SyncOperation_Type.serverOperation,
+    14: SyncOperation_Type.commonSshKeyOperation,
+    0: SyncOperation_Type.notSet
   };
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'SyncOperation', package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'), createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SyncOperation',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'),
+      createEmptyInstance: create)
     ..oo(0, [10, 11, 12, 13, 14])
-    ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'time', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
-    ..aOM<SqlQuery>(10, _omitFieldNames ? '' : 'sqlQuery', subBuilder: SqlQuery.create)
-    ..aOM<AddHandler>(11, _omitFieldNames ? '' : 'addHandler', subBuilder: AddHandler.create)
-    ..aOM<SqlOperation>(12, _omitFieldNames ? '' : 'sqlOperation', subBuilder: SqlOperation.create)
-    ..aOM<ServerOperation>(13, _omitFieldNames ? '' : 'serverOperation', subBuilder: ServerOperation.create)
-    ..aOM<CommonSshKeyOperation>(14, _omitFieldNames ? '' : 'commonSshKeyOperation', subBuilder: CommonSshKeyOperation.create)
-    ..hasRequiredFields = false
-  ;
+    ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'time', $pb.PbFieldType.OU6,
+        defaultOrMaker: $fixnum.Int64.ZERO)
+    ..aOM<SqlQuery>(10, _omitFieldNames ? '' : 'sqlQuery',
+        subBuilder: SqlQuery.create)
+    ..aOM<AddHandler>(11, _omitFieldNames ? '' : 'addHandler',
+        subBuilder: AddHandler.create)
+    ..aOM<SqlOperation>(12, _omitFieldNames ? '' : 'sqlOperation',
+        subBuilder: SqlOperation.create)
+    ..aOM<ServerOperation>(13, _omitFieldNames ? '' : 'serverOperation',
+        subBuilder: ServerOperation.create)
+    ..aOM<CommonSshKeyOperation>(
+        14, _omitFieldNames ? '' : 'commonSshKeyOperation',
+        subBuilder: CommonSshKeyOperation.create)
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  SyncOperation clone() => SyncOperation()..mergeFromMessage(this);
+  SyncOperation clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  SyncOperation copyWith(void Function(SyncOperation) updates) => super.copyWith((message) => updates(message as SyncOperation)) as SyncOperation;
+  SyncOperation copyWith(void Function(SyncOperation) updates) =>
+      super.copyWith((message) => updates(message as SyncOperation))
+          as SyncOperation;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -100,12 +102,22 @@ class SyncOperation extends $pb.GeneratedMessage {
   static SyncOperation create() => SyncOperation._();
   @$core.override
   SyncOperation createEmptyInstance() => create();
-  static $pb.PbList<SyncOperation> createRepeated() => $pb.PbList<SyncOperation>();
   @$core.pragma('dart2js:noInline')
-  static SyncOperation getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SyncOperation>(create);
+  static SyncOperation getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SyncOperation>(create);
   static SyncOperation? _defaultInstance;
 
+  @$pb.TagNumber(10)
+  @$pb.TagNumber(11)
+  @$pb.TagNumber(12)
+  @$pb.TagNumber(13)
+  @$pb.TagNumber(14)
   SyncOperation_Type whichType() => _SyncOperation_TypeByTag[$_whichOneof(0)]!;
+  @$pb.TagNumber(10)
+  @$pb.TagNumber(11)
+  @$pb.TagNumber(12)
+  @$pb.TagNumber(13)
+  @$pb.TagNumber(14)
   void clearType() => $_clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
@@ -164,7 +176,8 @@ class SyncOperation extends $pb.GeneratedMessage {
   @$pb.TagNumber(14)
   CommonSshKeyOperation get commonSshKeyOperation => $_getN(5);
   @$pb.TagNumber(14)
-  set commonSshKeyOperation(CommonSshKeyOperation value) => $_setField(14, value);
+  set commonSshKeyOperation(CommonSshKeyOperation value) =>
+      $_setField(14, value);
   @$pb.TagNumber(14)
   $core.bool hasCommonSshKeyOperation() => $_has(5);
   @$pb.TagNumber(14)
@@ -184,18 +197,27 @@ class SyncOperations extends $pb.GeneratedMessage {
 
   SyncOperations._();
 
-  factory SyncOperations.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory SyncOperations.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory SyncOperations.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SyncOperations.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'SyncOperations', package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'), createEmptyInstance: create)
-    ..pc<SyncOperation>(1, _omitFieldNames ? '' : 'operations', $pb.PbFieldType.PM, subBuilder: SyncOperation.create)
-    ..hasRequiredFields = false
-  ;
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SyncOperations',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'),
+      createEmptyInstance: create)
+    ..pPM<SyncOperation>(1, _omitFieldNames ? '' : 'operations',
+        subBuilder: SyncOperation.create)
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  SyncOperations clone() => SyncOperations()..mergeFromMessage(this);
+  SyncOperations clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  SyncOperations copyWith(void Function(SyncOperations) updates) => super.copyWith((message) => updates(message as SyncOperations)) as SyncOperations;
+  SyncOperations copyWith(void Function(SyncOperations) updates) =>
+      super.copyWith((message) => updates(message as SyncOperations))
+          as SyncOperations;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -204,9 +226,9 @@ class SyncOperations extends $pb.GeneratedMessage {
   static SyncOperations create() => SyncOperations._();
   @$core.override
   SyncOperations createEmptyInstance() => create();
-  static $pb.PbList<SyncOperations> createRepeated() => $pb.PbList<SyncOperations>();
   @$core.pragma('dart2js:noInline')
-  static SyncOperations getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SyncOperations>(create);
+  static SyncOperations getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SyncOperations>(create);
   static SyncOperations? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -226,19 +248,27 @@ class AddHandler extends $pb.GeneratedMessage {
 
   AddHandler._();
 
-  factory AddHandler.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory AddHandler.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory AddHandler.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory AddHandler.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AddHandler', package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'), createEmptyInstance: create)
-    ..p<$core.List<$core.int>>(1, _omitFieldNames ? '' : 'handlers', $pb.PbFieldType.PY)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'AddHandler',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'),
+      createEmptyInstance: create)
+    ..p<$core.List<$core.int>>(
+        1, _omitFieldNames ? '' : 'handlers', $pb.PbFieldType.PY)
     ..aOS(2, _omitFieldNames ? '' : 'group')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  AddHandler clone() => AddHandler()..mergeFromMessage(this);
+  AddHandler clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  AddHandler copyWith(void Function(AddHandler) updates) => super.copyWith((message) => updates(message as AddHandler)) as AddHandler;
+  AddHandler copyWith(void Function(AddHandler) updates) =>
+      super.copyWith((message) => updates(message as AddHandler)) as AddHandler;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -247,9 +277,9 @@ class AddHandler extends $pb.GeneratedMessage {
   static AddHandler create() => AddHandler._();
   @$core.override
   AddHandler createEmptyInstance() => create();
-  static $pb.PbList<AddHandler> createRepeated() => $pb.PbList<AddHandler>();
   @$core.pragma('dart2js:noInline')
-  static AddHandler getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AddHandler>(create);
+  static AddHandler getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<AddHandler>(create);
   static AddHandler? _defaultInstance;
 
   /// a list of HandlerConfig
@@ -279,19 +309,29 @@ class UpdateHandler extends $pb.GeneratedMessage {
 
   UpdateHandler._();
 
-  factory UpdateHandler.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory UpdateHandler.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory UpdateHandler.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory UpdateHandler.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UpdateHandler', package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, _omitFieldNames ? '' : 'newHandler', $pb.PbFieldType.OY)
-    ..a<$core.List<$core.int>>(2, _omitFieldNames ? '' : 'oldHandler', $pb.PbFieldType.OY)
-    ..hasRequiredFields = false
-  ;
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'UpdateHandler',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'),
+      createEmptyInstance: create)
+    ..a<$core.List<$core.int>>(
+        1, _omitFieldNames ? '' : 'newHandler', $pb.PbFieldType.OY)
+    ..a<$core.List<$core.int>>(
+        2, _omitFieldNames ? '' : 'oldHandler', $pb.PbFieldType.OY)
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  UpdateHandler clone() => UpdateHandler()..mergeFromMessage(this);
+  UpdateHandler clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  UpdateHandler copyWith(void Function(UpdateHandler) updates) => super.copyWith((message) => updates(message as UpdateHandler)) as UpdateHandler;
+  UpdateHandler copyWith(void Function(UpdateHandler) updates) =>
+      super.copyWith((message) => updates(message as UpdateHandler))
+          as UpdateHandler;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -300,9 +340,9 @@ class UpdateHandler extends $pb.GeneratedMessage {
   static UpdateHandler create() => UpdateHandler._();
   @$core.override
   UpdateHandler createEmptyInstance() => create();
-  static $pb.PbList<UpdateHandler> createRepeated() => $pb.PbList<UpdateHandler>();
   @$core.pragma('dart2js:noInline')
-  static UpdateHandler getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UpdateHandler>(create);
+  static UpdateHandler getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<UpdateHandler>(create);
   static UpdateHandler? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -335,18 +375,27 @@ class DeleteHandler extends $pb.GeneratedMessage {
 
   DeleteHandler._();
 
-  factory DeleteHandler.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory DeleteHandler.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory DeleteHandler.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory DeleteHandler.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'DeleteHandler', package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, _omitFieldNames ? '' : 'handler', $pb.PbFieldType.OY)
-    ..hasRequiredFields = false
-  ;
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'DeleteHandler',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'),
+      createEmptyInstance: create)
+    ..a<$core.List<$core.int>>(
+        1, _omitFieldNames ? '' : 'handler', $pb.PbFieldType.OY)
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  DeleteHandler clone() => DeleteHandler()..mergeFromMessage(this);
+  DeleteHandler clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  DeleteHandler copyWith(void Function(DeleteHandler) updates) => super.copyWith((message) => updates(message as DeleteHandler)) as DeleteHandler;
+  DeleteHandler copyWith(void Function(DeleteHandler) updates) =>
+      super.copyWith((message) => updates(message as DeleteHandler))
+          as DeleteHandler;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -355,9 +404,9 @@ class DeleteHandler extends $pb.GeneratedMessage {
   static DeleteHandler create() => DeleteHandler._();
   @$core.override
   DeleteHandler createEmptyInstance() => create();
-  static $pb.PbList<DeleteHandler> createRepeated() => $pb.PbList<DeleteHandler>();
   @$core.pragma('dart2js:noInline')
-  static DeleteHandler getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteHandler>(create);
+  static DeleteHandler getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<DeleteHandler>(create);
   static DeleteHandler? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -383,19 +432,27 @@ class AddSubscription extends $pb.GeneratedMessage {
 
   AddSubscription._();
 
-  factory AddSubscription.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory AddSubscription.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory AddSubscription.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory AddSubscription.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'AddSubscription', package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'), createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'AddSubscription',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'),
+      createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'name')
     ..aOS(2, _omitFieldNames ? '' : 'url')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  AddSubscription clone() => AddSubscription()..mergeFromMessage(this);
+  AddSubscription clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  AddSubscription copyWith(void Function(AddSubscription) updates) => super.copyWith((message) => updates(message as AddSubscription)) as AddSubscription;
+  AddSubscription copyWith(void Function(AddSubscription) updates) =>
+      super.copyWith((message) => updates(message as AddSubscription))
+          as AddSubscription;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -404,9 +461,9 @@ class AddSubscription extends $pb.GeneratedMessage {
   static AddSubscription create() => AddSubscription._();
   @$core.override
   AddSubscription createEmptyInstance() => create();
-  static $pb.PbList<AddSubscription> createRepeated() => $pb.PbList<AddSubscription>();
   @$core.pragma('dart2js:noInline')
-  static AddSubscription getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AddSubscription>(create);
+  static AddSubscription getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<AddSubscription>(create);
   static AddSubscription? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -445,21 +502,29 @@ class UpdateSubscription extends $pb.GeneratedMessage {
 
   UpdateSubscription._();
 
-  factory UpdateSubscription.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory UpdateSubscription.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory UpdateSubscription.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory UpdateSubscription.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UpdateSubscription', package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'), createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'UpdateSubscription',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'),
+      createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'name')
     ..aOS(2, _omitFieldNames ? '' : 'url')
     ..aOB(3, _omitFieldNames ? '' : 'nameChanged')
     ..aOB(4, _omitFieldNames ? '' : 'urlChanged')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  UpdateSubscription clone() => UpdateSubscription()..mergeFromMessage(this);
+  UpdateSubscription clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  UpdateSubscription copyWith(void Function(UpdateSubscription) updates) => super.copyWith((message) => updates(message as UpdateSubscription)) as UpdateSubscription;
+  UpdateSubscription copyWith(void Function(UpdateSubscription) updates) =>
+      super.copyWith((message) => updates(message as UpdateSubscription))
+          as UpdateSubscription;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -468,9 +533,9 @@ class UpdateSubscription extends $pb.GeneratedMessage {
   static UpdateSubscription create() => UpdateSubscription._();
   @$core.override
   UpdateSubscription createEmptyInstance() => create();
-  static $pb.PbList<UpdateSubscription> createRepeated() => $pb.PbList<UpdateSubscription>();
   @$core.pragma('dart2js:noInline')
-  static UpdateSubscription getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UpdateSubscription>(create);
+  static UpdateSubscription getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<UpdateSubscription>(create);
   static UpdateSubscription? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -521,18 +586,26 @@ class DeleteSubscription extends $pb.GeneratedMessage {
 
   DeleteSubscription._();
 
-  factory DeleteSubscription.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory DeleteSubscription.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory DeleteSubscription.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory DeleteSubscription.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'DeleteSubscription', package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'), createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'DeleteSubscription',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'),
+      createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'url')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  DeleteSubscription clone() => DeleteSubscription()..mergeFromMessage(this);
+  DeleteSubscription clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  DeleteSubscription copyWith(void Function(DeleteSubscription) updates) => super.copyWith((message) => updates(message as DeleteSubscription)) as DeleteSubscription;
+  DeleteSubscription copyWith(void Function(DeleteSubscription) updates) =>
+      super.copyWith((message) => updates(message as DeleteSubscription))
+          as DeleteSubscription;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -541,9 +614,9 @@ class DeleteSubscription extends $pb.GeneratedMessage {
   static DeleteSubscription create() => DeleteSubscription._();
   @$core.override
   DeleteSubscription createEmptyInstance() => create();
-  static $pb.PbList<DeleteSubscription> createRepeated() => $pb.PbList<DeleteSubscription>();
   @$core.pragma('dart2js:noInline')
-  static DeleteSubscription getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeleteSubscription>(create);
+  static DeleteSubscription getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<DeleteSubscription>(create);
   static DeleteSubscription? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -575,22 +648,31 @@ class ServerOperation extends $pb.GeneratedMessage {
 
   ServerOperation._();
 
-  factory ServerOperation.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory ServerOperation.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory ServerOperation.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory ServerOperation.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ServerOperation', package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'), createEmptyInstance: create)
-    ..e<ServerOperation_Type>(1, _omitFieldNames ? '' : 'type', $pb.PbFieldType.OE, defaultOrMaker: ServerOperation_Type.ADD, valueOf: ServerOperation_Type.valueOf, enumValues: ServerOperation_Type.values)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ServerOperation',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'),
+      createEmptyInstance: create)
+    ..aE<ServerOperation_Type>(1, _omitFieldNames ? '' : 'type',
+        enumValues: ServerOperation_Type.values)
     ..aOS(2, _omitFieldNames ? '' : 'row')
     ..aOS(3, _omitFieldNames ? '' : 'storageKey')
     ..aOS(4, _omitFieldNames ? '' : 'secureStorage')
     ..aInt64(5, _omitFieldNames ? '' : 'id')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  ServerOperation clone() => ServerOperation()..mergeFromMessage(this);
+  ServerOperation clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  ServerOperation copyWith(void Function(ServerOperation) updates) => super.copyWith((message) => updates(message as ServerOperation)) as ServerOperation;
+  ServerOperation copyWith(void Function(ServerOperation) updates) =>
+      super.copyWith((message) => updates(message as ServerOperation))
+          as ServerOperation;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -599,9 +681,9 @@ class ServerOperation extends $pb.GeneratedMessage {
   static ServerOperation create() => ServerOperation._();
   @$core.override
   ServerOperation createEmptyInstance() => create();
-  static $pb.PbList<ServerOperation> createRepeated() => $pb.PbList<ServerOperation>();
   @$core.pragma('dart2js:noInline')
-  static ServerOperation getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ServerOperation>(create);
+  static ServerOperation getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ServerOperation>(create);
   static ServerOperation? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -670,22 +752,32 @@ class CommonSshKeyOperation extends $pb.GeneratedMessage {
 
   CommonSshKeyOperation._();
 
-  factory CommonSshKeyOperation.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory CommonSshKeyOperation.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory CommonSshKeyOperation.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory CommonSshKeyOperation.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'CommonSshKeyOperation', package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'), createEmptyInstance: create)
-    ..e<CommonSshKeyOperation_Type>(1, _omitFieldNames ? '' : 'type', $pb.PbFieldType.OE, defaultOrMaker: CommonSshKeyOperation_Type.ADD, valueOf: CommonSshKeyOperation_Type.valueOf, enumValues: CommonSshKeyOperation_Type.values)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'CommonSshKeyOperation',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'),
+      createEmptyInstance: create)
+    ..aE<CommonSshKeyOperation_Type>(1, _omitFieldNames ? '' : 'type',
+        enumValues: CommonSshKeyOperation_Type.values)
     ..aOS(2, _omitFieldNames ? '' : 'row')
     ..aOS(3, _omitFieldNames ? '' : 'storageKey')
     ..aOS(4, _omitFieldNames ? '' : 'secureStorage')
     ..aInt64(5, _omitFieldNames ? '' : 'id')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  CommonSshKeyOperation clone() => CommonSshKeyOperation()..mergeFromMessage(this);
+  CommonSshKeyOperation clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  CommonSshKeyOperation copyWith(void Function(CommonSshKeyOperation) updates) => super.copyWith((message) => updates(message as CommonSshKeyOperation)) as CommonSshKeyOperation;
+  CommonSshKeyOperation copyWith(
+          void Function(CommonSshKeyOperation) updates) =>
+      super.copyWith((message) => updates(message as CommonSshKeyOperation))
+          as CommonSshKeyOperation;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -694,9 +786,9 @@ class CommonSshKeyOperation extends $pb.GeneratedMessage {
   static CommonSshKeyOperation create() => CommonSshKeyOperation._();
   @$core.override
   CommonSshKeyOperation createEmptyInstance() => create();
-  static $pb.PbList<CommonSshKeyOperation> createRepeated() => $pb.PbList<CommonSshKeyOperation>();
   @$core.pragma('dart2js:noInline')
-  static CommonSshKeyOperation getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CommonSshKeyOperation>(create);
+  static CommonSshKeyOperation getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<CommonSshKeyOperation>(create);
   static CommonSshKeyOperation? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -765,22 +857,30 @@ class SqlOperation extends $pb.GeneratedMessage {
 
   SqlOperation._();
 
-  factory SqlOperation.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory SqlOperation.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory SqlOperation.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SqlOperation.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'SqlOperation', package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'), createEmptyInstance: create)
-    ..e<SQLType>(1, _omitFieldNames ? '' : 'type', $pb.PbFieldType.OE, defaultOrMaker: SQLType.INSERT, valueOf: SQLType.valueOf, enumValues: SQLType.values)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SqlOperation',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'),
+      createEmptyInstance: create)
+    ..aE<SQLType>(1, _omitFieldNames ? '' : 'type', enumValues: SQLType.values)
     ..aOS(2, _omitFieldNames ? '' : 'table')
     ..pPS(3, _omitFieldNames ? '' : 'rows')
     ..p<$fixnum.Int64>(4, _omitFieldNames ? '' : 'ids', $pb.PbFieldType.K6)
     ..pPS(5, _omitFieldNames ? '' : 'names')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  SqlOperation clone() => SqlOperation()..mergeFromMessage(this);
+  SqlOperation clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  SqlOperation copyWith(void Function(SqlOperation) updates) => super.copyWith((message) => updates(message as SqlOperation)) as SqlOperation;
+  SqlOperation copyWith(void Function(SqlOperation) updates) =>
+      super.copyWith((message) => updates(message as SqlOperation))
+          as SqlOperation;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -789,9 +889,9 @@ class SqlOperation extends $pb.GeneratedMessage {
   static SqlOperation create() => SqlOperation._();
   @$core.override
   SqlOperation createEmptyInstance() => create();
-  static $pb.PbList<SqlOperation> createRepeated() => $pb.PbList<SqlOperation>();
   @$core.pragma('dart2js:noInline')
-  static SqlOperation getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SqlOperation>(create);
+  static SqlOperation getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SqlOperation>(create);
   static SqlOperation? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -839,20 +939,28 @@ class SqlQuery extends $pb.GeneratedMessage {
 
   SqlQuery._();
 
-  factory SqlQuery.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory SqlQuery.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory SqlQuery.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SqlQuery.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'SqlQuery', package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'), createEmptyInstance: create)
-    ..e<SQLType>(1, _omitFieldNames ? '' : 'type', $pb.PbFieldType.OE, defaultOrMaker: SQLType.INSERT, valueOf: SQLType.valueOf, enumValues: SQLType.values)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SqlQuery',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'),
+      createEmptyInstance: create)
+    ..aE<SQLType>(1, _omitFieldNames ? '' : 'type', enumValues: SQLType.values)
     ..aOS(10, _omitFieldNames ? '' : 'statement')
-    ..pc<SqlArgument>(11, _omitFieldNames ? '' : 'arguments', $pb.PbFieldType.PM, subBuilder: SqlArgument.create)
-    ..hasRequiredFields = false
-  ;
+    ..pPM<SqlArgument>(11, _omitFieldNames ? '' : 'arguments',
+        subBuilder: SqlArgument.create)
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  SqlQuery clone() => SqlQuery()..mergeFromMessage(this);
+  SqlQuery clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  SqlQuery copyWith(void Function(SqlQuery) updates) => super.copyWith((message) => updates(message as SqlQuery)) as SqlQuery;
+  SqlQuery copyWith(void Function(SqlQuery) updates) =>
+      super.copyWith((message) => updates(message as SqlQuery)) as SqlQuery;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -861,9 +969,9 @@ class SqlQuery extends $pb.GeneratedMessage {
   static SqlQuery create() => SqlQuery._();
   @$core.override
   SqlQuery createEmptyInstance() => create();
-  static $pb.PbList<SqlQuery> createRepeated() => $pb.PbList<SqlQuery>();
   @$core.pragma('dart2js:noInline')
-  static SqlQuery getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SqlQuery>(create);
+  static SqlQuery getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SqlQuery>(create);
   static SqlQuery? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -888,15 +996,7 @@ class SqlQuery extends $pb.GeneratedMessage {
   $pb.PbList<SqlArgument> get arguments => $_getList(2);
 }
 
-enum SqlArgument_Type {
-  string, 
-  int64, 
-  int32, 
-  bool_4, 
-  bytes, 
-  double_6, 
-  notSet
-}
+enum SqlArgument_Type { string, int64, int32, bool_4, bytes, double_6, notSet }
 
 class SqlArgument extends $pb.GeneratedMessage {
   factory SqlArgument({
@@ -921,34 +1021,43 @@ class SqlArgument extends $pb.GeneratedMessage {
 
   SqlArgument._();
 
-  factory SqlArgument.fromBuffer($core.List<$core.int> data, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(data, registry);
-  factory SqlArgument.fromJson($core.String json, [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(json, registry);
+  factory SqlArgument.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory SqlArgument.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
   static const $core.Map<$core.int, SqlArgument_Type> _SqlArgument_TypeByTag = {
-    1 : SqlArgument_Type.string,
-    2 : SqlArgument_Type.int64,
-    3 : SqlArgument_Type.int32,
-    4 : SqlArgument_Type.bool_4,
-    5 : SqlArgument_Type.bytes,
-    6 : SqlArgument_Type.double_6,
-    0 : SqlArgument_Type.notSet
+    1: SqlArgument_Type.string,
+    2: SqlArgument_Type.int64,
+    3: SqlArgument_Type.int32,
+    4: SqlArgument_Type.bool_4,
+    5: SqlArgument_Type.bytes,
+    6: SqlArgument_Type.double_6,
+    0: SqlArgument_Type.notSet
   };
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'SqlArgument', package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'), createEmptyInstance: create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'SqlArgument',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'vx'),
+      createEmptyInstance: create)
     ..oo(0, [1, 2, 3, 4, 5, 6])
     ..aOS(1, _omitFieldNames ? '' : 'string')
     ..aInt64(2, _omitFieldNames ? '' : 'int64')
-    ..a<$core.int>(3, _omitFieldNames ? '' : 'int32', $pb.PbFieldType.O3)
+    ..aI(3, _omitFieldNames ? '' : 'int32')
     ..aOB(4, _omitFieldNames ? '' : 'bool')
-    ..a<$core.List<$core.int>>(5, _omitFieldNames ? '' : 'bytes', $pb.PbFieldType.OY)
-    ..a<$core.double>(6, _omitFieldNames ? '' : 'double', $pb.PbFieldType.OF)
+    ..a<$core.List<$core.int>>(
+        5, _omitFieldNames ? '' : 'bytes', $pb.PbFieldType.OY)
+    ..aD(6, _omitFieldNames ? '' : 'double', fieldType: $pb.PbFieldType.OF)
     ..aOB(10, _omitFieldNames ? '' : 'isNull')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  SqlArgument clone() => SqlArgument()..mergeFromMessage(this);
+  SqlArgument clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  SqlArgument copyWith(void Function(SqlArgument) updates) => super.copyWith((message) => updates(message as SqlArgument)) as SqlArgument;
+  SqlArgument copyWith(void Function(SqlArgument) updates) =>
+      super.copyWith((message) => updates(message as SqlArgument))
+          as SqlArgument;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
@@ -957,12 +1066,24 @@ class SqlArgument extends $pb.GeneratedMessage {
   static SqlArgument create() => SqlArgument._();
   @$core.override
   SqlArgument createEmptyInstance() => create();
-  static $pb.PbList<SqlArgument> createRepeated() => $pb.PbList<SqlArgument>();
   @$core.pragma('dart2js:noInline')
-  static SqlArgument getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SqlArgument>(create);
+  static SqlArgument getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<SqlArgument>(create);
   static SqlArgument? _defaultInstance;
 
+  @$pb.TagNumber(1)
+  @$pb.TagNumber(2)
+  @$pb.TagNumber(3)
+  @$pb.TagNumber(4)
+  @$pb.TagNumber(5)
+  @$pb.TagNumber(6)
   SqlArgument_Type whichType() => _SqlArgument_TypeByTag[$_whichOneof(0)]!;
+  @$pb.TagNumber(1)
+  @$pb.TagNumber(2)
+  @$pb.TagNumber(3)
+  @$pb.TagNumber(4)
+  @$pb.TagNumber(5)
+  @$pb.TagNumber(6)
   void clearType() => $_clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
@@ -1029,6 +1150,7 @@ class SqlArgument extends $pb.GeneratedMessage {
   void clearIsNull() => $_clearField(10);
 }
 
-
-const $core.bool _omitFieldNames = $core.bool.fromEnvironment('protobuf.omit_field_names');
-const $core.bool _omitMessageNames = $core.bool.fromEnvironment('protobuf.omit_message_names');
+const $core.bool _omitFieldNames =
+    $core.bool.fromEnvironment('protobuf.omit_field_names');
+const $core.bool _omitMessageNames =
+    $core.bool.fromEnvironment('protobuf.omit_message_names');

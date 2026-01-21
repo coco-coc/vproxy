@@ -20,7 +20,6 @@ import 'package:installed_apps/index.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
-import 'package:tm/protos/google/protobuf/any.pb.dart';
 import 'package:tm/protos/common/net/net.pb.dart';
 import 'package:tm/protos/protos/dispatcher.pb.dart';
 import 'package:tm/protos/protos/dns.pb.dart';
@@ -56,6 +55,7 @@ import 'package:vx/common/net.dart';
 import 'package:vx/utils/permission.dart';
 import 'package:vx/utils/wintun.dart';
 import 'package:vx/utils/xapi_client.dart';
+import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart';
 
 final freedomHandlerConfig = o.HandlerConfig(
     outbound: o.OutboundHandlerConfig(
@@ -115,27 +115,30 @@ class XConfigHelper {
 
     // TODO: I assume a server supports ipv4
     final config = core.TmConfig(
-      inboundManager: inboundConfig,
-      outbound: await _getOutboundConfig(routerConfig),
-      tun: await _getTunConfig(routerConfig),
-      wfp: await _getWfpConfig(),
-      dns: dnsConfig,
-      policy: _getPolicyConfig(),
-      router: routerConfig,
-      selectors: await getSelectorsConfig(routerConfig),
-      log: await _getLoggerConfig(),
-      geo: geoConfig,
-      grpc: await _getGrpcConfig(certBytes: certBytes),
-      dispatcher: _getDispatcherConfig(),
-      subscription: isPkg ? null : await _getSubscriptionConfig(),
-      dbPath: isPkg ? null : await getDbPath(_persistentStateRepo),
-      serviceSecret: dbSecretAndPort?.$1,
-      servicePort: dbSecretAndPort?.$2,
-      defaultNicMonitor: true,
-      hysteria2RejectQuic: _persistentStateRepo.rejectQuicHysteria,
-      sysProxy: _getSysProxyConfig(inboundConfig),
-      useRealLatency: _persistentStateRepo.pingMode == PingMode.Real,
-    );
+        inboundManager: inboundConfig,
+        outbound: await _getOutboundConfig(routerConfig),
+        tun: await _getTunConfig(routerConfig),
+        wfp: await _getWfpConfig(),
+        dns: dnsConfig,
+        policy: _getPolicyConfig(),
+        router: routerConfig,
+        selectors: await getSelectorsConfig(routerConfig),
+        log: await _getLoggerConfig(),
+        geo: geoConfig,
+        grpc: await _getGrpcConfig(certBytes: certBytes),
+        dispatcher: _getDispatcherConfig(),
+        subscription: isPkg ? null : await _getSubscriptionConfig(),
+        dbPath: isPkg ? null : await getDbPath(_persistentStateRepo),
+        serviceSecret: dbSecretAndPort?.$1,
+        servicePort: dbSecretAndPort?.$2,
+        defaultNicMonitor: true,
+        hysteria2RejectQuic: _persistentStateRepo.rejectQuicHysteria,
+        sysProxy: _getSysProxyConfig(inboundConfig),
+        useRealLatency: _persistentStateRepo.pingMode == PingMode.Real,
+        userLog: l.UserLoggerConfig(
+          enable: _persistentStateRepo.enableLog,
+          logAppId: _persistentStateRepo.showApp,
+        ));
     // redirect std err
     if (!isProduction() ||
         _persistentStateRepo.shareLog ||
@@ -1158,11 +1161,7 @@ class XConfigHelper {
       logLevel = l.Level.DISABLED;
     }
     return l.LoggerConfig(
-        consoleWriter: true,
-        showCaller: true,
-        userLog: _persistentStateRepo.enableLog,
-        logAppId: _persistentStateRepo.showApp,
-        logLevel: logLevel);
+        consoleWriter: true, showCaller: true, logLevel: logLevel);
   }
 
   SysProxyConfig? _getSysProxyConfig(InboundManagerConfig inboundConfig) {

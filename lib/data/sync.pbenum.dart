@@ -1,18 +1,3 @@
-// Copyright (C) 2026 5V Network LLC <5vnetwork@proton.me>
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 // This is a generated file - do not edit.
 //
 // Generated from sync.proto.
@@ -23,7 +8,7 @@
 // ignore_for_file: constant_identifier_names
 // ignore_for_file: curly_braces_in_flow_control_structures
 // ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
 
 import 'dart:core' as $core;
 
@@ -36,7 +21,7 @@ class SQLType extends $pb.ProtobufEnum {
   static const SQLType CUSTOM = SQLType._(3, _omitEnumNames ? '' : 'CUSTOM');
   static const SQLType BATCH = SQLType._(4, _omitEnumNames ? '' : 'BATCH');
 
-  static const $core.List<SQLType> values = <SQLType> [
+  static const $core.List<SQLType> values = <SQLType>[
     INSERT,
     UPDATE,
     DELETE,
@@ -44,43 +29,55 @@ class SQLType extends $pb.ProtobufEnum {
     BATCH,
   ];
 
-  static final $core.List<SQLType?> _byValue = $pb.ProtobufEnum.$_initByValueList(values, 4);
-  static SQLType? valueOf($core.int value) =>  value < 0 || value >= _byValue.length ? null : _byValue[value];
+  static final $core.List<SQLType?> _byValue =
+      $pb.ProtobufEnum.$_initByValueList(values, 4);
+  static SQLType? valueOf($core.int value) =>
+      value < 0 || value >= _byValue.length ? null : _byValue[value];
 
   const SQLType._(super.value, super.name);
 }
 
 class ServerOperation_Type extends $pb.ProtobufEnum {
-  static const ServerOperation_Type ADD = ServerOperation_Type._(0, _omitEnumNames ? '' : 'ADD');
-  static const ServerOperation_Type UPDATE = ServerOperation_Type._(1, _omitEnumNames ? '' : 'UPDATE');
-  static const ServerOperation_Type DELETE = ServerOperation_Type._(2, _omitEnumNames ? '' : 'DELETE');
+  static const ServerOperation_Type ADD =
+      ServerOperation_Type._(0, _omitEnumNames ? '' : 'ADD');
+  static const ServerOperation_Type UPDATE =
+      ServerOperation_Type._(1, _omitEnumNames ? '' : 'UPDATE');
+  static const ServerOperation_Type DELETE =
+      ServerOperation_Type._(2, _omitEnumNames ? '' : 'DELETE');
 
-  static const $core.List<ServerOperation_Type> values = <ServerOperation_Type> [
+  static const $core.List<ServerOperation_Type> values = <ServerOperation_Type>[
     ADD,
     UPDATE,
     DELETE,
   ];
 
-  static final $core.List<ServerOperation_Type?> _byValue = $pb.ProtobufEnum.$_initByValueList(values, 2);
-  static ServerOperation_Type? valueOf($core.int value) =>  value < 0 || value >= _byValue.length ? null : _byValue[value];
+  static final $core.List<ServerOperation_Type?> _byValue =
+      $pb.ProtobufEnum.$_initByValueList(values, 2);
+  static ServerOperation_Type? valueOf($core.int value) =>
+      value < 0 || value >= _byValue.length ? null : _byValue[value];
 
   const ServerOperation_Type._(super.value, super.name);
 }
 
 class CommonSshKeyOperation_Type extends $pb.ProtobufEnum {
-  static const CommonSshKeyOperation_Type ADD = CommonSshKeyOperation_Type._(0, _omitEnumNames ? '' : 'ADD');
-  static const CommonSshKeyOperation_Type DELETE = CommonSshKeyOperation_Type._(1, _omitEnumNames ? '' : 'DELETE');
+  static const CommonSshKeyOperation_Type ADD =
+      CommonSshKeyOperation_Type._(0, _omitEnumNames ? '' : 'ADD');
+  static const CommonSshKeyOperation_Type DELETE =
+      CommonSshKeyOperation_Type._(1, _omitEnumNames ? '' : 'DELETE');
 
-  static const $core.List<CommonSshKeyOperation_Type> values = <CommonSshKeyOperation_Type> [
+  static const $core.List<CommonSshKeyOperation_Type> values =
+      <CommonSshKeyOperation_Type>[
     ADD,
     DELETE,
   ];
 
-  static final $core.List<CommonSshKeyOperation_Type?> _byValue = $pb.ProtobufEnum.$_initByValueList(values, 1);
-  static CommonSshKeyOperation_Type? valueOf($core.int value) =>  value < 0 || value >= _byValue.length ? null : _byValue[value];
+  static final $core.List<CommonSshKeyOperation_Type?> _byValue =
+      $pb.ProtobufEnum.$_initByValueList(values, 1);
+  static CommonSshKeyOperation_Type? valueOf($core.int value) =>
+      value < 0 || value >= _byValue.length ? null : _byValue[value];
 
   const CommonSshKeyOperation_Type._(super.value, super.name);
 }
 
-
-const $core.bool _omitEnumNames = $core.bool.fromEnvironment('protobuf.omit_enum_names');
+const $core.bool _omitEnumNames =
+    $core.bool.fromEnvironment('protobuf.omit_enum_names');

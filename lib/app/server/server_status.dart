@@ -23,6 +23,7 @@ import 'package:vx/common/net.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/theme.dart';
 import 'package:vx/l10n/app_localizations.dart';
+import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/xapi_client.dart';
 
 class ServerStatus extends StatefulWidget {
@@ -64,6 +65,7 @@ class _ServerStatusState extends State<ServerStatus> {
       setState(() {
         _connecting = false;
         _error = e.toString();
+        logger.e('Failed to connect to server: $e');
       });
     });
   }
@@ -127,6 +129,8 @@ class _ServerStatusState extends State<ServerStatus> {
         stream: stream,
         builder: (ctx, snapshot) {
           if (snapshot.hasError) {
+            _error = snapshot.error.toString();
+            logger.e('Failed to get server status: ${snapshot.error}');
             return _errorWidget();
           }
           if (snapshot.data == null) {

@@ -989,7 +989,7 @@ class _TransportProtocolWebsocketState
 
 class HeadersForm extends StatefulWidget {
   const HeadersForm({super.key, required this.headers});
-  final PbMap<String, String> headers;
+  final Map<String, String> headers;
   @override
   State<HeadersForm> createState() => _HeadersFormState();
 }
@@ -1315,7 +1315,7 @@ class __TransportProtocolSplitHttpState
   final _scMaxEachPostBytes = RangeConfig();
   final _scMinPostsIntervalMs = RangeConfig();
   SplitHttpMode _mode = SplitHttpMode.auto;
-  final _headers = PbMap<String, String>(1, 2);
+  final _headers = Map<String, String>();
   final _xPaddingBytes = RangeConfig();
   bool _noGRPCHeader = false;
   final _downConfigKey = GlobalKey<__SplitHttpDownConfigState>();

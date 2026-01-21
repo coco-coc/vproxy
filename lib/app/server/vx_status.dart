@@ -57,51 +57,122 @@ class VXServiceStatus extends StatelessWidget {
                       maxLines: 1,
                     )
                   : null,
-              trailing: MenuAnchor(
-                menuChildren: [
-                  MenuItemButton(
-                    leadingIcon: const Icon(Icons.restart_alt_outlined),
-                    onPressed: () {
-                      context.read<VXBloc>().add(VXRestartEvent());
+              trailing: BlocBuilder<VXBloc, VXState>(
+                builder: (context, state) {
+                  final isInstalled = state is VXInstalledState;
+                  final operationInProgress = isInstalled 
+                      ? state.operationInProgress 
+                      : null;
+                  final isLoading = operationInProgress != null;
+                  
+                  return MenuAnchor(
+                    menuChildren: [
+                      MenuItemButton(
+                        leadingIcon: operationInProgress == 'restart'
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: Padding(
+                                  padding: EdgeInsets.all(2.0),
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                              )
+                            : const Icon(Icons.restart_alt_outlined),
+                        onPressed: isLoading ? null : () {
+                          context.read<VXBloc>().add(VXRestartEvent());
+                        },
+                        child: Text(AppLocalizations.of(context)!.restart),
+                      ),
+                      MenuItemButton(
+                        leadingIcon: operationInProgress == 'stop'
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: Padding(
+                                  padding: EdgeInsets.all(2.0),
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                              )
+                            : const Icon(Icons.stop_outlined),
+                        onPressed: isLoading ? null : () {
+                          context.read<VXBloc>().add(VXStopEvent());
+                        },
+                        child: Text(AppLocalizations.of(context)!.stop),
+                      ),
+                      MenuItemButton(
+                        leadingIcon: operationInProgress == 'start'
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: Padding(
+                                  padding: EdgeInsets.all(2.0),
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                              )
+                            : const Icon(Icons.play_arrow_outlined),
+                        onPressed: isLoading ? null : () {
+                          context.read<VXBloc>().add(VXStartEvent());
+                        },
+                        child: Text(AppLocalizations.of(context)!.start),
+                      ),
+                      MenuItemButton(
+                        leadingIcon: operationInProgress == 'update'
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: Padding(
+                                  padding: EdgeInsets.all(2.0),
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                              )
+                            : const Icon(Icons.update_outlined),
+                        onPressed: isLoading ? null : () {
+                          context.read<VXBloc>().add(VXUpdateEvent());
+                        },
+                        child: Text(AppLocalizations.of(context)!.update),
+                      ),
+                      const Divider(),
+                      MenuItemButton(
+                        leadingIcon: operationInProgress == 'uninstall'
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: Padding(
+                                  padding: EdgeInsets.all(2.0),
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                              )
+                            : const Icon(Icons.delete_outline),
+                        onPressed: isLoading ? null : () {
+                          context.read<VXBloc>().add(VXUninstallEvent());
+                        },
+                        child: Text(AppLocalizations.of(context)!.uninstall),
+                      ),
+                    ],
+                    builder: (context, controller, child) {
+                      final currentState = state;
+                      final isInstalled = currentState is VXInstalledState;
+                      final operationInProgress = isInstalled 
+                          ? currentState.operationInProgress 
+                          : null;
+                      final isLoading = operationInProgress != null;
+                      
+                      return IconButton(
+                          onPressed: isLoading ? null : () {
+                            controller.open();
+                          },
+                          icon: isLoading
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(4.0),
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  ),
+                                )
+                              : const Icon(Icons.more_vert));
                     },
-                    child: Text(AppLocalizations.of(context)!.restart),
-                  ),
-                  MenuItemButton(
-                    leadingIcon: const Icon(Icons.stop_outlined),
-                    onPressed: () {
-                      context.read<VXBloc>().add(VXStopEvent());
-                    },
-                    child: Text(AppLocalizations.of(context)!.stop),
-                  ),
-                  MenuItemButton(
-                    leadingIcon: const Icon(Icons.play_arrow_outlined),
-                    onPressed: () {
-                      context.read<VXBloc>().add(VXStartEvent());
-                    },
-                    child: Text(AppLocalizations.of(context)!.start),
-                  ),
-                  MenuItemButton(
-                    leadingIcon: const Icon(Icons.update_outlined),
-                    onPressed: () {
-                      context.read<VXBloc>().add(VXUpdateEvent());
-                    },
-                    child: Text(AppLocalizations.of(context)!.update),
-                  ),
-                  const Divider(),
-                  MenuItemButton(
-                    leadingIcon: const Icon(Icons.delete_outline),
-                    onPressed: () {
-                      context.read<VXBloc>().add(VXUninstallEvent());
-                    },
-                    child: Text(AppLocalizations.of(context)!.uninstall),
-                  ),
-                ],
-                builder: (context, controller, child) {
-                  return IconButton(
-                      onPressed: () {
-                        controller.open();
-                      },
-                      icon: const Icon(Icons.more_vert));
+                  );
                 },
               ),
               contentPadding: const EdgeInsets.only(left: 16, right: 16),
@@ -131,6 +202,61 @@ class VXServiceStatus extends StatelessWidget {
                         child: mdCircularProgressIndicator,
                       );
                     case VXInstalledState():
+                      if (state.operationInProgress != null) {
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              mdCircularProgressIndicator,
+                              const SizedBox(height: 16),
+                              Text(
+                                _getOperationText(context, state.operationInProgress!),
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      if (state.lastError != null) {
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.error_outline,
+                                color: colorScheme.error,
+                                size: 48,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                'Error',
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  color: colorScheme.error,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                child: Text(
+                                  state.lastError!,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                       if (!isRunning) {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 24),
@@ -213,5 +339,23 @@ class VXServiceStatus extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _getOperationText(BuildContext context, String operation) {
+    final l10n = AppLocalizations.of(context);
+    switch (operation) {
+      case 'restart':
+        return '${l10n?.restart ?? 'Restart'}...';
+      case 'stop':
+        return '${l10n?.stop ?? 'Stop'}...';
+      case 'start':
+        return '${l10n?.start ?? 'Start'}...';
+      case 'update':
+        return '${l10n?.update ?? 'Update'}...';
+      case 'uninstall':
+        return '${l10n?.uninstall ?? 'Uninstall'}...';
+      default:
+        return 'Processing...';
+    }
   }
 }
