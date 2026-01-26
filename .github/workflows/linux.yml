@@ -44,7 +44,7 @@ jobs:
         id: cache-fonts
         uses: actions/cache@v4
         with:
-          path: asset/google_fonts
+          path: assets/google_fonts
           key: fonts-${{ runner.os }}
           restore-keys: |
             fonts-
@@ -52,10 +52,18 @@ jobs:
       - name: Download fonts from google
         if: steps.cache-fonts.outputs.cache-hit != 'true'
         run: |
-          mkdir -p asset/google_fonts
+          mkdir -p assets/google_fonts
           wget "https://download.5vnetwork.com/Noto_Sans_SC.zip" -O NotoSansSC.zip
-          unzip -j NotoSansSC.zip "*/NotoSansSC-Medium.ttf" "*/NotoSansSC-Regular.ttf" -d asset/google_fonts
+          unzip -j NotoSansSC.zip "*/NotoSansSC-Medium.ttf" "*/NotoSansSC-Regular.ttf" -d assets/google_fonts
           rm NotoSansSC.zip
+
+      - name: Download geo
+        run: |
+          mkdir -p assets/geo
+          curl -O "https://github.com/5VNetwork/process-geo/releases/download/latest/simplified_geoip.dat" 
+          mv simplified_geoip.dat assets/geo/simplified_geoip.dat
+          curl -O "https://github.com/5VNetwork/process-geo/releases/download/latest/simplified_geosite.dat" 
+          mv simplified_geosite.dat assets/geo/simplified_geosite.dat
 
       - name: Install Linux dependencies
         run: |
@@ -153,7 +161,7 @@ jobs:
         id: cache-fonts-rpm
         uses: actions/cache@v4
         with:
-          path: asset/google_fonts
+          path: assets/google_fonts
           key: fonts-${{ runner.os }}
           restore-keys: |
             fonts-
@@ -161,9 +169,9 @@ jobs:
       - name: Download fonts from google
         if: steps.cache-fonts-rpm.outputs.cache-hit != 'true'
         run: |
-          mkdir -p asset/google_fonts
+          mkdir -p assets/google_fonts
           wget "https://download.5vnetwork.com/Noto_Sans_SC.zip" -O NotoSansSC.zip
-          unzip -j NotoSansSC.zip "*/NotoSansSC-Medium.ttf" "*/NotoSansSC-Regular.ttf" -d asset/google_fonts
+          unzip -j NotoSansSC.zip "*/NotoSansSC-Medium.ttf" "*/NotoSansSC-Regular.ttf" -d assets/google_fonts
           rm NotoSansSC.zip
 
       - name: Cache pub dependencies (RPM)
@@ -235,7 +243,7 @@ jobs:
         id: cache-fonts
         uses: actions/cache@v4
         with:
-          path: asset/google_fonts
+          path: assets/google_fonts
           key: fonts-${{ runner.os }}
           restore-keys: |
             fonts-
@@ -243,9 +251,9 @@ jobs:
       - name: Download fonts from google
         if: steps.cache-fonts.outputs.cache-hit != 'true'
         run: |
-          mkdir -p asset/google_fonts
+          mkdir -p assets/google_fonts
           wget "https://download.5vnetwork.com/Noto_Sans_SC.zip" -O NotoSansSC.zip
-          unzip -j NotoSansSC.zip "*/NotoSansSC-Medium.ttf" "*/NotoSansSC-Regular.ttf" -d asset/google_fonts
+          unzip -j NotoSansSC.zip "*/NotoSansSC-Medium.ttf" "*/NotoSansSC-Regular.ttf" -d assets/google_fonts
           rm NotoSansSC.zip
 
       - name: Install Linux dependencies
@@ -379,7 +387,7 @@ jobs:
         id: cache-fonts-rpm
         uses: actions/cache@v4
         with:
-          path: asset/google_fonts
+          path: assets/google_fonts
           key: fonts-${{ runner.os }}
           restore-keys: |
             fonts-
@@ -387,9 +395,9 @@ jobs:
       - name: Download fonts from google
         if: steps.cache-fonts-rpm.outputs.cache-hit != 'true'
         run: |
-          mkdir -p asset/google_fonts
+          mkdir -p assets/google_fonts
           wget "https://download.5vnetwork.com/Noto_Sans_SC.zip" -O NotoSansSC.zip
-          unzip -j NotoSansSC.zip "*/NotoSansSC-Medium.ttf" "*/NotoSansSC-Regular.ttf" -d asset/google_fonts
+          unzip -j NotoSansSC.zip "*/NotoSansSC-Medium.ttf" "*/NotoSansSC-Regular.ttf" -d assets/google_fonts
           rm NotoSansSC.zip
 
       - name: Cache pub dependencies (RPM)

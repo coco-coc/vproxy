@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "VX"
-#define MyAppVersion "3.0.4"
+#define MyAppVersion "__REPLACE_WITH_NEW_VERSION__"
 #define MyAppPublisher "5V Network LLC"
 #define MyAppURL "https://vx.5vnetwork.com/"
 #define MyAppExeName "vx.exe"
