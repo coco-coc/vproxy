@@ -43,28 +43,7 @@ jobs:
           mkdir -p assets/geo
           mkdir -p assets/ads
 
-      - name: Cache fonts
-        id: cache-fonts
-        uses: actions/cache@v4
-        with:
-          path: asset/google_fonts
-          key: fonts-${{ runner.os }}
-          restore-keys: |
-            fonts-
-
-      - name: Cache geo files
-        id: cache-geo
-        uses: actions/cache@v4
-        with:
-          path: |
-            assets/geo/simplified_geoip.dat
-            assets/geo/simplified_geosite.dat
-          key: geo-files-${{ runner.os }}
-          restore-keys: |
-            geo-files-
-
       - name: Download fonts from google
-        if: steps.cache-fonts.outputs.cache-hit != 'true'
         shell: bash
         run: |
           mkdir -p asset/google_fonts
@@ -73,7 +52,6 @@ jobs:
           rm Noto_Sans_SC.zip
 
       - name: Download geo
-        if: steps.cache-geo.outputs.cache-hit != 'true'
         shell: bash
         run: |
           curl -O "https://github.com/5VNetwork/process-geo/releases/download/latest/simplified_geoip.dat"
