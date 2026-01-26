@@ -46,9 +46,9 @@ jobs:
       - name: Download fonts from google
         shell: bash
         run: |
-          mkdir -p asset/google_fonts
+          mkdir -p assets/google_fonts
           curl -O "https://download.5vnetwork.com/Noto_Sans_SC.zip"
-          unzip -j Noto_Sans_SC.zip "*/NotoSansSC-Medium.ttf" "*/NotoSansSC-Regular.ttf" -d asset/google_fonts
+          unzip -j Noto_Sans_SC.zip "*/NotoSansSC-Medium.ttf" "*/NotoSansSC-Regular.ttf" -d assets/google_fonts
           rm Noto_Sans_SC.zip
 
       - name: Download geo
@@ -70,7 +70,6 @@ jobs:
             -p "x_win_x86_64.zip"
 
       - name: unzip files
-        if: steps.cache-x-releases.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           Expand-Archive -Path x_win_arm64.zip -DestinationPath ./x_win_arm64 -Force
