@@ -2203,4 +2203,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String dbError(String error) {
     return 'Something wrong with database: $error. Restart VX might help.';
   }
+
+  @override
+  String get dnsRecord => 'DNS Record';
+
+  @override
+  String get addDnsRecord => 'Add DNS Record';
 }

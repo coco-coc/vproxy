@@ -102,7 +102,7 @@ class GeoDataHelper {
     await databaseHelper.getAtomicDomainSets().then((values) async {
       for (final set in values) {
         clashUrls.addAll(set.clashRuleUrls ?? []);
-        if (set.geoUrl != null) {
+        if (set.geoUrl != null && set.geoUrl!.isNotEmpty) {
           geoUrls.add(set.geoUrl!);
         }
       }
@@ -115,7 +115,7 @@ class GeoDataHelper {
     await databaseHelper.getAtomicIpSets().then((values) async {
       for (final set in values) {
         clashUrls.addAll(set.clashRuleUrls ?? []);
-        if (set.geoUrl != null) {
+        if (set.geoUrl != null && set.geoUrl!.isNotEmpty) {
           geoUrls.add(set.geoUrl!);
         }
       }

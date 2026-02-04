@@ -902,5 +902,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "dnsRecord": "DNS Record",
+  "addDnsRecord": "Add DNS Record"
 }

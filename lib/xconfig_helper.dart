@@ -455,6 +455,10 @@ class XConfigHelper {
     late final DnsConfig config;
     config = DnsConfig(
       enableFakeDns: _persistentStateRepo.fakeDns,
+      records: await (_databaseProvider.database
+              .select(_databaseProvider.database.dnsRecords))
+          .get()
+          .then((value) => value.map((e) => e.dnsRecord).toList()),
     );
     if (_persistentStateRepo.inboundMode == InboundMode.tun ||
         _persistentStateRepo.inboundMode == InboundMode.wfp) {

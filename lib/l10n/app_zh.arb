@@ -910,5 +910,8 @@
         "type": "String"
       }
     }
-  }
+  },
+  "dnsRecord": "本地DNS记录",
+  "dnsServer": "DNS服务器",
+  "addDnsRecord": "添加本地DNS记录"
 }
