@@ -2153,4 +2153,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String dbError(String error) {
     return '数据库出现问题: $error. 重启VX可能会有帮助。';
   }
+
+  @override
+  String get dnsRecord => '本地DNS记录';
+
+  @override
+  String get addDnsRecord => '添加本地DNS记录';
 }

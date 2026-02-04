@@ -4176,6 +4176,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something wrong with database: {error}. Restart VX might help.'**
   String dbError(String error);
+
+  /// No description provided for @dnsRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'DNS Record'**
+  String get dnsRecord;
+
+  /// No description provided for @addDnsRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Add DNS Record'**
+  String get addDnsRecord;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -602,6 +602,8 @@ class SyncService with ChangeNotifier {
         return AppSet.fromJson(jsonDecode(json)).toCompanion(true);
       case 'dns_servers':
         return DnsServer.fromJson(jsonDecode(json)).toCompanion(true);
+      case 'dns_records':
+        return DnsRecord.fromJson(jsonDecode(json)).toCompanion(true);
       case 'handler_selectors':
         return HandlerSelector.fromJson(jsonDecode(json)).toCompanion(true);
       case 'geo_domains':

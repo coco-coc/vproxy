@@ -101,6 +101,11 @@ abstract class DnsRepo {
       {String? dnsServerName, DnsServerConfig? dnsServer});
   Future<void> removeDnsServer(DnsServer ds);
   Stream<List<DnsServer>> getDnsServersStream();
+  
+  Future<DnsRecord> addDnsRecord(Record record);
+  Future<void> updateDnsRecord(DnsRecord record, Record newRecord);
+  Future<void> removeDnsRecord(DnsRecord record);
+  Stream<List<DnsRecord>> getDnsRecordsStream();
 }
 
 class DbHelper implements SelectorRepo, RouteRepo, SetRepo, DnsRepo {
@@ -539,6 +544,36 @@ class DbHelper implements SelectorRepo, RouteRepo, SetRepo, DnsRepo {
     // await _databaseProvider.database.managers.dnsServers.filter((f) => f.name(ds.name)).delete();
     await _databaseProvider.database
         .deleteByName(_databaseProvider.database.dnsServers, ds.name);
+  }
+
+  @override
+  Future<DnsRecord> addDnsRecord(Record record) async {
+    return await _databaseProvider.database.insertReturning(
+      _databaseProvider.database.dnsRecords,
+      DnsRecordsCompanion.insert(dnsRecord: record),
+    );
+  }
+
+  @override
+  Future<void> updateDnsRecord(DnsRecord record, Record newRecord) async {
+    await _databaseProvider.database.updateById(
+      _databaseProvider.database.dnsRecords,
+      record.id,
+      DnsRecordsCompanion(dnsRecord: Value(newRecord)),
+    );
+  }
+
+  @override
+  Future<void> removeDnsRecord(DnsRecord record) async {
+    await _databaseProvider.database
+        .deleteById(_databaseProvider.database.dnsRecords, [record.id]);
+  }
+
+  @override
+  Stream<List<DnsRecord>> getDnsRecordsStream() {
+    return _databaseProvider.database
+        .select(_databaseProvider.database.dnsRecords)
+        .watch();
   }
 
   // GeoRepo

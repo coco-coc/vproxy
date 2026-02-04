@@ -17,6 +17,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tm/protos/protos/dns.pb.dart';
@@ -28,6 +29,13 @@ import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
 import 'package:vx/widgets/form_dialog.dart';
 
+part 'dns_records.dart';
+
+enum _DnsSection {
+  servers,
+  records,
+}
+
 class DnsServersWidget extends StatefulWidget {
   const DnsServersWidget({super.key});
 
@@ -35,40 +43,65 @@ class DnsServersWidget extends StatefulWidget {
   State<DnsServersWidget> createState() => _DnsServersWidgetState();
 }
 
-// final defaultDnsServers = [
-//   DnsServer(
-//       id: 0,
-//       name: dnsServerFake,
-//       dnsServer: DnsServerConfig(
-//         fakeDnsServer: FakeDnsServer(
-//           poolConfigs: XConfigHelper.fakednsPools,
-//         ),
-//       )),
-//   DnsServer(
-//       id: 0,
-//       name: dnsServerProxy,
-//       dnsServer: DnsServerConfig(
-//         plainDnsServer: PlainDnsServer(
-//           addresses: ['1.1.1.1:53'],
-//         ),
-//       )),
-//   DnsServer(
-//       id: 0,
-//       name: dnsServerDirect,
-//       dnsServer: DnsServerConfig(
-//         plainDnsServer: PlainDnsServer(
-//             addresses: ['223.5.5.5:53', '1.1.1.1:53'], useDefaultDns: true),
-//       )),
-// ];
+class _DnsServersWidgetState extends State<DnsServersWidget> {
+  _DnsSection _section = _DnsSection.servers;
 
-class _DnsServersWidgetState extends State<DnsServersWidget>
-    with AutomaticKeepAliveClientMixin<DnsServersWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 5.0),
+              child: ChoiceChip(
+                  label: Text(AppLocalizations.of(context)!.dnsServer),
+                  selected: _section == _DnsSection.servers,
+                  onSelected: (value) {
+                    setState(() {
+                      _section = _DnsSection.servers;
+                    });
+                  }),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 5.0),
+              child: ChoiceChip(
+                  label: Text(AppLocalizations.of(context)!.dnsRecord),
+                  selected: _section == _DnsSection.records,
+                  onSelected: (value) {
+                    setState(() {
+                      _section = _DnsSection.records;
+                    });
+                  }),
+            ),
+          ],
+        ),
+        Gap(10),
+        Expanded(
+          child: _section == _DnsSection.servers
+              ? const DnsServers()
+              : const _DnsRecords(),
+        )
+      ],
+    );
+  }
+}
+
+class DnsServers extends StatefulWidget {
+  const DnsServers({super.key});
+
+  @override
+  State<DnsServers> createState() => _DnsServersState();
+}
+
+class _DnsServersState extends State<DnsServers>
+    with AutomaticKeepAliveClientMixin<DnsServers> {
   final width = 300;
 
   List<DnsServer> _servers = [/* ...defaultDnsServers */];
   late DnsRepo _dnsRepo;
   StreamSubscription? _dnsServersSubscription;
-
 
   @override
   bool get wantKeepAlive => true;
@@ -329,8 +362,7 @@ class _FakeDns extends StatelessWidget {
 }
 
 class _PlainTlsDnsServer extends StatelessWidget {
-  const _PlainTlsDnsServer(
-      {required this.addresses, this.useDefaultDns});
+  const _PlainTlsDnsServer({required this.addresses, this.useDefaultDns});
   final Iterable<String> addresses;
   final bool? useDefaultDns;
 
