@@ -480,12 +480,10 @@ QuicConfig getDefaultQuicConfig() {
     // maxStreamReceiveWindow: 20,
     initialConnectionReceiveWindowBytes:
         Platform.isIOS ? Int64(200 * 1024) : Int64(20 * 1024 * 1024),
-    maxConnectionReceiveWindowBytes:
-        Platform.isIOS ? Int64(2000 * 1024) : Int64(20 * 1024 * 1024),
+    maxConnectionReceiveWindowBytes: Int64(20 * 1024 * 1024),
     initialStreamReceiveWindowBytes:
         Platform.isIOS ? Int64(80 * 1024) : Int64(8 * 1024 * 1024),
-    maxStreamReceiveWindowBytes:
-        Platform.isIOS ? Int64(800 * 1024) : Int64(8 * 1024 * 1024),
+    maxStreamReceiveWindowBytes: Int64(8 * 1024 * 1024),
     maxIdleTimeout: 30,
     keepAlivePeriod: 10,
     disablePathMtuDiscovery: false,
