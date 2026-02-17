@@ -82,7 +82,7 @@ class PromotionPage extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: AdWidget(
-                    ad: adsProvider.getNextAd()!, maxHeight: c.maxHeight - 50),
+                    ad: ad, maxHeight: c.maxHeight - 50),
               );
             },
           );

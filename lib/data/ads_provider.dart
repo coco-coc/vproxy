@@ -132,7 +132,9 @@ class AdsProvider with ChangeNotifier {
         break;
       }
     }
-    selectedAd ??= iterator.current;
+    if (selectedAd == null) {
+      return null;
+    }
 
     // If we found a suitable ad, remove it from _adsToShow and add to _adsShown
     selectedAd.imageProvider ??=
