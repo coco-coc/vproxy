@@ -187,7 +187,7 @@ class AdsProvider with ChangeNotifier {
   static const _adsZipUrl = 'https://ads.5vnetwork.com/ads.zip';
 
   /// Fetch ads.zip from remote URL and extract it to _adsDirectory
-  Future<void> fetchAds() async {
+  Future<void> _fetchAds() async {
     try {
       if (isProduction()) {
         await _downloader.downloadZip(_adsZipUrl, _adsDirectory);
@@ -234,7 +234,7 @@ class AdsProvider with ChangeNotifier {
     logger.i('Next fetch ads in $durationUntilNextFetch');
     // Set timer to fetch ads
     _timer = Timer(durationUntilNextFetch, () async {
-      await fetchAds();
+      await _fetchAds();
       _startPeriodicFetchAds();
     });
   }

@@ -148,6 +148,7 @@ class AutoSubscriptionUpdater with ChangeNotifier {
 
     final res = await _apiClient.updateSubscriptions(request);
 
+    rootScaffoldMessengerKey.currentState?.removeCurrentSnackBar();
     rootScaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
         action: res.failedNodes.isNotEmpty ||
                 res.errorReasons.entries.isNotEmpty
