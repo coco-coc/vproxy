@@ -7,6 +7,7 @@
 
 import Foundation
 import NetworkExtension
+import Network
 import Tm
 import SystemConfiguration
 
@@ -65,10 +66,16 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                 .appendingPathComponent("Library", isDirectory: true)
                 .appendingPathComponent("Caches", isDirectory: true)
                 .appendingPathComponent("stderr.log").relativePath)
-        ///Users/shan/Library/Group Containers/K4FDLB3LLD.com.5vnetwork.x/Library/Caches/stderr.log
-        /// /private/var/mobile/Containers/Shared/AppGroup/E57DA8E3-EB41-4F67-AF65-FD2D108FCE62/Library/Caches/stderr.log
+        
+        monitor.pathUpdateHandler = { path in
+            self.setDefaultNIC(path: path)
+        }
+        monitor.start(queue: DispatchQueue.global())
+        setDefaultNIC(path: monitor.currentPath)
+
+        ///Users//Library/Group Containers/K4FDLB3LLD.com.5vnetwork.x/Library/Caches/stderr.log
+        ////private/var/mobile/Containers/Shared/AppGroup//Library/Caches/stderr.log
         var map: [String: NSObject]? = options
-       
         // TODO: Read configuration by loadAllFromPreferences
         if map == nil {
             let protocolConfiguration =
@@ -103,14 +110,10 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             }
         }
 
-        
         let settings = try getNetworkSetting(map: map, enableIpv6: enable6)
 
         nsLog(msg: "networkSetting \(String(describing: settings))")
         try await setTunnelNetworkSettings(settings)
-
-        //        // Start reading packets to get the file descriptor
-        //        let _ = await packetFlow.readPackets()
 
         let fd = getFd()
         if fd != nil {
@@ -119,18 +122,6 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         }
 
         var error: NSError?
-        // setup log
-//        if map["log"] as! NSNumber as! Bool {
-//            X_darwinRedirectStderr(
-//                PacketTunnelProvider.defaultSharedDirectory.appendingPathComponent(
-//                    "Library", isDirectory: true
-//                ).appendingPathComponent("Application Support", isDirectory: true).appendingPathComponent("tunnel_logs", isDirectory: true)
-//                    .appendingPathComponent("latest.txt").relativePath, &error
-//            )
-//            if let error {
-//                throw fatalError(errorStr: error.localizedDescription)
-//            }
-//        }
 
         // x config
         var config = map["config"] as? Data
@@ -144,7 +135,6 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             }
         }
 
-      
         let useFd = map["useFd"] as! NSNumber as! Bool
         x = X_darwinNew(
             config  ,
@@ -166,27 +156,6 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                 errorStr: "failed to start x: \(error.localizedDescription)")
         }
         
-        monitor.pathUpdateHandler = { path in
-            if path.status == .satisfied {
-                self.nsLog(msg: "connected")
-                let first = path.availableInterfaces.first { NWInterface in
-                    !NWInterface.name.contains("utun")
-                }
-                if first != nil {
-                    X_darwinUpdateDefaultRouteInterface(first!.name)
-                }
-                path.availableInterfaces.forEach { NWInterface in
-                    self.nsLog(msg: "available nic \(NWInterface.name)")
-                }
-                path.gateways.forEach { NWEndpoint in
-                    self.nsLog(msg: "available gateway \(NWEndpoint.debugDescription)")
-                }
-                self.nsLog(msg: "path support ipv6: \(path.supportsIPv6)")
-            } else {
-                self.nsLog(msg: "no connection")
-            }
-        }
-        monitor.start(queue: DispatchQueue.global())
         if #available(iOSApplicationExtension 18.0, *) {
             nsLog(msg: virtualInterface?.name ?? "aaa")
         } else {
@@ -194,6 +163,29 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         }
     }
 
+    private func setDefaultNIC(path: Network.NWPath) {
+        self.nsLog(msg: "path: \(path.debugDescription)")
+        if path.status == .satisfied {
+            let first = path.availableInterfaces.first { NWInterface in
+                !NWInterface.name.contains("utun")
+            }
+            if first != nil {
+                X_darwinUpdateDefaultRouteInterface(first!.name, first!.index)
+            }
+            path.availableInterfaces.forEach { NWInterface in
+                self.nsLog(msg: "available nic \(NWInterface.name)")
+            }
+            path.gateways.forEach { NWEndpoint in
+                self.nsLog(msg: "available gateway \(NWEndpoint.debugDescription)")
+            }
+            self.nsLog(msg: "path support ipv6: \(path.supportsIPv6)")
+            self.nsLog(msg: "path constrained: \(path.isConstrained)")
+            self.nsLog(msg: "path expensive: \(path.isExpensive)")
+        } else {
+            self.nsLog(msg: "unsatisfied \(path.unsatisfiedReason)")
+        }
+    }
+    
     private func getNetworkSetting(map: [String: NSObject], enableIpv6: Bool) throws
         -> NEPacketTunnelNetworkSettings
     {
@@ -415,9 +407,6 @@ func nsLog(msg: String) {
 }
 
 class Interface: NSObject, X_darwinInterfaceProtocol {
-
-    
-
     private let packetTunnelProvider: PacketTunnelProvider
     private let isDebug: Bool
     private let useFD: Bool
@@ -432,21 +421,9 @@ class Interface: NSObject, X_darwinInterfaceProtocol {
 
     }
 
-//    func getLogger() -> (any X_darwinLoggerProtocol)? {
-//        if isDebug {
-//            return Logger(packetTunnelProvider: packetTunnelProvider)
-//        } else {
-//            return nil
-//        }
-//    }
-
     func useFd() -> Bool {
         return useFD
     }
-
-//    func getTun() -> (any X_darwinTunProtocol)? {
-//        return Tun(packetTunnelProvider: self.packetTunnelProvider)
-//    }
 
     func getFd(_ ret0_: UnsafeMutablePointer<Int32>?) throws {
         let fd = packetTunnelProvider.getFd()
@@ -576,8 +553,6 @@ class Strings: NSObject, X_darwinStringsProtocol {
     func len() -> Int {
         return strings.count
     }
-    
-    
 }
 
 

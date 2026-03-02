@@ -96,20 +96,21 @@ class StartCloseCubit extends Cubit<XStatus> {
     _pref.setConnect(true);
     try {
       await _xController.start();
-    } on ConfigException catch (e) {
+    } on ConfigException catch (e, s) {
       snack(rootLocalizations()?.startFailedWithReason(e.message));
-    } on DriftRemoteException catch (e) {
+      logger.e('start error', error: e, stackTrace: s);
+    } on DriftRemoteException catch (e, s) {
       if (e.remoteCause is SqliteException &&
           (e.remoteCause as SqliteException).extendedResultCode == 5) {
         snack(rootLocalizations()
             ?.dbError(e.remoteCause.toString()));
       } else {
-        logger.e('start error', error: e, stackTrace: StackTrace.current);
+        logger.e('start error', error: e, stackTrace: s);
         snack(rootLocalizations()
             ?.startFailedWithReason(e.remoteCause.toString()));
       }
-    } catch (e) {
-      logger.e('start error', error: e, stackTrace: StackTrace.current);
+    } catch (e, s) {
+      logger.e('start error', error: e, stackTrace: s);
       snack(rootLocalizations()?.startFailedWithReason(e.toString()));
     }
   }

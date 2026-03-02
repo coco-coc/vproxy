@@ -100,3 +100,6 @@ inno/install.iss
 .crashlytics/
 ios/tm.xcframework/
 ios/Runner.ipa
+
+sentry.properties
+vx-packet-tunnel/

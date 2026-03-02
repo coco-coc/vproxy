@@ -21,7 +21,9 @@
 //
 
 import Foundation
+import Network
 import NetworkExtension
+import OSLog
 import Tm
 
 let XTunnelErrorDomain: String = "XTunnelErrorDomain"
@@ -64,6 +66,12 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             msg:
                 "protocolConfiguration \(String(describing: (protocolConfiguration as! NETunnelProviderProtocol).providerConfiguration))"
         )
+
+        monitor.pathUpdateHandler = { path in
+            self.setDefaultNIC(path: path)
+        }
+        monitor.start(queue: DispatchQueue.global())
+        setDefaultNIC(path: monitor.currentPath)
         
         ///Users/shan/Library/Group Containers/K4FDLB3LLD.com.5vnetwork.x/Library/Caches/stderr.log
         ///
@@ -110,9 +118,6 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         nsLog(msg: "networkSetting \(String(describing: settings))")
         try await setTunnelNetworkSettings(settings)
 
-        //        // Start reading packets to get the file descriptor
-        //        let _ = await packetFlow.readPackets()
-
         let fd = getFd()
         if fd != nil {
             let tunName = interfaceName(tunnelFileDescriptor: fd!)
@@ -136,13 +141,6 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         var config = map["config"] as? Data
         if config == nil {
             throw fatalError(errorStr: "no x config")
-//            do {
-//                NSLog("config path \(map["configPath"] as! String)")
-//                config = try Data(contentsOf: URL(fileURLWithPath: map["configPath"] as! String))
-//                nsLog(msg: "config file \(String(describing: config!))")
-//            } catch {
-//                
-//            }
         }
 
         let useFd = map["useFd"] as! NSNumber as! Bool
@@ -165,33 +163,36 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             throw fatalError(
                 errorStr: "failed to start x: \(error.localizedDescription)")
         }
-        monitor.pathUpdateHandler = { path in
-            if path.status == .satisfied {
-                self.nsLog(msg: "connected")
-                let first = path.availableInterfaces.first { NWInterface in
-                    !NWInterface.name.contains("utun")
-                }
-                if first != nil {
-                    X_darwinUpdateDefaultRouteInterface(first!.name)
-                }
-                path.availableInterfaces.forEach { NWInterface in
-                    self.nsLog(msg: "available nic \(NWInterface.name)")
-                }
-                path.gateways.forEach { NWEndpoint in
-                    self.nsLog(msg: "available gateway \(NWEndpoint.debugDescription)")
-                }
-                self.nsLog(msg: "support ipv6: \(path.supportsIPv6)")
-            } else {
-                self.nsLog(msg: "no connection")
-            }
-        }
-        monitor.start(queue: DispatchQueue.global())
         if #available(macOS 15.0, *) {
             nsLog(msg: virtualInterface?.name ?? "aaa")
         } else {
             // Fallback on earlier versions
         }
     }
+
+    private func setDefaultNIC(path: Network.NWPath) {
+       self.nsLog(msg: "path: \(path.debugDescription)")
+       if path.status == .satisfied {
+           let first = path.availableInterfaces.first { NWInterface in
+               !NWInterface.name.contains("utun")
+           }
+           if first != nil {
+               X_darwinUpdateDefaultRouteInterface(first!.name, first!.index)
+               self.nsLog(msg: "default \(first!.debugDescription)")
+           }
+           path.availableInterfaces.forEach { NWInterface in
+               self.nsLog(msg: "available nic \(NWInterface.name)")
+           }
+           path.gateways.forEach { NWEndpoint in
+               self.nsLog(msg: "available gateway \(NWEndpoint.debugDescription)")
+           }
+           self.nsLog(msg: "path support ipv6: \(path.supportsIPv6)")
+           self.nsLog(msg: "path constrained: \(path.isConstrained)")
+           self.nsLog(msg: "path expensive: \(path.isExpensive)")
+       } else {
+           self.nsLog(msg: "unsatisfied \(path.unsatisfiedReason)")
+       }
+   }
 
     private func getNetworkSetting(map: [String: NSObject], enableIpv6: Bool)
         throws
@@ -337,11 +338,20 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         return err
     }
 
-    func nsLog(msg: String) {
+    public func nsLog(msg: String) {
+        // Use privacy: .public to prevent <private> redaction in Console.app
+        // This marks the message as public so it won't be redacted
         #if DEBUG
-            NSLog(msg)
+            Self.logger.info("\(msg, privacy: .public)")
         #endif
     }
+    
+    // Use os_log for PacketTunnel extension logging
+    // macOS 26+ redacts NSLog, so we use os_log with public formatting
+    private static let logger = Logger(
+        subsystem: "vx-proxy-client",
+        category: "PacketTunnel"
+    )
 
     func getFd() -> Int32? {
         var fd =
@@ -439,22 +449,6 @@ class Interface: NSObject, X_darwinInterfaceProtocol {
         self.useFD = useFD
 
     }
-
-    //    func getLogger() -> (any X_darwinLoggerProtocol)? {
-    //        if isDebug {
-    //            return Logger(packetTunnelProvider: packetTunnelProvider)
-    //        } else {
-    //            return nil
-    //        }
-    //    }
-
-    //    func useFd() -> Bool {
-    //        return useFD
-    //    }
-
-    //    func getTun() -> (any X_darwinTunProtocol)? {
-    //        return Tun(packetTunnelProvider: self.packetTunnelProvider)
-    //    }
 
     func getFd(_ ret0_: UnsafeMutablePointer<Int32>?) throws {
         let fd = packetTunnelProvider.getFd()

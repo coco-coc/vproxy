@@ -17,6 +17,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:installed_apps/index.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
@@ -24,6 +25,7 @@ import 'package:tm/protos/common/net/net.pb.dart';
 import 'package:tm/protos/protos/dispatcher.pb.dart';
 import 'package:tm/protos/protos/dns.pb.dart';
 import 'package:tm/protos/protos/geo.pb.dart';
+import 'package:tm/protos/protos/grpc_service.pb.dart';
 import 'package:tm/protos/protos/inbound.pb.dart';
 import 'package:tm/protos/protos/logger.pb.dart' as l;
 import 'package:tm/protos/protos/client.pb.dart' as core;
@@ -134,7 +136,9 @@ class XConfigHelper {
         defaultNicMonitor: true,
         hysteria2RejectQuic: _persistentStateRepo.rejectQuicHysteria,
         sysProxy: _getSysProxyConfig(inboundConfig),
-        useRealLatency: _persistentStateRepo.pingMode == PingMode.Real,
+        grpcService: GrpcServiceConfig(
+          updateLatency: _persistentStateRepo.pingMode == PingMode.Real,
+        ),
         userLog: l.UserLoggerConfig(
           enable: _persistentStateRepo.enableLog,
           logAppId: _persistentStateRepo.showApp,
@@ -150,6 +154,10 @@ class XConfigHelper {
       // config.redirectStdErr = '/var/root/Library/Group Containers/K4FDLB3LLD.com.5vnetwork.x.system/Library/Application Support/v.log';
     }
     return config;
+  }
+
+  Future<String> getLogFileName() async {
+    return "${(await PackageInfo.fromPlatform()).version}-${DateTime.now().toString().replaceAll(':', '_')}.txt";
   }
 
   Future<o.OutboundConfig> _getOutboundConfig(RouterConfig routerConfig) async {
@@ -355,14 +363,7 @@ class XConfigHelper {
 
   static const _dnsTag = 'dns';
   static const _tunTag = 'tun';
-  static const outboundTag = 'outbound';
-  // used as the inbound tag of the nameserver for proxy
-  // static const _dnsProxy = 'v2ray-dns-proxy';
-  // used as the inbound tag of the nameserver for direct
-  // static const _dnsDirect = 'v2ray-dns-direct';
-  // used as the inbound tag of the dns server for proxy
 
-  // static const _dnsConnDirect = 'dns-conn-direct';
   final _dnsRule = RuleConfig(
     ruleName: 'default-dns go dns handler',
     inboundTags: [_tunTag],

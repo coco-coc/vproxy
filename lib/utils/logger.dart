@@ -26,9 +26,6 @@ import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/path.dart';
 
-Future<String> getLogFileName() async {
-  return "${(await PackageInfo.fromPlatform()).version}-${DateTime.now().toString().replaceAll(':', '_')}.txt";
-}
 
 Logger logger = Logger(
   level: Level.off,
@@ -90,10 +87,6 @@ Future<void> startShareLog() async {
         "FlutterError: ${e.exception}. line: ${e.library}. summary: ${e.summary}.",
         error: e,
         stackTrace: e.stack);
-    reportLogger.e(
-        "FlutterError: ${e.exception}. line: ${e.library}. summary: ${e.summary}.",
-        error: e,
-        stackTrace: e.stack);
   };
   // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
   // PlatformDispatcher.instance.onError = (error, stack) {
@@ -141,17 +134,16 @@ Future<void> initLogger(SharedPreferences pref) async {
     }
   } else {
     final redirectStdErr = !kDebugMode && (Platform.isIOS || Platform.isMacOS);
-
     if (redirectStdErr) {
       final logDirPath = getFlutterLogDir().path;
       logger.d("redirectStdErr: $logDirPath");
       await darwinHostApi!.redirectStdErr(join(logDirPath, "redirect.txt"));
     }
-    await setDebugLoggerDev();
+    await setDebugLoggerDevlopment();
   }
 }
 
-Future<void> setDebugLoggerDev() async {
+Future<void> setDebugLoggerDevlopment() async {
   final logDirPath = getFlutterLogDir().path;
   logger = Logger(
     filter: ProductionFilter(),

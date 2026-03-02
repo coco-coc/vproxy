@@ -23,9 +23,9 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tm/protos/app/api/api.pb.dart';
 import 'package:tm/tm.dart';
-import 'package:vx/utils/compress.dart';
+import 'package:flutter_common/util/compress.dart';
 import 'package:vx/utils/logger.dart';
-import 'package:vx/utils/mac.dart';
+import 'package:flutter_common/util/crypto.dart';
 import 'package:vx/utils/path.dart';
 import 'package:vx/utils/xapi_client.dart';
 
@@ -186,7 +186,7 @@ class LogUploadService {
     if (isProduction()) {
       await setReportLogger();
     } else {
-      await setDebugLoggerDev();
+      await setDebugLoggerDevlopment();
     }
   }
 
@@ -319,58 +319,15 @@ class LogUploadService {
 
     final jsonString = json.encode(logData.toJson());
 
-    // final headers = {
-    //   'Version': kDebugMode ? 'debug' : packageInfo.version,
-    //   'Authorization': generateHMAC_SHA256(
-    //       jsonString.substring(0, min(jsonString.length, 1024)),
-    //       utf8.encode(_secret)),
-    //   'Content-Type': 'application/json',
-    // };
-
-    // SecurityContext context = SecurityContext(withTrustedRoots: true);
-    // context
-    //     .setTrustedCertificates(join((await resourceDir()).path, 'rootCA.crt'));
-    // final httpClient = HttpClient();
-    // httpClient.connectionFactory =
-    //     (Uri uri, String? proxyHost, int? proxyPort) async {
-    //   final socket = await Socket.connect('127.0.0.1', 11111);
-    //   final secureSocket = await SecureSocket.secure(socket,
-    //       host: 'vxapi.5vnetwork.com',
-    //       context: context, onBadCertificate: (cert) {
-    //     logger.d('onBadCertificate: $cert');
-    //     inspect(cert);
-    //     return true;
-    //   });
-    //   return ConnectionTask.fromSocket(Future.value(secureSocket), () {});
-    // };
-
-    // final response = await http
-    //     .post(
-    //       Uri.parse(_uploadUrl),
-    //       headers: headers,
-    //       body: jsonString,
-    //     )
-    //     .timeout(
-    //       const Duration(seconds: 30),
-    //       onTimeout: () => throw TimeoutException('Upload timeout'),
-    //     );
     await _xApiClient.uploadLog(UploadLogRequest(
         ca: utf8.encode(serverCA),
         url: _uploadUrl,
-        secret: generateHMAC_SHA256(
+        secret: generateHmacSha256(
             jsonString.substring(0, min(jsonString.length, 1024)),
             utf8.encode(_secret)),
         version: packageInfo.version,
         body: jsonString));
     logger.i('Log upload successful');
-
-    // if (response.statusCode >= 200 && response.statusCode < 300) {
-    //   logger.i('Log upload successful: ${response.statusCode}');
-    //   return true;
-    // } else {
-    //   logger.e('Log upload failed: ${response.statusCode}');
-    //   throw HttpException('Upload failed with status ${response.statusCode}');
-    // }
   }
 }
 
