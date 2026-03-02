@@ -1274,6 +1274,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get autoUpdateDescription => '自动下载新版本安装包并在完成后提示您进行安装';
 
   @override
+  String get autoCheck => '自动检查新版本';
+
+  @override
+  String get autoCheckDesc => '自动检查新版本并提醒您';
+
+  @override
   String downloading(String version) {
     return '正在下载$version...';
   }

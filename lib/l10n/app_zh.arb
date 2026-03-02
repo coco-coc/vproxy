@@ -572,6 +572,8 @@
   "install": "安装",
   "later": "暂时不安装",
   "autoUpdateDescription": "自动下载新版本安装包并在完成后提示您进行安装",
+  "autoCheck": "自动检查新版本",
+  "autoCheckDesc": "自动检查新版本并提醒您",
   "downloading": "正在下载{version}...",
   "@downloading": {
     "placeholders": {

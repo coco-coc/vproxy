@@ -103,3 +103,4 @@ ios/Runner.ipa
 
 sentry.properties
 vx-packet-tunnel/
+.sentry-native

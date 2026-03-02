@@ -1324,6 +1324,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get autoUpdateDescription => 'Automatically downloading new version and notify you when it\'s ready';
 
   @override
+  String get autoCheck => 'Automatically Check New Version';
+
+  @override
+  String get autoCheckDesc => 'Automatically check for newer versions and remind you when there is one';
+
+  @override
   String downloading(String version) {
     return 'Downloading $version...';
   }

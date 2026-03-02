@@ -86,6 +86,7 @@ import 'package:vx/utils/root.dart';
 import 'package:flutter_common/auth/auth_provider.dart';
 import 'package:flutter_common/l10n/app_localizations.dart' as xv_localizations;
 import 'package:flutter_common/services/auto_update.dart';
+import 'package:vx/widgets/circular_progress_indicator.dart';
 import 'firebase_options.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/common/serial.dart';
@@ -359,6 +360,7 @@ void main() async {
                           downloadUrl: 'https://download.5vnetwork.com',
                           downloader: ctx.read<Downloader>().download,
                           currentVersion: version,
+                          logger: logger,
                           assetName: githubAssetName,
                           repository: '5vnetwork/vx',
                           exitCurrentApp: () {
@@ -377,10 +379,33 @@ void main() async {
                                         .read<AutoUpdateService>()
                                         .setSkipCurrentVersion();
                                   },
-                                  updateToRelease: (release) {
-                                    rootNavigationKey.currentContext!
-                                        .read<AutoUpdateService>()
-                                        .updateToRelease(release);
+                                  updateToRelease: (release) async {
+                                    final ctx =
+                                        rootNavigationKey.currentContext!;
+                                    final messenger = ScaffoldMessenger.of(ctx);
+                                    final snackBarController =
+                                        messenger.showSnackBar(
+                                      SnackBar(
+                                        persist: true,
+                                        content: Row(
+                                          children: [
+                                            Text(
+                                              AppLocalizations.of(ctx)!
+                                                  .downloading(release.version),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            smallCircularProgressIndicator,
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                    try {
+                                      await ctx
+                                          .read<AutoUpdateService>()
+                                          .updateToRelease(release);
+                                    } finally {
+                                      snackBarController.close();
+                                    }
                                   }),
                             );
                           },

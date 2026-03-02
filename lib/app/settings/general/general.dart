@@ -307,7 +307,7 @@ class _AutoUpdateSettingsState extends State<AutoUpdateSettings> {
               ),
             ],
           ),
-          const Gap(10),
+          const Gap(5),
           Text(AppLocalizations.of(context)!.autoUpdateDescription,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -316,11 +316,11 @@ class _AutoUpdateSettingsState extends State<AutoUpdateSettings> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(AppLocalizations.of(context)!.autoUpdate,
+              Text(AppLocalizations.of(context)!.autoCheck,
                   style: Theme.of(context).textTheme.bodyLarge),
               Switch(
                 value: _autoCheckLatestVersion,
-                onChanged: (value) {
+                onChanged: _autoUpdate ? null : (value) {
                   _autoUpdateService.setAutoCheckLatestVersion(value);
                   setState(() {
                     _autoCheckLatestVersion = value;
@@ -329,8 +329,8 @@ class _AutoUpdateSettingsState extends State<AutoUpdateSettings> {
               ),
             ],
           ),
-          const Gap(10),
-          Text(AppLocalizations.of(context)!.autoUpdateDescription,
+          const Gap(5),
+          Text(AppLocalizations.of(context)!.autoCheckDesc,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   )),

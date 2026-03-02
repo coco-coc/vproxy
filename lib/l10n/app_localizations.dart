@@ -2455,6 +2455,18 @@ abstract class AppLocalizations {
   /// **'Automatically downloading new version and notify you when it\'s ready'**
   String get autoUpdateDescription;
 
+  /// No description provided for @autoCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically Check New Version'**
+  String get autoCheck;
+
+  /// No description provided for @autoCheckDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically check for newer versions and remind you when there is one'**
+  String get autoCheckDesc;
+
   /// No description provided for @downloading.
   ///
   /// In en, this message translates to:
