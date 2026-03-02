@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -21,11 +21,11 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		1542052D2F32158C003C77B8 /* tm.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1542052C2F32158C003C77B8 /* tm.xcframework */; };
+		1542052E2F32158C003C77B8 /* tm.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1542052C2F32158C003C77B8 /* tm.xcframework */; };
+		1542052F2F32158C003C77B8 /* tm.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1542052C2F32158C003C77B8 /* tm.xcframework */; };
 		156EB8982E8AED3000DCC6A4 /* PacketTunnel.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 15EEE81F2D6319C100642457 /* PacketTunnel.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		15715F4D2D290435007C66D9 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 15F0A1EB2D1EFA2700E9C182 /* libresolv.tbd */; };
-		1572EE492EC32553008DEDEC /* tm.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1572EE482EC32553008DEDEC /* tm.xcframework */; };
-		1572EE4A2EC32553008DEDEC /* tm.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1572EE482EC32553008DEDEC /* tm.xcframework */; };
-		1572EE4B2EC32553008DEDEC /* tm.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1572EE482EC32553008DEDEC /* tm.xcframework */; };
 		15A130F22E71D3C4003E5632 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15F0A1DB2D1EF8E100E9C182 /* NetworkExtension.framework */; };
 		15A1310E2E71D492003E5632 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 15F0A1EB2D1EFA2700E9C182 /* libresolv.tbd */; };
 		15EEE7902D63071800642457 /* MacosHostApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15EEE78E2D63071800642457 /* MacosHostApi.swift */; };
@@ -129,11 +129,11 @@
 		08C4918CE0CDCA0AA9328970 /* Pods-ImageNotification.profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.profile-staging.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.profile-staging.xcconfig"; sourceTree = "<group>"; };
 		0C3C5797F4D22445974ED14A /* Pods-ImageNotification.profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.profile-production.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.profile-production.xcconfig"; sourceTree = "<group>"; };
 		13A58CE58EFED006B010BC02 /* Pods-RunnerTests.release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-production.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-production.xcconfig"; sourceTree = "<group>"; };
+		1542052C2F32158C003C77B8 /* tm.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = tm.xcframework; sourceTree = "<group>"; };
 		1555C8D42DDDE2A200F13D0C /* RunnerRelease-staging.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerRelease-staging.entitlements"; sourceTree = "<group>"; };
 		1555C9F12DE49EB100F13D0C /* RunnerRelease-production.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerRelease-production.entitlements"; sourceTree = "<group>"; };
 		1555CA6C2DE903FD00F13D0C /* libresolv.9.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.9.tbd; path = usr/lib/libresolv.9.tbd; sourceTree = SDKROOT; };
 		15703D252DB6BCEB00529F96 /* RunnerDebug-staging.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerDebug-staging.entitlements"; sourceTree = "<group>"; };
-		1572EE482EC32553008DEDEC /* tm.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = tm.xcframework; sourceTree = "<group>"; };
 		157F43FB2E75A7CA00C7AB3A /* RunnerDebug-pkg.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerDebug-pkg.entitlements"; sourceTree = "<group>"; };
 		15A130F12E71D3C4003E5632 /* com.5vnetwork.x.system.se.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = com.5vnetwork.x.system.se.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
 		15A1F1082E71A1F300AF435D /* RunnerRelease-pkg.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "RunnerRelease-pkg.entitlements"; sourceTree = "<group>"; };
@@ -241,7 +241,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				15A130F22E71D3C4003E5632 /* NetworkExtension.framework in Frameworks */,
-				1572EE4B2EC32553008DEDEC /* tm.xcframework in Frameworks */,
+				1542052D2F32158C003C77B8 /* tm.xcframework in Frameworks */,
 				15A1310E2E71D492003E5632 /* libresolv.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -251,7 +251,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				15EEE8202D6319C100642457 /* NetworkExtension.framework in Frameworks */,
-				1572EE492EC32553008DEDEC /* tm.xcframework in Frameworks */,
+				1542052F2F32158C003C77B8 /* tm.xcframework in Frameworks */,
 				15EEE8382D631A0E00642457 /* libresolv.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -269,7 +269,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				15715F4D2D290435007C66D9 /* libresolv.tbd in Frameworks */,
-				1572EE4A2EC32553008DEDEC /* tm.xcframework in Frameworks */,
+				1542052E2F32158C003C77B8 /* tm.xcframework in Frameworks */,
 				8F49F0C08E1F8C01974E02AA /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -320,7 +320,7 @@
 				D73912EC22F37F3D000D13A0 /* Frameworks */,
 				99729DAB62EA91DEDA6915B0 /* Pods */,
 				9764BAE33D15C5E49DCC01E6 /* GoogleService-Info.plist */,
-				1572EE482EC32553008DEDEC /* tm.xcframework */,
+				1542052C2F32158C003C77B8 /* tm.xcframework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -996,9 +996,7 @@
 					"-framework",
 					"\"flutter_local_notifications\"",
 					"-framework",
-					"\"flutter_secure_storage_macos\"",
-					"-framework",
-					"\"google_sign_in_macos\"",
+					"\"flutter_secure_storage_darwin\"",
 					"-framework",
 					"\"in_app_purchase_storekit\"",
 					"-framework",
@@ -1230,9 +1228,7 @@
 					"-framework",
 					"\"flutter_local_notifications\"",
 					"-framework",
-					"\"flutter_secure_storage_macos\"",
-					"-framework",
-					"\"google_sign_in_macos\"",
+					"\"flutter_secure_storage_darwin\"",
 					"-framework",
 					"\"in_app_purchase_storekit\"",
 					"-framework",
@@ -1459,9 +1455,7 @@
 					"-framework",
 					"\"flutter_local_notifications\"",
 					"-framework",
-					"\"flutter_secure_storage_macos\"",
-					"-framework",
-					"\"google_sign_in_macos\"",
+					"\"flutter_secure_storage_darwin\"",
 					"-framework",
 					"\"in_app_purchase_storekit\"",
 					"-framework",
@@ -1684,9 +1678,7 @@
 					"-framework",
 					"\"flutter_local_notifications\"",
 					"-framework",
-					"\"flutter_secure_storage_macos\"",
-					"-framework",
-					"\"google_sign_in_macos\"",
+					"\"flutter_secure_storage_darwin\"",
 					"-framework",
 					"\"in_app_purchase_storekit\"",
 					"-framework",
@@ -1911,9 +1903,7 @@
 					"-framework",
 					"\"flutter_local_notifications\"",
 					"-framework",
-					"\"flutter_secure_storage_macos\"",
-					"-framework",
-					"\"google_sign_in_macos\"",
+					"\"flutter_secure_storage_darwin\"",
 					"-framework",
 					"\"in_app_purchase_storekit\"",
 					"-framework",
@@ -2139,9 +2129,7 @@
 					"-framework",
 					"\"flutter_local_notifications\"",
 					"-framework",
-					"\"flutter_secure_storage_macos\"",
-					"-framework",
-					"\"google_sign_in_macos\"",
+					"\"flutter_secure_storage_darwin\"",
 					"-framework",
 					"\"in_app_purchase_storekit\"",
 					"-framework",
@@ -2374,9 +2362,7 @@
 					"-framework",
 					"\"flutter_local_notifications\"",
 					"-framework",
-					"\"flutter_secure_storage_macos\"",
-					"-framework",
-					"\"google_sign_in_macos\"",
+					"\"flutter_secure_storage_darwin\"",
 					"-framework",
 					"\"in_app_purchase_storekit\"",
 					"-framework",
@@ -3150,9 +3136,7 @@
 					"-framework",
 					"\"flutter_local_notifications\"",
 					"-framework",
-					"\"flutter_secure_storage_macos\"",
-					"-framework",
-					"\"google_sign_in_macos\"",
+					"\"flutter_secure_storage_darwin\"",
 					"-framework",
 					"\"in_app_purchase_storekit\"",
 					"-framework",
@@ -3266,9 +3250,7 @@
 					"-framework",
 					"\"flutter_local_notifications\"",
 					"-framework",
-					"\"flutter_secure_storage_macos\"",
-					"-framework",
-					"\"google_sign_in_macos\"",
+					"\"flutter_secure_storage_darwin\"",
 					"-framework",
 					"\"in_app_purchase_storekit\"",
 					"-framework",
@@ -3381,9 +3363,7 @@
 					"-framework",
 					"\"flutter_local_notifications\"",
 					"-framework",
-					"\"flutter_secure_storage_macos\"",
-					"-framework",
-					"\"google_sign_in_macos\"",
+					"\"flutter_secure_storage_darwin\"",
 					"-framework",
 					"\"in_app_purchase_storekit\"",
 					"-framework",
@@ -3497,9 +3477,7 @@
 					"-framework",
 					"\"flutter_local_notifications\"",
 					"-framework",
-					"\"flutter_secure_storage_macos\"",
-					"-framework",
-					"\"google_sign_in_macos\"",
+					"\"flutter_secure_storage_darwin\"",
 					"-framework",
 					"\"in_app_purchase_storekit\"",
 					"-framework",

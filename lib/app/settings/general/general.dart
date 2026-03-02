@@ -101,8 +101,8 @@ class GeneralSettingPage extends StatelessWidget {
               ),
             const Divider(),
             const Padding(
-              padding: EdgeInsets.only(
-                  top: 10, bottom: 10, left: 16, right: 16),
+              padding:
+                  EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
               child: ThemeModeSetting(),
             ),
             const Divider(),
@@ -264,76 +264,78 @@ class _ThemeModeSettingState extends State<ThemeModeSetting> {
   }
 }
 
-class AutoUpdateSettings extends StatelessWidget {
+class AutoUpdateSettings extends StatefulWidget {
   const AutoUpdateSettings({super.key});
 
   @override
+  State<AutoUpdateSettings> createState() => _AutoUpdateSettingsState();
+}
+
+class _AutoUpdateSettingsState extends State<AutoUpdateSettings> {
+  bool _autoUpdate = false;
+  bool _autoCheckLatestVersion = false;
+  late final AutoUpdateService _autoUpdateService;
+
+  @override
+  void initState() {
+    super.initState();
+    _autoUpdateService = context.read<AutoUpdateService>();
+    _autoUpdate = _autoUpdateService.autoUpdate;
+    _autoCheckLatestVersion = _autoUpdateService.autoCheckLatestVersion;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Consumer<AutoUpdateService>(
-      builder: (context, autoUpdateService, child) {
-        return Padding(
-          padding:
-              const EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(AppLocalizations.of(context)!.autoUpdate,
-                      style: Theme.of(context).textTheme.bodyLarge),
-                  Switch(
-                    value: autoUpdateService.autoUpdate,
-                    onChanged: autoUpdateService.setAutoUpdate,
-                  ),
-                ],
+              Text(AppLocalizations.of(context)!.autoUpdate,
+                  style: Theme.of(context).textTheme.bodyLarge),
+              Switch(
+                value: _autoUpdate,
+                onChanged: (value) {
+                  _autoUpdateService.setAutoUpdate(value);
+                  setState(() {
+                    _autoUpdate = value;
+                  });
+                },
               ),
-              const Gap(10),
-              Text(AppLocalizations.of(context)!.autoUpdateDescription,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      )),
-              if (autoUpdateService.downloadingVersion != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Row(
-                    children: [
-                      const Gap(2),
-                      smallCircularProgressIndicator,
-                      const Gap(10),
-                      Text(
-                          AppLocalizations.of(context)!.downloading(
-                              autoUpdateService.downloadingVersion ?? ''),
-                          style:
-                              Theme.of(context).textTheme.bodySmall!.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                  ))
-                    ],
-                  ),
-                ),
-              // if (!isProduction())
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: TextButton(
-                  onPressed: () async {
-                    final result = await autoUpdateService.checkForUpdates(
-                      (await PackageInfo.fromPlatform()).version,
-                    );
-                    if (result == null) {
-                      snack(AppLocalizations.of(context)!.noNewVersion);
-                    } else {
-                      autoUpdateService.checkAndUpdate();
-                    }
-                  },
-                  child: Text(AppLocalizations.of(context)!.checkAndUpdate),
-                ),
-              )
             ],
           ),
-        );
-      },
+          const Gap(10),
+          Text(AppLocalizations.of(context)!.autoUpdateDescription,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  )),
+          const Gap(10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(AppLocalizations.of(context)!.autoUpdate,
+                  style: Theme.of(context).textTheme.bodyLarge),
+              Switch(
+                value: _autoCheckLatestVersion,
+                onChanged: (value) {
+                  _autoUpdateService.setAutoCheckLatestVersion(value);
+                  setState(() {
+                    _autoCheckLatestVersion = value;
+                  });
+                },
+              ),
+            ],
+          ),
+          const Gap(10),
+          Text(AppLocalizations.of(context)!.autoUpdateDescription,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  )),
+        ],
+      ),
     );
   }
 }

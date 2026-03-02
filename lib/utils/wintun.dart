@@ -56,48 +56,6 @@ Future<void> makeWinTunAvailable(Downloader downloader) async {
   }
 }
 
-Future<void> installWindowsService() async {
-  if (kDebugMode) {
-    print(Directory.current.path);
-    final process = await Process.run(
-        'powershell.exe',
-        [
-          '-Command',
-          'Start-Process',
-          '..\\vx-core\\win_service\\service\\service_install.exe',
-          'install',
-          '-Verb',
-          'RunAs'
-        ],
-        stderrEncoding: utf8,
-        stdoutEncoding: utf8,
-        /* runInShell: true */
-        runInShell: true);
-    final exitCode = process.exitCode;
-    logger.d('Windows service installed with exit code: $exitCode');
-    // get stdout and stderr
-    final stdout = process.stdout;
-    final stderr = process.stderr;
-    logger.d('Windows service installed with stdout: $stdout');
-    logger.d('Windows service installed with stderr: $stderr');
-    if (exitCode != 0) {
-      throw Exception(
-          'Windows service installation failed with exit code: $exitCode. stdout: $stdout, stderr: $stderr');
-    }
-    // the process might takes some time to finish. so wait for 1 second
-    await Future.delayed(const Duration(seconds: 1));
-  }
-  // final process = await Process.run('powershell.exe', [
-  //   '-Command',
-  //   'Start-Process',
-  //   getServiceInstallExePath(),
-  //   'install',
-  //   '-Verb',
-  //   'RunAs'
-  // ]);
-  // final geoFile = await rootBundle.load('assets/geo/simplified_geosite.dat');
-}
-
 String getServiceInstallExePath() {
   final String localExePath = join('data', 'flutter_assets', 'packages',
       'tm_windows', 'assets', 'service_install.exe');

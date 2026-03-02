@@ -34,10 +34,10 @@ import 'package:tm/protos/protos/inbound.pb.dart';
 import 'package:tm/protos/protos/outbound.pb.dart';
 import 'package:tm/protos/protos/server/server.pb.dart';
 import 'package:tm/protos/protos/sysproxy.pb.dart';
+import 'package:tm/protos/protos/tls/certificate.pb.dart';
 import 'package:tm/tm.dart';
 import 'package:vx/app/server/add_server.dart';
 import 'package:vx/data/ssh_server.dart';
-import 'package:vx/utils/cert.dart';
 import 'package:vx/utils/channel_credentials.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/common/net.dart';
@@ -215,6 +215,50 @@ class XApiClient {
   Future<void> _stop() async {
     await _grpcChannel.shutdown();
     _tmStateSubscription.cancel();
+  }
+
+  Future<Certificate> getCertificate() async {
+    if (Platform.isWindows) {
+      final dll = DynamicLibrary.open(getDllPath());
+      final bindings = XApiBindings(dll);
+      final ret = bindings.GenerateTls();
+      final errStrPtr = ret.r2;
+      final errStr = errStrPtr.cast<Utf8>().toDartString();
+      bindings.FreeString(errStrPtr);
+      if (errStr.isNotEmpty) {
+        throw Exception(errStr);
+      }
+      final certificateBytesPointer = ret.r0;
+      final certificateBytes =
+          certificateBytesPointer.cast<Uint8>().asTypedList(ret.r1);
+      final certificate = Certificate.fromBuffer(certificateBytes);
+      bindings.FreeBytes(certificateBytesPointer);
+      return certificate;
+    } else if (Platform.isLinux) {
+      final dll = DynamicLibrary.open(getSoPath());
+      final bindings = XApiLinuxBindings(dll);
+      final ret = bindings.GenerateTls();
+      final errStrPtr = ret.r2;
+      final errStr = errStrPtr.cast<Utf8>().toDartString();
+      bindings.FreeString(errStrPtr);
+      if (errStr.isNotEmpty) {
+        throw Exception(errStr);
+      }
+      final certificateBytesPointer = ret.r0;
+      final certificateBytes =
+          certificateBytesPointer.cast<Uint8>().asTypedList(ret.r1);
+      final certificate = Certificate.fromBuffer(certificateBytes);
+      bindings.FreeBytes(certificateBytesPointer);
+      return certificate;
+    } else if (Platform.isMacOS || Platform.isIOS) {
+      final ret = await darwinHostApi!.generateTls();
+      final certificate = Certificate.fromBuffer(ret);
+      return certificate;
+    } else {
+      final ret = await androidHostApi!.generateTls();
+      final certificate = Certificate.fromBuffer(ret);
+      return certificate;
+    }
   }
 
   Future<DownloadResponse> download(DownloadRequest request) async {

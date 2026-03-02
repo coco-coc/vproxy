@@ -384,7 +384,7 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
     ),
     const Version(),
     if (!isProduction())
-      Row(
+      Column(
         children: [
           const IconButton(
             onPressed: saveLogToApplicationDocumentsDir,
@@ -424,6 +424,12 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
             },
             child: const Text('Set'),
           ),
+          ElevatedButton(
+            onPressed: () {
+              throw StateError('This is test exception');
+            },
+            child: const Text('Verify Sentry Setup'),
+          )
         ],
       ),
   ];

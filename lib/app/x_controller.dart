@@ -14,6 +14,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -46,7 +47,6 @@ import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/data/database_server.dart';
-import 'package:vx/utils/cert.dart';
 import 'package:vx/utils/channel_credentials.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/data/database.dart';
@@ -66,7 +66,7 @@ class XController implements MessageFlutterApi {
   final XConfigHelper _xConfigHelper;
   final _tm = Tm.instance;
   final SharedPreferences _pref;
-  final LogUploadService? _logUploadService;
+  final LogUploadService _logUploadService;
   final XApiClient _xApiClient;
   final AutoSubscriptionUpdater _autoSubscriptionUpdater;
   final DatabaseProvider _databaseProvider;
@@ -126,7 +126,9 @@ class XController implements MessageFlutterApi {
             rootLocalizations()?.disconnectedUnexpectedly(statusChange.error!));
         logger.e("disconnected!", error: statusChange.error);
         reportError("disconnected due to", statusChange.error!);
-        _logUploadService?.performUpload();
+        if (_pref.shareLog) {
+          _logUploadService.performUpload();
+        }
       }
       if (_pref.connect && _pref.alwaysOn && !restarting) {
         start();
@@ -137,11 +139,11 @@ class XController implements MessageFlutterApi {
   /// Handle system shutdown or user exit notifications
   ///
   /// pkg only
-  void _handleSystemShutdown() {
-    logger.i('System shutdown/restart detected - performing cleanup');
-    shuttingDown = true;
-    beforeExitCleanup();
-  }
+  // void _handleSystemShutdown() {
+  //   logger.i('System shutdown/restart detected - performing cleanup');
+  //   shuttingDown = true;
+  //   beforeExitCleanup();
+  // }
 
   ClientChannel? _grpcChannel;
   ClientServiceClient? _grpcServiceClient;
@@ -245,7 +247,7 @@ class XController implements MessageFlutterApi {
       _dbSecret = const Uuid().v4();
       logger.d("start");
       if (useTcpForGrpc) {
-        _certificate = await getCertificate();
+        _certificate = await _xApiClient.getCertificate();
         if (isPkg) {
           await startDbServer();
         }
@@ -258,32 +260,9 @@ class XController implements MessageFlutterApi {
       if (Platform.isWindows &&
           _pref.inboundMode == InboundMode.tun &&
           !isRunningAsAdmin &&
-          isStore /* !_pref.windowsServiceInstalled */) {
+          isStore) {
         _statusStreamCtrl.add(XStatus.disconnected);
         throw Exception("TUN requires admin");
-        // final result = await showDialog(
-        //     context: rootNavigationKey.currentContext!,
-        //     builder: (context) => AlertDialog(
-        //           title: Text(AppLocalizations.of(context)!.installAsWinService),
-        //           content: SizedBox(
-        //               width: 400,
-        //               child: Text(
-        //                   AppLocalizations.of(context)!.installAsWinServiceDesc)),
-        //           actions: [
-        //             TextButton(
-        //                 onPressed: () => Navigator.pop(context, false),
-        //                 child: Text(AppLocalizations.of(context)!.cancel)),
-        //             TextButton(
-        //                 onPressed: () => Navigator.pop(context, true),
-        //                 child: Text(AppLocalizations.of(context)!.add)),
-        //           ],
-        //         ));
-        // if (result == null || !result) {
-        //   _statusStreamCtrl.add(XStatus.disconnected);
-        //   return;
-        // }
-        // await installWindowsService();
-        // _pref.setWindowsServiceInstalled(true);
       }
 
       if (Platform.isLinux &&
@@ -399,22 +378,7 @@ class XController implements MessageFlutterApi {
             builder: (context) => AlertDialog(
                   title: Text(rootLocalizations()!.enableSystemExtension),
                 ));
-      } /* else if (e.toString().contains(
-              'The specified service does not exist as an installed service') ||
-          e.toString().contains('The system cannot find the file specified')) {
-        _pref.setWindowsServiceInstalled(false);
-        await installWindowsService();
-        _pref.setWindowsServiceInstalled(true);
-        await _tm.start(
-          config: config,
-          onSelfShutdown: (String e) {
-            logger.e('onSelfShutdown', error: e);
-          },
-          redirectStdErr: redirectStderr,
-          configPath: Platform.isWindows ? await configFilePath() : null,
-        );
-      } */
-      else {
+      } else {
         rethrow;
       }
     }
@@ -457,6 +421,49 @@ class XController implements MessageFlutterApi {
       }
     }
     logger.d("start done");
+  }
+
+  // only run in debug mode
+  Future<void> installWindowsService() async {
+    if (kDebugMode) {
+      print(Directory.current.path);
+      final process = await Process.run(
+          'powershell.exe',
+          [
+            '-Command',
+            'Start-Process',
+            '..\\vx-core\\win_service\\service\\service_install.exe',
+            'install',
+            '-Verb',
+            'RunAs'
+          ],
+          stderrEncoding: utf8,
+          stdoutEncoding: utf8,
+          /* runInShell: true */
+          runInShell: true);
+      final exitCode = process.exitCode;
+      logger.d('Windows service installed with exit code: $exitCode');
+      // get stdout and stderr
+      final stdout = process.stdout;
+      final stderr = process.stderr;
+      logger.d('Windows service installed with stdout: $stdout');
+      logger.d('Windows service installed with stderr: $stderr');
+      if (exitCode != 0) {
+        throw Exception(
+            'Windows service installation failed with exit code: $exitCode. stdout: $stdout, stderr: $stderr');
+      }
+      // the process might takes some time to finish. so wait for 1 second
+      await Future.delayed(const Duration(seconds: 1));
+    }
+    // final process = await Process.run('powershell.exe', [
+    //   '-Command',
+    //   'Start-Process',
+    //   getServiceInstallExePath(),
+    //   'install',
+    //   '-Verb',
+    //   'RunAs'
+    // ]);
+    // final geoFile = await rootBundle.load('assets/geo/simplified_geosite.dat');
   }
 
   Future<void> _setSystemProxy(TmConfig config) async {
@@ -529,6 +536,7 @@ class XController implements MessageFlutterApi {
     }
   }
 
+  /// Should be called before the app is exiting
   Future<void> beforeExitCleanup() async {
     logger.d('beforeExitCleanup');
     try {

@@ -86,9 +86,7 @@ class AdsProvider with ChangeNotifier {
 
   /// Move to next ad that fits within constraints
   Ad? getNextAd({double? maxHeight, double? maxWidth}) {
-    if (Platform.isMacOS && !isPkg) {
-      return null;
-    }
+    
     // If no ads to show, swap the queues
     if (_adsToShow.isEmpty) {
       if (_adsShown.isEmpty) return null; // No ads at all
@@ -190,7 +188,7 @@ class AdsProvider with ChangeNotifier {
   Future<void> _fetchAds() async {
     try {
       if (isProduction()) {
-        await _downloader.downloadZip(_adsZipUrl, _adsDirectory);
+      await _downloader.downloadZip(_adsZipUrl, _adsDirectory);
       }
       _setLastAdsFetchTime(DateTime.now());
       _loadAds();

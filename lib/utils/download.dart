@@ -14,6 +14,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:archive/archive_io.dart';
@@ -94,11 +95,13 @@ class Downloader {
       if (handlers.isNotEmpty) {
         final configs = handlersToHandlerConfig(handlers);
         await xApiClient.download(DownloadRequest(
-            url: url, handlers: configs.sublist(0, 5), dest: dest));
+            url: url,
+            handlers: configs.sublist(0, max(5, configs.length)),
+            dest: dest));
         return;
       }
-    } catch (e) {
-      logger.d("proxy download failed: $e", stackTrace: StackTrace.current);
+    } catch (e, s) {
+      logger.d("proxy download failed: $e", stackTrace: s);
     }
 
     return await directDownloadToFile(url, dest);
@@ -129,8 +132,8 @@ class Downloader {
     try {
       await directDownloadToFile(url, dest);
       return;
-    } catch (e) {
-      logger.d("plain download failed: $e", stackTrace: StackTrace.current);
+    } catch (e, s) {
+      logger.d("plain download failed: $e", stackTrace: s);
     }
 
     List<HandlerConfig> configs = handlersToHandlerConfig(await outboundRepo
