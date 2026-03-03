@@ -349,9 +349,7 @@ void main() async {
                       controller: ctx.read<XController>(),
                       outboundRepo: ctx.read<OutboundRepo>())),
               Provider<MyLayout>(create: (_) => MyLayout()),
-              if (androidApkRelease ||
-                  (Platform.isWindows && !isStore) ||
-                  Platform.isLinux)
+              if (autoUpdateSupported)
                 Provider(
                     lazy: false,
                     create: (ctx) {
@@ -363,6 +361,8 @@ void main() async {
                           logger: logger,
                           assetName: githubAssetName,
                           repository: '5vnetwork/vx',
+                          autoCheck: true,
+                          autoDownload: false,
                           exitCurrentApp: () {
                             return exitCurrentApp(ctx.read<XController>());
                           },

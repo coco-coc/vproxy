@@ -694,7 +694,7 @@ abstract class AppLocalizations {
   /// No description provided for @autoUpdate.
   ///
   /// In en, this message translates to:
-  /// **'Auto Update'**
+  /// **'Automatically Download New Version'**
   String get autoUpdate;
 
   /// No description provided for @unableToGetNodes.
@@ -2449,28 +2449,16 @@ abstract class AppLocalizations {
   /// **'Remind Me Later'**
   String get later;
 
-  /// No description provided for @autoUpdateDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Automatically downloading new version and notify you when it\'s ready'**
-  String get autoUpdateDescription;
-
   /// No description provided for @autoCheck.
   ///
   /// In en, this message translates to:
   /// **'Automatically Check New Version'**
   String get autoCheck;
 
-  /// No description provided for @autoCheckDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Automatically check for newer versions and remind you when there is one'**
-  String get autoCheckDesc;
-
   /// No description provided for @downloading.
   ///
   /// In en, this message translates to:
-  /// **'Downloading {version}...'**
+  /// **'Downloading...'**
   String downloading(String version);
 
   /// No description provided for @installFailed.

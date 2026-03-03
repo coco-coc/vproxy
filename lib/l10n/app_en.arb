@@ -98,7 +98,7 @@
   "actions": "Actions",
   "updateInterval": "Update Interval",
   "testArea": "Test Area",
-  "autoUpdate": "Auto Update",
+  "autoUpdate": "Automatically Download New Version",
   "unableToGetNodes": "Failed to get nodes, your pasteboard does not contain a subscription url that VX can parse",
   "unableToGetNodesEmptyClipboard": "Failed to get nodes, clipboard is empty",
   "subscriptionAddress": "Subscription Address",
@@ -561,9 +561,7 @@
   "skipThisVersion": "Skip this version",
   "install": "Install",
   "later": "Remind Me Later",
-  "autoUpdateDescription": "Automatically downloading new version and notify you when it's ready",
   "autoCheck": "Automatically Check New Version",
-  "autoCheckDesc": "Automatically check for newer versions and remind you when there is one",
   "downloading": "Downloading {version}...",
   "@downloading": {
     "placeholders": {

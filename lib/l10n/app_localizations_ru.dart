@@ -1321,13 +1321,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get later => 'Напомнить мне позже';
 
   @override
-  String get autoUpdateDescription => 'Автоматически загружает новую версию и уведомляет вас, когда она будет готова';
-
-  @override
   String get autoCheck => 'Automatically Check New Version';
-
-  @override
-  String get autoCheckDesc => 'Automatically check for newer versions and remind you when there is one';
 
   @override
   String downloading(String version) {

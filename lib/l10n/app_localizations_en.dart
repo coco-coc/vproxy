@@ -306,7 +306,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get testArea => 'Test Area';
 
   @override
-  String get autoUpdate => 'Auto Update';
+  String get autoUpdate => 'Automatically Download New Version';
 
   @override
   String get unableToGetNodes => 'Failed to get nodes, your pasteboard does not contain a subscription url that VX can parse';
@@ -1321,17 +1321,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get later => 'Remind Me Later';
 
   @override
-  String get autoUpdateDescription => 'Automatically downloading new version and notify you when it\'s ready';
-
-  @override
   String get autoCheck => 'Automatically Check New Version';
 
   @override
-  String get autoCheckDesc => 'Automatically check for newer versions and remind you when there is one';
-
-  @override
   String downloading(String version) {
-    return 'Downloading $version...';
+    return 'Downloading...';
   }
 
   @override

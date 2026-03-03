@@ -111,9 +111,7 @@ dependencies:
   # flutter_sparkle:
   #   path: ../flutter_sparkle
   flutter_common:
-    git:
-      url: https://github.com/5vnetwork/flutter_common.git
-      ref: main
+    path: ../flutter_common
 
 dev_dependencies:
   sentry_dart_plugin: ^3.2.1
