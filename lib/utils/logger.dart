@@ -25,16 +25,54 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/path.dart';
+import 'package:flutter_common/types/logger.dart' as common;
 
+class LoggerWrapper implements common.Logger {
+  Logger? _logger;
+  LoggerWrapper({Logger? logger}) {
+    _logger = logger;
+  }
 
-Logger logger = Logger(
-  level: Level.off,
-);
+  set logger(Logger? value) {
+    _logger?.close();
+    _logger = value;
+  }
+
+  @override
+  void t(dynamic message,
+      {DateTime? time, Object? error, StackTrace? stackTrace}) {
+    _logger?.t(message, time: time, error: error, stackTrace: stackTrace);
+  }
+
+  @override
+  void d(dynamic message,
+      {DateTime? time, Object? error, StackTrace? stackTrace}) {
+    _logger?.d(message, time: time, error: error, stackTrace: stackTrace);
+  }
+
+  @override
+  void i(dynamic message,
+      {DateTime? time, Object? error, StackTrace? stackTrace}) {
+    _logger?.i(message, time: time, error: error, stackTrace: stackTrace);
+  }
+
+  @override
+  void w(dynamic message,
+      {DateTime? time, Object? error, StackTrace? stackTrace}) {
+    _logger?.w(message, time: time, error: error, stackTrace: stackTrace);
+  }
+
+  @override
+  void e(dynamic message,
+      {DateTime? time, Object? error, StackTrace? stackTrace}) {
+    _logger?.e(message, time: time, error: error, stackTrace: stackTrace);
+  }
+}
+
+LoggerWrapper logger = LoggerWrapper();
 
 /// used in production to report error that do not contain personal data
-Logger reportLogger = Logger(
-  level: Level.off,
-);
+LoggerWrapper reportLogger = LoggerWrapper();
 
 class MultiOutput extends LogOutput {
   final List<LogOutput> outputs;
@@ -119,9 +157,7 @@ Future<void> reportError(String message, dynamic error) async {
 
 Future<void> stopShareLog() async {
   // if (Platform.isWindows) {
-  reportLogger = Logger(
-    level: Level.off,
-  );
+  reportLogger.logger = null;
   // } else {
   // FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
   // }
@@ -145,7 +181,7 @@ Future<void> initLogger(SharedPreferences pref) async {
 
 Future<void> setDebugLoggerDevlopment() async {
   final logDirPath = getFlutterLogDir().path;
-  logger = Logger(
+  final l = Logger(
     filter: ProductionFilter(),
     printer: SimplePrinter(
         printTime:
@@ -168,12 +204,13 @@ Future<void> setDebugLoggerDevlopment() async {
     ]),
     level: Level.debug,
   );
+  logger.logger = l;
   logger.d(
       'Logger initialized in debug mode - output to console and file: $logDirPath');
 }
 
 Future<void> setReportLogger() async {
-  reportLogger = Logger(
+  final l = Logger(
     filter: ProductionFilter(),
     printer: PrettyPrinter(
       methodCount: 2, // Number of method calls to be displayed
@@ -192,11 +229,12 @@ Future<void> setReportLogger() async {
       },
     ),
   );
+  reportLogger.logger = l;
 }
 
 Future<void> setDebugLoggerProduction() async {
   final logDirPath = getFlutterLogDir().path;
-  logger = Logger(
+  final l = Logger(
     filter: ProductionFilter(),
     printer: SimplePrinter(printTime: true),
     output: AdvancedFileOutput(
@@ -209,14 +247,11 @@ Future<void> setDebugLoggerProduction() async {
     ),
     level: Level.debug,
   );
+  logger.logger = l;
   logger.d(
       'Logger initialized in debug mode - output to console and file: $logDirPath');
 }
 
 Future<void> unsetDebugLoggerProduction() async {
-  final oldLogger = logger;
-  logger = Logger(
-    level: Level.off,
-  );
-  await oldLogger.close();
+  logger.logger = null;
 }

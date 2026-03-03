@@ -29,6 +29,7 @@ import 'package:vx/common/common.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/main.dart';
+import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/node_test_service.dart';
 import 'package:vx/utils/geodata.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
@@ -89,16 +90,7 @@ class GeneralSettingPage extends StatelessWidget {
                 }));
               },
             ),
-            if (androidApkRelease ||
-                (Platform.isWindows && !isStore) ||
-                Platform.isLinux)
-              const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Divider(),
-                  AutoUpdateSettings(),
-                ],
-              ),
+        
             const Divider(),
             const Padding(
               padding:
@@ -264,81 +256,7 @@ class _ThemeModeSettingState extends State<ThemeModeSetting> {
   }
 }
 
-class AutoUpdateSettings extends StatefulWidget {
-  const AutoUpdateSettings({super.key});
 
-  @override
-  State<AutoUpdateSettings> createState() => _AutoUpdateSettingsState();
-}
-
-class _AutoUpdateSettingsState extends State<AutoUpdateSettings> {
-  bool _autoUpdate = false;
-  bool _autoCheckLatestVersion = false;
-  late final AutoUpdateService _autoUpdateService;
-
-  @override
-  void initState() {
-    super.initState();
-    _autoUpdateService = context.read<AutoUpdateService>();
-    _autoUpdate = _autoUpdateService.autoUpdate;
-    _autoCheckLatestVersion = _autoUpdateService.autoCheckLatestVersion;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(AppLocalizations.of(context)!.autoUpdate,
-                  style: Theme.of(context).textTheme.bodyLarge),
-              Switch(
-                value: _autoUpdate,
-                onChanged: (value) {
-                  _autoUpdateService.setAutoUpdate(value);
-                  setState(() {
-                    _autoUpdate = value;
-                  });
-                },
-              ),
-            ],
-          ),
-          const Gap(10),
-          Text(AppLocalizations.of(context)!.autoUpdateDescription,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
-          const Gap(10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(AppLocalizations.of(context)!.autoUpdate,
-                  style: Theme.of(context).textTheme.bodyLarge),
-              Switch(
-                value: _autoCheckLatestVersion,
-                onChanged: (value) {
-                  _autoUpdateService.setAutoCheckLatestVersion(value);
-                  setState(() {
-                    _autoCheckLatestVersion = value;
-                  });
-                },
-              ),
-            ],
-          ),
-          const Gap(10),
-          Text(AppLocalizations.of(context)!.autoUpdateDescription,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
-        ],
-      ),
-    );
-  }
-}
 
 class StartOnBootSetting extends StatefulWidget {
   const StartOnBootSetting({super.key});

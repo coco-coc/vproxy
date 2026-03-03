@@ -306,7 +306,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get testArea => '地区检测';
 
   @override
-  String get autoUpdate => '自动更新';
+  String get autoUpdate => '自动下载新版本';
 
   @override
   String get unableToGetNodes => '获取节点失败，请复制正确格式的订阅链接后重试';
@@ -1271,7 +1271,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get later => '暂时不安装';
 
   @override
-  String get autoUpdateDescription => '自动下载新版本安装包并在完成后提示您进行安装';
+  String get autoCheck => '自动检查新版本';
 
   @override
   String downloading(String version) {

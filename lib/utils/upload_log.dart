@@ -172,13 +172,9 @@ class LogUploadService {
 
   Future<void> _closeFlutterLogger() async {
     if (isProduction()) {
-      if (!reportLogger.isClosed()) {
-        await reportLogger.close();
-      }
+      reportLogger.logger = null;
     } else {
-      if (!logger.isClosed()) {
-        await logger.close();
-      }
+      logger.logger = null;
     }
   }
 

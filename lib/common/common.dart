@@ -48,7 +48,8 @@ const isStore = bool.fromEnvironment('STORE');
 const isPkg = appFlavor == 'pkg';
 final androidApkRelease =
     Platform.isAndroid && !const bool.fromEnvironment('PLAY_STORE');
-
+final autoUpdateSupported =
+    androidApkRelease || (Platform.isWindows && !isStore) || Platform.isLinux;
 String getUserCountryFromLocale() {
   final locale = PlatformDispatcher.instance.locale;
   return locale.countryCode ?? 'Unknown';

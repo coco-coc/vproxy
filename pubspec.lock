@@ -561,11 +561,9 @@ packages:
   flutter_common:
     dependency: "direct main"
     description:
-      path: "."
-      ref: main
-      resolved-ref: d836b64832b0544a44bceb98e60e8cdee0d00681
-      url: "https://github.com/5vnetwork/flutter_common.git"
-    source: git
+      path: "../flutter_common"
+      relative: true
+    source: path
     version: "0.0.2"
   flutter_driver:
     dependency: transitive

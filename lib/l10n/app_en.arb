@@ -98,7 +98,7 @@
   "actions": "Actions",
   "updateInterval": "Update Interval",
   "testArea": "Test Area",
-  "autoUpdate": "Auto Update",
+  "autoUpdate": "Automatically Download New Version",
   "unableToGetNodes": "Failed to get nodes, your pasteboard does not contain a subscription url that VX can parse",
   "unableToGetNodesEmptyClipboard": "Failed to get nodes, clipboard is empty",
   "subscriptionAddress": "Subscription Address",
@@ -561,7 +561,7 @@
   "skipThisVersion": "Skip this version",
   "install": "Install",
   "later": "Remind Me Later",
-  "autoUpdateDescription": "Automatically downloading new version and notify you when it's ready",
+  "autoCheck": "Automatically Check New Version",
   "downloading": "Downloading {version}...",
   "@downloading": {
     "placeholders": {
@@ -904,5 +904,6 @@
     }
   },
   "dnsRecord": "DNS Record",
-  "addDnsRecord": "Add DNS Record"
+  "addDnsRecord": "Add DNS Record",
+  "downloading": "Downloading..."
 }
