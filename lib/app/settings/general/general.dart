@@ -90,7 +90,7 @@ class GeneralSettingPage extends StatelessWidget {
                 }));
               },
             ),
-        
+
             const Divider(),
             const Padding(
               padding:
@@ -255,8 +255,6 @@ class _ThemeModeSettingState extends State<ThemeModeSetting> {
     );
   }
 }
-
-
 
 class StartOnBootSetting extends StatefulWidget {
   const StartOnBootSetting({super.key});
@@ -488,12 +486,14 @@ class _NodeTestSettingsState extends State<NodeTestSettings> {
             Switch(
               value: _autoTestNodes,
               onChanged: (value) {
-                context.read<SharedPreferences>().setAutoTestNodes(value);
                 setState(() {
                   _autoTestNodes = value;
                 });
-                // Restart the service if it exists
-                context.read<NodeTestService>().restart();
+                if (value) {
+                  context.read<NodeTestService>().start();
+                } else {
+                  context.read<NodeTestService>().stop();
+                }
               },
             ),
           ],
@@ -518,10 +518,7 @@ class _NodeTestSettingsState extends State<NodeTestSettings> {
             onChanged: (event) {
               final parsedValue = int.tryParse(_intervalController.text);
               if (parsedValue != null && parsedValue >= 0) {
-                context
-                    .read<SharedPreferences>()
-                    .setNodeTestInterval(parsedValue);
-                context.read<NodeTestService>().restart();
+                context.read<NodeTestService>().resetInterval(parsedValue);
               }
             },
           ),

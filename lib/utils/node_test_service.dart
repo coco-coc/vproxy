@@ -14,6 +14,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:async';
+import 'package:flutter_common/services/periodic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
@@ -37,63 +38,33 @@ class NodeTestService {
   final OutboundBloc outboundBloc;
   final SharedPreferences pref;
 
-  Timer? _timer;
-  bool _isRunning = false;
+  PeriodicTask? _periodicTask;
 
   /// Start the periodic testing service
   void start() {
-    if (_isRunning) {
-      logger.d('NodeTestService already running');
-      return;
-    }
-
-    _isRunning = true;
-    _scheduleUpdate();
-  }
-
-  void _scheduleUpdate() {
-    if (!pref.autoTestNodes) {
-      return;
-    }
-
-    Duration interval = Duration(minutes: pref.nodeTestInterval);
-    late DateTime nextTestTime;
-    final lastTestTime = pref.lastNodeTestTime;
-    if (lastTestTime == null) {
-      nextTestTime = DateTime.now();
-    } else {
-      nextTestTime = lastTestTime.add(interval);
-    }
-
-    late final Duration initialDelay;
-    if (nextTestTime.isBefore(DateTime.now())) {
-      initialDelay = const Duration();
-    } else {
-      initialDelay = nextTestTime.difference(DateTime.now());
-    }
-
-    logger.d('next test in: ${initialDelay.inMinutes} minutes');
-    _timer = Timer(initialDelay, _checkAndTestNodes);
+    _periodicTask ??= PeriodicTask(
+      sharedPreferences: pref,
+      task: _checkAndTestNodes,
+      period: Duration(minutes: pref.nodeTestInterval),
+      lastRunKey: 'lastNodeTestTime',
+    )..start();
   }
 
   /// Stop the periodic testing service
   void stop() {
-    _timer?.cancel();
-    _timer = null;
-    _isRunning = false;
+    _periodicTask?.stop();
     logger.d('NodeTestService stopped');
   }
 
   /// Restart the service (useful when settings change)
-  void restart() {
-    stop();
-    if (pref.autoTestNodes) {
-      start();
-    }
+  void resetInterval(int value) {
+    _periodicTask!.setPeriod(Duration(minutes: value));
   }
 
   /// Check nodes and test those with old data
   Future<void> _checkAndTestNodes() async {
+    logger.d('testing nodes');
+
     if (!pref.autoTestNodes) {
       return;
     }
@@ -102,6 +73,7 @@ class NodeTestService {
     try {
       final now = DateTime.now().millisecondsSinceEpoch ~/
           1000; // Unix timestamp in seconds
+      final intervalSeconds = pref.nodeTestInterval * 60;
 
       // Get all handlers
       final handlers = await outboundRepo.getHandlers();
@@ -114,13 +86,14 @@ class NodeTestService {
         bool needsSpeedTest = false;
 
         // Check if ping data is old or missing
-        if (handler.pingTestTime == 0 || (now - handler.pingTestTime) > 1800) {
+        if (handler.pingTestTime == 0 ||
+            (now - handler.pingTestTime) > intervalSeconds) {
           needsPingTest = true;
         }
 
         // Check if speed data is old or missing
         if (handler.speedTestTime == 0 ||
-            (now - handler.speedTestTime) > 1800) {
+            (now - handler.speedTestTime) > intervalSeconds) {
           needsSpeedTest = true;
         }
 
@@ -140,7 +113,8 @@ class NodeTestService {
       // Test latency first (faster)
       final handlersNeedingPing = handlersToTest.where((h) {
         final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-        return h.pingTestTime == 0 || (now - h.pingTestTime) > 1800;
+        return h.pingTestTime == 0 ||
+            (now - h.pingTestTime) > intervalSeconds;
       }).toList();
 
       if (handlersNeedingPing.isNotEmpty) {
@@ -151,7 +125,8 @@ class NodeTestService {
       // Test speed for nodes that need it (slower, so do it after ping)
       final handlersNeedingSpeed = handlersToTest.where((h) {
         final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-        return h.speedTestTime == 0 || (now - h.speedTestTime) > 1800;
+        return h.speedTestTime == 0 ||
+            (now - h.speedTestTime) > intervalSeconds;
       }).toList();
 
       if (handlersNeedingSpeed.isNotEmpty) {
@@ -163,6 +138,5 @@ class NodeTestService {
     } catch (e) {
       logger.e('Error in NodeTestService._checkAndTestNodes', error: e);
     }
-    _scheduleUpdate();
   }
 }
