@@ -38,6 +38,7 @@ import 'package:vx/app/outbound/subscription_page.dart';
 import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
+import 'package:vx/app/home/home_widget_visibility.dart';
 import 'package:vx/app/x_controller.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/common/circuler_buffer.dart';
@@ -53,26 +54,56 @@ import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
 import 'package:collection/collection.dart';
 import 'package:vx/utils/logger.dart';
+import 'package:vx/utils/xapi_client.dart';
+import 'package:vx/widgets/circular_progress_indicator.dart';
 import 'package:vx/widgets/home_card.dart';
+import 'package:tm/protos/app/api/api.pb.dart' as api_pb;
+import 'package:tm/tm.dart';
 
 part 'realtime_speed.dart';
 part 'route.dart';
 part 'active_nodes.dart';
 part 'proxy_selector.dart';
 
+/// Identifiers for home sections that the user can show/hide.
+enum HomeWidgetId {
+  stats('stats'),
+  nodesHelper('nodesHelper'),
+  route('route'),
+  proxySelector('proxySelector'),
+  inbound('inbound'),
+  subscription('subscription'),
+  promotion('promotion'),
+  nodes('nodes');
+
+  const HomeWidgetId(this.id);
+  final String id;
+
+  static HomeWidgetId? fromId(String id) {
+    for (final v in values) {
+      if (v.id == id) return v;
+    }
+    return null;
+  }
+}
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final visibility = context.watch<HomeWidgetVisibilityNotifier>();
+    final hidden = visibility.hiddenIds;
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 300),
-              child: const Stats()),
-          const Gap(10),
+          if (!hidden.contains(HomeWidgetId.stats.id))
+            ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 300),
+                child: const Stats()),
+          if (!hidden.contains(HomeWidgetId.stats.id)) const Gap(10),
           Expanded(
             child: Builder(builder: (ctx) {
               final hasActiveNodes =
@@ -83,44 +114,52 @@ class HomePage extends StatelessWidget {
               if (size.isCompact) {
                 return ListView(
                   children: [
-                    if (hasActiveNodes)
+                    if (hasActiveNodes &&
+                        !hidden.contains(HomeWidgetId.nodes.id))
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: ConstrainedBox(
                             constraints: const BoxConstraints(maxHeight: 310),
                             child: const ActiveNodes()),
                       ),
-                    if (!hasActiveNodes && mode == ProxySelectorMode.manual)
+                    if (!hasActiveNodes &&
+                        mode == ProxySelectorMode.manual &&
+                        !hidden.contains(HomeWidgetId.nodes.id))
                       const CurrentNodes(),
-                    if (mode == ProxySelectorMode.manual)
+                    if (mode == ProxySelectorMode.manual &&
+                        !hidden.contains(HomeWidgetId.nodesHelper.id))
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: ConstrainedBox(
                             constraints: const BoxConstraints(maxHeight: 284),
                             child: const NodesHelper()),
                       ),
-                    const _Route(),
-                    const Gap(10),
-                    const ProxySelector(home: true),
-                    if (desktopPlatforms)
+                    if (!hidden.contains(HomeWidgetId.route.id)) const _Route(),
+                    if (!hidden.contains(HomeWidgetId.route.id)) const Gap(10),
+                    if (!hidden.contains(HomeWidgetId.proxySelector.id))
+                      const ProxySelector(home: true),
+                    if (desktopPlatforms &&
+                        !hidden.contains(HomeWidgetId.inbound.id))
                       const Padding(
                         padding: EdgeInsets.only(top: 10),
                         child: _Inbound(),
                       ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: _Subscription(),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: BlocBuilder<AuthBloc, AuthState>(
-                          builder: (context, state) {
-                        if (state.pro) {
-                          return const SizedBox.shrink();
-                        }
-                        return const Promotion();
-                      }),
-                    ),
+                    if (!hidden.contains(HomeWidgetId.subscription.id))
+                      const Padding(
+                        padding: EdgeInsets.only(top: 10),
+                        child: _Subscription(),
+                      ),
+                    if (!hidden.contains(HomeWidgetId.promotion.id))
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: BlocBuilder<AuthBloc, AuthState>(
+                            builder: (context, state) {
+                          if (state.pro) {
+                            return const SizedBox.shrink();
+                          }
+                          return const Promotion();
+                        }),
+                      ),
                     const Gap(60),
                   ],
                 );
@@ -134,37 +173,60 @@ class HomePage extends StatelessWidget {
                           .copyWith(scrollbars: false),
                       child: ListView(
                         children: [
-                          const _Route(),
-                          const Gap(10),
-                          const ProxySelector(home: true),
-                          if (desktopPlatforms)
+                          if (!hidden.contains(HomeWidgetId.route.id))
+                            const _Route(),
+                          if (!hidden.contains(HomeWidgetId.route.id))
+                            const Gap(10),
+                          if (!hidden.contains(HomeWidgetId.proxySelector.id))
+                            const ProxySelector(home: true),
+                          if (desktopPlatforms &&
+                              !hidden.contains(HomeWidgetId.inbound.id))
                             const Padding(
                               padding: EdgeInsets.only(top: 8.0),
                               child: _Inbound(),
                             ),
-                          const Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child: _Subscription(),
-                          ),
-                          BlocBuilder<AuthBloc, AuthState>(
-                              builder: (context, state) {
-                            if (state.pro) {
-                              return const SizedBox.shrink();
-                            }
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 10),
-                              child: ConstrainedBox(
-                                  constraints:
-                                      BoxConstraints(maxHeight: c.maxHeight),
-                                  child: Promotion(maxHeight: c.maxHeight)),
-                            );
-                          })
+                          if (!hidden.contains(HomeWidgetId.subscription.id))
+                            const Padding(
+                              padding: EdgeInsets.only(top: 10),
+                              child: _Subscription(),
+                            ),
+                          if (!hidden.contains(HomeWidgetId.promotion.id))
+                            BlocBuilder<AuthBloc, AuthState>(
+                                builder: (context, state) {
+                              if (state.pro) {
+                                return const SizedBox.shrink();
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: ConstrainedBox(
+                                    constraints:
+                                        BoxConstraints(maxHeight: c.maxHeight),
+                                    child: Promotion(maxHeight: c.maxHeight)),
+                              );
+                            })
                         ],
                       ),
                     );
                   })),
                   const Gap(10),
-                  const Expanded(child: Nodes())
+                  // if (!hidden.contains(HomeWidgetId.nodes.id) ||
+                  //     !hidden.contains(HomeWidgetId.nodesHelper.id))
+                  Expanded(
+                      child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (!hidden.contains(HomeWidgetId.nodes.id))
+                        const Nodes(),
+                      if (!hidden.contains(HomeWidgetId.nodesHelper.id))
+                        Expanded(
+                            child: Align(
+                                alignment: Alignment.topCenter,
+                                child: ConstrainedBox(
+                                    constraints:
+                                        const BoxConstraints(maxHeight: 613),
+                                    child: const NodesHelper())))
+                    ],
+                  ))
                 ],
               );
             }),
@@ -219,6 +281,7 @@ class _SubscriptionState extends State<_Subscription> {
     final isExpired = parsedData?.expirationDate != null &&
         parsedData!.expirationDate!.isBefore(DateTime.now());
 
+    final visibility = context.read<HomeWidgetVisibilityNotifier>();
     return SizedBox(
       height: 120,
       child: GestureDetector(
@@ -230,6 +293,7 @@ class _SubscriptionState extends State<_Subscription> {
         child: HomeCard(
             title: subscription!.name,
             icon: Icons.subscriptions_rounded,
+            onHide: () => visibility.hide(HomeWidgetId.subscription.id),
             button: BlocBuilder<SubscriptionBloc, SubscriptionState>(
                 builder: (ctx, satte) {
               return satte.updatingSubs.contains(subscription!.id)
@@ -362,9 +426,11 @@ class _Inbound extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final disableTun = Platform.isWindows && !isRunningAsAdmin && isStore;
+    final visibility = context.read<HomeWidgetVisibilityNotifier>();
     return HomeCard(
         title: AppLocalizations.of(context)!.inbound,
         icon: Icons.keyboard_double_arrow_right_rounded,
+        onHide: () => visibility.hide(HomeWidgetId.inbound.id),
         child: BlocBuilder<InboundCubit, InboundMode>(builder: (ctx, mode) {
           return Column(
             mainAxisSize: MainAxisSize.min,

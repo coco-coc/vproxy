@@ -156,6 +156,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delete => 'Delete';
 
   @override
+  String get hide => 'Hide from home';
+
+  @override
   String get gettingNodesSubscriptions => 'Getting Nodes/Subscriptions';
 
   @override
@@ -355,6 +358,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get latency => 'Latency';
+
+  @override
+  String get recent => 'Recent';
 
   @override
   String get selectOneOutbound => 'Select';
@@ -1347,6 +1353,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get general => 'General';
+
+  @override
+  String get customizeHomeWidgets => 'Customize home';
+
+  @override
+  String get customizeHomeWidgetsDesc =>
+      'Choose which sections to show on the home screen.';
+
+  @override
+  String get homeWidgetStats => 'Speed & stats';
+
+  @override
+  String get homeWidgetActiveNodes => 'Active nodes';
+
+  @override
+  String get homeWidgetCurrentNodes => 'Current nodes';
+
+  @override
+  String get homeWidgetNodesHelper => 'Nodes helper';
+
+  @override
+  String get homeWidgetNodes => 'Node list';
 
   @override
   String get light => 'Light';

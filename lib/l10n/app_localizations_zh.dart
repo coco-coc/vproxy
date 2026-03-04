@@ -156,6 +156,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get delete => '删除';
 
   @override
+  String get hide => '从主页隐藏';
+
+  @override
   String get gettingNodesSubscriptions => '获取节点/订阅中';
 
   @override
@@ -355,6 +358,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get latency => '延迟';
+
+  @override
+  String get recent => '最近使用';
 
   @override
   String get selectOneOutbound => '使用';
@@ -1297,6 +1303,27 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get general => '通用';
+
+  @override
+  String get customizeHomeWidgets => '自定义主页';
+
+  @override
+  String get customizeHomeWidgetsDesc => '选择在主页上显示哪些模块。';
+
+  @override
+  String get homeWidgetStats => '速度与统计';
+
+  @override
+  String get homeWidgetActiveNodes => '活动节点';
+
+  @override
+  String get homeWidgetCurrentNodes => '当前节点';
+
+  @override
+  String get homeWidgetNodesHelper => '节点助手';
+
+  @override
+  String get homeWidgetNodes => '节点列表';
 
   @override
   String get light => '亮色';

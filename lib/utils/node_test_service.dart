@@ -47,7 +47,8 @@ class NodeTestService {
       task: _checkAndTestNodes,
       period: Duration(minutes: pref.nodeTestInterval),
       lastRunKey: 'lastNodeTestTime',
-    )..start();
+    );
+    _periodicTask!.start();
   }
 
   /// Stop the periodic testing service
@@ -58,6 +59,7 @@ class NodeTestService {
 
   /// Restart the service (useful when settings change)
   void resetInterval(int value) {
+    pref.setNodeTestInterval(value);
     _periodicTask!.setPeriod(Duration(minutes: value));
   }
 

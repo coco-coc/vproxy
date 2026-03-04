@@ -23,6 +23,7 @@ import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vx/app/home/home_widgets_setting.dart';
 import 'package:vx/app/settings/general/language.dart';
 import 'package:vx/app/settings/general/sync.dart';
 import 'package:vx/common/common.dart';
@@ -87,6 +88,21 @@ class GeneralSettingPage extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) {
                   return const SyncPage();
+                }));
+              },
+            ),
+            ListTile(
+              minTileHeight: 64,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              leading: const Icon(Icons.dashboard_customize_rounded),
+              title: Text(AppLocalizations.of(context)!.customizeHomeWidgets,
+                  style: Theme.of(context).textTheme.bodyLarge),
+              trailing: const Icon(Icons.keyboard_arrow_right_rounded),
+              onTap: () {
+                Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) {
+                  return const HomeWidgetsSettingPage();
                 }));
               },
             ),

@@ -38,6 +38,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 import 'package:vx/app/blocs/inbound.dart';
 import 'package:vx/app/home/home.dart';
+import 'package:vx/app/home/home_widget_visibility.dart';
 import 'package:vx/app/start_close_button.dart';
 import 'package:vx/app/android_host_api.g.dart';
 import 'package:vx/app/darwin_host_api.g.dart';
@@ -348,6 +349,9 @@ void main() async {
                   create: (ctx) => RealtimeSpeedNotifier(
                       controller: ctx.read<XController>(),
                       outboundRepo: ctx.read<OutboundRepo>())),
+              ChangeNotifierProvider<HomeWidgetVisibilityNotifier>(
+                  create: (ctx) =>
+                      HomeWidgetVisibilityNotifier(ctx.read<SharedPreferences>())),
               Provider<MyLayout>(create: (_) => MyLayout()),
               if (autoUpdateSupported)
                 Provider(

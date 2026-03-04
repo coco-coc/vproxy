@@ -391,6 +391,8 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get delete;
 
+  String get hide;
+
   /// No description provided for @gettingNodesSubscriptions.
   ///
   /// In en, this message translates to:
@@ -792,6 +794,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Latency'**
   String get latency;
+
+  /// No description provided for @recent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get recent;
 
   /// No description provided for @selectOneOutbound.
   ///
@@ -2496,6 +2504,20 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'General'**
   String get general;
+
+  String get customizeHomeWidgets;
+
+  String get customizeHomeWidgetsDesc;
+
+  String get homeWidgetStats;
+
+  String get homeWidgetActiveNodes;
+
+  String get homeWidgetCurrentNodes;
+
+  String get homeWidgetNodesHelper;
+
+  String get homeWidgetNodes;
 
   /// No description provided for @light.
   ///

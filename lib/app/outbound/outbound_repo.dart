@@ -262,6 +262,20 @@ class OutboundRepo {
         .getSingleOrNull();
   }
 
+  /// Returns handlers for the given IDs in the same order; skips missing IDs.
+  Future<List<OutboundHandler>> getHandlersByIds(List<int> ids) async {
+    if (ids.isEmpty) return [];
+    final db = databaseProvider.database;
+    final results = <OutboundHandler>[];
+    for (final id in ids) {
+      final h = await (db.select(db.outboundHandlers)
+            ..where((tbl) => tbl.id.equals(id)))
+          .getSingleOrNull();
+      if (h != null) results.add(h);
+    }
+    return results;
+  }
+
   Future<List<Subscription>> getAllSubs() async {
     return await (databaseProvider.database
             .select(databaseProvider.database.subscriptions))

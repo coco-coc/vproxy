@@ -867,6 +867,26 @@ extension PrefHelperExtension on SharedPreferences {
     setInt('nodesHelperSegment', segment.index);
   }
 
+  /// Up to 10 most recently used node (handler) IDs, most recent first.
+  List<int> get recentlyUsedNodeIds {
+    final list = getStringList('recentlyUsedNodeIds');
+    if (list == null) return [];
+    return list
+        .map((e) => int.tryParse(e))
+        .whereType<int>()
+        .toList();
+  }
+
+  /// Append a node ID to recently used (prepend in list, dedupe, keep max 10).
+  void addRecentlyUsedNodeId(int id) {
+    if (id <= 0) return;
+    final current = recentlyUsedNodeIds;
+    final updated = [id, ...current.where((e) => e != id)].take(10).toList();
+    setStringList(
+        'recentlyUsedNodeIds',
+        updated.map((e) => e.toString()).toList());
+  }
+
   List<String> getSelectorSubString() {
     final subString = getStringList('selectorSubString');
     if (subString == null) return [];
@@ -885,6 +905,17 @@ extension PrefHelperExtension on SharedPreferences {
 
   void setSelectorPrefix(List<String> prefix) {
     setStringList('selectorPrefix', prefix);
+  }
+
+  /// Home widget IDs that the user has chosen to hide. Empty = show all.
+  Set<String> get hiddenHomeWidgetIds {
+    final list = getStringList('hiddenHomeWidgetIds');
+    if (list == null) return {};
+    return list.toSet();
+  }
+
+  void setHiddenHomeWidgetIds(Set<String> ids) {
+    setStringList('hiddenHomeWidgetIds', ids.toList());
   }
 
   String get uniqueDeviceId {

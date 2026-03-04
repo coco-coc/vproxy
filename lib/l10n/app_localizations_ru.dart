@@ -156,6 +156,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get delete => 'Удалить';
 
   @override
+  String get hide => 'Скрыть с главной';
+
+  @override
   String get gettingNodesSubscriptions => 'Получение узлов/подписок';
 
   @override
@@ -355,6 +358,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get latency => 'Задержка';
+
+  @override
+  String get recent => 'Недавние';
 
   @override
   String get selectOneOutbound => 'Выбирать';
@@ -1347,6 +1353,28 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get general => 'Общий';
+
+  @override
+  String get customizeHomeWidgets => 'Настроить главную';
+
+  @override
+  String get customizeHomeWidgetsDesc =>
+      'Выберите, какие блоки показывать на главном экране.';
+
+  @override
+  String get homeWidgetStats => 'Скорость и статистика';
+
+  @override
+  String get homeWidgetActiveNodes => 'Активные узлы';
+
+  @override
+  String get homeWidgetCurrentNodes => 'Текущие узлы';
+
+  @override
+  String get homeWidgetNodesHelper => 'Помощник узлов';
+
+  @override
+  String get homeWidgetNodes => 'Список узлов';
 
   @override
   String get light => 'Свет';
