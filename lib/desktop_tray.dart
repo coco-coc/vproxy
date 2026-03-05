@@ -15,6 +15,59 @@
 
 part of 'main.dart';
 
+class _BackIntent extends Intent {
+  const _BackIntent();
+}
+
+class _ForwardIntent extends Intent {
+  const _ForwardIntent();
+}
+
+class _DesktopBackForwardHandler extends StatelessWidget {
+  const _DesktopBackForwardHandler({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (PointerDownEvent event) {
+        if (event.kind != PointerDeviceKind.mouse) return;
+        if (event.buttons & kBackMouseButton != 0) {
+          logger.d('mouse back button → desktopNavigateBack, history: $_historyStack');
+          desktopNavigateBack();
+        } else if (event.buttons & kForwardMouseButton != 0) {
+          logger.d('mouse forward button → desktopNavigateForward, forward: $_forwardStack');
+          desktopNavigateForward();
+        }
+      },
+      child: Shortcuts(
+        shortcuts: <ShortcutActivator, Intent>{
+          const SingleActivator(LogicalKeyboardKey.browserBack): const _BackIntent(),
+          const SingleActivator(LogicalKeyboardKey.browserForward): const _ForwardIntent(),
+        },
+        child: Actions(
+          actions: <Type, Action<Intent>>{
+            _BackIntent: CallbackAction<_BackIntent>(
+              onInvoke: (_) {
+                desktopNavigateBack();
+                return null;
+              },
+            ),
+            _ForwardIntent: CallbackAction<_ForwardIntent>(
+              onInvoke: (_) {
+                desktopNavigateForward();
+                return null;
+              },
+            ),
+          },
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
 class DesktopTray extends StatefulWidget {
   const DesktopTray({super.key, required this.child});
   final Widget child;
@@ -209,7 +262,7 @@ class _DesktopTrayState extends State<DesktopTray>
 
   @override
   Widget build(BuildContext context) {
-    return widget.child;
+    return _DesktopBackForwardHandler(child: widget.child);
   }
 }
 

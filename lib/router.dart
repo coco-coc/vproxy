@@ -25,6 +25,37 @@ final ValueNotifier<RoutingConfig> myRoutingConfig =
 );
 late final GoRouter _router;
 
+// Desktop browser-like back/forward history (separate from navigator stack).
+final List<String> _historyStack = [];
+final List<String> _forwardStack = [];
+bool _isBackForwardNav = false;
+
+void _recordLocation(String location) {
+  if (location.isEmpty || location == '/') return;
+  if (_historyStack.isNotEmpty && _historyStack.last == location) return;
+  _historyStack.add(location);
+  _forwardStack.clear();
+}
+
+/// Desktop-only: navigate back (mouse back / browser back key).
+void desktopNavigateBack() {
+  if (_historyStack.length < 2) return;
+  final current = _historyStack.removeLast();
+  _forwardStack.add(current);
+  final location = _historyStack.last;
+  _isBackForwardNav = true;
+  _router.go(location);
+}
+
+/// Desktop-only: navigate forward (mouse forward / browser forward key).
+void desktopNavigateForward() {
+  if (_forwardStack.isEmpty) return;
+  final location = _forwardStack.removeLast();
+  _historyStack.add(location);
+  _isBackForwardNav = true;
+  _router.go(location);
+}
+
 /// Initialize the router after preferences are loaded
 void initRouter(SharedPreferences pref) {
   _router = GoRouter.routingConfig(
@@ -35,10 +66,15 @@ void initRouter(SharedPreferences pref) {
     ..routerDelegate.addListener(() {
       try {
         final location = _router.routeInformationProvider.value.uri.toString();
-        // Only save if location is valid and not empty
         if (location.isNotEmpty && location != '/') {
           logger.d('set initial location: $location');
           pref.setInitialLocation(location);
+          if (_isBackForwardNav) {
+            // Location change triggered by our own back/forward — don't record.
+            _isBackForwardNav = false;
+          } else {
+            _recordLocation(location);
+          }
         }
       } catch (e) {
         // Ignore errors during initialization
