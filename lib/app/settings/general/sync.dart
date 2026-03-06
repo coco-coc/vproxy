@@ -45,21 +45,23 @@ class _SyncPageState extends State<SyncPage> {
     return Scaffold(
       appBar: getAdaptiveAppBar(
           context, Text(AppLocalizations.of(context)!.syncBackup)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: !context.watch<AuthBloc>().state.pro
-            ? Center(
-                child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: useStripe ? const ProPromotion() : const IAPPurchase(),
-              ))
-            : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const _Sync(),
-                    TextDivider(text: AppLocalizations.of(context)!.backup),
-                    const _Backup()
-                  ],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: !context.watch<AuthBloc>().state.pro
+              ? Center(
+                  child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: useStripe ? const ProPromotion() : const IAPPurchase(),
+                ))
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const _Sync(),
+                      TextDivider(text: AppLocalizations.of(context)!.backup),
+                      const _Backup()
+                    ],
+                  ),
                 ),
               ),
       ),
