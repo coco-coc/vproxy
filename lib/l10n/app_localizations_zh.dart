@@ -360,7 +360,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get latency => '延迟';
 
   @override
-  String get recent => '最近使用';
+  String get recent => '最近';
 
   @override
   String get selectOneOutbound => '使用';
@@ -1314,16 +1314,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeWidgetStats => '速度与统计';
 
   @override
-  String get homeWidgetActiveNodes => '活动节点';
-
-  @override
-  String get homeWidgetCurrentNodes => '当前节点';
-
-  @override
   String get homeWidgetNodesHelper => '节点助手';
 
   @override
-  String get homeWidgetNodes => '节点列表';
+  String get homeWidgetNodes => '当前节点';
 
   @override
   String get light => '亮色';
@@ -2006,7 +2000,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get clientOnly => '仅客户端';
 
   @override
-  String get visionDesc => 'Vision会减少连接的特征。提高性能，特别是在 Linux上。如果你启用它，服务器也必须启用它，目前，只有VX核心支持在Trojan协议中使用它。（该功能源自VLESS的Vision-RPRX-XTLS，和基础版Vision-RPRX-XTLS大致相同）';
+  String get visionDesc => 'Vision会减少连接的特征。提高性能，特别是在 Linux上。如果你启用它，服务器也必须启用它，（该功能源自VLESS的Vision-RPRX-XTLS，和基础版Vision-RPRX-XTLS大致相同）';
 
   @override
   String get activeNodes => '活跃节点';
@@ -2075,7 +2069,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get domainStrategyDesc => '影响如何连接服务器。PreferIPv4: 优先使用IPv4，如果失败，使用IPv6。PreferIPv6: 优先使用IPv6，如果失败，使用IPv4。IPv4Only: 只尝试IPv4。IPv6Only: 只尝试IPv6。';
 
   @override
-  String get uotDesc => '使用TCP传输UDP（Sagernet UDP over TCP v2 协议）。服务端也必须支持它，目前VX，Singbox，Clash支持它';
+  String get uotDesc => '使用TCP传输UDP（Sagernet UDP over TCP v2 协议）。服务端也必须支持它';
 
   @override
   String get maxConcurrency => '最大并发数';
