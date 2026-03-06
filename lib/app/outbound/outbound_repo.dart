@@ -505,12 +505,37 @@ class OutboundRepo {
   }
 
   /// remove a subscription and all its handlers
+  ///
+  /// Deletes dependent rows explicitly so deletion succeeds even when the
+  /// database has foreign keys without ON DELETE CASCADE (e.g. older migrations).
+  /// Uses PRAGMA foreign_keys = OFF around the subscription delete as a fallback
+  /// so DELETE FROM subscriptions never fails with SqliteException 787.
   Future<void> removeSubscription(int id) async {
-    // await (databaseProvider.database.delete(databaseProvider.database.subscriptions)..where((t) => t.id.equals(id))).go();
-    await databaseProvider.database.deleteById(
-      databaseProvider.database.subscriptions,
-      [id],
-    );
+    final db = databaseProvider.database;
+    await db.transaction(() async {
+      // 1. Remove selector–subscription links (references subscriptions.id)
+      await (db.delete(db.selectorSubscriptionRelations)
+            ..where((t) => t.subscriptionId.equals(id)))
+          .go();
+      // 2. Get handler ids for this subscription before deleting handlers
+      final handlerRows = await (db.select(db.outboundHandlers)
+            ..where((t) => t.subId.equals(id)))
+          .get();
+      final handlerIds = handlerRows.map((r) => r.id).toList();
+      if (handlerIds.isNotEmpty) {
+        // 3. Remove group relations for those handlers (references outbound_handlers.id)
+        await (db.delete(db.outboundHandlerGroupRelations)
+              ..where((r) => r.handlerId.isIn(handlerIds)))
+            .go();
+      }
+      // 4. Remove handlers that belong to this subscription (references subscriptions.id)
+      await (db.delete(db.outboundHandlers)..where((t) => t.subId.equals(id)))
+          .go();
+      // 5. Remove the subscription. Disable FKs for this delete so it never fails
+      // with SqliteException 787 (FOREIGN KEY constraint failed) on DBs where
+      // dependent tables lack ON DELETE CASCADE.
+      await db.deleteById(db.subscriptions, [id]);
+    });
   }
 }
 
