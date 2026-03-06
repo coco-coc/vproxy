@@ -101,7 +101,7 @@ jobs:
       - name: upload to play store
         env:
           FASTLANE_PLAY_STORE: ${{ secrets.FASTLANE_PLAY_STORE }}
-        run: cd android && fastlane beta
+        run: cd android && fastlane deploy
 
       - name: make releases dir
         run: mkdir -p releases
