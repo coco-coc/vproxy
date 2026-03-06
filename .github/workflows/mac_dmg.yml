@@ -126,7 +126,7 @@ jobs:
       - name: Build
         env:
           LOG_KEY: ${{ secrets.LOG_KEY }}
-        run: flutter build macos --dart-define=LOG_KEY=$LOG_KEY --flavor pkg --release --obfuscate --split-debug-info=symbols/darwin
+        run: flutter build macos --dart-define=LOG_KEY=$LOG_KEY --flavor pkg --release   --split-debug-info=symbols/darwin
 
       - name: Archive
         run: |

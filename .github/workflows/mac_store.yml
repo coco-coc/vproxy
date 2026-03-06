@@ -135,7 +135,7 @@ jobs:
         env:
           LOG_KEY: ${{ secrets.LOG_KEY }}
         run: |
-          flutter build macos --dart-define=LOG_KEY=$LOG_KEY --flavor production --release --obfuscate \
+          flutter build macos --dart-define=LOG_KEY=$LOG_KEY --flavor production --release   \
           --split-debug-info=symbols/darwin --build-name ${{ steps.get_version.outputs.version }} \
           --build-number ${{ steps.get_version.outputs.build_number }}
 
