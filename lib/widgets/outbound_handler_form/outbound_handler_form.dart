@@ -29,6 +29,7 @@ import 'package:tm/protos/protos/proxy/dokodemo.pb.dart';
 import 'package:tm/protos/protos/proxy/http.pb.dart';
 import 'package:tm/protos/protos/proxy/hysteria.pb.dart';
 import 'package:tm/protos/protos/proxy/shadowsocks.pb.dart';
+import 'package:tm/protos/protos/proxy/shadowsocks_2022.pb.dart';
 import 'package:tm/protos/protos/proxy/socks.pb.dart';
 import 'package:tm/protos/protos/proxy/trojan.pb.dart';
 import 'package:tm/protos/protos/proxy/vless.pb.dart';
@@ -104,6 +105,8 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
   TrojanClientConfig _trojanConfig = TrojanClientConfig();
   VlessClientConfig _vlessConfig = VlessClientConfig(encryption: "none");
   ShadowsocksClientConfig _shadowsocksConfig = ShadowsocksClientConfig();
+  Shadowsocks2022ClientConfig _shadowsocks2022Config =
+      Shadowsocks2022ClientConfig();
   SocksClientConfig _socksConfig = SocksClientConfig();
   AnytlsClientConfig _anytlsConfig = AnytlsClientConfig();
   Hysteria2ClientConfig _hysteriaConfig = _getDefaultHysteriaConfig();
@@ -159,6 +162,8 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
           _vlessConfig = any.unpackInto(_vlessConfig);
         case ProxyProtocolLabel.shadowsocks:
           _shadowsocksConfig = any.unpackInto(_shadowsocksConfig);
+        case ProxyProtocolLabel.shadowsocks2022:
+          _shadowsocks2022Config = any.unpackInto(_shadowsocks2022Config);
         case ProxyProtocolLabel.socks:
           _socksConfig = any.unpackInto(_socksConfig);
         case ProxyProtocolLabel.hysteria2:
@@ -187,6 +192,8 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
         protocol = Any.pack(_vlessConfig);
       case ProxyProtocolLabel.shadowsocks:
         protocol = Any.pack(_shadowsocksConfig);
+      case ProxyProtocolLabel.shadowsocks2022:
+        protocol = Any.pack(_shadowsocks2022Config);
       case ProxyProtocolLabel.socks:
         protocol = Any.pack(_socksConfig);
       case ProxyProtocolLabel.hysteria2:
@@ -420,6 +427,8 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
                       _selectedProtocolLabel == ProxyProtocolLabel.socks ||
                       _selectedProtocolLabel ==
                           ProxyProtocolLabel.shadowsocks ||
+                      _selectedProtocolLabel ==
+                          ProxyProtocolLabel.shadowsocks2022 ||
                       _selectedProtocolLabel == ProxyProtocolLabel.vless)
                     SwitchListTile(
                       title: Text('UDP over TCP',
@@ -449,6 +458,8 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
               _VlessClient(config: _vlessConfig),
             if (_selectedProtocolLabel == ProxyProtocolLabel.shadowsocks)
               _ShadowsocksClient(config: _shadowsocksConfig),
+            if (_selectedProtocolLabel == ProxyProtocolLabel.shadowsocks2022)
+              _Shadowsocks2022Client(config: _shadowsocks2022Config),
             if (_selectedProtocolLabel == ProxyProtocolLabel.socks)
               _SocksClient(config: _socksConfig),
             if (_selectedProtocolLabel == ProxyProtocolLabel.hysteria2)

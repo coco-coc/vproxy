@@ -421,6 +421,8 @@ class __ProxyProtocolsState extends State<_ProxyProtocols> with FormDataGetter {
             return (label, TrojanServerConfig.fromBuffer(e.value));
           case ProxyProtocolLabel.shadowsocks:
             return (label, ShadowsocksServerConfig.fromBuffer(e.value));
+          case ProxyProtocolLabel.shadowsocks2022:
+            return (label, Shadowsocks2022ServerConfig.fromBuffer(e.value));
           case ProxyProtocolLabel.socks:
             return (label, SocksServerConfig.fromBuffer(e.value));
           case ProxyProtocolLabel.hysteria2:
@@ -515,6 +517,9 @@ class __ProxyProtocolsState extends State<_ProxyProtocols> with FormDataGetter {
       case ProxyProtocolLabel.shadowsocks:
         return ShadowsocksServer(
             config: _selected.$2 as ShadowsocksServerConfig);
+      case ProxyProtocolLabel.shadowsocks2022:
+        return Shadowsocks2022Server(
+            config: _selected.$2 as Shadowsocks2022ServerConfig);
       case ProxyProtocolLabel.socks:
         return SocksServer(config: _selected.$2 as SocksServerConfig);
       case ProxyProtocolLabel.hysteria2:

@@ -21,6 +21,7 @@ import 'package:tm/protos/protos/proxy/anytls.pb.dart';
 import 'package:tm/protos/protos/proxy/dokodemo.pb.dart';
 import 'package:tm/protos/protos/proxy/http.pb.dart';
 import 'package:tm/protos/protos/proxy/shadowsocks.pb.dart';
+import 'package:tm/protos/protos/proxy/shadowsocks_2022.pb.dart';
 import 'package:tm/protos/protos/proxy/socks.pb.dart';
 import 'package:tm/protos/protos/proxy/trojan.pb.dart';
 import 'package:tm/protos/protos/proxy/vless.pb.dart';
@@ -31,6 +32,9 @@ import 'package:vx/widgets/outbound_handler_form/outbound_handler_form.dart';
 ProxyProtocolLabel getProtocolTypeFromAny(Any any) {
   // unpack the any to the specific config type
   switch (any.typeUrl) {
+    case 'type.googleapis.com/x.proxy.Shadowsocks2022ClientConfig' ||
+          'type.googleapis.com/x.proxy.Shadowsocks2022ServerConfig':
+      return ProxyProtocolLabel.shadowsocks2022;
     case 'type.googleapis.com/x.proxy.ShadowsocksClientConfig' ||
           'type.googleapis.com/x.proxy.ShadowsocksServerConfig':
       return ProxyProtocolLabel.shadowsocks;
@@ -71,6 +75,7 @@ enum ProxyProtocolLabel {
   trojan('Trojan'),
   vless('VLESS'),
   shadowsocks('Shadowsocks'),
+  shadowsocks2022('Shadowsocks 2022'),
   socks('Socks'),
   hysteria2('Hysteria2'),
   anytls('AnyTLS'),
@@ -95,6 +100,8 @@ enum ProxyProtocolLabel {
         return VlessServerConfig();
       case ProxyProtocolLabel.shadowsocks:
         return ShadowsocksServerConfig();
+      case ProxyProtocolLabel.shadowsocks2022:
+        return Shadowsocks2022ServerConfig();
       case ProxyProtocolLabel.socks:
         return SocksServerConfig();
       case ProxyProtocolLabel.hysteria2:
