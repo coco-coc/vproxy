@@ -416,6 +416,81 @@ class _ShadowsocksClientState extends State<_ShadowsocksClient> {
   }
 }
 
+class _Shadowsocks2022Client extends StatefulWidget {
+  const _Shadowsocks2022Client({required this.config});
+
+  final Shadowsocks2022ClientConfig config;
+
+  @override
+  State<_Shadowsocks2022Client> createState() => _Shadowsocks2022ClientState();
+}
+
+class _Shadowsocks2022ClientState extends State<_Shadowsocks2022Client> {
+  final _keyController = TextEditingController();
+  static const List<String> _methods = [
+    '2022-blake3-aes-128-gcm',
+    '2022-blake3-aes-256-gcm',
+    '2022-blake3-chacha20-poly1305',
+  ];
+  late String _method;
+
+  @override
+  void initState() {
+    super.initState();
+    _keyController.text = widget.config.key;
+    _method = widget.config.method.isNotEmpty
+        ? widget.config.method
+        : _methods.first;
+  }
+
+  @override
+  void dispose() {
+    _keyController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownMenu<String>(
+          requestFocusOnTap: false,
+          initialSelection: _method,
+          label: const Text('Method'),
+          onSelected: (String? m) {
+            if (m != null) {
+              setState(() {
+                _method = m;
+                widget.config.method = m;
+              });
+            }
+          },
+          dropdownMenuEntries: _methods
+              .map<DropdownMenuEntry<String>>(
+                  (m) => DropdownMenuEntry<String>(label: m, value: m))
+              .toList(),
+        ),
+        boxH10,
+        TextFormField(
+          controller: _keyController,
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.password,
+            helperText: 'PSK / password (BLAKE3-derived if not base64)',
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return AppLocalizations.of(context)!.fieldRequired;
+            }
+            widget.config.key = value;
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+}
+
 class _SocksClient extends StatefulWidget {
   const _SocksClient({required this.config});
 
@@ -841,6 +916,93 @@ class _ShadowsocksServerState extends State<ShadowsocksServer> {
                   widget.config.ivCheck = value;
                 });
               },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class Shadowsocks2022Server extends StatefulWidget {
+  const Shadowsocks2022Server({super.key, required this.config});
+
+  final Shadowsocks2022ServerConfig config;
+
+  @override
+  State<Shadowsocks2022Server> createState() => _Shadowsocks2022ServerState();
+}
+
+class _Shadowsocks2022ServerState extends State<Shadowsocks2022Server> {
+  static const List<String> _methods = [
+    '2022-blake3-aes-128-gcm',
+    '2022-blake3-aes-256-gcm',
+    '2022-blake3-chacha20-poly1305',
+  ];
+
+  late String _method;
+  bool _tcp = true;
+  bool _udp = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _method = widget.config.method.isNotEmpty
+        ? widget.config.method
+        : _methods.first;
+    _tcp = widget.config.networks.contains(Network.TCP);
+    _udp = widget.config.networks.contains(Network.UDP);
+  }
+
+  void _setNetwork(bool tcp, bool udp) {
+    setState(() {
+      _tcp = tcp;
+      _udp = udp;
+      widget.config.networks.clear();
+      if (_tcp) {
+        widget.config.networks.add(Network.TCP);
+      }
+      if (_udp) {
+        widget.config.networks.add(Network.UDP);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownMenu<String>(
+          requestFocusOnTap: false,
+          initialSelection: _method,
+          label: const Text('Method'),
+          onSelected: (String? m) {
+            if (m != null) {
+              setState(() {
+                _method = m;
+                widget.config.method = m;
+              });
+            }
+          },
+          dropdownMenuEntries: _methods
+              .map<DropdownMenuEntry<String>>(
+                  (m) => DropdownMenuEntry<String>(label: m, value: m))
+              .toList(),
+        ),
+        boxH10,
+        Row(
+          children: [
+            ChoiceChip(
+              label: const Text('TCP'),
+              selected: _tcp,
+              onSelected: (v) => _setNetwork(v, _udp),
+            ),
+            const Gap(5),
+            ChoiceChip(
+              label: const Text('UDP'),
+              selected: _udp,
+              onSelected: (v) => _setNetwork(_tcp, v),
             ),
           ],
         ),

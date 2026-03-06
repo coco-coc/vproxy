@@ -24,25 +24,15 @@ class Nodes extends StatelessWidget {
     final mode = context.select<ProxySelectorBloc, ProxySelectorMode>(
         (b) => b.state.proxySelectorMode);
     final manual = mode == ProxySelectorMode.manual;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (realtime.nodeInfos.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 300),
-                child: const ActiveNodes()),
-          ),
-        if (realtime.nodeInfos.isEmpty && manual) const CurrentNodes(),
-        Expanded(
-            child: Align(
-                alignment: Alignment.topCenter,
-                child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxHeight: 613),
-                    child: const NodesHelper())))
-      ],
-    );
+    if (realtime.nodeInfos.isNotEmpty)
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 300),
+            child: const ActiveNodes()),
+      );
+    if (realtime.nodeInfos.isEmpty && manual) return const CurrentNodes();
+    return const SizedBox();
   }
 }
 
@@ -53,18 +43,21 @@ class CurrentNodes extends StatelessWidget {
   Widget build(BuildContext context) {
     // final proxySelectorState = context.watch<ProxySelectorBloc>().state;
     // if (proxySelectorState.proxySelectorMode == ProxySelectorMode.manual) {
+    final visibility = context.read<HomeWidgetVisibilityNotifier>();
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: HomeCard(
         title: AppLocalizations.of(context)!.currentNodes,
         icon: Icons.outbound_outlined,
+        onHide: () => visibility.hide(HomeWidgetId.nodes.id),
         child: StreamBuilder(
             stream:
                 context.watch<OutboundRepo>().getHandlersStream(selected: true),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data!.isEmpty) {
-                  return const Center(child: AddMenuAnchor(elevatedButton: true));
+                  return const Center(
+                      child: AddMenuAnchor(elevatedButton: true));
                 }
                 return ListView.separated(
                   physics: const ClampingScrollPhysics(),
@@ -121,9 +114,11 @@ class ActiveNodes extends StatelessWidget {
     if (realtime.nodeInfos.isEmpty) {
       return const SizedBox();
     }
+    final visibility = context.read<HomeWidgetVisibilityNotifier>();
     return HomeCard(
         title: AppLocalizations.of(context)!.activeNodes,
         icon: Icons.outbound,
+        onHide: () => visibility.hide(HomeWidgetId.nodes.id),
         child: ConstrainedBox(
           constraints: BoxConstraints(maxHeight: desktopPlatforms ? 227 : 235),
           child: ListView.separated(
@@ -148,9 +143,9 @@ class ActiveNodes extends StatelessWidget {
 }
 
 enum NodesHelperSegment {
-  // recent,
   fastest,
   lowestLatency,
+  recent,
 }
 
 class NodesHelper extends StatefulWidget {
@@ -164,17 +159,51 @@ class _NodesHelperState extends State<NodesHelper> {
   late NodesHelperSegment _selectedSegment;
   List<OutboundHandler> _handlers = [];
   StreamSubscription<List<OutboundHandler>>? _handlerStream;
+  StreamSubscription<HandlerBeingUsed>? _handlerBeingUsedSub;
   late OutboundRepo outboundRepo;
+
+  static int _parseHandlerId(String tag) {
+    if (tag.contains('-')) {
+      return int.tryParse(tag.split('-').firstOrNull ?? '') ?? 0;
+    }
+    return int.tryParse(tag) ?? 0;
+  }
+
+  void _onHandlerBeingUsed(HandlerBeingUsed used) {
+    final id4 = _parseHandlerId(used.tag4);
+    final id6 = _parseHandlerId(used.tag6);
+    final pref = context.read<SharedPreferences>();
+    if (id4 > 0) pref.addRecentlyUsedNodeId(id4);
+    if (id6 > 0 && id6 != id4) pref.addRecentlyUsedNodeId(id6);
+    if (mounted && _selectedSegment == NodesHelperSegment.recent) {
+      _loadRecentHandlers();
+    }
+  }
+
+  Future<void> _loadRecentHandlers() async {
+    final ids = context.read<SharedPreferences>().recentlyUsedNodeIds;
+    if (ids.isEmpty) {
+      if (mounted) setState(() => _handlers = []);
+      return;
+    }
+    final handlers = await outboundRepo.getHandlersByIds(ids);
+    if (mounted) setState(() => _handlers = handlers);
+  }
 
   @override
   void initState() {
     super.initState();
     _selectedSegment = context.read<SharedPreferences>().nodesHelperSegment;
+    _handlerBeingUsedSub = context
+        .read<XController>()
+        .handlerBeingUsedStream()
+        .listen(_onHandlerBeingUsed);
   }
 
   @override
   void dispose() {
     _handlerStream?.cancel();
+    _handlerBeingUsedSub?.cancel();
     super.dispose();
   }
 
@@ -187,7 +216,10 @@ class _NodesHelperState extends State<NodesHelper> {
 
   void _loadHandlers() {
     _handlerStream?.cancel();
-    if (_selectedSegment == NodesHelperSegment.fastest) {
+    if (_selectedSegment == NodesHelperSegment.recent) {
+      _loadRecentHandlers();
+      return;
+    } else if (_selectedSegment == NodesHelperSegment.fastest) {
       _handlerStream = outboundRepo
           .getHandlersStream(orderBySpeed1MBDesc: true, limit: 10, usable: true)
           .listen((handlers) {
@@ -212,9 +244,11 @@ class _NodesHelperState extends State<NodesHelper> {
 
   @override
   Widget build(BuildContext context) {
+    final visibility = context.read<HomeWidgetVisibilityNotifier>();
     return HomeCard(
         title: AppLocalizations.of(context)!.recommendedNodes,
         icon: Icons.recommend_outlined,
+        onHide: () => visibility.hide(HomeWidgetId.nodesHelper.id),
         child: Expanded(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -234,11 +268,19 @@ class _NodesHelperState extends State<NodesHelper> {
                     label: Text(AppLocalizations.of(context)!.latency),
                     icon: const Icon(Icons.network_check, size: 16),
                   ),
+                  ButtonSegment(
+                    value: NodesHelperSegment.recent,
+                    label: Text(AppLocalizations.of(context)!.recent),
+                    icon: const Icon(Icons.history, size: 16),
+                  ),
                 ],
                 selected: {_selectedSegment},
                 onSelectionChanged: (Set<NodesHelperSegment> set) {
                   setState(() {
                     _selectedSegment = set.first;
+                    context
+                        .read<SharedPreferences>()
+                        .setNodesHelperSegment(_selectedSegment);
                     _loadHandlers();
                   });
                 },
@@ -249,13 +291,7 @@ class _NodesHelperState extends State<NodesHelper> {
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(32.0),
-                    child: Text(
-                      'No nodes available',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                    ),
+                    child: SizedBox(),
                   ),
                 )
               else
@@ -276,35 +312,55 @@ class _NodesHelperState extends State<NodesHelper> {
                               .state
                               .proxySelectorMode ==
                           ProxySelectorMode.manual;
-                      return Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: manualSelect
-                              ? () {
-                                  context.read<OutboundBloc>().add(
-                                        SwitchHandlerEvent(_handlers[index],
-                                            !_handlers[index].selected),
-                                      );
-                                }
-                              : null,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                  child:
-                                      _NodeListItem(handler: _handlers[index])),
-                              const SizedBox(width: 4),
-                              if (manualSelect)
-                                Transform.scale(
-                                  scale: 0.8,
-                                  child: Switch(
-                                      value: _handlers[index].selected,
-                                      onChanged: (value) {
-                                        context.read<OutboundBloc>().add(
-                                            SwitchHandlerEvent(
-                                                _handlers[index], value));
-                                      }),
-                                )
-                            ],
+                      return SizedBox(
+                        // height: 50,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: manualSelect
+                                ? () {
+                                    final handler = _handlers[index];
+                                    context
+                                        .read<SharedPreferences>()
+                                        .addRecentlyUsedNodeId(handler.id);
+                                    if (_selectedSegment ==
+                                        NodesHelperSegment.recent) {
+                                      _loadRecentHandlers();
+                                    }
+                                    context.read<OutboundBloc>().add(
+                                          SwitchHandlerEvent(
+                                              handler, !handler.selected),
+                                        );
+                                  }
+                                : null,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                    child: _NodeListItem(
+                                        handler: _handlers[index])),
+                                const SizedBox(width: 4),
+                                if (manualSelect)
+                                  Transform.scale(
+                                    scale: 0.8,
+                                    child: Switch(
+                                        value: _handlers[index].selected,
+                                        onChanged: (value) {
+                                          final handler = _handlers[index];
+                                          context
+                                              .read<SharedPreferences>()
+                                              .addRecentlyUsedNodeId(
+                                                  handler.id);
+                                          if (_selectedSegment ==
+                                              NodesHelperSegment.recent) {
+                                            _loadRecentHandlers();
+                                          }
+                                          context.read<OutboundBloc>().add(
+                                              SwitchHandlerEvent(
+                                                  handler, value));
+                                        }),
+                                  )
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -317,13 +373,101 @@ class _NodesHelperState extends State<NodesHelper> {
   }
 }
 
-class _NodeListItem extends StatelessWidget {
+class _NodeListItem extends StatefulWidget {
   const _NodeListItem({required this.handler});
 
   final OutboundHandler handler;
 
   @override
+  State<_NodeListItem> createState() => _NodeListItemState();
+}
+
+class _NodeListItemState extends State<_NodeListItem> {
+  bool _isTesting = false;
+
+  Future<void> _runTests() async {
+    if (_isTesting) return;
+    final handler = widget.handler;
+    final xApiClient = context.read<XApiClient>();
+    final repo = context.read<OutboundRepo>();
+    final xController = context.read<XController>();
+    final bloc = context.read<OutboundBloc>();
+    final pref = context.read<SharedPreferences>();
+
+    setState(() => _isTesting = true);
+    try {
+      // Latency test (status)
+      final pingMode = pref.pingMode;
+      if (pingMode == PingMode.Real) {
+        try {
+          final res = await xApiClient.handlerUsable(
+              api_pb.HandlerUsableRequest(handler: handler.toConfig()));
+          final ok = res.ping > 0;
+          await repo.updateHandler(handler.id,
+              ok: ok ? 1 : -1,
+              ping: res.ping,
+              serverIp: res.ip,
+              country: res.country,
+              pingTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+              speed: ok ? null : 0);
+        } catch (e) {
+          logger.e('handlerUsable error', error: e);
+        }
+      } else {
+        try {
+          int port;
+          String addr;
+          if (handler.config.hasOutbound()) {
+            addr = handler.config.outbound.address;
+            port = handler.config.outbound.port;
+            if (port == 0) port = handler.config.outbound.ports.first.from;
+          } else {
+            final c = handler.config.chain.handlers.first;
+            addr = c.address;
+            port = c.port;
+            if (port == 0) port = c.ports.first.from;
+          }
+          final ping = Tm.instance.state == TmStatus.connected
+              ? await xController.rttTest(addr, port)
+              : await xApiClient
+                  .rtt(api_pb.RttTestRequest(addr: addr, port: port));
+          await repo.updateHandler(handler.id,
+              ok: ping > 0 ? 1 : -1,
+              ping: ping,
+              pingTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000);
+        } catch (e) {
+          logger.e('rtt error', error: e);
+        }
+      }
+
+      // Speed test
+      try {
+        final resStream = await xApiClient
+            .speedTest(api_pb.SpeedTestRequest(handlers: [handler.toConfig()]));
+        await for (final res in resStream) {
+          if (!mounted) return;
+          final id = int.parse(res.tag);
+          final ok = res.down > 0 ? 1 : -1;
+          await repo.updateHandler(id,
+              ping: ok > 0 ? null : 0,
+              speed: bytesToMbps(res.down.toInt()),
+              speedTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+              ok: ok);
+          await xController.updateHandlerSpeed(res.tag, res.down.toInt());
+        }
+      } catch (e) {
+        logger.e('speedTest error', error: e);
+      }
+
+      if (mounted) bloc.add(HandlerUpdatedEvent(handler.id));
+    } finally {
+      if (mounted) setState(() => _isTesting = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final handler = widget.handler;
     final speedText =
         handler.speed > 0 ? '${handler.speed.toStringAsFixed(1)} Mbps' : '--';
     final latencyText = handler.ping > 0 ? '${handler.ping}ms' : '--';
@@ -355,49 +499,80 @@ class _NodeListItem extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          // Stats
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.speed,
-                    size: 14,
-                    color: XBlue,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    speedText,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: XBlue,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 11,
+          // Stats (tap to run speed + latency test)
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: _isTesting ? null : _runTests,
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 4,
+                ),
+                child: _isTesting
+                    ? const Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 8.0),
+                          child: smallCircularProgressIndicator,
                         ),
-                  ),
-                ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.speed,
+                                size: 14,
+                                color: XBlue,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                speedText,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: XBlue,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 11,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.network_check_rounded,
+                                size: 14,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                latencyText,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                      fontSize: 11,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
               ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.network_check_rounded,
-                    size: 14,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    latencyText,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          fontSize: 11,
-                        ),
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
         ],
       ),

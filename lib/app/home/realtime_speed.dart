@@ -1429,50 +1429,79 @@ class _NodeCardState extends State<NodeCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Header: Country flag + Name + IP
-        Row(
-          children: [
-            // Country flag
-            Padding(
-              padding: const EdgeInsets.all(6),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.1),
-                    width: 1,
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () {
+              // Ensure "All" group is visible
+              context
+                  .read<OutboundBloc>()
+                  .add(SelectedGroupChangeEvent(allGroup));
+              GoRouter.of(context).go('/node');
+              final tableState =
+                  outboundTableKey.currentState as OutboundTableState?;
+              if (tableState != null) {
+                int? handlerId;
+                if (widget.nodeInfo.id.contains('-')) {
+                  handlerId = int.tryParse(widget.nodeInfo.id.split('-').last);
+                } else {
+                  handlerId = int.tryParse(widget.nodeInfo.id);
+                }
+                if (handlerId != null) {
+                  tableState.scrollToHandler(handlerId);
+                }
+              }
+            },
+            child: // Header: Country flag + Name + IP
+                Row(
+              children: [
+                // Country flag
+                Padding(
+                  padding: const EdgeInsets.all(6),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.1),
+                        width: 1,
+                      ),
+                    ),
+                    child: widget.nodeInfo.country,
                   ),
                 ),
-                child: widget.nodeInfo.country,
-              ),
-            ),
-            const SizedBox(width: 8),
-            // Node info
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.nodeInfo.name,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  widget.nodeInfo.serverIp,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 10,
-                      ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                const SizedBox(width: 8),
+                // Node info
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.nodeInfo.name,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      widget.nodeInfo.serverIp,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            fontSize: 10,
+                          ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
+
         const SizedBox(height: 10),
         // Stats grid
         Row(

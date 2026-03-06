@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archßive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 3.3.12+2037
+version: 3.4.0+2038
 
 environment:
   sdk: ">=3.3.4 <4.0.0"
@@ -209,7 +209,7 @@ msix_config:
   trim_logo: false
   language: zh-cn, en-us
   output_path: build/windows/msix
-  windows_build_args: --obfuscate --split-debug-info=symbols --dart-define=STORE=true
+  windows_build_args: --dart-define=STORE=true
   store: true
 
 sentry:

@@ -15,6 +15,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:vx/l10n/app_localizations.dart';
 
 class HomeCard extends StatelessWidget {
   const HomeCard(
@@ -22,14 +23,59 @@ class HomeCard extends StatelessWidget {
       required this.title,
       required this.icon,
       this.button,
+      this.onHide,
       required this.child});
   final String title;
   final Widget? button;
   final IconData icon;
+  /// When non-null, long-press or right-click on the title row shows a "Hide" menu.
+  final VoidCallback? onHide;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
+    final labelRow = Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Icon(
+            icon,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+            size: 14,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.2,
+                ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        if (button != null) ...[
+          const SizedBox(width: 8),
+          button!,
+        ],
+      ],
+    );
+
+    final labelRowWithMenu = onHide != null
+        ? _HomeCardTitleMenuAnchor(
+            onHide: onHide!,
+            child: labelRow,
+          )
+        : labelRow;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -51,45 +97,58 @@ class HomeCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Label row with icon
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Icon(
-                  icon,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  size: 14,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0.2,
-                      ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              if (button != null) ...[
-                const SizedBox(width: 8),
-                button!,
-              ],
-            ],
-          ),
+          // Label row with icon (and optional hide menu)
+          labelRowWithMenu,
           const Gap(10),
           // Speed value
           child,
         ],
+      ),
+    );
+  }
+}
+
+class _HomeCardTitleMenuAnchor extends StatefulWidget {
+  const _HomeCardTitleMenuAnchor({
+    required this.onHide,
+    required this.child,
+  });
+
+  final VoidCallback onHide;
+  final Widget child;
+
+  @override
+  State<_HomeCardTitleMenuAnchor> createState() =>
+      _HomeCardTitleMenuAnchorState();
+}
+
+class _HomeCardTitleMenuAnchorState extends State<_HomeCardTitleMenuAnchor> {
+  final MenuController _menuController = MenuController();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return MenuAnchor(
+      controller: _menuController,
+      menuChildren: [
+        MenuItemButton(
+          onPressed: () {
+            widget.onHide();
+          },
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.visibility_off_outlined, size: 20),
+              const SizedBox(width: 12),
+              Text(l10n.hide),
+            ],
+          ),
+        ),
+      ],
+      child: GestureDetector(
+        onLongPress: () => _menuController.open(),
+        onSecondaryTapDown: (_) => _menuController.open(),
+        child: widget.child,
       ),
     );
   }

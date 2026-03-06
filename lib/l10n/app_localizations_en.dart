@@ -156,6 +156,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delete => 'Delete';
 
   @override
+  String get hide => 'Hide from home';
+
+  @override
   String get gettingNodesSubscriptions => 'Getting Nodes/Subscriptions';
 
   @override
@@ -355,6 +358,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get latency => 'Latency';
+
+  @override
+  String get recent => 'Recent';
 
   @override
   String get selectOneOutbound => 'Select';
@@ -1349,6 +1355,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get general => 'General';
 
   @override
+  String get customizeHomeWidgets => 'Customize home';
+
+  @override
+  String get customizeHomeWidgetsDesc => 'Choose which sections to show on the home screen.';
+
+  @override
+  String get homeWidgetStats => 'Speed & stats';
+
+  @override
+  String get homeWidgetNodesHelper => 'Nodes helper';
+
+  @override
+  String get homeWidgetNodes => 'Current nodes';
+
+  @override
   String get light => 'Light';
 
   @override
@@ -2029,7 +2050,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clientOnly => 'Client Only';
 
   @override
-  String get visionDesc => 'Vision will reduce the characteristics of the connection and improve performance, expecially on Linux. If you enable this, the server must also have this enabled, currently, only VX core support using it in Trojan protocol. (This feature originates from Vision-RPRX-XTLS of VLESS, and is roughly the same as the basic mode of Vision-RPRX-XTLS)';
+  String get visionDesc => 'Vision will reduce the characteristics of the connection and improve performance, expecially on Linux. If you enable this, the server must also have this enabled. (This feature originates from Vision-RPRX-XTLS of VLESS, and is roughly same as the basic mode of Vision-RPRX-XTLS)';
 
   @override
   String get activeNodes => 'Active Nodes';
@@ -2098,7 +2119,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get domainStrategyDesc => 'Determine how to connect to server. PreferIPv4: use IPv4, if failed, use IPv6; PreferIPv6: use IPv6, if failed, use IPv4; IPv4Only: only try IPv4; IPv6Only: only try IPv6';
 
   @override
-  String get uotDesc => 'Use TCP to transport UDP (Sagernet UDP over TCP v2 protocol). The server must also support it. Currently, VX, Singbox, Clash support it';
+  String get uotDesc => 'Use TCP to transport UDP (Sagernet UDP over TCP v2 protocol). The server must also support it';
 
   @override
   String get maxConcurrency => 'Max Concurrency';

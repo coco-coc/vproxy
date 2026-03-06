@@ -391,6 +391,12 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get delete;
 
+  /// No description provided for @hide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide from home'**
+  String get hide;
+
   /// No description provided for @gettingNodesSubscriptions.
   ///
   /// In en, this message translates to:
@@ -792,6 +798,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Latency'**
   String get latency;
+
+  /// No description provided for @recent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get recent;
 
   /// No description provided for @selectOneOutbound.
   ///
@@ -2497,6 +2509,36 @@ abstract class AppLocalizations {
   /// **'General'**
   String get general;
 
+  /// No description provided for @customizeHomeWidgets.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize home'**
+  String get customizeHomeWidgets;
+
+  /// No description provided for @customizeHomeWidgetsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose which sections to show on the home screen.'**
+  String get customizeHomeWidgetsDesc;
+
+  /// No description provided for @homeWidgetStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed & stats'**
+  String get homeWidgetStats;
+
+  /// No description provided for @homeWidgetNodesHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Nodes helper'**
+  String get homeWidgetNodesHelper;
+
+  /// No description provided for @homeWidgetNodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Current nodes'**
+  String get homeWidgetNodes;
+
   /// No description provided for @light.
   ///
   /// In en, this message translates to:
@@ -3832,7 +3874,7 @@ abstract class AppLocalizations {
   /// No description provided for @visionDesc.
   ///
   /// In en, this message translates to:
-  /// **'Vision will reduce the characteristics of the connection and improve performance, expecially on Linux. If you enable this, the server must also have this enabled, currently, only VX core support using it in Trojan protocol. (This feature originates from Vision-RPRX-XTLS of VLESS, and is roughly the same as the basic mode of Vision-RPRX-XTLS)'**
+  /// **'Vision will reduce the characteristics of the connection and improve performance, expecially on Linux. If you enable this, the server must also have this enabled. (This feature originates from Vision-RPRX-XTLS of VLESS, and is roughly same as the basic mode of Vision-RPRX-XTLS)'**
   String get visionDesc;
 
   /// No description provided for @activeNodes.
@@ -3970,7 +4012,7 @@ abstract class AppLocalizations {
   /// No description provided for @uotDesc.
   ///
   /// In en, this message translates to:
-  /// **'Use TCP to transport UDP (Sagernet UDP over TCP v2 protocol). The server must also support it. Currently, VX, Singbox, Clash support it'**
+  /// **'Use TCP to transport UDP (Sagernet UDP over TCP v2 protocol). The server must also support it'**
   String get uotDesc;
 
   /// No description provided for @maxConcurrency.

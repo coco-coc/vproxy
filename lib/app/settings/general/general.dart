@@ -23,6 +23,7 @@ import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vx/app/home/home_widgets_setting.dart';
 import 'package:vx/app/settings/general/language.dart';
 import 'package:vx/app/settings/general/sync.dart';
 import 'package:vx/common/common.dart';
@@ -90,7 +91,22 @@ class GeneralSettingPage extends StatelessWidget {
                 }));
               },
             ),
-        
+            ListTile(
+              minTileHeight: 64,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              leading: const Icon(Icons.dashboard_customize_rounded),
+              title: Text(AppLocalizations.of(context)!.customizeHomeWidgets,
+                  style: Theme.of(context).textTheme.bodyLarge),
+              trailing: const Icon(Icons.keyboard_arrow_right_rounded),
+              onTap: () {
+                Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) {
+                  return const HomeWidgetsSettingPage();
+                }));
+              },
+            ),
+
             const Divider(),
             const Padding(
               padding:
@@ -255,8 +271,6 @@ class _ThemeModeSettingState extends State<ThemeModeSetting> {
     );
   }
 }
-
-
 
 class StartOnBootSetting extends StatefulWidget {
   const StartOnBootSetting({super.key});
@@ -488,12 +502,14 @@ class _NodeTestSettingsState extends State<NodeTestSettings> {
             Switch(
               value: _autoTestNodes,
               onChanged: (value) {
-                context.read<SharedPreferences>().setAutoTestNodes(value);
                 setState(() {
                   _autoTestNodes = value;
                 });
-                // Restart the service if it exists
-                context.read<NodeTestService>().restart();
+                if (value) {
+                  context.read<NodeTestService>().start();
+                } else {
+                  context.read<NodeTestService>().stop();
+                }
               },
             ),
           ],
@@ -518,10 +534,7 @@ class _NodeTestSettingsState extends State<NodeTestSettings> {
             onChanged: (event) {
               final parsedValue = int.tryParse(_intervalController.text);
               if (parsedValue != null && parsedValue >= 0) {
-                context
-                    .read<SharedPreferences>()
-                    .setNodeTestInterval(parsedValue);
-                context.read<NodeTestService>().restart();
+                context.read<NodeTestService>().resetInterval(parsedValue);
               }
             },
           ),

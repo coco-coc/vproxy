@@ -867,18 +867,6 @@ class MockXApiClient extends _i1.Mock implements _i3.XApiClient {
       ) as _i9.Future<List<_i14.Domain>>);
 
   @override
-  _i9.Future<List<_i4.RealiScannerResult>> realiTLScanner(
-          String? destination) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #realiTLScanner,
-          [destination],
-        ),
-        returnValue: _i9.Future<List<_i4.RealiScannerResult>>.value(
-            <_i4.RealiScannerResult>[]),
-      ) as _i9.Future<List<_i4.RealiScannerResult>>);
-
-  @override
   _i9.Future<(String, String)> generateX25519KeyPair() => (super.noSuchMethod(
         Invocation.method(
           #generateX25519KeyPair,

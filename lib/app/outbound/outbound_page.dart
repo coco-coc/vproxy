@@ -152,6 +152,33 @@ class OutboundTableState extends State<OutboundTable> {
         duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
+  void scrollToHandler(int handlerId) {
+    if (!_scrollController.hasClients) return;
+    final state = context.read<OutboundBloc>().state;
+    final handlers = state.handlers;
+    final index = handlers.indexWhere((h) => h.id == handlerId);
+    if (index == -1) return;
+
+    final viewMode = state.viewMode;
+    double offset = 0;
+    if (viewMode == OutboundViewMode.list) {
+      // itemExtent for list view is 50
+      offset = index * 50.0;
+    } else {
+      final width = MediaQuery.sizeOf(context).width;
+      final crossAxisCount = _getGridCrossAxisCount(width);
+      const itemExtent = 150.0;
+      final row = index ~/ crossAxisCount;
+      offset = row * itemExtent;
+    }
+
+    _scrollController.animateTo(
+      offset,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(

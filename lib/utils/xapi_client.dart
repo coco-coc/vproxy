@@ -562,13 +562,6 @@ class XApiClient {
         .domains;
   }
 
-  Future<List<RealiScannerResult>> realiTLScanner(String destination) async {
-    await _completer.future;
-    return (await _xApiClient
-            .runRealiScanner(RunRealiScannerRequest(addr: destination)))
-        .results;
-  }
-
   Future<(String, String)> generateX25519KeyPair() async {
     await _completer.future;
     final response =

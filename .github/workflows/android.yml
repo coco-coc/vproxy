@@ -95,13 +95,13 @@ jobs:
           LOG_KEY: ${{ secrets.LOG_KEY }}
         run: |
           flutter build appbundle --dart-define=PLAY_STORE=true --dart-define=LOG_KEY=$LOG_KEY --flavor production --release \
-          --obfuscate --split-debug-info=symbols/android  --build-name ${{ steps.get_version.outputs.version }} \
+            --split-debug-info=symbols/android  --build-name ${{ steps.get_version.outputs.version }} \
           --build-number ${{ steps.get_version.outputs.build_number }}
 
       - name: upload to play store
         env:
           FASTLANE_PLAY_STORE: ${{ secrets.FASTLANE_PLAY_STORE }}
-        run: cd android && fastlane beta
+        run: cd android && fastlane deploy
 
       - name: make releases dir
         run: mkdir -p releases
@@ -110,10 +110,10 @@ jobs:
         env:
           LOG_KEY: ${{ secrets.LOG_KEY }}
         run: |
-          flutter build apk  --flavor apk --dart-define=LOG_KEY=$LOG_KEY --release --obfuscate --split-debug-info=symbols/android --split-per-abi
+          flutter build apk  --flavor apk --dart-define=LOG_KEY=$LOG_KEY --release   --split-debug-info=symbols/android --split-per-abi
           mv build/app/outputs/flutter-apk/app-arm64-v8a-apk-release.apk releases/vx-arm64-v8a.apk
           zip -j releases/vx-arm64-v8a.apk.zip releases/vx-arm64-v8a.apk
-          flutter build apk  --flavor apk --dart-define=LOG_KEY=$LOG_KEY --release --obfuscate --split-debug-info=symbols/android --dart-define=LOG_KEY=$LOG_KEY
+          flutter build apk  --flavor apk --dart-define=LOG_KEY=$LOG_KEY --release   --split-debug-info=symbols/android --dart-define=LOG_KEY=$LOG_KEY
           mv build/app/outputs/flutter-apk/app-apk-release.apk releases/vx-universal.apk
           zip -j releases/vx-universal.apk.zip releases/vx-universal.apk
           rm releases/vx-universal.apk
