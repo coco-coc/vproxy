@@ -520,12 +520,6 @@ class _MasquerateQuickDeploySetState extends State<MasquerateQuickDeploySet> {
           ),
         ),
         const Gap(2),
-        RealiScanner(
-          destination: widget.destination,
-          onDestinationTap: (destination) {
-            _destinationController.text = destination;
-          },
-        ),
         // if (_enbale80Xhttp)
         Padding(
           padding: const EdgeInsets.only(top: 8),
@@ -564,88 +558,6 @@ class _MasquerateQuickDeploySetState extends State<MasquerateQuickDeploySet> {
             ),
           ),
         ),
-      ],
-    );
-  }
-}
-
-class RealiScanner extends StatefulWidget {
-  const RealiScanner(
-      {super.key, required this.destination, required this.onDestinationTap});
-  final String destination;
-  final Function(String) onDestinationTap;
-
-  @override
-  State<RealiScanner> createState() => _RealiScannerState();
-}
-
-class _RealiScannerState extends State<RealiScanner> {
-  bool _running = false;
-  List<RealiScannerResult> _results = [];
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (!_running)
-          TextButton(
-            onPressed: () async {
-              setState(() {
-                _running = true;
-              });
-              try {
-                _results = await context
-                    .read<XApiClient>()
-                    .realiTLScanner(widget.destination);
-              } catch (e) {
-                snack(e.toString());
-              } finally {
-                setState(() {
-                  _running = false;
-                });
-              }
-            },
-            child: const Text('运行RealiTLScanner'),
-          ),
-        if (_running || _results.isNotEmpty)
-          ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxHeight: 300,
-            ),
-            child: _running
-                ? const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        mdCircularProgressIndicator,
-                        Gap(10),
-                        Text('扫描中... （最多用时1分钟）'),
-                      ],
-                    ),
-                  )
-                : ListView(
-                    shrinkWrap: true,
-                    children: _results
-                        .map((e) => FutureBuilder(
-                            future: getCountryCode(e.ip),
-                            builder: (context, snapshot) {
-                              return TextButton.icon(
-                                  onPressed: () {
-                                    if (e.domain.startsWith("*.")) {
-                                      widget.onDestinationTap(
-                                          e.domain.substring(2));
-                                    } else {
-                                      widget.onDestinationTap(e.domain);
-                                    }
-                                  },
-                                  icon: snapshot.data?.isNotEmpty ?? false
-                                      ? getCountryIcon(snapshot.data!)
-                                      : null,
-                                  label: Text('${e.ip} - ${e.domain}'));
-                            }))
-                        .toList(),
-                  ),
-          ),
       ],
     );
   }
@@ -875,13 +787,6 @@ class _AllInOneFormState extends State<AllInOneForm> {
             }
             widget.deploy.realityDomain = value ?? '';
             return null;
-          },
-        ),
-        const Gap(2),
-        RealiScanner(
-          destination: widget.destination,
-          onDestinationTap: (destination) {
-            _realityDomainController.text = destination;
           },
         ),
       ],

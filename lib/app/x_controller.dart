@@ -32,7 +32,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:system_proxy/messages.g.dart';
 import 'package:system_proxy/system_proxy.dart';
-import 'package:tm/protos/app/clientgrpc/grpc.pbgrpc.dart';
+import 'package:tm/protos/app/grpcservice/grpc.pbgrpc.dart';
 import 'package:tm/protos/app/userlogger/config.pb.dart';
 import 'package:tm/protos/common/geo/geo.pb.dart';
 import 'package:tm/protos/protos/client.pb.dart';
@@ -146,18 +146,18 @@ class XController implements MessageFlutterApi {
   // }
 
   ClientChannel? _grpcChannel;
-  ClientServiceClient? _grpcServiceClient;
-  Completer<ClientServiceClient>? _completer;
+  GrpcServiceClient? _grpcServiceClient;
+  Completer<GrpcServiceClient>? _completer;
   // windows only
   int? grpcPort;
   Certificate? _certificate;
 
-  Future<ClientServiceClient> getXClient() async {
+  Future<GrpcServiceClient> getXClient() async {
     if (_grpcChannel != null) return _grpcServiceClient!;
     if (_completer != null) {
       return await _completer!.future;
     }
-    _completer = Completer<ClientServiceClient>();
+    _completer = Completer<GrpcServiceClient>();
     if (useTcpForGrpc && _certificate == null) {
       throw Exception("certificate not found");
     }
@@ -182,7 +182,7 @@ class XController implements MessageFlutterApi {
       }
       _grpcChannel =
           ClientChannel(address, port: grpcPort ?? 0, options: channelOptions);
-      _grpcServiceClient = ClientServiceClient(_grpcChannel!);
+      _grpcServiceClient = GrpcServiceClient(_grpcChannel!);
       _completer?.complete(_grpcServiceClient!);
       return _grpcServiceClient!;
     } catch (e) {
