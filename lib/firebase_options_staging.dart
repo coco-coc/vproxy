@@ -62,11 +62,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyBWooiCE0PdPuSdU_4Wr_-Pc41nX25gTug',
-    appId: '1:629742529281:ios:0d4e5bcf56fd9132f44900',
+    appId: '1:629742529281:ios:84e3c3c3f0752d74f44900',
     messagingSenderId: '629742529281',
     projectId: 'vproxy-1407e-staging',
     storageBucket: 'vproxy-1407e-staging.firebasestorage.app',
-    iosBundleId: 'com.5vnetwork.x',
+    iosBundleId: 'com.5vnetwork.x.staging',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
@@ -78,4 +78,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'vproxy-1407e-staging.firebasestorage.app',
     measurementId: 'G-VE4XPNYPS5',
   );
+
 }

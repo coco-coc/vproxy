@@ -15,7 +15,9 @@ case $1 in
       --ios-bundle-id=com.5vnetwork.x.staging \
       --ios-out=ios/flavors/staging/GoogleService-Info.plist \
       --android-package-name=com5vnetwork.vproxy.staging \
-      --android-out=android/app/src/staging/google-services.json
+      --android-out=android/app/src/staging/google-services.json \
+      --macos-bundle-id=com.5vnetwork.x.staging \
+      --macos-out=macos/Runner/staging/GoogleService-Info.plist 
     ;;
   production)
     flutterfire config \

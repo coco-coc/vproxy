@@ -564,7 +564,7 @@ packages:
       path: "../flutter_common"
       relative: true
     source: path
-    version: "0.0.3"
+    version: "0.0.2"
   flutter_driver:
     dependency: transitive
     description: flutter

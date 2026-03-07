@@ -1,1 +1,76 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"vproxy-1407e","appId":"1:479311300497:android:7daf8b25965b3c1489bc30","fileOutput":"android/app/google-services.json"},"buildConfigurations":{"src\\staging":{"projectId":"vproxy-1407e-staging","appId":"1:629742529281:android:ee93ecf0934d980ef44900","fileOutput":"android/app/src/staging/google-services.json"}}},"ios":{"default":{"projectId":"vproxy-1407e","appId":"1:479311300497:ios:24983b421f94721d89bc30","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"macos":{"default":{"projectId":"vproxy-1407e","appId":"1:479311300497:ios:24983b421f94721d89bc30","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"vproxy-1407e","configurations":{"android":"1:479311300497:android:7daf8b25965b3c1489bc30","ios":"1:479311300497:ios:24983b421f94721d89bc30","macos":"1:479311300497:ios:24983b421f94721d89bc30"}},"lib/firebase_options_staging.dart":{"projectId":"vproxy-1407e-staging","configurations":{"android":"1:629742529281:android:ee93ecf0934d980ef44900","ios":"1:629742529281:ios:84e3c3c3f0752d74f44900","macos":"1:629742529281:ios:0d4e5bcf56fd9132f44900","windows":"1:629742529281:web:9c7f6f58f012bd93f44900"}}}}}}
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "vproxy-1407e",
+                    "appId": "1:479311300497:android:7daf8b25965b3c1489bc30",
+                    "fileOutput": "android/app/google-services.json"
+                },
+                "buildConfigurations": {
+                    "src\\staging": {
+                        "projectId": "vproxy-1407e-staging",
+                        "appId": "1:629742529281:android:ee93ecf0934d980ef44900",
+                        "fileOutput": "android/app/src/staging/google-services.json"
+                    },
+                    "src/staging": {
+                        "projectId": "vproxy-1407e-staging",
+                        "appId": "1:629742529281:android:ee93ecf0934d980ef44900",
+                        "fileOutput": "android/app/src/staging/google-services.json"
+                    }
+                }
+            },
+            "ios": {
+                "default": {
+                    "projectId": "vproxy-1407e",
+                    "appId": "1:479311300497:ios:24983b421f94721d89bc30",
+                    "uploadDebugSymbols": false,
+                    "fileOutput": "ios/Runner/GoogleService-Info.plist"
+                },
+                "buildConfigurations": {
+                    "Debug-staging": {
+                        "projectId": "vproxy-1407e-staging",
+                        "appId": "1:629742529281:ios:84e3c3c3f0752d74f44900",
+                        "uploadDebugSymbols": false,
+                        "fileOutput": "ios/flavors/staging/GoogleService-Info.plist"
+                    }
+                }
+            },
+            "macos": {
+                "default": {
+                    "projectId": "vproxy-1407e",
+                    "appId": "1:479311300497:ios:24983b421f94721d89bc30",
+                    "uploadDebugSymbols": false,
+                    "fileOutput": "macos/Runner/GoogleService-Info.plist"
+                },
+                "buildConfigurations": {
+                    "Debug-staging": {
+                        "projectId": "vproxy-1407e-staging",
+                        "appId": "1:629742529281:ios:84e3c3c3f0752d74f44900",
+                        "uploadDebugSymbols": false,
+                        "fileOutput": "macos/Runner/staging/GoogleService-Info.plist"
+                    }
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "vproxy-1407e",
+                    "configurations": {
+                        "android": "1:479311300497:android:7daf8b25965b3c1489bc30",
+                        "ios": "1:479311300497:ios:24983b421f94721d89bc30",
+                        "macos": "1:479311300497:ios:24983b421f94721d89bc30"
+                    }
+                },
+                "lib/firebase_options_staging.dart": {
+                    "projectId": "vproxy-1407e-staging",
+                    "configurations": {
+                        "android": "1:629742529281:android:ee93ecf0934d980ef44900",
+                        "ios": "1:629742529281:ios:84e3c3c3f0752d74f44900",
+                        "macos": "1:629742529281:ios:84e3c3c3f0752d74f44900",
+                        "windows": "1:629742529281:web:9c7f6f58f012bd93f44900"
+                    }
+                }
+            }
+        }
+    }
+}
