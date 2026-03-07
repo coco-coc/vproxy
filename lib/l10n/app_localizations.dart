@@ -2425,6 +2425,78 @@ abstract class AppLocalizations {
   /// **'On Windows/Linux, if your physical NIC supports IPv6, IPv6 traffic will not be handled by VX TUN, they will be handled by your physical NIC; on Android/iOS/macOS, IPv6 traffic will be blocked anyway.'**
   String get tunIpv4Desc;
 
+  /// No description provided for @tunRejectIpv6.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject IPv6 if node does not support it'**
+  String get tunRejectIpv6;
+
+  /// No description provided for @tunRejectIpv6Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Match a connection based on destination, source, application (if available), if the matched handler does not support IPv6, reject the connection'**
+  String get tunRejectIpv6Desc;
+
+  /// No description provided for @tunCidr4.
+  ///
+  /// In en, this message translates to:
+  /// **'TUN IPv4 address (CIDR)'**
+  String get tunCidr4;
+
+  /// No description provided for @tunCidr6.
+  ///
+  /// In en, this message translates to:
+  /// **'TUN IPv6 address (CIDR)'**
+  String get tunCidr6;
+
+  /// No description provided for @tunCidr4Hint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 172.23.27.1/24'**
+  String get tunCidr4Hint;
+
+  /// No description provided for @tunCidr6Hint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. fc20::1/120'**
+  String get tunCidr6Hint;
+
+  /// No description provided for @tunDns4.
+  ///
+  /// In en, this message translates to:
+  /// **'TUN DNS IPv4'**
+  String get tunDns4;
+
+  /// No description provided for @tunDns6.
+  ///
+  /// In en, this message translates to:
+  /// **'TUN DNS IPv6'**
+  String get tunDns6;
+
+  /// No description provided for @tunDns4Hint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 172.23.27.2'**
+  String get tunDns4Hint;
+
+  /// No description provided for @tunDns6Hint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. fc20::2'**
+  String get tunDns6Hint;
+
+  /// No description provided for @tunMtu.
+  ///
+  /// In en, this message translates to:
+  /// **'TUN MTU'**
+  String get tunMtu;
+
+  /// No description provided for @tunMtuHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty = platform default'**
+  String get tunMtuHint;
+
   /// No description provided for @failedToCreateAllFirstLaunch.
   ///
   /// In en, this message translates to:
