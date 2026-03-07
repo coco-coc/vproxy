@@ -20,6 +20,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_common/common.dart' hide Downloader;
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/auth/auth_bloc.dart';
@@ -86,7 +87,9 @@ class AdsProvider with ChangeNotifier {
 
   /// Move to next ad that fits within constraints
   Ad? getNextAd({double? maxHeight, double? maxWidth}) {
-    
+    if (applePlatform) {
+      return null;
+    }
     // If no ads to show, swap the queues
     if (_adsToShow.isEmpty) {
       if (_adsShown.isEmpty) return null; // No ads at all
@@ -156,6 +159,9 @@ class AdsProvider with ChangeNotifier {
 
   /// Load local ads
   void _loadAds() {
+    if (applePlatform) {
+      return;
+    }
     try {
       final metadataFile = File(path.join(_adsDirectory, _adsMetadataFile));
       if (!metadataFile.existsSync()) {

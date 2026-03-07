@@ -541,7 +541,7 @@
       }
     }
   },
-  "tunIpv6Settings": "TUN IP 设置",
+  "tunIpv6Settings": "TUN 设置",
   "alwaysEnableIpv6": "总是启用IPv6",
   "dependsOnDefaultNic": "取决于默认物理网卡",
   "dependsOnDefaultNicDesc": "如果默认物理网卡支持IPv6，TUN网卡也支持IPv6",

@@ -531,7 +531,7 @@
       }
     }
   },
-  "tunIpv6Settings": "TUN IP Settings",
+  "tunIpv6Settings": "TUN Settings",
   "alwaysEnableIpv6": "Always Enable IPv6",
   "dependsOnDefaultNic": "Depends on Default Physical NIC",
   "dependsOnDefaultNicDesc": "If the default physical NIC supports IPv6, then the TUN NIC will also support IPv6, otherwise IPv6 is not supported",

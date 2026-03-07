@@ -1288,7 +1288,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get tunIpv6Settings => 'TUN IP Settings';
+  String get tunIpv6Settings => 'TUN Settings';
 
   @override
   String get alwaysEnableIpv6 => 'Always Enable IPv6';

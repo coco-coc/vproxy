@@ -16,6 +16,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_common/common.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -180,6 +181,10 @@ class AdWantedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (applePlatform) {
+      return const SizedBox();
+    }
+
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () => launchUrl(Uri.parse(adWantedUrl)),

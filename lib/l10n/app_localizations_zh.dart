@@ -1238,7 +1238,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get tunIpv6Settings => 'TUN IP 设置';
+  String get tunIpv6Settings => 'TUN 设置';
 
   @override
   String get alwaysEnableIpv6 => '总是启用IPv6';

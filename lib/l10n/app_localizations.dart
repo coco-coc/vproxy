@@ -2398,7 +2398,7 @@ abstract class AppLocalizations {
   /// No description provided for @tunIpv6Settings.
   ///
   /// In en, this message translates to:
-  /// **'TUN IP Settings'**
+  /// **'TUN Settings'**
   String get tunIpv6Settings;
 
   /// No description provided for @alwaysEnableIpv6.
