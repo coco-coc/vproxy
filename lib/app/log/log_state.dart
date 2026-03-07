@@ -74,7 +74,7 @@ class LogFilter {
   }
 
   bool showAll() {
-    return showDirect && showProxy && substring.isEmpty && !errorOnly;
+    return showDirect && showProxy && substring.isEmpty && !errorOnly && showReject;
   }
 
   bool show(XLog log) {
