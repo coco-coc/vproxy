@@ -59,17 +59,10 @@ class AutoSubscriptionUpdater with ChangeNotifier {
         _apiClient = api,
         _outRepo = outboundRepo,
         _databaseProvider = databaseProvider {
-    if (_pref.autoUpdate && Tm.instance.state == TmStatus.disconnected) {
-      startAutoUpdate();
-    }
     Tm.instance.stateStream.listen((state) {
-      // when vpn is on, auto update is done in golang
-      if (state.status == TmStatus.connected) {
-        stopAutoUpdate();
-      } else if (state.status == TmStatus.disconnected && _pref.autoUpdate) {
-        startAutoUpdate();
-      }
+      reset();
     });
+    reset();
   }
 
   final SharedPreferences _pref;
@@ -92,14 +85,14 @@ class AutoSubscriptionUpdater with ChangeNotifier {
     return DateTime.fromMillisecondsSinceEpoch(sub[0].lastUpdate);
   }
 
-  void startAutoUpdate() {
-    if (!running) {
+  void reset() {
+    if (_pref.autoUpdate &&
+        Tm.instance.state == TmStatus.disconnected &&
+        !running) {
       _scheduleUpdate();
+    } else {
+      _stopTimer();
     }
-  }
-
-  void stopAutoUpdate() {
-    _stopTimer();
   }
 
   bool get running => timer != null;
@@ -122,6 +115,7 @@ class AutoSubscriptionUpdater with ChangeNotifier {
       initialDelay = nextUpdate.difference(DateTime.now());
     }
     logger.d("next update in ${initialDelay.inMinutes} minutes");
+    timer?.cancel();
     timer = Timer(initialDelay, () async {
       await updateAllSubs();
     });

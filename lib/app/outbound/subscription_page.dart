@@ -225,13 +225,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         });
         context.read<SharedPreferences>().setAutoUpdate(value);
         context.read<XController>().setSubscriptionAutoUpdate(value);
-        if (Tm.instance.state == TmStatus.disconnected) {
-          if (value) {
-            context.read<AutoSubscriptionUpdater>().startAutoUpdate();
-          } else {
-            context.read<AutoSubscriptionUpdater>().stopAutoUpdate();
-          }
-        }
+        context.read<AutoSubscriptionUpdater>().reset();
       },
     );
     final size = MediaQuery.sizeOf(context);
