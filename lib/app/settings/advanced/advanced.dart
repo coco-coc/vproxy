@@ -29,6 +29,28 @@ class AdvancedScreen extends StatelessWidget {
   const AdvancedScreen({super.key, this.showAppBar = true});
   final bool showAppBar;
 
+  static void _showTunDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.tunIpv6Settings),
+        content: SingleChildScrollView(
+          child: SizedBox(
+            width: double.maxFinite,
+            child: TunSetting(onSave: () => Navigator.of(ctx).pop()),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(l10n.cancel),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,10 +83,15 @@ class AdvancedScreen extends StatelessWidget {
             const Divider(),
             const FallbackSetting(),
             const Divider(),
-            const Padding(
-              padding:
-                  EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
-              child: TunSetting(),
+            ListTile(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              title: Text(
+                  AppLocalizations.of(context)!.tunIpv6Settings,
+                  style: Theme.of(context).textTheme.bodyLarge),
+              trailing: const Icon(Icons.keyboard_arrow_right_rounded),
+              onTap: () => _showTunDialog(context),
             ),
             const Divider(),
             const SystemProxySetting(),
@@ -236,8 +263,12 @@ class _FallbackSettingState extends State<FallbackSetting> {
 
 /// Widget for TUN-related settings: tun IPv4/IPv6 (tun46Setting),
 /// reject IPv6, and reject QUIC (all map to [TunConfig] fields).
+/// When [onSave] is non-null (e.g. in a dialog), nothing is written until
+/// the user taps Save; [onSave] is called after applying.
 class TunSetting extends StatefulWidget {
-  const TunSetting({super.key});
+  const TunSetting({super.key, this.onSave});
+
+  final VoidCallback? onSave;
 
   @override
   State<TunSetting> createState() => _TunSettingState();
@@ -245,6 +276,7 @@ class TunSetting extends StatefulWidget {
 
 class _TunSettingState extends State<TunSetting> {
   bool _rejectIpv6 = false;
+  TunConfig_TUN46Setting _tun46Setting = TunConfig_TUN46Setting.DYNAMIC;
   late final TextEditingController _cidr4Controller;
   late final TextEditingController _cidr6Controller;
   late final TextEditingController _dns4Controller;
@@ -256,12 +288,12 @@ class _TunSettingState extends State<TunSetting> {
     super.initState();
     final pref = context.read<SharedPreferences>();
     _rejectIpv6 = pref.rejectIpv6;
-    _cidr4Controller = TextEditingController(text: pref.tunCidr4 ?? '');
-    _cidr6Controller = TextEditingController(text: pref.tunCidr6 ?? '');
-    _dns4Controller = TextEditingController(text: pref.tunDns4 ?? '');
-    _dns6Controller = TextEditingController(text: pref.tunDns6 ?? '');
-    _mtuController = TextEditingController(
-        text: pref.tunMtu != null ? '${pref.tunMtu}' : '');
+    _tun46Setting = pref.tun46Setting;
+    _cidr4Controller = TextEditingController(text: pref.tunCidr4);
+    _cidr6Controller = TextEditingController(text: pref.tunCidr6);
+    _dns4Controller = TextEditingController(text: pref.tunDns4);
+    _dns6Controller = TextEditingController(text: pref.tunDns6);
+    _mtuController = TextEditingController(text: '${pref.tunMtu}');
   }
 
   @override
@@ -272,6 +304,26 @@ class _TunSettingState extends State<TunSetting> {
     _dns6Controller.dispose();
     _mtuController.dispose();
     super.dispose();
+  }
+
+  bool get _inDialog => widget.onSave != null;
+
+  void _applyAll() {
+    final pref = context.read<SharedPreferences>();
+    pref.setTunCidr4(
+        _cidr4Controller.text.isEmpty ? null : _cidr4Controller.text);
+    pref.setTunCidr6(
+        _cidr6Controller.text.isEmpty ? null : _cidr6Controller.text);
+    pref.setTunDns4(
+        _dns4Controller.text.isEmpty ? null : _dns4Controller.text);
+    pref.setTunDns6(
+        _dns6Controller.text.isEmpty ? null : _dns6Controller.text);
+    final mtuStr = _mtuController.text.trim();
+    final mtu = mtuStr.isEmpty ? null : int.tryParse(mtuStr);
+    pref.setTunMtu(mtu != null && mtu > 0 ? mtu : null);
+    pref.setTun46Setting(_tun46Setting);
+    pref.setRejectIpv6(_rejectIpv6);
+    context.read<XController>().restart();
   }
 
   void _saveCidr4(String value) {
@@ -303,20 +355,45 @@ class _TunSettingState extends State<TunSetting> {
     context.read<XController>().restart();
   }
 
-  void _toggleRejectIpv6(bool value) {
-    context.read<SharedPreferences>().setRejectIpv6(value);
-    setState(() => _rejectIpv6 = value);
-    context.read<XController>().restart();
-  }
-
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        const TunIpv6Settings(),
+        Text(l10n.tunIpv6Settings,
+            style: Theme.of(context).textTheme.bodyLarge),
+        const Gap(10),
+        DropdownMenu<TunConfig_TUN46Setting>(
+          initialSelection: _tun46Setting,
+          requestFocusOnTap: false,
+          dropdownMenuEntries: [
+            DropdownMenuEntry(
+                value: TunConfig_TUN46Setting.FOUR_ONLY,
+                label: l10n.tun46SettingIpv4Only),
+            DropdownMenuEntry(
+                value: TunConfig_TUN46Setting.BOTH,
+                label: l10n.tun46SettingIpv4AndIpv6),
+            DropdownMenuEntry(
+                value: TunConfig_TUN46Setting.DYNAMIC,
+                label: l10n.dependsOnDefaultNic),
+          ],
+          onSelected: (value) {
+            if (value != null) setState(() => _tun46Setting = value);
+          },
+        ),
+        const Gap(10),
+        if (_tun46Setting == TunConfig_TUN46Setting.DYNAMIC)
+          Text(l10n.dependsOnDefaultNicDesc,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ))
+        else if (_tun46Setting == TunConfig_TUN46Setting.FOUR_ONLY)
+          Text(l10n.tunIpv4Desc,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  )),
         const Gap(16),
         TextField(
           controller: _cidr4Controller,
@@ -327,8 +404,9 @@ class _TunSettingState extends State<TunSetting> {
             isDense: true,
           ),
           textInputAction: TextInputAction.next,
-          onSubmitted: _saveCidr4,
-          onEditingComplete: () => _saveCidr4(_cidr4Controller.text),
+          onSubmitted: _inDialog ? null : _saveCidr4,
+          onEditingComplete:
+              _inDialog ? null : () => _saveCidr4(_cidr4Controller.text),
         ),
         const Gap(10),
         TextField(
@@ -340,8 +418,9 @@ class _TunSettingState extends State<TunSetting> {
             isDense: true,
           ),
           textInputAction: TextInputAction.next,
-          onSubmitted: _saveCidr6,
-          onEditingComplete: () => _saveCidr6(_cidr6Controller.text),
+          onSubmitted: _inDialog ? null : _saveCidr6,
+          onEditingComplete:
+              _inDialog ? null : () => _saveCidr6(_cidr6Controller.text),
         ),
         const Gap(10),
         TextField(
@@ -353,8 +432,9 @@ class _TunSettingState extends State<TunSetting> {
             isDense: true,
           ),
           textInputAction: TextInputAction.next,
-          onSubmitted: _saveDns4,
-          onEditingComplete: () => _saveDns4(_dns4Controller.text),
+          onSubmitted: _inDialog ? null : _saveDns4,
+          onEditingComplete:
+              _inDialog ? null : () => _saveDns4(_dns4Controller.text),
         ),
         const Gap(10),
         TextField(
@@ -366,8 +446,9 @@ class _TunSettingState extends State<TunSetting> {
             isDense: true,
           ),
           textInputAction: TextInputAction.next,
-          onSubmitted: _saveDns6,
-          onEditingComplete: () => _saveDns6(_dns6Controller.text),
+          onSubmitted: _inDialog ? null : _saveDns6,
+          onEditingComplete:
+              _inDialog ? null : () => _saveDns6(_dns6Controller.text),
         ),
         const Gap(10),
         TextField(
@@ -380,8 +461,9 @@ class _TunSettingState extends State<TunSetting> {
           ),
           keyboardType: TextInputType.number,
           textInputAction: TextInputAction.done,
-          onSubmitted: _saveMtu,
-          onEditingComplete: () => _saveMtu(_mtuController.text),
+          onSubmitted: _inDialog ? null : _saveMtu,
+          onEditingComplete:
+              _inDialog ? null : () => _saveMtu(_mtuController.text),
         ),
         const Gap(16),
         SwitchListTile(
@@ -392,8 +474,30 @@ class _TunSettingState extends State<TunSetting> {
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   )),
           value: _rejectIpv6,
-          onChanged: _toggleRejectIpv6,
+          onChanged: (value) {
+            if (_inDialog) {
+              setState(() => _rejectIpv6 = value);
+            } else {
+              context.read<SharedPreferences>().setRejectIpv6(value);
+              setState(() => _rejectIpv6 = value);
+              context.read<XController>().restart();
+            }
+          },
         ),
+        if (_inDialog) ...[
+          const Gap(24),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: () {
+                _applyAll();
+                widget.onSave?.call();
+              },
+              icon: const Icon(Icons.save_outlined, size: 20),
+              label: Text(l10n.save),
+            ),
+          ),
+        ],
       ],
     );
   }
