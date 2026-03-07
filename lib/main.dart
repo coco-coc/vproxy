@@ -111,7 +111,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:win32_registry/win32_registry.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'firebase_options_staging.dart' as staging;
 part 'init.dart';
 part 'desktop_tray.dart';
 part 'router.dart';
@@ -126,9 +126,7 @@ void main() async {
   }
 
   if (enableFirebase) {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    await initializeFirebaseApp();
   }
 
   final pref = await SharedPreferences.getInstance();
@@ -168,6 +166,9 @@ void main() async {
           if (uniqueId != null) {
             isActivated = await validateLicence(
                 Licence.fromJson(jsonDecode(licence)), uniqueId);
+            if (!isActivated) {
+              await storage.delete(key: 'licence');
+            }
           }
         }
       } catch (e) {
@@ -352,8 +353,8 @@ void main() async {
                       controller: ctx.read<XController>(),
                       outboundRepo: ctx.read<OutboundRepo>())),
               ChangeNotifierProvider<HomeWidgetVisibilityNotifier>(
-                  create: (ctx) =>
-                      HomeWidgetVisibilityNotifier(ctx.read<SharedPreferences>())),
+                  create: (ctx) => HomeWidgetVisibilityNotifier(
+                      ctx.read<SharedPreferences>())),
               Provider<MyLayout>(create: (_) => MyLayout()),
               if (autoUpdateSupported)
                 Provider(
@@ -1042,4 +1043,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
   final sharedPref = await SharedPreferences.getInstance();
   sharedPref.setBool('shouldSync', true);
+}
+
+Future<void> initializeFirebaseApp() async {
+  // Determine which Firebase options to use based on the flavor
+  final firebaseOptions = switch (appFlavor) {
+    'produdction' || 'pkg' || 'apk' => DefaultFirebaseOptions.currentPlatform,
+    'staging' || null => staging.DefaultFirebaseOptions.currentPlatform,
+    _ => throw UnsupportedError('Invalid flavor: $appFlavor'),
+  };
+  await Firebase.initializeApp(options: firebaseOptions);
 }

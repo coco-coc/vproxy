@@ -66,7 +66,7 @@ android {
             resValue(
                 type = "string",
                 name = "app_name",
-                value = "asdf")
+                value = "VX")
             applicationIdSuffix = ".staging"
         }
         create("production") {
