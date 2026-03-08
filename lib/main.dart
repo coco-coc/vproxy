@@ -90,7 +90,7 @@ import 'package:flutter_common/auth/auth_provider.dart';
 import 'package:flutter_common/l10n/app_localizations.dart' as xv_localizations;
 import 'package:flutter_common/services/auto_update.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
-import 'firebase_options.dart';
+import 'firebase_options_production.dart' as production;
 import 'package:vx/utils/logger.dart';
 import 'package:vx/common/serial.dart';
 import 'package:vx/data/database.dart';
@@ -1048,7 +1048,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> initializeFirebaseApp() async {
   // Determine which Firebase options to use based on the flavor
   final firebaseOptions = switch (appFlavor) {
-    'produdction' || 'pkg' || 'apk' => DefaultFirebaseOptions.currentPlatform,
+    'produdction' || 'pkg' || 'apk' => production.DefaultFirebaseOptions.currentPlatform,
     'staging' || null => staging.DefaultFirebaseOptions.currentPlatform,
     _ => throw UnsupportedError('Invalid flavor: $appFlavor'),
   };

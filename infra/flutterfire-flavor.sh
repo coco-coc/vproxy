@@ -17,16 +17,18 @@ case $1 in
       --android-package-name=com5vnetwork.vproxy.staging \
       --android-out=android/app/src/staging/google-services.json \
       --macos-bundle-id=com.5vnetwork.x.staging \
-      --macos-out=macos/Runner/staging/GoogleService-Info.plist 
+      --macos-out=macos/flavors/staging/GoogleService-Info.plist 
     ;;
   production)
     flutterfire config \
-      --project=umivpn \
-      --out=lib/firebase_options.dart \
-      --ios-bundle-id=com.umivpn \
+      --project=vproxy-1407e \
+      --out=lib/firebase_options_production.dart \
+      --ios-bundle-id=com.5vnetwork.x \
       --ios-out=ios/flavors/production/GoogleService-Info.plist \
-      --android-package-name=com5vnetwork.umi \
-      --android-out=android/app/src/production/google-services.json
+      --android-package-name=com5vnetwork.vproxy \
+      --android-out=android/app/src/production/google-services.json \
+      --macos-bundle-id=com.5vnetwork.x \
+      --macos-out=macos/flavors/production/GoogleService-Info.plist 
     ;;
   *)
     echo "Error: Invalid environment specified. Use 'staging' or 'production'."

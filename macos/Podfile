@@ -11,6 +11,7 @@ project 'Runner', {
   'Profile' => :release,
   'Profile-staging' => :release,
   'Profile-production' => :release,
+  'Profile-pkg' => :release,
   'Release' => :release,
   'Release-staging' => :release,
   'Release-production' => :release,

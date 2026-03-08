@@ -2,16 +2,11 @@
     "flutter": {
         "platforms": {
             "android": {
-                "default": {
-                    "projectId": "vproxy-1407e",
-                    "appId": "1:479311300497:android:7daf8b25965b3c1489bc30",
-                    "fileOutput": "android/app/google-services.json"
-                },
                 "buildConfigurations": {
-                    "src\\staging": {
-                        "projectId": "vproxy-1407e-staging",
-                        "appId": "1:629742529281:android:ee93ecf0934d980ef44900",
-                        "fileOutput": "android/app/src/staging/google-services.json"
+                    "src/production": {
+                        "projectId": "vproxy-1407e",
+                        "appId": "1:479311300497:android:7daf8b25965b3c1489bc30",
+                        "fileOutput": "android/app/src/production/google-services.json"
                     },
                     "src/staging": {
                         "projectId": "vproxy-1407e-staging",
@@ -21,14 +16,20 @@
                 }
             },
             "ios": {
-                "default": {
-                    "projectId": "vproxy-1407e",
-                    "appId": "1:479311300497:ios:24983b421f94721d89bc30",
-                    "uploadDebugSymbols": false,
-                    "fileOutput": "ios/Runner/GoogleService-Info.plist"
-                },
                 "buildConfigurations": {
+                    "Release-production": {
+                        "projectId": "vproxy-1407e",
+                        "appId": "1:479311300497:ios:24983b421f94721d89bc30",
+                        "uploadDebugSymbols": false,
+                        "fileOutput": "ios/flavors/production/GoogleService-Info.plist"
+                    },
                     "Debug-staging": {
+                        "projectId": "vproxy-1407e-staging",
+                        "appId": "1:629742529281:ios:84e3c3c3f0752d74f44900",
+                        "uploadDebugSymbols": false,
+                        "fileOutput": "ios/flavors/staging/GoogleService-Info.plist"
+                    },
+                    "Release-staging": {
                         "projectId": "vproxy-1407e-staging",
                         "appId": "1:629742529281:ios:84e3c3c3f0752d74f44900",
                         "uploadDebugSymbols": false,
@@ -37,23 +38,29 @@
                 }
             },
             "macos": {
-                "default": {
-                    "projectId": "vproxy-1407e",
-                    "appId": "1:479311300497:ios:24983b421f94721d89bc30",
-                    "uploadDebugSymbols": false,
-                    "fileOutput": "macos/Runner/GoogleService-Info.plist"
-                },
                 "buildConfigurations": {
+                    "Release-production": {
+                        "projectId": "vproxy-1407e",
+                        "appId": "1:479311300497:ios:24983b421f94721d89bc30",
+                        "uploadDebugSymbols": false,
+                        "fileOutput": "macos/flavors/production/GoogleService-Info.plist"
+                    },
                     "Debug-staging": {
                         "projectId": "vproxy-1407e-staging",
                         "appId": "1:629742529281:ios:84e3c3c3f0752d74f44900",
                         "uploadDebugSymbols": false,
-                        "fileOutput": "macos/Runner/staging/GoogleService-Info.plist"
+                        "fileOutput": "macos/flavors/staging/GoogleService-Info.plist"
+                    },
+                    "Release-staging": {
+                        "projectId": "vproxy-1407e-staging",
+                        "appId": "1:629742529281:ios:84e3c3c3f0752d74f44900",
+                        "uploadDebugSymbols": false,
+                        "fileOutput": "macos/flavors/staging/GoogleService-Info.plist"
                     }
                 }
             },
             "dart": {
-                "lib/firebase_options.dart": {
+                "lib/firebase_options_production.dart": {
                     "projectId": "vproxy-1407e",
                     "configurations": {
                         "android": "1:479311300497:android:7daf8b25965b3c1489bc30",
@@ -66,8 +73,7 @@
                     "configurations": {
                         "android": "1:629742529281:android:ee93ecf0934d980ef44900",
                         "ios": "1:629742529281:ios:84e3c3c3f0752d74f44900",
-                        "macos": "1:629742529281:ios:84e3c3c3f0752d74f44900",
-                        "windows": "1:629742529281:web:9c7f6f58f012bd93f44900"
+                        "macos": "1:629742529281:ios:84e3c3c3f0752d74f44900"
                     }
                 }
             }
