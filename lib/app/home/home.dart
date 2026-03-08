@@ -55,6 +55,7 @@ import 'package:vx/main.dart';
 import 'package:collection/collection.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/xapi_client.dart';
+import 'package:vx/widgets/ad.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
 import 'package:vx/widgets/home_card.dart';
 import 'package:tm/protos/app/api/api.pb.dart' as api_pb;
@@ -106,26 +107,30 @@ class HomePage extends StatelessWidget {
           if (!hidden.contains(HomeWidgetId.stats.id)) const Gap(10),
           Expanded(
             child: Builder(builder: (ctx) {
-              final hasActiveNodes =
-                  ctx.watch<RealtimeSpeedNotifier>().nodeInfos.isNotEmpty;
               final mode = ctx.select<ProxySelectorBloc, ProxySelectorMode>(
                   (b) => b.state.proxySelectorMode);
               final size = MediaQuery.of(context).size;
               if (size.isCompact) {
                 return ListView(
                   children: [
-                    if (hasActiveNodes &&
-                        !hidden.contains(HomeWidgetId.nodes.id))
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxHeight: 310),
-                            child: const ActiveNodes()),
-                      ),
-                    if (!hasActiveNodes &&
-                        mode == ProxySelectorMode.manual &&
-                        !hidden.contains(HomeWidgetId.nodes.id))
-                      const CurrentNodes(),
+                    Consumer<RealtimeSpeedNotifier>(
+                        builder: (ctx, realtimeSpeedNotifier, child) {
+                      final hasActiveNodes =
+                          realtimeSpeedNotifier.nodeInfos.isNotEmpty;
+                      if (hasActiveNodes &&
+                          !hidden.contains(HomeWidgetId.nodes.id))
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxHeight: 310),
+                              child: const ActiveNodes()),
+                        );
+                      if (!hasActiveNodes &&
+                          mode == ProxySelectorMode.manual &&
+                          !hidden.contains(HomeWidgetId.nodes.id))
+                        return const CurrentNodes();
+                      return const SizedBox.shrink();
+                    }),
                     if (mode == ProxySelectorMode.manual &&
                         !hidden.contains(HomeWidgetId.nodesHelper.id))
                       Padding(
