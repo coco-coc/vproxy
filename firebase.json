@@ -34,6 +34,12 @@
                         "appId": "1:629742529281:ios:84e3c3c3f0752d74f44900",
                         "uploadDebugSymbols": false,
                         "fileOutput": "ios/flavors/staging/GoogleService-Info.plist"
+                    },
+                    "Debug-production": {
+                        "projectId": "vproxy-1407e",
+                        "appId": "1:479311300497:ios:24983b421f94721d89bc30",
+                        "uploadDebugSymbols": false,
+                        "fileOutput": "ios/flavors/production/GoogleService-Info.plist"
                     }
                 }
             },
@@ -56,6 +62,12 @@
                         "appId": "1:629742529281:ios:84e3c3c3f0752d74f44900",
                         "uploadDebugSymbols": false,
                         "fileOutput": "macos/flavors/staging/GoogleService-Info.plist"
+                    },
+                    "Debug-production": {
+                        "projectId": "vproxy-1407e",
+                        "appId": "1:479311300497:ios:24983b421f94721d89bc30",
+                        "uploadDebugSymbols": false,
+                        "fileOutput": "macos/flavors/production/GoogleService-Info.plist"
                     }
                 }
             },
