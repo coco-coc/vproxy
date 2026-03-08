@@ -173,13 +173,17 @@ class AdsProvider with ChangeNotifier {
           .toList();
 
       // in addition, load build-in ads from assets
-      final List<dynamic> bundledAdJson =
-          jsonDecode(await rootBundle.loadString('assets/ads/ads.json'));
-      loadedAds.addAll(bundledAdJson.map((json) {
-        final ad = Ad.fromJson(json);
-        ad.imageProvider = AssetImage('assets/ads/${ad.name}');
-        return ad;
-      }).toList());
+      try {
+        final List<dynamic> bundledAdJson =
+            jsonDecode(await rootBundle.loadString('assets/ads/ads.json'));
+        loadedAds.addAll(bundledAdJson.map((json) {
+          final ad = Ad.fromJson(json);
+          ad.imageProvider = AssetImage('assets/ads/${ad.name}');
+          return ad;
+        }).toList());
+      } catch (e) {
+        logger.d('Error loading bundled ads', error: e);
+      }
 
       // Shuffle and add to _adsToShow queue
       loadedAds.shuffle(Random());
