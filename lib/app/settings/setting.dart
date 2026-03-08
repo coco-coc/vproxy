@@ -18,6 +18,7 @@ import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_common/common.dart';
 import 'package:flutter_common/services/auto_update.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -375,16 +376,17 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
       ],
     ),
     const Gap(5),
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
-      child: OutlinedButton.icon(
-          onPressed: () {
-            launchUrl(Uri.parse(adWantedUrl));
-          },
-          label: Text(AppLocalizations.of(context)!.adWanted),
-          icon: Icon(Icons.campaign_rounded,
-              color: Theme.of(context).colorScheme.primary)),
-    ),
+    if (!applePlatform)
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: OutlinedButton.icon(
+            onPressed: () {
+              launchUrl(Uri.parse(adWantedUrl));
+            },
+            label: Text(AppLocalizations.of(context)!.adWanted),
+            icon: Icon(Icons.campaign_rounded,
+                color: Theme.of(context).colorScheme.primary)),
+      ),
     const Gap(5),
     const Version(),
     const Gap(5),

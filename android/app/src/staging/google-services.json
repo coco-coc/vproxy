@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "629742529281",
+    "project_id": "vproxy-1407e-staging",
+    "storage_bucket": "vproxy-1407e-staging.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:629742529281:android:ee93ecf0934d980ef44900",
+        "android_client_info": {
+          "package_name": "com5vnetwork.vproxy.staging"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBd-62Dnrl4Ru7_C5kJeBt0mDwPe8tr1nY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

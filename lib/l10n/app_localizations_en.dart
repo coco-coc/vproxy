@@ -1288,7 +1288,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get tunIpv6Settings => 'TUN IP Settings';
+  String get tunIpv6Settings => 'TUN Settings';
 
   @override
   String get alwaysEnableIpv6 => 'Always Enable IPv6';
@@ -1301,6 +1301,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tunIpv4Desc => 'On Windows/Linux, if your physical NIC supports IPv6, IPv6 traffic will not be handled by VX TUN, they will be handled by your physical NIC; on Android/iOS/macOS, IPv6 traffic will be blocked anyway.';
+
+  @override
+  String get tunRejectIpv6 => 'Reject IPv6 if node does not support it';
+
+  @override
+  String get tunRejectIpv6Desc => 'Match a connection based on destination, source, application (if available), if the matched handler does not support IPv6, reject the connection';
+
+  @override
+  String get tunCidr4 => 'TUN IPv4 address (CIDR)';
+
+  @override
+  String get tunCidr6 => 'TUN IPv6 address (CIDR)';
+
+  @override
+  String get tunCidr4Hint => 'e.g. 172.23.27.1/24';
+
+  @override
+  String get tunCidr6Hint => 'e.g. fc20::1/120';
+
+  @override
+  String get tunDns4 => 'TUN DNS IPv4';
+
+  @override
+  String get tunDns6 => 'TUN DNS IPv6';
+
+  @override
+  String get tunDns4Hint => 'e.g. 172.23.27.2';
+
+  @override
+  String get tunDns6Hint => 'e.g. fc20::2';
+
+  @override
+  String get tunMtu => 'TUN MTU';
+
+  @override
+  String get tunMtuHint => 'Empty = platform default';
 
   @override
   String failedToCreateAllFirstLaunch(String value) {

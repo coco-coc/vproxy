@@ -32,9 +32,8 @@ Future<bool> validateLicence(Licence licence, String uniqueId) async {
     return false;
   }
 
-  // if licence expired
-  if (licence.expiresAt != null &&
-      licence.expiresAt!.isBefore(DateTime.now())) {
+  // if licence has expiration, the licence is not valid
+  if (licence.expiresAt != null) {
     return false;
   }
 

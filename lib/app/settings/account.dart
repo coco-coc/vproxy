@@ -86,7 +86,7 @@ class _AccountPageState extends State<AccountPage> {
           body: (await getConstDeviceInfo(uniqueId)).hash());
       if (response.status == 200) {
         await storage.write(key: 'licence', value: jsonEncode(response.data));
-        print(response.data);
+        logger.d('licence: ${response.data}');
         if (await validateLicence(Licence.fromJson(response.data), uniqueId)) {
           authBloc.add(const AuthActivatedEvent());
         }
@@ -249,7 +249,7 @@ class _AccountPageState extends State<AccountPage> {
                 ),
                 const Gap(10),
                 if (state.isActivated) const ActivatedIcon(),
-                if (!state.isActivated)
+                if (!state.isActivated && state.user!.lifetimePro == true)
                   Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -296,7 +296,7 @@ class _AccountPageState extends State<AccountPage> {
                 const Gap(20),
                 divider,
                 const Gap(20),
-                const _Invitation(),
+                // const _Invitation(),
               ],
             ),
           );

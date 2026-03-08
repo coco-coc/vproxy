@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "479311300497",
+    "project_id": "vproxy-1407e",
+    "storage_bucket": "vproxy-1407e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:479311300497:android:7daf8b25965b3c1489bc30",
+        "android_client_info": {
+          "package_name": "com5vnetwork.vproxy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCPgguh3Ga7OAoCX3FAsckTLAjZmpDUzA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -34,7 +34,9 @@ platform :ios do
 
   desc "Push a new beta build to TestFlight"
   lane :beta do
-    increment_build_number(xcodeproj: "Runner.xcodeproj")
+    # increment_build_number(
+    #   build_number: app_store_build_number + 1,  
+    #   xcodeproj: "Runner.xcodeproj")
     build_app(
     workspace: "Runner.xcworkspace",
     skip_build_archive: true,
