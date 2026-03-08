@@ -20,11 +20,11 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_common/common.dart' hide Downloader;
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/auth/auth_bloc.dart';
-import 'package:vx/common/common.dart';
 import 'package:vx/utils/download.dart';
 import 'package:vx/utils/logger.dart';
 
@@ -79,6 +79,7 @@ class AdsProvider with ChangeNotifier {
   // Remote URL to fetch ads configuration from
   // The URL should return a JSON array of ad objects with 'name', 'website', and 'imageUrl'
   String? remoteUrl;
+  // This directory will contain a metadata file and a list of ads
   final String _adsDirectory;
   static const String _adsMetadataFile = 'ads.json';
   final SharedPreferences _sharedPreferences;
@@ -108,11 +109,11 @@ class AdsProvider with ChangeNotifier {
     final iterator = _adsToShow.iterator;
     while (iterator.moveNext()) {
       final ad = iterator.current;
-      // Check if ad meets constraints
-      if (maxHeight != null && ad.height > maxHeight) {
+      final preferredSize = ad.fittedSize();
+      if (maxHeight != null && preferredSize.height > maxHeight) {
         continue;
       }
-      if (maxWidth != null && ad.width > maxWidth) {
+      if (maxWidth != null && preferredSize.width > maxWidth) {
         continue;
       }
       selectedAd = ad;
@@ -120,13 +121,14 @@ class AdsProvider with ChangeNotifier {
     }
     // if no ad meets constraints, try to find one that meets constraints * 1.5
     if (selectedAd == null) {
-      while (iterator.moveNext()) {
-        final ad = iterator.current;
-        // Check if ad meets constraints
-        if (maxHeight != null && ad.height > maxHeight * 1.5) {
+      final relaxedIterator = _adsToShow.iterator;
+      while (relaxedIterator.moveNext()) {
+        final ad = relaxedIterator.current;
+        final preferredSize = ad.fittedSize();
+        if (maxHeight != null && preferredSize.height > maxHeight * 1.5) {
           continue;
         }
-        if (maxWidth != null && ad.width > maxWidth * 1.5) {
+        if (maxWidth != null && preferredSize.width > maxWidth * 1.5) {
           continue;
         }
         selectedAd = ad;
@@ -143,8 +145,6 @@ class AdsProvider with ChangeNotifier {
     _adsToShow.remove(selectedAd);
     _adsShown.add(selectedAd);
     return selectedAd;
-
-    // return null; // No suitable ads available
   }
 
   DateTime? get _lastAdsFetchTime {
@@ -158,10 +158,7 @@ class AdsProvider with ChangeNotifier {
   }
 
   /// Load local ads
-  void _loadAds() {
-    if (applePlatform) {
-      return;
-    }
+  void _loadAds() async {
     try {
       final metadataFile = File(path.join(_adsDirectory, _adsMetadataFile));
       if (!metadataFile.existsSync()) {
@@ -174,6 +171,15 @@ class AdsProvider with ChangeNotifier {
           .map((json) => Ad.fromJson(json))
           .where((ad) => ad.expiresAt.isAfter(DateTime.now()))
           .toList();
+
+      // in addition, load build-in ads from assets
+      final List<dynamic> bundledAdJson =
+          jsonDecode(await rootBundle.loadString('assets/ads/ads.json'));
+      loadedAds.addAll(bundledAdJson.map((json) {
+        final ad = Ad.fromJson(json);
+        ad.imageProvider = AssetImage('assets/ads/${ad.name}');
+        return ad;
+      }).toList());
 
       // Shuffle and add to _adsToShow queue
       loadedAds.shuffle(Random());
@@ -193,9 +199,7 @@ class AdsProvider with ChangeNotifier {
   /// Fetch ads.zip from remote URL and extract it to _adsDirectory
   Future<void> _fetchAds() async {
     try {
-      if (isProduction()) {
       await _downloader.downloadZip(_adsZipUrl, _adsDirectory);
-      }
       _setLastAdsFetchTime(DateTime.now());
       _loadAds();
     } catch (e) {
@@ -260,6 +264,9 @@ class Ad {
   final DateTime expiresAt;
   final int width;
   final int height;
+  final int? assetWidthPx;
+  final int? assetHeightPx;
+  final String? adSizePreset;
   final AdImageType imageType;
   ImageProvider? imageProvider;
 
@@ -269,8 +276,48 @@ class Ad {
     required this.expiresAt,
     required this.width,
     required this.height,
+    this.assetWidthPx,
+    this.assetHeightPx,
+    this.adSizePreset,
     required this.imageType,
   });
+
+  double get imageAspectRatio {
+    final sourceWidth = assetWidthPx ?? width;
+    final sourceHeight = assetHeightPx ?? height;
+    if (sourceWidth <= 0 || sourceHeight <= 0) {
+      return 1;
+    }
+    return sourceWidth / sourceHeight;
+  }
+
+  Size fittedSize({double? maxWidth, double? maxHeight}) {
+    var fittedWidth = width.toDouble();
+    var fittedHeight = height.toDouble();
+    final aspectRatio = imageAspectRatio;
+
+    if (fittedWidth > 0 && fittedHeight > 0) {
+      final preferredHeight = fittedWidth / aspectRatio;
+      if (preferredHeight <= fittedHeight) {
+        fittedHeight = preferredHeight;
+      } else {
+        fittedWidth = fittedHeight * aspectRatio;
+      }
+    }
+
+    if (maxWidth != null && fittedWidth > maxWidth) {
+      final scale = maxWidth / fittedWidth;
+      fittedWidth *= scale;
+      fittedHeight *= scale;
+    }
+    if (maxHeight != null && fittedHeight > maxHeight) {
+      final scale = maxHeight / fittedHeight;
+      fittedWidth *= scale;
+      fittedHeight *= scale;
+    }
+
+    return Size(fittedWidth, fittedHeight);
+  }
 
   Map<String, dynamic> toJson() => {
         'name': name,
@@ -278,6 +325,9 @@ class Ad {
         'expiresAt': expiresAt.toIso8601String(),
         'width': width,
         'height': height,
+        if (assetWidthPx != null) 'assetWidthPx': assetWidthPx,
+        if (assetHeightPx != null) 'assetHeightPx': assetHeightPx,
+        if (adSizePreset != null) 'adSizePreset': adSizePreset,
         'imageType': imageType.name,
       };
 
@@ -287,6 +337,9 @@ class Ad {
         expiresAt: DateTime.parse(json['expiresAt']),
         width: json['width'],
         height: json['height'],
+        assetWidthPx: json['assetWidthPx'],
+        assetHeightPx: json['assetHeightPx'],
+        adSizePreset: json['adSizePreset'],
         imageType: AdImageType.values.byName(json['imageType']),
       );
 }

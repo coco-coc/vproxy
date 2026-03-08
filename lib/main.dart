@@ -779,8 +779,8 @@ class _AppState extends State<App> with WidgetsBindingObserver {
           builder: (context, state) {
             return LayoutBuilder(
               builder: (context, constraints) {
-                // logger.d(
-                //     "W: ${constraints.maxWidth}, H: ${constraints.maxHeight}");
+                logger.d(
+                    "W: ${constraints.maxWidth}, H: ${constraints.maxHeight}");
                 Provider.of<MyLayout>(context, listen: false)
                     .setFields(constraints.maxWidth, constraints.maxHeight);
                 if (constraints.isCompact) {
