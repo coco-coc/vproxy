@@ -1048,9 +1048,12 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> initializeFirebaseApp() async {
   // Determine which Firebase options to use based on the flavor
   final firebaseOptions = switch (appFlavor) {
-    'produdction' || 'pkg' || 'apk' => production.DefaultFirebaseOptions.currentPlatform,
-    'staging' || null => staging.DefaultFirebaseOptions.currentPlatform,
-    _ => throw UnsupportedError('Invalid flavor: $appFlavor'),
+    'production' ||
+    'pkg' ||
+    'apk' =>
+      production.DefaultFirebaseOptions.currentPlatform,
+    'staging' => staging.DefaultFirebaseOptions.currentPlatform,
+    _ => null,
   };
   await Firebase.initializeApp(options: firebaseOptions);
 }
