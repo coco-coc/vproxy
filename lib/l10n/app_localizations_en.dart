@@ -117,6 +117,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscription => 'Subscription';
 
   @override
+  String get autoUpdate => 'Auto Update';
+
+  @override
   String get unknown => 'Unknown';
 
   @override
@@ -309,7 +312,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get testArea => 'Test Area';
 
   @override
-  String get autoUpdate => 'Automatically Download New Version';
+  String get autoDownload => 'Automatically Download New Version';
 
   @override
   String get unableToGetNodes => 'Failed to get nodes, your pasteboard does not contain a subscription url that VX can parse';

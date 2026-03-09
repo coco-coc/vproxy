@@ -58,7 +58,8 @@ class PromotionPage extends StatelessWidget {
                         padding: const EdgeInsets.only(bottom: 10),
                         child: AdWidget(
                             ad: snapshot.data![index],
-                            maxHeight: c.maxHeight - 50),
+                            maxHeight: c.maxHeight - 50,
+                            maxWidth: c.maxWidth),
                       );
                     });
               },
@@ -82,7 +83,7 @@ class PromotionPage extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: AdWidget(
-                    ad: ad, maxHeight: c.maxHeight - 50),
+                    ad: ad, maxHeight: c.maxHeight - 50, maxWidth: c.maxWidth),
               );
             },
           );

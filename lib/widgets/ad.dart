@@ -20,9 +20,6 @@ import 'package:flutter_common/common.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-// import 'package:google_mobile_ads/google_mobile_ads.dart';
-
-
 import 'package:vx/common/extension.dart';
 import 'package:vx/data/ads_provider.dart';
 import 'package:vx/l10n/app_localizations.dart';
@@ -90,7 +87,11 @@ class _AdsState extends State<Ads> {
           if (ad == null) {
             return const AdWantedCard();
           }
-          return AdWidget(ad: ad);
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              return AdWidget(ad: ad!, maxWidth: constraints.maxWidth);
+            },
+          );
         }, childCount: context.read<AdsProvider>().adsLen + 1),
         gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount,
@@ -99,16 +100,27 @@ class _AdsState extends State<Ads> {
 }
 
 class AdWidget extends StatelessWidget {
-  const AdWidget({super.key, required this.ad, this.maxHeight});
+  const AdWidget({
+    super.key,
+    required this.ad,
+    this.maxHeight,
+    this.maxWidth,
+  });
   final Ad ad;
   final double? maxHeight;
+  final double? maxWidth;
 
   @override
   Widget build(BuildContext context) {
+    final fittedSize = ad.fittedSize(
+      maxHeight: maxHeight,
+      maxWidth: maxWidth,
+    );
     return Stack(
       children: [
-        ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: maxHeight ?? double.infinity),
+        SizedBox(
+          width: fittedSize.width,
+          height: fittedSize.height,
           child: Card(
             margin: EdgeInsets.zero,
             elevation: 2,
@@ -124,8 +136,9 @@ class AdWidget extends StatelessWidget {
                 cursor: SystemMouseCursors.click,
                 child: Image(
                   image: ad.imageProvider!,
-                  fit: BoxFit.fitWidth,
-                  width: ad.width.toDouble() * 2,
+                  fit: BoxFit.fill,
+                  width: fittedSize.width,
+                  height: fittedSize.height,
                 ),
               ),
             ),
@@ -221,342 +234,18 @@ class AdWantedCard extends StatelessWidget {
   }
 }
 
-// import 'package:google_mobile_ads/google_mobile_ads.dart';
-
-// class TestAdIdManager extends IAdIdManager {
-//   const TestAdIdManager();
-
-//   @override
-//   AppAdIds? get admobAdIds => null;
-
-//   @override
-//   AppAdIds? get unityAdIds => AppAdIds(
-//         appId: Platform.isAndroid ? '5923221' : '5923220',
-//         bannerId: Platform.isAndroid ? 'Banner_Android' : 'Banner_iOS',
-//         interstitialId:
-//             Platform.isAndroid ? 'Interstitial_Android' : 'Interstitial_iOS',
-//         rewardedId: Platform.isAndroid ? 'Rewarded_Android' : 'Rewarded_iOS',
-//       );
-
-//   @override
-//   AppAdIds? get appLovinAdIds => null;
-
-//   @override
-//   AppAdIds? get fbAdIds => null;
-// }
-
-// class MyBannderAdWidget extends StatefulWidget {
-//   MyBannderAdWidget({super.key, this.adSize = AdSize.fluid});
-
-//   /// The requested size of the banner. Defaults to [AdSize.banner].
-//   final AdSize adSize;
-
-//   /// The AdMob ad unit to show.
-//   ///
-//   /// TODO: replace this test ad unit with your own ad unit
-//   final String adUnitId = Platform.isAndroid
-//       // Use this ad unit on Android...
-//       ? androidAdUnitId
-//       // ... or this one on iOS.
-//       : iosAdUnitId;
-//   @override
-//   State<MyBannderAdWidget> createState() => _MyBannderAdWidgetState();
-// }
-
-// class _MyBannderAdWidgetState extends State<MyBannderAdWidget> {
-//   BannerAd? _bannerAd;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _loadAd();
-//   }
-
-//   @override
-//   void dispose() {
-//     _bannerAd?.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return SafeArea(
-//       child: SizedBox(
-//         width: widget.adSize.width.toDouble(),
-//         height: widget.adSize.height.toDouble(),
-//         child: _bannerAd == null
-//             // Nothing to render yet.
-//             ? const SizedBox()
-//             // The actual ad.
-//             : AdWidget(ad: _bannerAd!),
-//       ),
-//     );
-//   }
-
-//   void _loadAd() {
-//     final bannerAd = BannerAd(
-//       size: widget.adSize,
-//       adUnitId: widget.adUnitId,
-//       request: const AdRequest(),
-//       listener: BannerAdListener(
-//         // Called when an ad is successfully received.
-//         onAdLoaded: (ad) {
-//           if (!mounted) {
-//             ad.dispose();
-//             return;
-//           }
-//           setState(() {
-//             _bannerAd = ad as BannerAd;
-//           });
-//         },
-//         // Called when an ad request failed.
-//         onAdFailedToLoad: (ad, error) {
-//           debugPrint('BannerAd failed to load: $error');
-//           ad.dispose();
-//         },
-//       ),
-//     );
-
-//     // Start loading.
-//     bannerAd.load();
-//   }
-// }
-
-// const androidAdUnitId = 'ca-app-pub-5364901025165933/3926890225';
-// const iosAdUnitId = 'ca-app-pub-5364901025165933/7390334969';
-
-// class MyScrollingAdWidget extends StatefulWidget {
-//   MyScrollingAdWidget({super.key, required this.width, required this.height});
-
-//   /// The requested size of the banner. Defaults to [AdSize.banner].
-//   final double width;
-//   final double height;
-
-//   /// The AdMob ad unit to show.
-//   ///
-//   /// TODO: replace this test ad unit with your own ad unit
-//   final String adUnitId = Platform.isAndroid
-//       // Use this ad unit on Android...
-//       ? androidAdUnitId
-//       // ... or this one on iOS.
-//       : iosAdUnitId;
-//   @override
-//   State<MyScrollingAdWidget> createState() => _MyScrollingAdWidgetState();
-// }
-
-// class _MyScrollingAdWidgetState extends State<MyScrollingAdWidget> {
-//   BannerAd? _bannerAd;
-//   AdSize? _platformAdSize;
-//   bool _isLoaded = false;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _loadAd();
-//   }
-
-//   @override
-//   void dispose() {
-//     _bannerAd?.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     if (!_isLoaded || _platformAdSize == null || _bannerAd == null) {
-//       return const SizedBox();
-//     }
-//     return SafeArea(
-//       child: SizedBox(
-//         width: _platformAdSize!.width.toDouble(),
-//         height: _platformAdSize!.height.toDouble(),
-//         child: AdWidget(ad: _bannerAd!),
-//       ),
-//     );
-//   }
-
-//   Future<void> _loadAd() async {
-//     await _bannerAd?.dispose();
-//     setState(() {
-//       _bannerAd = null;
-//       _isLoaded = false;
-//     });
-
-//     AdSize size = AdSize.getInlineAdaptiveBannerAdSize(
-//         widget.width.truncate(), widget.height.truncate());
-//     final bannerAd = BannerAd(
-//       size: size,
-//       adUnitId: widget.adUnitId,
-//       request: const AdRequest(),
-//       listener: BannerAdListener(
-//         onAdLoaded: (Ad ad) async {
-//           print('Inline adaptive banner loaded: ${ad.responseInfo}');
-
-//           // After the ad is loaded, get the platform ad size and use it to
-//           // update the height of the container. This is necessary because the
-//           // height can change after the ad is loaded.
-//           BannerAd bannerAd = (ad as BannerAd);
-//           final AdSize? size = await bannerAd.getPlatformAdSize();
-//           if (size == null) {
-//             print('Error: getPlatformAdSize() returned null for $bannerAd');
-//             return;
-//           }
-
-//           if (mounted) {
-//             setState(() {
-//               _bannerAd = bannerAd;
-//               _isLoaded = true;
-//               _platformAdSize = size;
-//             });
-//           }
-//         },
-//         onAdFailedToLoad: (Ad ad, LoadAdError error) {
-//           print('Inline adaptive banner failedToLoad: $error');
-//           ad.dispose();
-//         },
-//       ),
-//     );
-
-//     // Start loading.
-//     await bannerAd.load();
-//   }
-// }
-
-// class ControlAdsChangeNotifier extends ChangeNotifier {
-//   final String adUnitId = Platform.isAndroid
-//       // Use this ad unit on Android...
-//       ? androidAdUnitId
-//       // ... or this one on iOS.
-//       : iosAdUnitId;
-//   // int _scrollingAdWidth = 0;
-//   // width will be 284 always
-//   double? _controlAdHeight;
-//   static const _controlAdWidth = 284;
-//   // height will be 50 always
-//   // int _topBannerAdWidth = 0;
-//   // static const _topBannerAdHeight = 50;
-//   // BannerAd? scrollingAd;
-//   BannerAd? controlAd;
-//   Timer? _timer;
-//   late final StreamSubscription<AuthState> _authStateSubscription;
-//   final AuthBloc _authBloc;
-
-//   // BannerAd? topBannerAd;
-//   ControlAdsChangeNotifier(this._authBloc) {
-//     _authStateSubscription = _authBloc.stream.listen((state) {
-//       if (state.isPro && _timer != null) {
-//         _timer?.cancel();
-//         _timer = null;
-//       } else if (!state.isPro && _timer == null) {
-//         _startTimer();
-//       }
-//     });
-//   }
-
-//   void _startTimer() {
-//     _timer = Timer.periodic(const Duration(seconds: 60), (timer) {
-//       _load();
-//     });
-//     _load();
-//   }
-
-//   @override
-//   void dispose() {
-//     _authStateSubscription.cancel();
-//     _timer?.cancel();
-//     controlAd?.dispose();
-//     super.dispose();
-//   }
-
-//   void _load() {
-//     if (controlAd == null) {
-//       print('loading control ad');
-//       controlAd?.dispose();
-//       controlAd = null;
-//       controlAd = BannerAd(
-//         size: AdSize(
-//             width: _controlAdWidth, height: _controlAdHeight?.toInt() ?? 300),
-//         adUnitId: adUnitId,
-//         request: const AdRequest(),
-//         listener: BannerAdListener(
-//           // Called when an ad is successfully received.
-//           onAdLoaded: (ad) {
-//             ad.dispose();
-//             return;
-//           },
-//           // Called when an ad request failed.
-//           onAdFailedToLoad: (ad, error) {
-//             debugPrint('BannerAd failed to load: $error');
-//             ad.dispose();
-//           },
-//         ),
-//       );
-//       notifyListeners();
-//     }
-//   }
-
-//   BannerAd? getControlAd(double height) {
-//     print('getControlAd: $height');
-//     if (_controlAdHeight != height) {
-//       _controlAdHeight = height;
-//       _load();
-//     }
-//     return controlAd;
-//   }
-
-  // void _reload() {
-  //   if (scrollingAd != null && scrollingAd!.isMounted) {
-  //     scrollingAd!.dispose();
-  //     scrollingAd = null;
-  //     scrollingAd = BannerAd(
-  //       size: AdSize(width: _scrollingAdWidth, height: _controlAdHeight),
-  //       adUnitId: adUnitId,
-  //       request: const AdRequest(),
-  //       listener: BannerAdListener(
-  //         // Called when an ad is successfully received.
-  //         onAdLoaded: (ad) {
-  //           ad.dispose();
-  //           return;
-  //         },
-  //         // Called when an ad request failed.
-  //         onAdFailedToLoad: (ad, error) {
-  //           debugPrint('BannerAd failed to load: $error');
-  //           ad.dispose();
-  //         },
-  //       ),
-  //     );
-  //   }
-  //   if (controlAd != null && controlAd!.isMounted) {
-  //     controlAd!.dispose();
-  //     controlAd = null;
-  //   }
-  //   if (topBannerAd != null && topBannerAd!.isMounted) {
-  //     topBannerAd!.dispose();
-  //     topBannerAd = null;
-  //   }
-  // }
-
-  // void setScrollingAdWidth(int width) {
-  //   if (_scrollingAdWidth == width) return;
-  //   _scrollingAdWidth = width;
-  //   scrollingAd?.dispose();
-  //   scrollingAd = null;
-  //   notifyListeners();
-  // }
-
-  // void setControlAdHeight(int height) {
-  //   if (_controlAdHeight == height) return;
-  //   _controlAdHeight = height;
-  //   controlAd?.dispose();
-  //   controlAd = null;
-  //   notifyListeners();
-  // }
-
-  // void setTopBannerAdWidth(int width) {
-  //   if (_topBannerAdWidth == width) return;
-  //   _topBannerAdWidth = width;
-  //   topBannerAd?.dispose();
-  //   topBannerAd = null;
-  //   notifyListeners();
-  // }
-// }
+class Promotion extends StatelessWidget {
+  const Promotion({super.key, this.maxHeight, this.maxWidth});
+  final double? maxHeight;
+  final double? maxWidth;
+  @override
+  Widget build(BuildContext context) {
+    final ad = context
+        .watch<AdsProvider>()
+        .getNextAd(maxHeight: maxHeight, maxWidth: maxWidth);
+    if (ad == null) {
+      return const SizedBox.shrink();
+    }
+    return AdWidget(ad: ad, maxHeight: maxHeight, maxWidth: maxWidth);
+  }
+}

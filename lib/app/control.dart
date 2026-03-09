@@ -122,21 +122,7 @@ class Control extends StatelessWidget {
   }
 }
 
-class Promotion extends StatelessWidget {
-  const Promotion({super.key, this.maxHeight, this.maxWidth});
-  final double? maxHeight;
-  final double? maxWidth;
-  @override
-  Widget build(BuildContext context) {
-    final ad = context
-        .watch<AdsProvider>()
-        .getNextAd(maxHeight: maxHeight, maxWidth: maxWidth);
-    if (ad == null) {
-      return const SizedBox.shrink();
-    }
-    return AdWidget(ad: ad);
-  }
-}
+
 
 class Route extends StatefulWidget {
   const Route({super.key});

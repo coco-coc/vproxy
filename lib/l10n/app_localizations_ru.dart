@@ -117,6 +117,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get subscription => 'Подписка';
 
   @override
+  String get autoUpdate => 'Автоматическое обновление';
+
+  @override
   String get unknown => 'Неизвестный';
 
   @override
@@ -309,7 +312,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get testArea => 'Тестовая зона';
 
   @override
-  String get autoUpdate => 'Автоматическое обновление';
+  String get autoDownload => 'Automatically Download New Version';
 
   @override
   String get unableToGetNodes => 'Не удалось получить узлы, ваш буфер обмена не содержит URL-адрес подписки, который VX может проанализировать.';

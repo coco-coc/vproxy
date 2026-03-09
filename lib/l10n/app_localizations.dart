@@ -313,6 +313,12 @@ abstract class AppLocalizations {
   /// **'Subscription'**
   String get subscription;
 
+  /// No description provided for @autoUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Update'**
+  String get autoUpdate;
+
   /// No description provided for @unknown.
   ///
   /// In en, this message translates to:
@@ -697,11 +703,11 @@ abstract class AppLocalizations {
   /// **'Test Area'**
   String get testArea;
 
-  /// No description provided for @autoUpdate.
+  /// No description provided for @autoDownload.
   ///
   /// In en, this message translates to:
   /// **'Automatically Download New Version'**
-  String get autoUpdate;
+  String get autoDownload;
 
   /// No description provided for @unableToGetNodes.
   ///

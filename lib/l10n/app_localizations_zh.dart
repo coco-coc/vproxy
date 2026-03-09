@@ -117,6 +117,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get subscription => '订阅';
 
   @override
+  String get autoUpdate => '自动更新';
+
+  @override
   String get unknown => '未知';
 
   @override
@@ -309,7 +312,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get testArea => '地区检测';
 
   @override
-  String get autoUpdate => '自动下载新版本';
+  String get autoDownload => '自动下载新版本';
 
   @override
   String get unableToGetNodes => '获取节点失败，请复制正确格式的订阅链接后重试';
