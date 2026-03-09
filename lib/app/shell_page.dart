@@ -229,13 +229,6 @@ class _ShellPageState extends State<ShellPage> {
                   ),
                 ),
               ),
-              // title: (isPro || !isAdPlatforms)
-              //     ? null
-              //     : LayoutBuilder(builder: (ctx, c) {
-              //         return MyBannderAdWidget(
-              //             adSize:
-              //                 AdSize(width: c.maxWidth.toInt(), height: 50));
-              //       }),
               actions: [
                 Builder(builder: (context) {
                   return IconButton(
@@ -251,7 +244,6 @@ class _ShellPageState extends State<ShellPage> {
                 MyNavigationRail(
                   naviDestination: naviDestination,
                 ),
-                // VerticalDivider(),
                 Expanded(
                   child: widget.child,
                 )
@@ -264,7 +256,7 @@ class _ShellPageState extends State<ShellPage> {
           body: SafeArea(
             child: Column(
               children: [
-                const TopBar(),
+                TopBar(isHomeRoute: widget.state.fullPath == '/home'),
                 Expanded(
                   child: Row(
                     children: [
@@ -355,7 +347,7 @@ class _ShellPageState extends State<ShellPage> {
           body: Platform.isWindows
               ? Column(
                   children: [
-                    const TopBar(),
+                    TopBar(isHomeRoute: widget.state.fullPath == '/home'),
                     Expanded(child: widget.child),
                   ],
                 )

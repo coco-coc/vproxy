@@ -20,11 +20,9 @@ class ProxySelectorHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final visibility = context.read<HomeWidgetVisibilityNotifier>();
     return HomeCard(
       title: AppLocalizations.of(context)!.selector,
       icon: Icons.filter_alt_outlined,
-      onHide: () => visibility.hide(HomeWidgetId.proxySelector.id),
       child: const DefaultProxySelector(),
     );
   }

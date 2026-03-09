@@ -24,13 +24,14 @@ class Nodes extends StatelessWidget {
     final mode = context.select<ProxySelectorBloc, ProxySelectorMode>(
         (b) => b.state.proxySelectorMode);
     final manual = mode == ProxySelectorMode.manual;
-    if (realtime.nodeInfos.isNotEmpty)
+    if (realtime.nodeInfos.isNotEmpty) {
       return Padding(
         padding: const EdgeInsets.only(bottom: 10),
         child: ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 300),
             child: const ActiveNodes()),
       );
+    }
     if (realtime.nodeInfos.isEmpty && manual) return const CurrentNodes();
     return const SizedBox();
   }
@@ -43,13 +44,11 @@ class CurrentNodes extends StatelessWidget {
   Widget build(BuildContext context) {
     // final proxySelectorState = context.watch<ProxySelectorBloc>().state;
     // if (proxySelectorState.proxySelectorMode == ProxySelectorMode.manual) {
-    final visibility = context.read<HomeWidgetVisibilityNotifier>();
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: HomeCard(
         title: AppLocalizations.of(context)!.currentNodes,
         icon: Icons.outbound_outlined,
-        onHide: () => visibility.hide(HomeWidgetId.nodes.id),
         child: StreamBuilder(
             stream:
                 context.watch<OutboundRepo>().getHandlersStream(selected: true),
@@ -114,11 +113,9 @@ class ActiveNodes extends StatelessWidget {
     if (realtime.nodeInfos.isEmpty) {
       return const SizedBox();
     }
-    final visibility = context.read<HomeWidgetVisibilityNotifier>();
     return HomeCard(
         title: AppLocalizations.of(context)!.activeNodes,
         icon: Icons.outbound,
-        onHide: () => visibility.hide(HomeWidgetId.nodes.id),
         child: ConstrainedBox(
           constraints: BoxConstraints(maxHeight: desktopPlatforms ? 227 : 235),
           child: ListView.separated(
@@ -244,11 +241,9 @@ class _NodesHelperState extends State<NodesHelper> {
 
   @override
   Widget build(BuildContext context) {
-    final visibility = context.read<HomeWidgetVisibilityNotifier>();
     return HomeCard(
         title: AppLocalizations.of(context)!.recommendedNodes,
         icon: Icons.recommend_outlined,
-        onHide: () => visibility.hide(HomeWidgetId.nodesHelper.id),
         child: Expanded(
           child: Column(
             mainAxisSize: MainAxisSize.min,

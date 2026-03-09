@@ -352,9 +352,6 @@ void main() async {
                   create: (ctx) => RealtimeSpeedNotifier(
                       controller: ctx.read<XController>(),
                       outboundRepo: ctx.read<OutboundRepo>())),
-              ChangeNotifierProvider<HomeWidgetVisibilityNotifier>(
-                  create: (ctx) => HomeWidgetVisibilityNotifier(
-                      ctx.read<SharedPreferences>())),
               Provider<MyLayout>(create: (_) => MyLayout()),
               if (autoUpdateSupported)
                 Provider(
@@ -765,6 +762,9 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                     outboundBloc: ctx.read<OutboundBloc>(),
                     pref: ctx.read<SharedPreferences>(),
                   )),
+          ChangeNotifierProvider<HomeWidgetVisibilityNotifier>(
+              create: (ctx) =>
+                  HomeWidgetVisibilityNotifier(ctx.read<SharedPreferences>())),
         ],
         child: BlocConsumer<AuthBloc, AuthState>(
           listenWhen: (previous, current) => previous.pro != current.pro,
