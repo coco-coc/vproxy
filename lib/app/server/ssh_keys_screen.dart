@@ -16,6 +16,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:ads/ad.dart';
 import 'package:drift/drift.dart' hide Column;
 import 'package:drift/native.dart';
 import 'package:drift/remote.dart';
@@ -35,7 +36,6 @@ import 'package:vx/data/ssh_server.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/random.dart';
-import 'package:vx/widgets/ad.dart';
 
 class SshKeys extends StatefulWidget {
   const SshKeys({super.key});

@@ -23,13 +23,10 @@ class HomeCard extends StatelessWidget {
       required this.title,
       required this.icon,
       this.button,
-      this.onHide,
       required this.child});
   final String title;
   final Widget? button;
   final IconData icon;
-  /// When non-null, long-press or right-click on the title row shows a "Hide" menu.
-  final VoidCallback? onHide;
   final Widget child;
 
   @override
@@ -69,12 +66,6 @@ class HomeCard extends StatelessWidget {
       ],
     );
 
-    final labelRowWithMenu = onHide != null
-        ? _HomeCardTitleMenuAnchor(
-            onHide: onHide!,
-            child: labelRow,
-          )
-        : labelRow;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -98,7 +89,7 @@ class HomeCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Label row with icon (and optional hide menu)
-          labelRowWithMenu,
+          labelRow,
           const Gap(10),
           // Speed value
           child,

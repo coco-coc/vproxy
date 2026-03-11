@@ -15,6 +15,7 @@
 
 import 'dart:io';
 
+import 'package:ads/ad.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
@@ -26,7 +27,6 @@ import 'package:vx/app/outbound/subscription.dart';
 import 'package:vx/app/x_controller.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/qr.dart';
-import 'package:vx/widgets/ad.dart';
 import 'package:vx/app/outbound/add.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/l10n/app_localizations.dart';
@@ -34,12 +34,15 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:vx/app/home/home.dart';
 import 'package:vx/app/layout_provider.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/app/outbound/subscription_bloc.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/utils/logger.dart';
+import 'package:vx/widgets/pro_icon.dart';
+import 'package:vx/widgets/pro_promotion.dart';
 
 class SubscriptionPage extends StatefulWidget {
   const SubscriptionPage({super.key});
@@ -559,12 +562,26 @@ class _SubScriptionListTileState extends State<SubScriptionListTile> {
     final isExpired = parsedData?.expirationDate != null &&
         parsedData!.expirationDate!.isBefore(DateTime.now());
 
+    final isPro = context.read<AuthBloc>().state.pro;
     return MenuAnchor(
       menuChildren: [
         MenuItemButton(
             leadingIcon: const Icon(Icons.edit_rounded),
             child: Text(AppLocalizations.of(context)!.edit),
             onPressed: () => _onTap(context, widget.group)),
+        MenuItemButton(
+          leadingIcon: const Icon(Icons.add_home_rounded),
+          trailingIcon: isPro ? null : proIcon,
+          child: Text(AppLocalizations.of(context)!.addToHomeScreen),
+          onPressed: () {
+            if (!isPro) {
+              showProPromotionDialog(context);
+            }
+            context.read<HomeLayoutRepo>().addWidgetIdToHome(
+                  'SUBSCRIPTION_${widget.group.id}',
+                );
+          },
+        ),
         MenuItemButton(
             leadingIcon: const Icon(Icons.arrow_upward_rounded),
             child: Text(widget.group.placeOnTop

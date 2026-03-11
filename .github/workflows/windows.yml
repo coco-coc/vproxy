@@ -43,6 +43,7 @@ jobs:
           mkdir -p assets/google_fonts
           mkdir -p assets/geo
           mkdir -p assets/ads
+          mkdir -p ../flutter_common/packages/ads/assets/ads
 
       - name: Cache fonts
         id: cache-fonts

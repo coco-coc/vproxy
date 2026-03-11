@@ -19,11 +19,14 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tm/protos/app/api/api.pb.dart';
 import 'package:tm/tm.dart';
 import 'package:flutter_common/util/compress.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:flutter_common/util/crypto.dart';
 import 'package:vx/utils/path.dart';
@@ -44,11 +47,13 @@ class LogUploadService {
     required Directory tunnelLogDir,
     required String secret,
     required XApiClient xApiClient,
+    required ValueGetter<bool> shareLog,
   })  : _flutterLogDir = flutterLogDir,
         _tunnelLogDir = tunnelLogDir,
         _uploadUrl = uploadUrl,
         _secret = secret,
-        _xApiClient = xApiClient;
+        _xApiClient = xApiClient,
+        _shareLog = shareLog;
 
   Timer? _uploadTimer;
   final Directory _flutterLogDir;
@@ -56,6 +61,7 @@ class LogUploadService {
   final String _uploadUrl;
   final String _secret;
   final XApiClient _xApiClient;
+  final ValueGetter<bool> _shareLog;
 
   /// Initialize the log upload service with configuration
   Future<void> start() async {
@@ -180,7 +186,9 @@ class LogUploadService {
 
   Future<void> _openFlutterLogger() async {
     if (isProduction()) {
-      await setReportLogger();
+      if (_shareLog()) {
+        await setReportLogger();
+      }
     } else {
       await setDebugLoggerDevlopment();
     }

@@ -89,6 +89,7 @@ class Downloader {
   }
 
   Future<void> downloadProxyFirst(String url, String dest) async {
+    logger.d("downloading $url to $dest with proxy");
     try {
       final handlers = await outboundRepo.getHandlers(
           usable: true, orderBySpeed1MBDesc: true);
@@ -98,6 +99,7 @@ class Downloader {
             url: url,
             handlers: configs.sublist(0, max(5, configs.length)),
             dest: dest));
+        logger.d("downloaded $url to $dest with proxy");
         return;
       }
     } catch (e, s) {

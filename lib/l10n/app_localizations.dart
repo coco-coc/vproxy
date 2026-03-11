@@ -223,6 +223,12 @@ abstract class AppLocalizations {
   /// **'Add'**
   String get add;
 
+  /// No description provided for @addToHomeScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to home screen'**
+  String get addToHomeScreen;
+
   /// No description provided for @name.
   ///
   /// In en, this message translates to:
@@ -828,6 +834,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enable in auto mode'**
   String get enableInAuto;
+
+  /// No description provided for @homeCustomizeDragHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag cards to reorder. Hidden cards move to the bottom tray.'**
+  String get homeCustomizeDragHint;
+
+  /// No description provided for @homeCustomizeResetOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset order'**
+  String get homeCustomizeResetOrder;
+
+  /// No description provided for @homeCustomizeHiddenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden'**
+  String get homeCustomizeHiddenTitle;
+
+  /// No description provided for @homeCustomizeDropHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop here to add at bottom'**
+  String get homeCustomizeDropHere;
+
+  /// No description provided for @homeCustomizeMergeWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge with…'**
+  String get homeCustomizeMergeWith;
+
+  /// No description provided for @homeCustomizeNoMergeTargets.
+  ///
+  /// In en, this message translates to:
+  /// **'No mergeable widgets'**
+  String get homeCustomizeNoMergeTargets;
+
+  /// No description provided for @compact.
+  ///
+  /// In en, this message translates to:
+  /// **'Compact'**
+  String get compact;
+
+  /// No description provided for @medium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get medium;
+
+  /// No description provided for @large.
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get large;
 
   /// No description provided for @showClient.
   ///
@@ -4080,6 +4140,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'There might be incompatibility issues'**
   String get shareWithOtherClientsNotice;
+
+  /// No description provided for @homeEditStandardLayout.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard'**
+  String get homeEditStandardLayout;
+
+  /// No description provided for @homeEditCustomizableLayout.
+  ///
+  /// In en, this message translates to:
+  /// **'Customizable'**
+  String get homeEditCustomizableLayout;
 
   /// No description provided for @domainStrategyDesc.
   ///

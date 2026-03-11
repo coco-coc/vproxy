@@ -22,6 +22,22 @@ const proIconExtraSmall = Icon(Icons.stars_rounded, color: XBlue, size: 16);
 const proIconSmall = Icon(Icons.stars_rounded, color: XBlue, size: 18);
 const largeProIcon = Icon(Icons.stars_rounded, color: XBlue, size: 32);
 
+class AppendProIcon extends StatelessWidget {
+  const AppendProIcon({super.key, required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        child,
+        const SizedBox(width: 4),
+        proIconSmall,
+      ],
+    );
+  }
+}
+
 class ActivatedIcon extends StatelessWidget {
   const ActivatedIcon({super.key});
 

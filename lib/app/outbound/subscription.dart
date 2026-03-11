@@ -60,7 +60,10 @@ class AutoSubscriptionUpdater with ChangeNotifier {
         _outRepo = outboundRepo,
         _databaseProvider = databaseProvider {
     Tm.instance.stateStream.listen((state) {
-      reset();
+      if (state.status == TmStatus.disconnected ||
+          state.status == TmStatus.connected) {
+        reset();
+      }
     });
     reset();
   }
@@ -153,6 +156,7 @@ class AutoSubscriptionUpdater with ChangeNotifier {
                       context: rootNavigationKey.currentContext!,
                       // TODO: improve, scrollable
                       builder: (context) => AlertDialog(
+                            scrollable: true,
                             title:
                                 Text(rootLocalizations()?.failureDetail ?? ''),
                             content: Column(

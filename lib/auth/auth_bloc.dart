@@ -35,7 +35,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ) {
     on<_AuthUserChanged>(_onUserChanged);
     on<AuthActivatedEvent>(_onActivated);
-
     _userSubscription = _authRepo.sessionStreams.listen(
       (session) {
         logger.d("authStateChange, current user: ${session?.user}");

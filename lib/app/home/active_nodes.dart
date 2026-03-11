@@ -24,13 +24,11 @@ class Nodes extends StatelessWidget {
     final mode = context.select<ProxySelectorBloc, ProxySelectorMode>(
         (b) => b.state.proxySelectorMode);
     final manual = mode == ProxySelectorMode.manual;
-    if (realtime.nodeInfos.isNotEmpty)
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 300),
-            child: const ActiveNodes()),
-      );
+    if (realtime.nodeInfos.isNotEmpty) {
+      return ConstrainedBox(
+          constraints: const BoxConstraints(maxHeight: 300),
+          child: const ActiveNodes());
+    }
     if (realtime.nodeInfos.isEmpty && manual) return const CurrentNodes();
     return const SizedBox();
   }
@@ -41,63 +39,56 @@ class CurrentNodes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final proxySelectorState = context.watch<ProxySelectorBloc>().state;
-    // if (proxySelectorState.proxySelectorMode == ProxySelectorMode.manual) {
-    final visibility = context.read<HomeWidgetVisibilityNotifier>();
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: HomeCard(
-        title: AppLocalizations.of(context)!.currentNodes,
-        icon: Icons.outbound_outlined,
-        onHide: () => visibility.hide(HomeWidgetId.nodes.id),
-        child: StreamBuilder(
-            stream:
-                context.watch<OutboundRepo>().getHandlersStream(selected: true),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.isEmpty) {
-                  return const Center(
-                      child: AddMenuAnchor(elevatedButton: true));
-                }
-                return ListView.separated(
-                  physics: const ClampingScrollPhysics(),
-                  shrinkWrap: true,
-                  separatorBuilder: (context, index) => Divider(
-                    height: 1,
-                    color: Colors.grey.withOpacity(0.1),
-                  ),
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    return Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                          borderRadius: BorderRadius.circular(8),
-                          onTap: () {
-                            context
-                                .read<OutboundBloc>()
-                                .add(SelectedGroupChangeEvent(allGroup));
-                            context
-                                .read<OutboundBloc>()
-                                .add(const SortHandlersEvent((Col.active, -1)));
-                            GoRouter.of(context).go('/node');
-                            (outboundTableKey.currentState
-                                    as OutboundTableState)
-                                .scrollToTop();
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: SizedBox(
-                                height: 54,
-                                child: _NodeListItem(
-                                    handler: snapshot.data![index])),
-                          )),
-                    );
-                  },
-                );
+    return HomeCard(
+      title: AppLocalizations.of(context)!.currentNodes,
+      icon: Icons.outbound_outlined,
+      child: StreamBuilder(
+          stream:
+              context.watch<OutboundRepo>().getHandlersStream(selected: true),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data!.isEmpty) {
+                return const Center(
+                    child: AddMenuAnchor(elevatedButton: true));
               }
-              return const SizedBox();
-            }),
-      ),
+              return ListView.separated(
+                physics: const ClampingScrollPhysics(),
+                shrinkWrap: true,
+                separatorBuilder: (context, index) => Divider(
+                  height: 1,
+                  color: Colors.grey.withOpacity(0.1),
+                ),
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  return Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: () {
+                          context
+                              .read<OutboundBloc>()
+                              .add(SelectedGroupChangeEvent(allGroup));
+                          context
+                              .read<OutboundBloc>()
+                              .add(const SortHandlersEvent((Col.active, -1)));
+                          GoRouter.of(context).go('/node');
+                          (outboundTableKey.currentState
+                                  as OutboundTableState)
+                              .scrollToTop();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: SizedBox(
+                              height: 54,
+                              child: _NodeListItem(
+                                  handler: snapshot.data![index])),
+                        )),
+                  );
+                },
+              );
+            }
+            return const SizedBox();
+          }),
     );
     // } else {
     //   return SizedBox();
@@ -114,11 +105,9 @@ class ActiveNodes extends StatelessWidget {
     if (realtime.nodeInfos.isEmpty) {
       return const SizedBox();
     }
-    final visibility = context.read<HomeWidgetVisibilityNotifier>();
     return HomeCard(
         title: AppLocalizations.of(context)!.activeNodes,
         icon: Icons.outbound,
-        onHide: () => visibility.hide(HomeWidgetId.nodes.id),
         child: ConstrainedBox(
           constraints: BoxConstraints(maxHeight: desktopPlatforms ? 227 : 235),
           child: ListView.separated(
@@ -244,11 +233,9 @@ class _NodesHelperState extends State<NodesHelper> {
 
   @override
   Widget build(BuildContext context) {
-    final visibility = context.read<HomeWidgetVisibilityNotifier>();
     return HomeCard(
         title: AppLocalizations.of(context)!.recommendedNodes,
         icon: Icons.recommend_outlined,
-        onHide: () => visibility.hide(HomeWidgetId.nodesHelper.id),
         child: Expanded(
           child: Column(
             mainAxisSize: MainAxisSize.min,

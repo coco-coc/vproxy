@@ -37,6 +37,14 @@ const int _interval = 3;
 const int _averageGroupSize = 2; // Average every N entries into one
 const int _maxHistorySize = 100;
 
+/// IDs of home widgets that use the stats stream (upload, download, memory, connections).
+const Set<String> _statsWidgetIds = {
+  'upload',
+  'download',
+  'memory',
+  'connections'
+};
+
 /// Averages nearby data entries to reduce the number of points
 /// Groups every [groupSize] entries and averages their values
 List<DataPoint> _averageData(List<DataPoint> data, int groupSize) {
@@ -114,19 +122,7 @@ class RealtimeSpeedNotifier extends ChangeNotifier {
         _outboundRepo = outboundRepo {
     _statusStream = _controller.statusStream().listen((event) async {
       if (event == XStatus.connected) {
-        try {
-          _speedStream = (await _controller.outboundStatsStream(_interval))
-              .listen((event) {
-            _process(event);
-          }, onDone: () {
-            logger.d("speed stream done");
-          }, onError: (e) {
-            logger.e("error in speed stream", error: e);
-          });
-          logger.d("speed stream started");
-        } catch (e) {
-          logger.e("error starting speed stream", error: e);
-        }
+        await _startSpeedStreamIfNeeded();
       } else if (event == XStatus.disconnected) {
         uploadSpeed = null;
         downloadSpeed = null;
@@ -148,6 +144,39 @@ class RealtimeSpeedNotifier extends ChangeNotifier {
   final OutboundRepo _outboundRepo;
   StreamSubscription<StatsResponse>? _speedStream;
   StreamSubscription<XStatus>? _statusStream;
+  bool _statsWidgetsVisible = true;
+
+  /// Call when home widget visibility changes. When all stats widgets (upload,
+  /// download, memory, connections) are hidden, the stats stream is cancelled.
+  void setStatsWidgetsVisible(bool visible) {
+    if (_statsWidgetsVisible == visible) return;
+    _statsWidgetsVisible = visible;
+    if (!visible) {
+      _speedStream?.cancel();
+      _speedStream = null;
+      notifyListeners();
+    } else if (_controller.status == XStatus.connected) {
+      _startSpeedStreamIfNeeded();
+    }
+  }
+
+  Future<void> _startSpeedStreamIfNeeded() async {
+    if (!_statsWidgetsVisible || _speedStream != null) return;
+    try {
+      _speedStream =
+          (await _controller.outboundStatsStream(_interval)).listen((event) {
+        _process(event);
+      }, onDone: () {
+        logger.d("speed stream done");
+      }, onError: (e) {
+        logger.e("error in speed stream", error: e);
+      });
+      logger.d("speed stream started");
+    } catch (e) {
+      logger.e("error starting speed stream", error: e);
+    }
+  }
+
   @override
   void dispose() {
     _statusStream?.cancel();
@@ -249,22 +278,34 @@ class Stats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final visibility = context.watch<StandardHomeWidgetVisibilityNotifier>();
+    final hidden = visibility.hiddenIds;
+    final showUpload = !hidden.contains(HomeWidgetId.upload.id);
+    final showDownload = !hidden.contains(HomeWidgetId.download.id);
+    final showMemory = !hidden.contains(HomeWidgetId.memory.id);
+    final showConnections = !hidden.contains(HomeWidgetId.connections.id);
+    if (!showUpload && !showDownload && !showMemory && !showConnections) {
+      return const SizedBox();
+    }
     return LayoutBuilder(builder: (context, constraints) {
       final count = constraints.maxWidth > 800 ? 4 : 2;
       final ratio = ((constraints.maxWidth - 30) / count) / 90;
-      return GridView.count(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: ratio,
-        crossAxisCount: count,
-        children: const [
-          RealtimeSpeed(isUpload: true),
-          RealtimeSpeed(isUpload: false),
-          MemoryStats(),
-          ConnectionsStats(),
-        ],
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: ratio,
+          crossAxisCount: count,
+          children: [
+            if (showUpload) const RealtimeSpeed(isUpload: true),
+            if (showDownload) const RealtimeSpeed(isUpload: false),
+            if (showMemory) const MemoryStats(),
+            if (showConnections) const ConnectionsStats(),
+          ],
+        ),
       );
     });
   }
@@ -315,7 +356,7 @@ class _RealtimeSpeedState extends State<RealtimeSpeed> {
       onTap: _toggleView,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        width: 180,
+        // width: 180,
         height: 90,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainerLow,

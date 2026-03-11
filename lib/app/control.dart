@@ -15,6 +15,7 @@
 
 import 'dart:io';
 
+import 'package:ads/ad.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
@@ -25,10 +26,8 @@ import 'package:vx/app/blocs/inbound.dart';
 import 'package:vx/app/home/home.dart';
 import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/x_controller.dart';
-import 'package:vx/data/ads_provider.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/logger.dart';
-import 'package:vx/widgets/ad.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:tm/protos/protos/router.pb.dart';
@@ -115,7 +114,7 @@ class Control extends StatelessWidget {
           if (state.pro) {
             return const SizedBox.shrink();
           }
-          return const Promotion();
+          return const BannerAdWidget();
         }),
       ],
     );

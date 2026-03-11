@@ -18,6 +18,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:ads/ads_provider.dart';
 import 'package:app_links/app_links.dart';
 import 'package:drift/drift.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -40,7 +41,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 import 'package:vx/app/blocs/inbound.dart';
 import 'package:vx/app/home/home.dart';
-import 'package:vx/app/home/home_widget_visibility.dart';
 import 'package:vx/app/start_close_button.dart';
 import 'package:vx/app/android_host_api.g.dart';
 import 'package:vx/app/darwin_host_api.g.dart';
@@ -63,7 +63,6 @@ import 'package:vx/common/bloc_observer.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/common/const.dart';
 import 'package:vx/common/extension.dart';
-import 'package:vx/data/ads_provider.dart';
 import 'package:vx/data/database_provider.dart';
 import 'package:vx/data/sync.dart';
 import 'package:vx/iap/pro.dart';
@@ -88,6 +87,7 @@ import 'package:vx/utils/random.dart';
 import 'package:vx/utils/root.dart';
 import 'package:flutter_common/auth/auth_provider.dart';
 import 'package:flutter_common/l10n/app_localizations.dart' as xv_localizations;
+import 'package:ads/l10n/app_localizations.dart' as ads_localizations;
 import 'package:flutter_common/services/auto_update.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
 import 'firebase_options_production.dart' as production;
@@ -192,282 +192,292 @@ void main() async {
       .d("App start time: ${DateTime.now().difference(startTime).inSeconds}s");
 
   final githubAssetName = await assetName();
-  await SentryFlutter.init((options) {
-    options.dsn =
-        'https://009ab463981b5d206a8d733ebd4182ec@o4510866353618944.ingest.us.sentry.io/4510866355257344';
-    // Adds request headers and IP for users, for more info visit:
-    // https://docs.sentry.io/platforms/dart/guides/flutter/data-management/data-collected/
-    options.sendDefaultPii = false;
-    if (!isProduction()) {
-      options.enableLogs = true;
-      // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
-      // We recommend adjusting this value in production.
-      options.tracesSampleRate = 1.0;
-      // The sampling rate for profiling is relative to tracesSampleRate
-      // Setting to 1.0 will profile 100% of sampled transactions:
-      options.profilesSampleRate = 1.0;
-      // Configure Session Replay
-      options.replay.sessionSampleRate = 0.1;
-      options.replay.onErrorSampleRate = 1.0;
-    }
-  },
-      appRunner: () => runApp(SentryWidget(
-              child: MultiProvider(
-            providers: [
-              ChangeNotifierProvider(
-                create: (context) => DatabaseProvider(database: database!),
-              ),
-              Provider(
-                  create: (ctx) => XApiClient(pref, storage)..init(),
-                  lazy: false),
-              ChangeNotifierProvider.value(value: proPurchases),
-              ChangeNotifierProvider<AuthProvider>.value(value: authProvider),
-              Provider.value(value: pref),
-              Provider.value(value: storage),
-              Provider(
-                create: (ctx) => OutboundRepo(
-                    databaseProvider: ctx.read<DatabaseProvider>()),
-              ),
-              ProxyProvider<DatabaseProvider, DbHelper>(
-                create: (ctx) =>
-                    DbHelper(databaseProvider: ctx.read<DatabaseProvider>()),
-                update: (ctx, databaseProvider, dbHelper) =>
-                    DbHelper(databaseProvider: databaseProvider),
-              ),
-              Provider(
-                create: (context) {
-                  final downloader = Downloader(
-                      context.read<OutboundRepo>(), context.read<XApiClient>());
-                  makeWinTunAvailable(downloader);
-                  return downloader;
-                },
-              ),
-              BlocProvider(
-                  create: (ctx) => AuthBloc(authProvider, isActivated)),
-              Provider<LogUploadService>(
-                  lazy: false,
-                  create: (ctx) {
-                    final logUploadService = LogUploadService(
-                        flutterLogDir: getFlutterLogDir(),
-                        tunnelLogDir: getTunnelLogDir(),
-                        secret: logKey,
-                        xApiClient: ctx.read<XApiClient>(),
-                        uploadUrl: kDebugMode
-                            ? 'https://127.0.0.1:11111/api/upload-logs'
-                            : 'https://vproxybackend.5vnetwork.com:443/api/upload-logs');
-                    if (pref.shareLog) {
-                      logUploadService.start();
+  final app = MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        create: (context) => DatabaseProvider(database: database!),
+      ),
+      Provider(create: (ctx) => XApiClient(pref, storage)..init(), lazy: false),
+      ChangeNotifierProvider.value(value: proPurchases),
+      ChangeNotifierProvider<AuthProvider>.value(value: authProvider),
+      Provider.value(value: pref),
+      Provider.value(value: storage),
+      Provider(
+        create: (ctx) =>
+            OutboundRepo(databaseProvider: ctx.read<DatabaseProvider>()),
+      ),
+      ProxyProvider<DatabaseProvider, DbHelper>(
+        create: (ctx) =>
+            DbHelper(databaseProvider: ctx.read<DatabaseProvider>()),
+        update: (ctx, databaseProvider, dbHelper) =>
+            DbHelper(databaseProvider: databaseProvider),
+      ),
+      Provider(
+        create: (context) {
+          final downloader = Downloader(
+              context.read<OutboundRepo>(), context.read<XApiClient>());
+          makeWinTunAvailable(downloader);
+          return downloader;
+        },
+      ),
+      BlocProvider(create: (ctx) => AuthBloc(authProvider, isActivated)),
+      Provider<LogUploadService>(
+          lazy: false,
+          create: (ctx) {
+            final logUploadService = LogUploadService(
+                flutterLogDir: getFlutterLogDir(),
+                tunnelLogDir: getTunnelLogDir(),
+                secret: logKey,
+                xApiClient: ctx.read<XApiClient>(),
+                shareLog: () => pref.shareLog,
+                uploadUrl: kDebugMode
+                    ? 'https://127.0.0.1:11111/api/upload-logs'
+                    : 'https://vproxybackend.5vnetwork.com:443/api/upload-logs');
+            if (pref.shareLog) {
+              logUploadService.start();
+            }
+            return logUploadService;
+          }),
+      ChangeNotifierProvider(
+        create: (ctx) => AutoSubscriptionUpdater(
+            pref: pref,
+            api: ctx.read<XApiClient>(),
+            outboundRepo: ctx.read<OutboundRepo>(),
+            databaseProvider: ctx.read<DatabaseProvider>()),
+      ),
+      Provider(
+          lazy: false,
+          create: (ctx) => GeoDataHelper(
+                downloader: ctx.read<Downloader>(),
+                pref: pref,
+                xApiClient: ctx.read<XApiClient>(),
+                databaseHelper: ctx.read<DbHelper>(),
+                resouceDirPath: resourceDirectory.path,
+                geoSiteUrl: geositeUrls[0],
+                geoIpUrl: geoipUrls[0],
+              )
+                ..makeGeoDataAvailable()
+                ..reset()),
+      Provider(
+          create: (ctx) => XConfigHelper(
+              outboundRepo: ctx.read<OutboundRepo>(),
+              psr: pref,
+              downloader: ctx.read<Downloader>(),
+              authBloc: ctx.read<AuthBloc>(),
+              geoDataHelper: ctx.read<GeoDataHelper>(),
+              databaseProvider: ctx.read<DatabaseProvider>(),
+              xApiClient: ctx.read<XApiClient>())),
+      Provider(
+        create: (ctx) {
+          final controller = XController(
+              xConfigHelper: ctx.read<XConfigHelper>(),
+              pref: pref,
+              xApiClient: ctx.read<XApiClient>(),
+              logUploadService: ctx.read<LogUploadService>(),
+              databaseProvider: ctx.read<DatabaseProvider>(),
+              autoSubscriptionUpdater: ctx.read<AutoSubscriptionUpdater>());
+          if (Platform.isWindows) {
+            MessageFlutterApi.setUp(controller);
+          }
+          return controller;
+        },
+        lazy: false,
+      ),
+      ChangeNotifierProvider(
+        create: (ctx) {
+          final dp = ctx.read<DatabaseProvider>();
+          final ss = SyncService(
+              deviceId: pref.uniqueDeviceId,
+              prefHelper: pref,
+              storage: storage,
+              authBloc: ctx.read<AuthBloc>(),
+              databaseProvider: dp);
+          dp.database.syncService = ss;
+          return ss;
+        },
+      ),
+      BlocProvider(
+          create: (ctx) => StartCloseCubit(
+              pref: pref,
+              xController: ctx.read<XController>(),
+              authBloc: ctx.read<AuthBloc>())),
+      ChangeNotifierProvider<AdsProvider>(
+          lazy: false,
+          create: (ctx) {
+            final adsProvider = AdsProvider(
+                adsDirectory: path.join(resourceDirectory.path, 'ads'),
+                sharedPreferences: pref,
+                logger: logger,
+                downloadFunction: ctx.read<Downloader>().downloadProxyFirst);
+            ctx.read<AuthBloc>().stream.listen((state) {
+              if (state.pro) {
+                adsProvider.stop();
+              } else {
+                adsProvider.start();
+              }
+            });
+            if (!ctx.read<AuthBloc>().state.pro) {
+              adsProvider.start();
+            }
+            return adsProvider;
+          }),
+      ProxyProvider<DatabaseProvider, SetRepo>(
+          create: (ctx) => ctx.read<DbHelper>(),
+          update: (ctx, databaseProvider, dbHelper) => ctx.read<DbHelper>()),
+      ProxyProvider<DatabaseProvider, RouteRepo>(
+          create: (ctx) => ctx.read<DbHelper>(),
+          update: (ctx, databaseProvider, dbHelper) => ctx.read<DbHelper>()),
+      ProxyProvider<DatabaseProvider, DnsRepo>(
+          create: (ctx) => ctx.read<DbHelper>(),
+          update: (ctx, databaseProvider, dbHelper) => ctx.read<DbHelper>()),
+      ProxyProvider<DatabaseProvider, SelectorRepo>(
+          create: (ctx) => ctx.read<DbHelper>(),
+          update: (ctx, databaseProvider, dbHelper) => ctx.read<DbHelper>()),
+      BlocProvider(
+          create: (ctx) => InboundCubit(pref, ctx.read<XController>())),
+      ChangeNotifierProvider<RealtimeSpeedNotifier>(
+          create: (ctx) => RealtimeSpeedNotifier(
+              controller: ctx.read<XController>(),
+              outboundRepo: ctx.read<OutboundRepo>())),
+      Provider<MyLayout>(create: (_) => MyLayout()),
+      if (autoUpdateSupported)
+        Provider(
+            lazy: false,
+            create: (ctx) {
+              final a = AutoUpdateService(
+                  pref: pref,
+                  downloadUrl: 'https://download.5vnetwork.com',
+                  downloader: ctx.read<Downloader>().download,
+                  currentVersion: version,
+                  logger: logger,
+                  assetName: githubAssetName,
+                  repository: '5vnetwork/vx',
+                  autoCheck: true,
+                  autoDownload: false,
+                  exitCurrentApp: () {
+                    return exitCurrentApp(ctx.read<XController>());
+                  },
+                  onNewVersionAvailable: (release) {
+                    if (rootNavigationKey.currentContext == null) {
+                      return;
                     }
-                    return logUploadService;
-                  }),
-              ChangeNotifierProvider(
-                create: (ctx) => AutoSubscriptionUpdater(
-                    pref: pref,
-                    api: ctx.read<XApiClient>(),
-                    outboundRepo: ctx.read<OutboundRepo>(),
-                    databaseProvider: ctx.read<DatabaseProvider>()),
-              ),
-              Provider(
-                  lazy: false,
-                  create: (ctx) => GeoDataHelper(
-                        downloader: ctx.read<Downloader>(),
-                        pref: pref,
-                        xApiClient: ctx.read<XApiClient>(),
-                        databaseHelper: ctx.read<DbHelper>(),
-                        resouceDirPath: resourceDirectory.path,
-                        geoSiteUrl: geositeUrls[0],
-                        geoIpUrl: geoipUrls[0],
-                      )
-                        ..makeGeoDataAvailable()
-                        ..reset()),
-              Provider(
-                  create: (ctx) => XConfigHelper(
-                      outboundRepo: ctx.read<OutboundRepo>(),
-                      psr: pref,
-                      downloader: ctx.read<Downloader>(),
-                      authBloc: ctx.read<AuthBloc>(),
-                      geoDataHelper: ctx.read<GeoDataHelper>(),
-                      databaseProvider: ctx.read<DatabaseProvider>(),
-                      xApiClient: ctx.read<XApiClient>())),
-              Provider(
-                create: (ctx) {
-                  final controller = XController(
-                      xConfigHelper: ctx.read<XConfigHelper>(),
-                      pref: pref,
-                      xApiClient: ctx.read<XApiClient>(),
-                      logUploadService: ctx.read<LogUploadService>(),
-                      databaseProvider: ctx.read<DatabaseProvider>(),
-                      autoSubscriptionUpdater:
-                          ctx.read<AutoSubscriptionUpdater>());
-                  if (Platform.isWindows) {
-                    MessageFlutterApi.setUp(controller);
-                  }
-                  return controller;
-                },
-                lazy: false,
-              ),
-              ChangeNotifierProvider(
-                create: (ctx) {
-                  final dp = ctx.read<DatabaseProvider>();
-                  final ss = SyncService(
-                      deviceId: pref.uniqueDeviceId,
-                      prefHelper: pref,
-                      storage: storage,
-                      authBloc: ctx.read<AuthBloc>(),
-                      databaseProvider: dp);
-                  dp.database.syncService = ss;
-                  return ss;
-                },
-              ),
-              BlocProvider(
-                  create: (ctx) => StartCloseCubit(
-                      pref: pref,
-                      xController: ctx.read<XController>(),
-                      authBloc: ctx.read<AuthBloc>())),
-              ChangeNotifierProvider<AdsProvider>(
-                  create: (ctx) => AdsProvider(
-                      adsDirectory: path.join(resourceDirectory.path, 'ads'),
-                      sharedPreferences: pref,
-                      authBloc: ctx.read<AuthBloc>(),
-                      downloader: ctx.read<Downloader>())),
-              ProxyProvider<DatabaseProvider, SetRepo>(
-                  create: (ctx) => ctx.read<DbHelper>(),
-                  update: (ctx, databaseProvider, dbHelper) =>
-                      ctx.read<DbHelper>()),
-              ProxyProvider<DatabaseProvider, RouteRepo>(
-                  create: (ctx) => ctx.read<DbHelper>(),
-                  update: (ctx, databaseProvider, dbHelper) =>
-                      ctx.read<DbHelper>()),
-              ProxyProvider<DatabaseProvider, DnsRepo>(
-                  create: (ctx) => ctx.read<DbHelper>(),
-                  update: (ctx, databaseProvider, dbHelper) =>
-                      ctx.read<DbHelper>()),
-              ProxyProvider<DatabaseProvider, SelectorRepo>(
-                  create: (ctx) => ctx.read<DbHelper>(),
-                  update: (ctx, databaseProvider, dbHelper) =>
-                      ctx.read<DbHelper>()),
-              BlocProvider(
-                  create: (ctx) => InboundCubit(pref, ctx.read<XController>())),
-              ChangeNotifierProvider<RealtimeSpeedNotifier>(
-                  create: (ctx) => RealtimeSpeedNotifier(
-                      controller: ctx.read<XController>(),
-                      outboundRepo: ctx.read<OutboundRepo>())),
-              ChangeNotifierProvider<HomeWidgetVisibilityNotifier>(
-                  create: (ctx) => HomeWidgetVisibilityNotifier(
-                      ctx.read<SharedPreferences>())),
-              Provider<MyLayout>(create: (_) => MyLayout()),
-              if (autoUpdateSupported)
-                Provider(
-                    lazy: false,
-                    create: (ctx) {
-                      final a = AutoUpdateService(
-                          pref: pref,
-                          downloadUrl: 'https://download.5vnetwork.com',
-                          downloader: ctx.read<Downloader>().download,
-                          currentVersion: version,
-                          logger: logger,
-                          assetName: githubAssetName,
-                          repository: '5vnetwork/vx',
-                          autoCheck: true,
-                          autoDownload: false,
-                          exitCurrentApp: () {
-                            return exitCurrentApp(ctx.read<XController>());
+                    showDialog(
+                      context: rootNavigationKey.currentContext!,
+                      builder: (context) => HasNewerVersionDialog(
+                          release: release,
+                          setSkipCurrentVersion: () {
+                            rootNavigationKey.currentContext!
+                                .read<AutoUpdateService>()
+                                .setSkipCurrentVersion();
                           },
-                          onNewVersionAvailable: (release) {
-                            if (rootNavigationKey.currentContext == null) {
-                              return;
-                            }
-                            showDialog(
-                              context: rootNavigationKey.currentContext!,
-                              builder: (context) => HasNewerVersionDialog(
-                                  release: release,
-                                  setSkipCurrentVersion: () {
-                                    rootNavigationKey.currentContext!
-                                        .read<AutoUpdateService>()
-                                        .setSkipCurrentVersion();
-                                  },
-                                  updateToRelease: (release) async {
-                                    final ctx =
-                                        rootNavigationKey.currentContext!;
-                                    final messenger = ScaffoldMessenger.of(ctx);
-                                    final snackBarController =
-                                        messenger.showSnackBar(
-                                      SnackBar(
-                                        persist: true,
-                                        content: Row(
-                                          children: [
-                                            Text(
-                                              AppLocalizations.of(ctx)!
-                                                  .downloading(release.version),
-                                            ),
-                                            const SizedBox(width: 12),
-                                            smallCircularProgressIndicator,
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                    try {
-                                      await ctx
-                                          .read<AutoUpdateService>()
-                                          .updateToRelease(release);
-                                    } finally {
-                                      snackBarController.close();
-                                    }
-                                  }),
+                          updateToRelease: (release) async {
+                            final ctx = rootNavigationKey.currentContext!;
+                            final messenger = ScaffoldMessenger.of(ctx);
+                            final snackBarController = messenger.showSnackBar(
+                              SnackBar(
+                                persist: true,
+                                content: Row(
+                                  children: [
+                                    Text(
+                                      AppLocalizations.of(ctx)!
+                                          .downloading(release.version),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    smallCircularProgressIndicator,
+                                  ],
+                                ),
+                              ),
                             );
-                          },
-                          onDownloadComplete: (downloadedInstaller) {
-                            if (rootNavigationKey.currentContext == null) {
-                              return;
+                            try {
+                              await ctx
+                                  .read<AutoUpdateService>()
+                                  .updateToRelease(release);
+                            } finally {
+                              snackBarController.close();
                             }
-                            showDialog(
-                              context: rootNavigationKey.currentContext!,
-                              builder: (context) => InstallNewerVersionDialog(
-                                  downloadedInstaller: downloadedInstaller,
-                                  setSkipCurrentInstaller: rootNavigationKey
-                                      .currentContext!
-                                      .read<AutoUpdateService>()
-                                      .setSkipCurrentVersion,
-                                  installLocalInstaller: () {
-                                    rootNavigationKey.currentContext!
-                                        .read<AutoUpdateService>()
-                                        .installLocalInstaller();
-                                  }),
-                            );
-                          },
-                          cacheDir: cacheDirectory);
+                          }),
+                    );
+                  },
+                  onDownloadComplete: (downloadedInstaller) {
+                    if (rootNavigationKey.currentContext == null) {
+                      return;
+                    }
+                    showDialog(
+                      context: rootNavigationKey.currentContext!,
+                      builder: (context) => InstallNewerVersionDialog(
+                          downloadedInstaller: downloadedInstaller,
+                          setSkipCurrentInstaller: rootNavigationKey
+                              .currentContext!
+                              .read<AutoUpdateService>()
+                              .setSkipCurrentVersion,
+                          installLocalInstaller: () {
+                            rootNavigationKey.currentContext!
+                                .read<AutoUpdateService>()
+                                .installLocalInstaller();
+                          }),
+                    );
+                  },
+                  cacheDir: cacheDirectory);
 
-                      return a;
-                    }),
-              ChangeNotifierProvider(
-                  create: (ctx) => BackupSerevice(
-                      authProvider: ctx.read<AuthBloc>(),
-                      prefHelper: pref,
-                      storage: storage,
-                      databaseProvider: ctx.read<DatabaseProvider>(),
-                      xController: ctx.read<XController>(),
-                      xApiClient: ctx.read<XApiClient>(),
-                      syncService: ctx.read<SyncService>())),
-              ChangeNotifierProvider(
-                  create: (ctx) => Deployer(
-                        xApiClient: ctx.read<XApiClient>(),
-                      )),
-              BlocProvider(
-                  lazy: false,
-                  create: (ctx) => LogBloc(
-                      pref: pref,
-                      xController: ctx.read<XController>(),
-                      outboundRepo: ctx.read<OutboundRepo>())),
-              BlocProvider(
-                  create: (ctx) => ProxySelectorBloc(
-                        pref: pref,
-                        databaseProvider: ctx.read<DatabaseProvider>(),
-                        xConfigController: ctx.read<XController>(),
-                        authBloc: ctx.read<AuthBloc>(),
-                      )..add(XBlocInitialEvent())),
-            ],
-            child: const App(),
-          ))));
+              return a;
+            }),
+      ChangeNotifierProvider(
+          create: (ctx) => BackupSerevice(
+              authProvider: ctx.read<AuthBloc>(),
+              prefHelper: pref,
+              storage: storage,
+              databaseProvider: ctx.read<DatabaseProvider>(),
+              xController: ctx.read<XController>(),
+              xApiClient: ctx.read<XApiClient>(),
+              syncService: ctx.read<SyncService>())),
+      ChangeNotifierProvider(
+          create: (ctx) => Deployer(
+                xApiClient: ctx.read<XApiClient>(),
+              )),
+      BlocProvider(
+          lazy: false,
+          create: (ctx) => LogBloc(
+              pref: pref,
+              xController: ctx.read<XController>(),
+              outboundRepo: ctx.read<OutboundRepo>())),
+      BlocProvider(
+          create: (ctx) => ProxySelectorBloc(
+                pref: pref,
+                databaseProvider: ctx.read<DatabaseProvider>(),
+                xConfigController: ctx.read<XController>(),
+                authBloc: ctx.read<AuthBloc>(),
+              )..add(XBlocInitialEvent())),
+    ],
+    child: const App(),
+  );
+
+  if (isProduction()) {
+    if (Platform.isWindows || Platform.isLinux) {
+      await SentryFlutter.init((options) {
+        options.dsn =
+            'https://009ab463981b5d206a8d733ebd4182ec@o4510866353618944.ingest.us.sentry.io/4510866355257344';
+        // Adds request headers and IP for users, for more info visit:
+        // https://docs.sentry.io/platforms/dart/guides/flutter/data-management/data-collected/
+        options.sendDefaultPii = false;
+        // if (!isProduction()) {
+        //   options.enableLogs = true;
+        //   // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
+        //   // We recommend adjusting this value in production.
+        //   options.tracesSampleRate = 1.0;
+        //   // The sampling rate for profiling is relative to tracesSampleRate
+        //   // Setting to 1.0 will profile 100% of sampled transactions:
+        //   options.profilesSampleRate = 1.0;
+        //   // Configure Session Replay
+        //   options.replay.sessionSampleRate = 0.1;
+        //   options.replay.onErrorSampleRate = 1.0;
+        // }
+      }, appRunner: () => runApp(SentryWidget(child: app)));
+    } else {
+      
+    }
+  } else {
+    runApp(app);
+  }
 }
 
 // const IAdIdManager adIdManager = TestAdIdManager();
@@ -735,6 +745,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       localizationsDelegates: const [
         ...AppLocalizations.localizationsDelegates,
         ...xv_localizations.AppLocalizations.localizationsDelegates,
+        ...ads_localizations.AppLocalizations.localizationsDelegates,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
     );
@@ -765,6 +776,17 @@ class _AppState extends State<App> with WidgetsBindingObserver {
                     outboundBloc: ctx.read<OutboundBloc>(),
                     pref: ctx.read<SharedPreferences>(),
                   )),
+          ChangeNotifierProvider<StandardHomeWidgetVisibilityNotifier>(
+              create: (ctx) => StandardHomeWidgetVisibilityNotifier(
+                  ctx.read<SharedPreferences>())),
+          ChangeNotifierProvider(
+              create: (ctx) => HomeLayoutRepo(ctx.read<SharedPreferences>())),
+          ChangeNotifierProvider<CustomHomePageLayoutProvider>(
+              create: (ctx) =>
+                  CustomHomePageLayoutProvider(ctx.read<HomeLayoutRepo>())),
+          BlocProvider(
+            create: (ctx) => HomePageCubit(ctx.read<SharedPreferences>()),
+          ),
         ],
         child: BlocConsumer<AuthBloc, AuthState>(
           listenWhen: (previous, current) => previous.pro != current.pro,

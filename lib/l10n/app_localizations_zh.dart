@@ -72,6 +72,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get add => '添加';
 
   @override
+  String get addToHomeScreen => '添加到主页';
+
+  @override
   String get name => '名称';
 
   @override
@@ -373,6 +376,33 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get enableInAuto => '自动模式下启用';
+
+  @override
+  String get homeCustomizeDragHint => '拖动卡片可以重新排序，隐藏的卡片会移动到底部托盘。';
+
+  @override
+  String get homeCustomizeResetOrder => '重置顺序';
+
+  @override
+  String get homeCustomizeHiddenTitle => '已隐藏';
+
+  @override
+  String get homeCustomizeDropHere => '拖放到这里以添加到列底部';
+
+  @override
+  String get homeCustomizeMergeWith => '合并到…';
+
+  @override
+  String get homeCustomizeNoMergeTargets => '没有可合并的小部件';
+
+  @override
+  String get compact => '紧凑';
+
+  @override
+  String get medium => '中等';
+
+  @override
+  String get large => '大';
 
   @override
   String get showClient => '显示客户端';
@@ -2103,6 +2133,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get shareWithOtherClientsNotice => '可能存在不兼容问题';
+
+  @override
+  String get homeEditStandardLayout => '标准主页';
+
+  @override
+  String get homeEditCustomizableLayout => '可自定义主页';
 
   @override
   String get domainStrategyDesc => '影响如何连接服务器。PreferIPv4: 优先使用IPv4，如果失败，使用IPv6。PreferIPv6: 优先使用IPv6，如果失败，使用IPv4。IPv4Only: 只尝试IPv4。IPv6Only: 只尝试IPv6。';

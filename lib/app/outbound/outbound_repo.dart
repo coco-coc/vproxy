@@ -426,6 +426,13 @@ class OutboundRepo {
         .get();
   }
 
+  Future<Subscription?> getSubById(int id) async {
+    return await (databaseProvider.database
+            .select(databaseProvider.database.subscriptions)
+          ..where((tbl) => tbl.id.equals(id)))
+        .getSingleOrNull();
+  }
+
   Future<List<OutboundHandlerGroup>> getGroups() async {
     return await (databaseProvider.database
             .select(databaseProvider.database.outboundHandlerGroups))

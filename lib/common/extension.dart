@@ -21,11 +21,6 @@ extension BreakpointUtils on BoxConstraints {
   bool get isExpanded => maxWidth >= 840 && maxWidth < 1200;
   bool get isLarge => maxWidth >= 1200 && maxWidth < 1600;
   bool get isSuperLarge => maxWidth >= 1600;
-  // Layout get layout {
-  //   if (isCompact) {
-  //     return Layout.compact;
-  //   }
-  // }
 }
 
 extension LayoutUtils on Size {

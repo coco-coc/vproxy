@@ -50,11 +50,9 @@ class _RouteState extends State<_Route> {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<ProxySelectorBloc>();
-    final visibility = context.read<HomeWidgetVisibilityNotifier>();
     return HomeCard(
         title: AppLocalizations.of(context)!.routing,
         icon: Icons.alt_route_rounded,
-        onHide: () => visibility.hide(HomeWidgetId.route.id),
         child: BlocSelector<ProxySelectorBloc, ProxySelectorState, String?>(
             selector: (state) => state.routeMode,
             builder: (context, routeModeIdx) {

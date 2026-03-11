@@ -14,12 +14,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+import 'package:ads/ad.dart';
+import 'package:ads/ads_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vx/app/settings/setting.dart';
-import 'package:vx/data/ads_provider.dart';
 import 'package:vx/l10n/app_localizations.dart';
-import 'package:vx/widgets/ad.dart';
 
 class PromotionPage extends StatelessWidget {
   const PromotionPage({super.key, this.showAppBar = true});

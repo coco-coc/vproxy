@@ -20,8 +20,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:vx/app/home/home.dart';
 import 'package:vx/app/layout_provider.dart';
 import 'package:vx/app/x_controller.dart';
+import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/data/sync.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
@@ -48,11 +51,20 @@ class GlobalQuicActionMenuAnchor extends StatelessWidget {
         ),
       ],
       builder: (context, c, child) {
-        return GestureDetector(
-          onTapDown: (details) {
-            c.open();
-          },
-          child: child,
+        return Container(
+          width: 80,
+          height: double.infinity,
+          color: Colors.transparent,
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            hoverColor:
+                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+            onTapDown: (_) {
+              c.open();
+            },
+            child: Center(child: child),
+          ),
         );
       },
       child: child,
@@ -61,13 +73,14 @@ class GlobalQuicActionMenuAnchor extends StatelessWidget {
 }
 
 class TopBar extends StatelessWidget {
-  const TopBar({super.key});
+  const TopBar({super.key, this.isHomeRoute = false});
+
+  final bool isHomeRoute;
 
   @override
   Widget build(BuildContext context) {
     late final Widget child;
     if (Platform.isMacOS || Platform.isIOS || Platform.isAndroid) {
-      // final isPro = context.watch<AuthBloc>().state.pro;
       child = SizedBox(
         height: 50,
         child: Row(
@@ -83,6 +96,7 @@ class TopBar extends StatelessWidget {
                     )),
               ),
             const Expanded(child: SizedBox()),
+            if (isHomeRoute) const HomeEditButton(),
             if (!isProduction())
               IconButton(
                   onPressed: () async {
@@ -105,19 +119,18 @@ class TopBar extends StatelessWidget {
       child = Row(
         children: [
           GlobalQuicActionMenuAnchor(
-            child: SizedBox(
-                width: 80,
-                child: Image.asset(
-                  'assets/icons/V.png',
-                  width: 18,
-                  height: 18,
-                  color: Theme.of(context).colorScheme.primary,
-                )),
+            child: Image.asset(
+              'assets/icons/V.png',
+              width: 18,
+              height: 18,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           Expanded(
               child: MoveWindow(
             child: const SizedBox(),
           )),
+          if (isHomeRoute) const HomeEditButton(),
           if (!isProduction())
             TextButton(
               onPressed: () async {
