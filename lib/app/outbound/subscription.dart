@@ -156,6 +156,7 @@ class AutoSubscriptionUpdater with ChangeNotifier {
                       context: rootNavigationKey.currentContext!,
                       // TODO: improve, scrollable
                       builder: (context) => AlertDialog(
+                            scrollable: true,
                             title:
                                 Text(rootLocalizations()?.failureDetail ?? ''),
                             content: Column(
