@@ -112,7 +112,8 @@ dependencies:
   #   path: ../flutter_sparkle
   flutter_common:
     path: ../flutter_common
-  sliver_dashboard: ^0.9.0
+  ads:
+    path: ../flutter_common/packages/ads
 
 dev_dependencies:
   sentry_dart_plugin: ^3.2.1

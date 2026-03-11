@@ -16,6 +16,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:ads/ad.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -44,7 +45,6 @@ import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/qr.dart';
 import 'package:vx/utils/xapi_client.dart';
-import 'package:vx/widgets/ad.dart';
 import 'package:vx/widgets/form_dialog.dart';
 import 'package:vx/app/outbound/outbound_handler_card.dart';
 

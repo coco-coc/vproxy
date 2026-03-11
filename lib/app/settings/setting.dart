@@ -15,6 +15,7 @@
 
 import 'dart:io';
 
+import 'package:ads/ad.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,7 +46,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:vx/utils/debug.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
-import 'package:vx/widgets/ad.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
 import 'package:vx/widgets/pro_icon.dart';
 import 'package:vx/widgets/pro_promotion.dart';

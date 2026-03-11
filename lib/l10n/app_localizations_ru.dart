@@ -72,6 +72,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get add => 'Добавлять';
 
   @override
+  String get addToHomeScreen => 'Add to home screen';
+
+  @override
   String get name => 'Имя';
 
   @override
@@ -373,6 +376,33 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get enableInAuto => 'Включить в автоматическом режиме';
+
+  @override
+  String get homeCustomizeDragHint => 'Drag cards to reorder. Hidden cards move to the bottom tray.';
+
+  @override
+  String get homeCustomizeResetOrder => 'Reset order';
+
+  @override
+  String get homeCustomizeHiddenTitle => 'Hidden';
+
+  @override
+  String get homeCustomizeDropHere => 'Drop here to add at bottom';
+
+  @override
+  String get homeCustomizeMergeWith => 'Merge with…';
+
+  @override
+  String get homeCustomizeNoMergeTargets => 'No mergeable widgets';
+
+  @override
+  String get compact => 'Compact';
+
+  @override
+  String get medium => 'Medium';
+
+  @override
+  String get large => 'Large';
 
   @override
   String get showClient => 'Показать клиента';
@@ -2153,6 +2183,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get shareWithOtherClientsNotice => 'There might be incompatibility issues';
+
+  @override
+  String get homeEditStandardLayout => 'Standard';
+
+  @override
+  String get homeEditCustomizableLayout => 'Customizable';
 
   @override
   String get domainStrategyDesc => 'Determine how to connect to server. PreferIPv4: use IPv4, if failed, use IPv6; PreferIPv6: use IPv6, if failed, use IPv4; IPv4Only: only try IPv4; IPv6Only: only try IPv6';

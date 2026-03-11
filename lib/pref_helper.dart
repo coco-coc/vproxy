@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:math';
 
@@ -143,14 +145,6 @@ extension PrefHelperExtension on SharedPreferences {
 
   String? get _customRoutingMode {
     return getString('customRoutingMode');
-  }
-
-  void _setCustomRoutingMode(String? mode) {
-    if (mode == null) {
-      remove('customRoutingMode');
-    } else {
-      setString('customRoutingMode', mode);
-    }
   }
 
   SelectorConfig get manualSelectorConfig {
@@ -956,10 +950,7 @@ extension PrefHelperExtension on SharedPreferences {
   List<int> get recentlyUsedNodeIds {
     final list = getStringList('recentlyUsedNodeIds');
     if (list == null) return [];
-    return list
-        .map((e) => int.tryParse(e))
-        .whereType<int>()
-        .toList();
+    return list.map((e) => int.tryParse(e)).whereType<int>().toList();
   }
 
   /// Append a node ID to recently used (prepend in list, dedupe, keep max 10).
@@ -968,8 +959,7 @@ extension PrefHelperExtension on SharedPreferences {
     final current = recentlyUsedNodeIds;
     final updated = [id, ...current.where((e) => e != id)].take(10).toList();
     setStringList(
-        'recentlyUsedNodeIds',
-        updated.map((e) => e.toString()).toList());
+        'recentlyUsedNodeIds', updated.map((e) => e.toString()).toList());
   }
 
   List<String> getSelectorSubString() {
@@ -1002,6 +992,58 @@ extension PrefHelperExtension on SharedPreferences {
   void setHiddenHomeWidgetIds(Set<String> ids) {
     setStringList('hiddenHomeWidgetIds', ids.toList());
   }
+
+  /// Whether the user prefers the customizable home page layout.
+  ///
+  /// Defaults to `false`, which means using the standard home page.
+  bool get useCustomizableHomePage {
+    return getBool('useCustomizableHomePage') ?? false;
+  }
+
+  void setUseCustomizableHomePage(bool value) {
+    setBool('useCustomizableHomePage', value);
+  }
+
+  HomeLayout? getHomeWidgetRows(HomeLayoutPreset preset) {
+    final jsonRaw = getString('homeWidgetRows.${preset.storageKey}');
+    try {
+      if (jsonRaw != null && jsonRaw.isNotEmpty) {
+        return HomeLayout.fromJson(jsonRaw);
+      }
+    } catch (e) {
+      logger.e('Error parsing home widget rows: $e');
+      clearHomeWidgetRows(preset);
+    }
+    return null;
+  }
+
+  void setHomeWidgetRows(HomeLayoutPreset preset, HomeLayout rows) {
+    setString(
+      'homeWidgetRows.${preset.storageKey}',
+      rows.toJson(),
+    );
+  }
+
+  void clearHomeWidgetRows(HomeLayoutPreset preset) {
+    remove('homeWidgetRows.${preset.storageKey}');
+  }
+
+  // List<Map<String, dynamic>>? get homeDashboardLayout {
+  //   final raw = getString('homeDashboardLayout');
+  //   if (raw == null || raw.isEmpty) return null;
+  //   final layout = jsonDecode(raw);
+  //   inspect(layout);
+  //   if (layout is! List<Map<String, dynamic>>) return null;
+  //   return layout;
+  // }
+
+  // void setHomeDashboardLayout(List<Map<String, dynamic>> layout) {
+  //   setString('homeDashboardLayout', jsonEncode(layout));
+  // }
+
+  // void clearHomeDashboardLayout() {
+  //   remove('homeDashboardLayout');
+  // }
 
   String get uniqueDeviceId {
     const key = 'unique_device_id';

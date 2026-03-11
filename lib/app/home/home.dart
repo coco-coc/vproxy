@@ -14,9 +14,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:math';
+import 'package:ads/ad.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
@@ -28,11 +30,9 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sliver_dashboard/sliver_dashboard.dart';
 import 'package:tm/protos/app/grpcservice/grpc.pbgrpc.dart';
 import 'package:vx/app/blocs/inbound.dart';
 import 'package:vx/app/control.dart';
-import 'package:vx/app/home/home_widget_visibility.dart';
 import 'package:vx/app/layout_provider.dart';
 import 'package:vx/app/outbound/add.dart';
 import 'package:vx/app/outbound/outbound_page.dart';
@@ -58,18 +58,47 @@ import 'package:vx/main.dart';
 import 'package:collection/collection.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/xapi_client.dart';
-import 'package:vx/widgets/ad.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
 import 'package:vx/widgets/home_card.dart';
 import 'package:tm/protos/app/api/api.pb.dart' as api_pb;
 import 'package:tm/tm.dart';
+import 'package:vx/widgets/pro_icon.dart';
 
 part 'realtime_speed.dart';
 part 'route.dart';
 part 'active_nodes.dart';
 part 'proxy_selector.dart';
 part 'home0.dart';
-part 'home1.dart';
+part 'home_customize.dart';
+part 'home_standard.dart';
+part 'home_edit.dart';
+part 'subscription.dart';
+
+class HomePageCubit extends Cubit<bool> {
+  HomePageCubit(this._prefs) : super(_prefs.useCustomizableHomePage);
+
+  final SharedPreferences _prefs;
+
+  void setUseCustomizableHomePage(bool value) {
+    emit(value);
+    _prefs.setUseCustomizableHomePage(value);
+  }
+}
+
+/// Root home page that chooses between standard and customizable layouts.
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isPro = context.select<AuthBloc, bool>((bloc) => bloc.state.pro);
+    final useCustom = isPro && context.watch<HomePageCubit>().state;
+    if (useCustom) {
+      return const CustomizableHomePage();
+    }
+    return const StandardHomePage();
+  }
+}
 
 /// Identifiers for home sections that the user can show/hide.
 enum HomeWidgetId {
@@ -120,7 +149,7 @@ enum HomeWidgetId {
     }
   }
 
-  Widget buildWidget(BuildContext context) {
+  Widget buildWidget(BuildContext context, HomeLayoutPreset preset) {
     switch (this) {
       case HomeWidgetId.upload:
         return const RealtimeSpeed(isUpload: true);
@@ -131,7 +160,10 @@ enum HomeWidgetId {
       case HomeWidgetId.connections:
         return const ConnectionsStats();
       case HomeWidgetId.nodesHelper:
-        return const NodesHelper();
+        return ConstrainedBox(
+            constraints: BoxConstraints(
+                maxHeight: preset == HomeLayoutPreset.compact ? 284 : 565),
+            child: const NodesHelper());
       case HomeWidgetId.route:
         return const _Route();
       case HomeWidgetId.proxySelector:
@@ -143,324 +175,6 @@ enum HomeWidgetId {
       case HomeWidgetId.nodes:
         return const Nodes();
     }
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final visibility = context.watch<HomeWidgetVisibilityNotifier>();
-    final hidden = visibility.hiddenIds;
-    final anyStatsVisible = _statsWidgetIds.any((id) => !hidden.contains(id));
-    context
-        .read<RealtimeSpeedNotifier>()
-        .setStatsWidgetsVisible(anyStatsVisible);
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 300),
-              child: const Stats()),
-          Expanded(
-            child: Builder(builder: (ctx) {
-              final mode = ctx.select<ProxySelectorBloc, ProxySelectorMode>(
-                  (b) => b.state.proxySelectorMode);
-              final size = MediaQuery.of(context).size;
-              if (size.isCompact) {
-                return ListView(
-                  children: [
-                    if (!hidden.contains(HomeWidgetId.nodes.id)) const Nodes(),
-                    if (mode == ProxySelectorMode.manual &&
-                        !hidden.contains(HomeWidgetId.nodesHelper.id))
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxHeight: 284),
-                            child: const NodesHelper()),
-                      ),
-                    if (!hidden.contains(HomeWidgetId.route.id)) const _Route(),
-                    if (!hidden.contains(HomeWidgetId.route.id)) const Gap(10),
-                    if (!hidden.contains(HomeWidgetId.proxySelector.id))
-                      const ProxySelector(home: true),
-                    if (desktopPlatforms &&
-                        !hidden.contains(HomeWidgetId.inbound.id))
-                      const Padding(
-                        padding: EdgeInsets.only(top: 10),
-                        child: _Inbound(),
-                      ),
-                    if (!hidden.contains(HomeWidgetId.subscription.id))
-                      const Padding(
-                        padding: EdgeInsets.only(top: 10),
-                        child: _Subscription(),
-                      ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: BlocBuilder<AuthBloc, AuthState>(
-                          builder: (context, state) {
-                        if (state.pro) {
-                          return const SizedBox.shrink();
-                        }
-                        return const Promotion();
-                      }),
-                    ),
-                    const Gap(60),
-                  ],
-                );
-              }
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: LayoutBuilder(builder: (ctx, c) {
-                    return ScrollConfiguration(
-                      behavior: ScrollConfiguration.of(context)
-                          .copyWith(scrollbars: false),
-                      child: ListView(
-                        children: [
-                          if (!hidden.contains(HomeWidgetId.route.id))
-                            const _Route(),
-                          if (!hidden.contains(HomeWidgetId.route.id))
-                            const Gap(10),
-                          if (!hidden.contains(HomeWidgetId.proxySelector.id))
-                            const ProxySelector(home: true),
-                          if (desktopPlatforms &&
-                              !hidden.contains(HomeWidgetId.inbound.id))
-                            const Padding(
-                              padding: EdgeInsets.only(top: 8.0),
-                              child: _Inbound(),
-                            ),
-                          if (!hidden.contains(HomeWidgetId.subscription.id))
-                            const Padding(
-                              padding: EdgeInsets.only(top: 10),
-                              child: _Subscription(),
-                            ),
-                          BlocBuilder<AuthBloc, AuthState>(
-                              builder: (context, state) {
-                            if (state.pro) {
-                              return const SizedBox.shrink();
-                            }
-                            return ConstrainedBox(
-                                constraints:
-                                    BoxConstraints(maxHeight: c.maxHeight),
-                                child: Promotion(maxHeight: c.maxHeight));
-                          })
-                        ],
-                      ),
-                    );
-                  })),
-                  const Gap(10),
-                  Expanded(
-                      child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (!hidden.contains(HomeWidgetId.nodes.id))
-                        const Nodes(),
-                      if (!hidden.contains(HomeWidgetId.nodesHelper.id))
-                        Expanded(
-                            child: Align(
-                                alignment: Alignment.topCenter,
-                                child: ConstrainedBox(
-                                    constraints:
-                                        const BoxConstraints(maxHeight: 613),
-                                    child: const NodesHelper())))
-                    ],
-                  ))
-                ],
-              );
-            }),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class _Subscription extends StatefulWidget {
-  const _Subscription();
-
-  @override
-  State<_Subscription> createState() => _SubscriptionState();
-}
-
-class _SubscriptionState extends State<_Subscription> {
-  Subscription? subscription;
-  StreamSubscription<List<MySubscription>>? _subscriptionStream;
-
-  @override
-  void initState() {
-    super.initState();
-    _subscriptionStream =
-        context.read<OutboundRepo>().getStreamOfSubs(limit: 1).listen((value) {
-      if (mounted) {
-        setState(() {
-          subscription = value.firstOrNull;
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _subscriptionStream?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (subscription == null) {
-      return const SizedBox();
-    }
-
-    final parsedData = SubscriptionData.parse(subscription!.description);
-    final hasUpdateError =
-        subscription!.lastSuccessUpdate != subscription!.lastUpdate;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    // Check if subscription is expiring soon (within 7 days)
-    final isExpiringSoon = parsedData?.expirationDate != null &&
-        parsedData!.expirationDate!.difference(DateTime.now()).inDays <= 7 &&
-        parsedData.expirationDate!.isAfter(DateTime.now());
-
-    // Check if expired
-    final isExpired = parsedData?.expirationDate != null &&
-        parsedData!.expirationDate!.isBefore(DateTime.now());
-
-    return SizedBox(
-      height: 120,
-      child: GestureDetector(
-        onTap: () {
-          context
-              .read<SubscriptionBloc>()
-              .add(UpdateSubscriptionEvent(subscription!));
-        },
-        child: HomeCard(
-            title: subscription!.name,
-            icon: Icons.subscriptions_rounded,
-            button: BlocBuilder<SubscriptionBloc, SubscriptionState>(
-                builder: (ctx, satte) {
-              return satte.updatingSubs.contains(subscription!.id)
-                  ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : const Icon(Icons.refresh_rounded);
-            }),
-            child: Expanded(
-              child: Column(
-                children: [
-                  const Spacer(),
-                  // Show parsed data if available
-                  if (parsedData?.expirationDate != null ||
-                      parsedData?.remainingData != null) ...[
-                    // Data usage section
-                    if (parsedData?.remainingData != null) ...[
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.data_usage_rounded,
-                            size: 16,
-                            color: colorScheme.primary,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            parsedData!.totalData != null
-                                ? '${parsedData.remainingData} / ${parsedData.totalData}'
-                                : parsedData.remainingData!,
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: colorScheme.onSurface,
-                                    ),
-                          ),
-                          const Spacer(),
-                          if (parsedData.expirationDate != null)
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  isExpired
-                                      ? Icons.error
-                                      : isExpiringSoon
-                                          ? Icons.warning_amber_rounded
-                                          : Icons.calendar_month,
-                                  size: 16,
-                                  color: isExpired
-                                      ? colorScheme.error
-                                      : colorScheme.primary,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  DateFormat('yyyy-MM-dd')
-                                      .format(parsedData.expirationDate!),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        color: colorScheme.onSurface,
-                                      ),
-                                ),
-                              ],
-                            ),
-                        ],
-                      ),
-                    ],
-                  ]
-                  // Show description if no parsed data available
-                  else if (subscription!.description.isNotEmpty) ...[
-                    AutoSizeText(
-                      subscription!.description,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                      maxLines: 1,
-                      minFontSize: 10,
-                    ),
-                  ],
-                  // Push content to bottom
-                  const Spacer(),
-                  Row(
-                    children: [
-                      Icon(
-                        hasUpdateError ? Icons.error_outline : Icons.schedule,
-                        size: 12,
-                        color: hasUpdateError
-                            ? colorScheme.error
-                            : colorScheme.onSurfaceVariant.withOpacity(0.7),
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          hasUpdateError
-                              ? AppLocalizations.of(context)!.failure
-                              : '${AppLocalizations.of(context)!.updatedAt} ${DateFormat(
-                                  'MM-dd HH:mm',
-                                  Localizations.localeOf(context).toString(),
-                                ).format(DateTime.fromMillisecondsSinceEpoch(subscription!.lastSuccessUpdate))}',
-                          style:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    fontSize: 10,
-                                    color: hasUpdateError
-                                        ? colorScheme.error
-                                        : colorScheme.onSurfaceVariant
-                                            .withOpacity(0.7),
-                                  ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            )),
-      ),
-    );
   }
 }
 

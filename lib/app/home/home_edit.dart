@@ -13,45 +13,101 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:vx/app/home/home.dart';
-import 'package:vx/app/home/home_widget_visibility.dart';
-import 'package:vx/auth/auth_bloc.dart';
-import 'package:vx/l10n/app_localizations.dart';
+part of 'home.dart';
 
 class HomeEditButton extends StatelessWidget {
   const HomeEditButton();
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeWidgetVisibilityNotifier>(
-        builder: (context, visibility, child) {
-      return MenuAnchor(
-        menuChildren: HomeWidgetId.values.map((id) {
-          return MenuItemButton(
-            leadingIcon: visibility.hiddenIds.contains(id.id)
-                ? const Icon(Icons.visibility_off)
-                : const Icon(Icons.visibility),
-            closeOnActivate: false,
-            child: Text(id.label(context)),
-            onPressed: () {
-              if (visibility.hiddenIds.contains(id.id)) {
-                visibility.show(id.id);
-              } else {
-                visibility.hide(id.id);
-              }
-            },
-          );
-        }).toList(),
-        builder: (context, controller, child) {
-          return IconButton(
-            onPressed: () => controller.open(),
-            icon: const Icon(Icons.edit_rounded),
-          );
-        },
-      );
-    });
+    return IconButton(
+      icon: const Icon(Icons.edit_rounded),
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) => const _HomeConfigDialog(),
+        );
+      },
+    );
+  }
+}
+
+class _HomeConfigDialog extends StatefulWidget {
+  const _HomeConfigDialog();
+
+  @override
+  State<_HomeConfigDialog> createState() => _HomeConfigDialogState();
+}
+
+class _HomeConfigDialogState extends State<_HomeConfigDialog> {
+  @override
+  Widget build(BuildContext context) {
+    final _useCustomizable = context.watch<HomePageCubit>().state &&
+        context.read<AuthBloc>().state.pro;
+    final l10n = AppLocalizations.of(context)!;
+    return Dialog(
+      constraints: !_useCustomizable
+          ? const BoxConstraints(maxWidth: 520)
+          : BoxConstraints(),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  l10n.home,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const Spacer(),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close_rounded),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                ChoiceChip(
+                  label: Text(l10n.homeEditStandardLayout),
+                  selected: !_useCustomizable,
+                  onSelected: (selected) {
+                    if (!selected) return;
+                    context
+                        .read<HomePageCubit>()
+                        .setUseCustomizableHomePage(false);
+                  },
+                ),
+                const SizedBox(width: 8),
+                ChoiceChip(
+                  label: AppendProIcon(
+                      child: Text(l10n.homeEditCustomizableLayout)),
+                  selected: _useCustomizable,
+                  onSelected: context.read<AuthBloc>().state.pro
+                      ? (selected) {
+                          if (!selected) return;
+                          context
+                              .read<HomePageCubit>()
+                              .setUseCustomizableHomePage(true);
+                        }
+                      : null,
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (!_useCustomizable) const _StandardHomeWidgetSetting(),
+            if (_useCustomizable)
+              Expanded(
+                  child: ChangeNotifierProvider(
+                      create: (context) => CustomizeHomeWidgetNotifier(
+                          context.read<HomeLayoutRepo>()),
+                      child: const _HomeEditDialog())),
+          ],
+        ),
+      ),
+    );
   }
 }

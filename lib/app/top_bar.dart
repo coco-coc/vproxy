@@ -22,8 +22,6 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:vx/app/home/home.dart';
-import 'package:vx/app/home/home_edit.dart';
-import 'package:vx/app/home/home_widget_visibility.dart';
 import 'package:vx/app/layout_provider.dart';
 import 'package:vx/app/x_controller.dart';
 import 'package:vx/auth/auth_bloc.dart';

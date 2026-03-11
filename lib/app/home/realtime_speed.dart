@@ -278,7 +278,7 @@ class Stats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final visibility = context.watch<HomeWidgetVisibilityNotifier>();
+    final visibility = context.watch<StandardHomeWidgetVisibilityNotifier>();
     final hidden = visibility.hiddenIds;
     final showUpload = !hidden.contains(HomeWidgetId.upload.id);
     final showDownload = !hidden.contains(HomeWidgetId.download.id);
@@ -356,7 +356,7 @@ class _RealtimeSpeedState extends State<RealtimeSpeed> {
       onTap: _toggleView,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        width: 180,
+        // width: 180,
         height: 90,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainerLow,

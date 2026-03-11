@@ -15,6 +15,7 @@
 
 import 'dart:async';
 
+import 'package:ads/ad.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,6 @@ import 'package:vx/common/common.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/data/database_provider.dart';
 import 'package:vx/utils/logger.dart';
-import 'package:vx/widgets/ad.dart';
 import 'package:vx/widgets/pro_promotion.dart';
 import '../../main.dart';
 import 'package:vx/l10n/app_localizations.dart';
