@@ -60,7 +60,10 @@ class AutoSubscriptionUpdater with ChangeNotifier {
         _outRepo = outboundRepo,
         _databaseProvider = databaseProvider {
     Tm.instance.stateStream.listen((state) {
-      reset();
+      if (state.status == TmStatus.disconnected ||
+          state.status == TmStatus.connected) {
+        reset();
+      }
     });
     reset();
   }
