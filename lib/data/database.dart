@@ -185,6 +185,11 @@ class AppDatabase extends _$AppDatabase {
       // runs after migration
       beforeOpen: (details) async {
         try {
+          await customStatement('PRAGMA journal_mode = WAL');
+        } catch (e) {
+          reportError("beforeOpen journal_mode WAL", e);
+        }
+        try {
           await customStatement('PRAGMA busy_timeout = 1000');
         } catch (e) {
           reportError("beforeOpen busy_timeout", e);
@@ -200,6 +205,7 @@ class AppDatabase extends _$AppDatabase {
               reportError("insertDefault", e);
               snack(
                   rootLocalizations()?.failedToInsertDefaultData(e.toString()));
+              //TODO: recreate database
               return;
             }
             // Check if it's a database lock error
@@ -1334,6 +1340,8 @@ class DnsServers extends Table with TableMixin {
   IntColumn get id => integer()();
   TextColumn get name => text().unique()();
   BlobColumn get dnsServer => blob().map(const DnsServerConverter())();
+  BoolColumn get isInternal => boolean().withDefault(const Constant(false))();
+
   @override
   Set<Column<Object>> get primaryKey => {id};
 }
