@@ -233,7 +233,6 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
     emit(state.copyWith(
       handlers: _sortHandlers(await _getHandlers(), state.sortCol),
     ));
-
   }
 
   void _onOutboundModeSwitch(
@@ -757,7 +756,12 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
       emit(state.copyWith(selected: () => null));
       _pref.setNodeGroup(null);
     }
-    await _outboundRepo.removeSubscription(e.sub.id);
+    try {
+      await _outboundRepo.removeSubscription(e.sub.id);
+    } catch (e) {
+      logger.e('removeSubscription', error: e);
+      rethrow;
+    }
     _xController.subscriptionUpdated();
     final handlers = _sortHandlers(await _getHandlers(), state.sortCol);
     emit(state.copyWith(handlers: handlers));
