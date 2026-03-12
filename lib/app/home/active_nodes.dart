@@ -48,8 +48,7 @@ class CurrentNodes extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data!.isEmpty) {
-                return const Center(
-                    child: AddMenuAnchor(elevatedButton: true));
+                return const Center(child: AddMenuAnchor(elevatedButton: true));
               }
               return ListView.separated(
                 physics: const ClampingScrollPhysics(),
@@ -72,8 +71,7 @@ class CurrentNodes extends StatelessWidget {
                               .read<OutboundBloc>()
                               .add(const SortHandlersEvent((Col.active, -1)));
                           GoRouter.of(context).go('/node');
-                          (outboundTableKey.currentState
-                                  as OutboundTableState)
+                          (outboundTableKey.currentState as OutboundTableState)
                               .scrollToTop();
                         },
                         child: Padding(
@@ -110,23 +108,27 @@ class ActiveNodes extends StatelessWidget {
         icon: Icons.outbound,
         child: ConstrainedBox(
           constraints: BoxConstraints(maxHeight: desktopPlatforms ? 227 : 235),
-          child: ListView.separated(
-              shrinkWrap: true,
-              physics: const ClampingScrollPhysics(),
-              separatorBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Divider(
-                      height: 1,
-                      color: Colors.grey.withOpacity(0.1),
+          child: ScrollConfiguration(
+            behavior:
+                ScrollConfiguration.of(context).copyWith(scrollbars: true),
+            child: ListView.separated(
+                shrinkWrap: true,
+                physics: const ClampingScrollPhysics(),
+                separatorBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Divider(
+                        height: 1,
+                        color: Colors.grey.withOpacity(0.1),
+                      ),
                     ),
-                  ),
-              itemCount: realtime.nodeInfos.length,
-              itemBuilder: (context, index) {
-                final nodeInfo = realtime.nodeInfos[index];
-                return NodeCard(
-                  nodeInfo: nodeInfo,
-                );
-              }),
+                itemCount: realtime.nodeInfos.length,
+                itemBuilder: (context, index) {
+                  final nodeInfo = realtime.nodeInfos[index];
+                  return NodeCard(
+                    nodeInfo: nodeInfo,
+                  );
+                }),
+          ),
         ));
   }
 }

@@ -162,7 +162,7 @@ enum HomeWidgetId {
       case HomeWidgetId.nodesHelper:
         return ConstrainedBox(
             constraints: BoxConstraints(
-                maxHeight: preset == HomeLayoutPreset.compact ? 284 : 565),
+                maxHeight: preset == HomeLayoutPreset.compact ? 284 : 614),
             child: const NodesHelper());
       case HomeWidgetId.route:
         return const _Route();
