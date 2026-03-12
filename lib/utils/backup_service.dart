@@ -34,6 +34,7 @@ import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
 import 'package:vx/utils/xapi_client.dart';
 
+//TODO: reduce duplicate code
 class BackupSerevice extends ChangeNotifier {
   BackupSerevice(
       {required AuthBloc authProvider,
@@ -74,6 +75,63 @@ class BackupSerevice extends ChangeNotifier {
   void stopPeriodicBackup() {
     _periodicBackupTimer?.cancel();
     _periodicBackupTimer = null;
+  }
+
+  /// Create a local backup of the current database at [destinationPath].
+  ///
+  /// [destinationPath] should be a full file path (e.g. selected by user).
+  /// The backup content is identical to cloud backups and will be encrypted
+  /// when a backup password is set.
+  Future<void> saveLocalBackup(String destinationPath) async {
+    uploading = true;
+    notifyListeners();
+
+    final dst = await dbVacuumDest();
+    File? encryptedFile;
+
+    try {
+      if (await File(dst).exists()) {
+        await File(dst).delete();
+      }
+
+      // Create a compact, standalone copy of the current database
+      await databaseProvider.database.customStatement('VACUUM INTO ?', [dst]);
+
+      // Get backup password from secure storage
+      final password = await _storage.read(key: 'backupPassword');
+
+      File fileToSave = File(dst);
+
+      // Encrypt the database file if password is set
+      if (password != null && password.isNotEmpty) {
+        encryptedFile = await encryptFile(File(dst), password);
+        fileToSave = encryptedFile;
+        logger.i('Database encrypted for local backup');
+      } else {
+        logger.w('No backup password set, saving unencrypted local backup');
+      }
+
+      final destFile = File(destinationPath);
+      if (!await destFile.parent.exists()) {
+        await destFile.parent.create(recursive: true);
+      }
+
+      await fileToSave.copy(destinationPath);
+    } catch (e) {
+      logger.e('Failed to save local backup', error: e);
+      rethrow;
+    } finally {
+      uploading = false;
+      notifyListeners();
+
+      // Clean up temporary files
+      if (await File(dst).exists()) {
+        await File(dst).delete();
+      }
+      if (encryptedFile != null && await encryptedFile.exists()) {
+        await encryptedFile.delete();
+      }
+    }
   }
 
   Future<String?> uploadBackup() async {
@@ -217,6 +275,111 @@ class BackupSerevice extends ChangeNotifier {
       }
 
       // Open the database and vacuum it
+      final backupDb = sqlite3.open(dbFileToRestore.path);
+      final tmpDb = '$tmpLocation.db';
+      backupDb
+        ..execute('VACUUM INTO ?', [tmpDb])
+        ..dispose();
+
+      // Then replace the existing database file with it.
+      final tempDbFile = File(tmpDb);
+      filesToDelete.add(tempDbFile);
+
+      await xController.waitForConnectedIfConnecting();
+      if (xController.status == XStatus.connected) {
+        await xController.stop();
+      }
+      await databaseProvider.database.close(); // close the current database
+      await xApiClient.closeDb();
+
+      late String newDbPath;
+      if (Platform.isWindows) {
+        // copy the new database file to the standard location
+        final newDbName = _prefHelper.dbName == 'x_database.sqlite'
+            ? '1.sqlite'
+            : '${int.parse(_prefHelper.dbName.split('.')[0]) + 1}.sqlite';
+        newDbPath = join(resourceDirectory.path, newDbName);
+        logger.d(newDbPath);
+      } else {
+        newDbPath = await getDbPath(_prefHelper);
+      }
+
+      await tempDbFile.copy(newDbPath);
+
+      if (Platform.isWindows) {
+        _prefHelper.setDbName(newDbPath.split('\\').last);
+      }
+
+      databaseProvider.setDatabase(
+          AppDatabase(path: newDbPath)..syncService = _syncService);
+      await xApiClient.openDb();
+    } catch (e) {
+      rethrow;
+    } finally {
+      restoring = false;
+      notifyListeners();
+      unawaited(Future(() async {
+        // remove old db
+        // get all files ended with .sqlite
+        final currentDbPath = await getDbPath(_prefHelper);
+        final sqliteFiles = resourceDirectory.listSync().where((e) {
+          return e.path.endsWith('.sqlite') && e.path != currentDbPath;
+        }).map((e) => File(e.path));
+        filesToDelete.addAll(sqliteFiles);
+        // delete the temporary database file
+        for (final file in filesToDelete) {
+          try {
+            file.delete();
+          } catch (e) {
+            logger.e('Failed to delete file', error: e);
+          }
+        }
+      }));
+    }
+  }
+
+  /// Restore from a local backup file at [backupPath].
+  ///
+  /// The file format is the same as cloud backups: optionally encrypted,
+  /// then VACUUMed into a clean SQLite file before replacing the current DB.
+  Future<void> restoreFromLocalBackup(String backupPath) async {
+    restoring = true;
+    notifyListeners();
+
+    final filesToDelete = <File>[];
+
+    try {
+      final sourceFile = File(backupPath);
+      if (!await sourceFile.exists()) {
+        throw Exception('Backup file not found: $backupPath');
+      }
+
+      // Work on a temporary copy so the original file is never modified
+      final tmpLocation = await tempFilePath();
+      final tmpFile =
+          await File(tmpLocation).writeAsBytes(await sourceFile.readAsBytes());
+      filesToDelete.add(tmpFile);
+
+      File dbFileToRestore = tmpFile;
+
+      // Try to decrypt the file if password is set
+      final password = await _storage.read(key: 'backupPassword');
+      if (password != null && password.isNotEmpty) {
+        try {
+          final decryptedFile = await decryptFile(tmpFile, password);
+          filesToDelete.add(decryptedFile);
+          dbFileToRestore = decryptedFile;
+          logger.i('Local backup decrypted successfully');
+        } catch (e) {
+          logger.e('Failed to decrypt local backup', error: e);
+          throw Exception(
+              'Failed to decrypt backup. Please check your password.');
+        }
+      } else {
+        logger.w('No backup password set, assuming unencrypted local backup');
+      }
+
+      // Open the database and vacuum it into a clean file
       final backupDb = sqlite3.open(dbFileToRestore.path);
       final tmpDb = '$tmpLocation.db';
       backupDb

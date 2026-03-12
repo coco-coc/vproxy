@@ -13,9 +13,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
+import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
@@ -63,7 +65,7 @@ class _SyncPageState extends State<SyncPage> {
                     ],
                   ),
                 ),
-              ),
+        ),
       ),
     );
   }
@@ -131,11 +133,7 @@ class __BackupState extends State<_Backup> {
               top: 10,
             ),
             child: Text(
-                '${AppLocalizations.of(context)!.currentBackup} ${DateTime.parse(_latestBackup!.replaceAll('.db', ''))
-                        .toLocal()
-                        .toString()
-                        .split('.')
-                        .first}',
+                '${AppLocalizations.of(context)!.currentBackup} ${DateTime.parse(_latestBackup!.replaceAll('.db', '')).toLocal().toString().split('.').first}',
                 style: Theme.of(context).textTheme.bodyMedium),
           ),
         const Gap(10),
@@ -144,20 +142,22 @@ class __BackupState extends State<_Backup> {
           child: Row(
             children: [
               FilledButton(
-                  onPressed: () async {
-                    try {
-                      final fileName = await backupService.uploadBackup();
-                      snack(rootLocalizations()!.uploadDbSuccess);
-                      if (fileName != null) {
-                        setState(() {
-                          _latestBackup = fileName;
-                        });
-                      }
-                    } catch (e) {
-                      logger.e("uploadBackup", error: e);
-                      snack(e.toString());
-                    }
-                  },
+                  onPressed: backupService.uploading
+                      ? null
+                      : () async {
+                          try {
+                            final fileName = await backupService.uploadBackup();
+                            snack(rootLocalizations()!.uploadDbSuccess);
+                            if (fileName != null) {
+                              setState(() {
+                                _latestBackup = fileName;
+                              });
+                            }
+                          } catch (e) {
+                            logger.e("uploadBackup", error: e);
+                            snack(e.toString());
+                          }
+                        },
                   child: backupService.uploading
                       ? SizedBox(
                           width: 12,
@@ -170,20 +170,22 @@ class __BackupState extends State<_Backup> {
                       : Text(AppLocalizations.of(context)!.uploadDb)),
               const Gap(10),
               FilledButton(
-                  onPressed: () async {
-                    try {
-                      final appState = App.of(context);
-                      final outBloc = context.read<OutboundBloc>();
-                      await backupService.restoreBackup();
-                      snack(rootLocalizations()!.restoreDbSuccess);
-                      appState?.rebuildAllChildren();
-                      // to stop query stream and relisten
-                      outBloc.add(InitialEvent());
-                    } catch (e) {
-                      logger.e("restoreBackup", error: e);
-                      snack(e.toString());
-                    }
-                  },
+                  onPressed: backupService.restoring
+                      ? null
+                      : () async {
+                          try {
+                            final appState = App.of(context);
+                            final outBloc = context.read<OutboundBloc>();
+                            await backupService.restoreBackup();
+                            snack(rootLocalizations()!.restoreDbSuccess);
+                            appState?.rebuildAllChildren();
+                            // to stop query stream and relisten
+                            outBloc.add(InitialEvent());
+                          } catch (e) {
+                            logger.e("restoreBackup", error: e);
+                            snack(e.toString());
+                          }
+                        },
                   child: backupService.restoring
                       ? SizedBox(
                           width: 12,
@@ -215,6 +217,78 @@ class __BackupState extends State<_Backup> {
                   child: Text(AppLocalizations.of(context)!.deleteCloudDb)),
             ],
           ),
+        ),
+        const Gap(10),
+        Row(
+          children: [
+            FilledButton.tonal(
+                onPressed: backupService.uploading
+                    ? null
+                    : () async {
+                        try {
+                          final directoryPath =
+                              await FilePicker.platform.getDirectoryPath();
+                          if (directoryPath == null) {
+                            return;
+                          }
+                          final fileName =
+                              'vx_backup_${DateTime.now().toIso8601String().replaceAll(':', '-')}.db';
+                          final destPath = p.join(directoryPath, fileName);
+                          await backupService.saveLocalBackup(destPath);
+                          snack('Local backup saved');
+                        } catch (e) {
+                          logger.e("saveLocalBackup", error: e);
+                          snack(e.toString());
+                        }
+                      },
+                child: backupService.uploading
+                    ? SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      )
+                    : const Text('Export to file')),
+            const Gap(10),
+            FilledButton.tonal(
+                onPressed: backupService.restoring
+                    ? null
+                    : () async {
+                        try {
+                          final result = await FilePicker.platform.pickFiles(
+                            type: FileType.custom,
+                            allowedExtensions: ['db', 'encrypted'],
+                          );
+                          if (result == null ||
+                              result.files.single.path == null) {
+                            return;
+                          }
+                          final path = result.files.single.path!;
+                          final appState = App.of(context);
+                          final outBloc = context.read<OutboundBloc>();
+                          await backupService.restoreFromLocalBackup(path);
+                          snack('Local backup restored');
+                          appState?.rebuildAllChildren();
+                          outBloc.add(InitialEvent());
+                        } catch (e) {
+                          logger.e("restoreFromLocalBackup", error: e);
+                          snack(e.toString());
+                        }
+                      },
+                child: backupService.restoring
+                    ? SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      )
+                    : const Text('Import from file')),
+            const Gap(10),
+          ],
         ),
         const Gap(10),
         TextField(
