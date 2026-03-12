@@ -263,9 +263,6 @@ class _SelectorConfigWidgetState extends State<SelectorConfigWidget>
     final config = widget.config;
     final copy = widget.config.deepCopy();
     copy.filter.all = value;
-    // await database.managers.handlerSelectors
-    //     .filter((f) => f.name(widget.config.tag))
-    //     .update((f) => f(config: Value(copy)));
     await _repo.updateSelector(copy);
     setState(() {
       config.filter.all = value;
@@ -278,9 +275,6 @@ class _SelectorConfigWidgetState extends State<SelectorConfigWidget>
     final config = widget.config;
     final copy = widget.config.deepCopy();
     copy.strategy = strategy;
-    // await database.managers.handlerSelectors
-    //     .filter((f) => f.name(widget.config.tag))
-    //     .update((f) => f(config: Value(copy)));
     await _repo.updateSelector(copy);
     setState(() {
       config.strategy = strategy;
@@ -292,9 +286,6 @@ class _SelectorConfigWidgetState extends State<SelectorConfigWidget>
     final config = widget.config;
     final copy = widget.config.deepCopy();
     copy.balanceStrategy = strategy;
-    // await database.managers.handlerSelectors
-    //     .filter((f) => f.name(widget.config.tag))
-    //     .update((f) => f(config: Value(copy)));
     await _repo.updateSelector(copy);
     setState(() {
       config.balanceStrategy = strategy;
@@ -303,17 +294,11 @@ class _SelectorConfigWidgetState extends State<SelectorConfigWidget>
   }
 
   void _onLandHandlerChange(int handlerId, bool add) async {
-    // await database.managers.handlerSelectors
-    //     .filter((f) => f.name(widget.config.tag))
-    //     .update((f) => f(config: Value(widget.config)));
     await _repo.updateSelector(widget.config);
     widget.onStrategyOrLandHandlersChange();
   }
 
   void _onLandHandlerReplace(int oldId, int newId) async {
-    // await database.managers.handlerSelectors
-    //     .filter((f) => f.name(widget.config.tag))
-    //     .update((f) => f(config: Value(widget.config)));
     await _repo.updateSelector(widget.config);
     widget.onStrategyOrLandHandlersChange();
   }
@@ -366,19 +351,15 @@ class _SelectorConfigWidgetState extends State<SelectorConfigWidget>
           spacing: 5,
           runSpacing: 5,
           children: [
-            ...SelectorConfig_SelectingStrategy.values
-                .where((e) =>
-                    e != SelectorConfig_SelectingStrategy.TOP_PING &&
-                    e != SelectorConfig_SelectingStrategy.TOP_THROUGHPUT)
-                .map((e) => ChoiceChip(
-                      label: Text(e.toLocalString(context)),
-                      selected: widget.config.strategy == e,
-                      onSelected: (value) {
-                        if (value) {
-                          _onSelectStrategyChange(e);
-                        }
-                      },
-                    ))
+            ...SelectorConfig_SelectingStrategy.values.map((e) => ChoiceChip(
+                  label: Text(e.toLocalString(context)),
+                  selected: widget.config.strategy == e,
+                  onSelected: (value) {
+                    if (value) {
+                      _onSelectStrategyChange(e);
+                    }
+                  },
+                ))
           ],
         ),
         if (widget.config.strategy == SelectorConfig_SelectingStrategy.ALL_OK ||
@@ -1095,9 +1076,9 @@ extension SelectorConfigSelectingStrategyExtension
       case SelectorConfig_SelectingStrategy.LEAST_PING:
         return AppLocalizations.of(context)!.lowestLatency;
       case SelectorConfig_SelectingStrategy.TOP_PING:
-        return '低延迟';
+        return AppLocalizations.of(context)!.lowLatency;
       case SelectorConfig_SelectingStrategy.TOP_THROUGHPUT:
-        return '高速度';
+        return AppLocalizations.of(context)!.highThroughput;
       default:
         return '';
     }
