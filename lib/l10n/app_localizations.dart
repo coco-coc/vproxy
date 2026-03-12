@@ -1288,7 +1288,7 @@ abstract class AppLocalizations {
   /// No description provided for @nodeGroup.
   ///
   /// In en, this message translates to:
-  /// **'Node Group'**
+  /// **'Group'**
   String get nodeGroup;
 
   /// No description provided for @lowestLatency.
@@ -1458,6 +1458,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'IP -> Domain'**
   String get ipToDomain;
+
+  /// No description provided for @showSessionOngoingIndicator.
+  ///
+  /// In en, this message translates to:
+  /// **'Show session ongoing indicator'**
+  String get showSessionOngoingIndicator;
+
+  /// No description provided for @hideSessionOngoingIndicator.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide session ongoing indicator'**
+  String get hideSessionOngoingIndicator;
+
+  /// No description provided for @showRealtimeUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Show realtime usage'**
+  String get showRealtimeUsage;
+
+  /// No description provided for @hideRealtimeUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide realtime usage'**
+  String get hideRealtimeUsage;
 
   /// No description provided for @proFeatureDescription.
   ///

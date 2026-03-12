@@ -315,6 +315,22 @@ extension PrefHelperExtension on SharedPreferences {
     setBool('showHandler', show);
   }
 
+  bool get showSessionOngoing {
+    return getBool('showSessionOngoing') ?? false;
+  }
+
+  void setShowSessionOngoing(bool show) {
+    setBool('showSessionOngoing', show);
+  }
+
+  bool get showRealtimeUsage {
+    return getBool('showRealtimeUsage') ?? false;
+  }
+
+  void setShowRealtimeUsage(bool show) {
+    setBool('showRealtimeUsage', show);
+  }
+
   DateTime? get lastGeoUpdate {
     final time = getInt('lastGeoUpdate');
     if (time == null) return null;

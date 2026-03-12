@@ -63,6 +63,16 @@ class HandlerPressedEvent extends LogEvent {
   final bool showHandler;
 }
 
+class SessionOngoingPressedEvent extends LogEvent {
+  const SessionOngoingPressedEvent(this.showSessionOngoing);
+  final bool showSessionOngoing;
+}
+
+class RealtimeUsagePressedEvent extends LogEvent {
+  const RealtimeUsagePressedEvent(this.showRealtimeUsage);
+  final bool showRealtimeUsage;
+}
+
 class SubstringChangedEvent extends LogEvent {
   const SubstringChangedEvent(this.substring);
   final String substring;

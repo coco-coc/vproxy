@@ -635,7 +635,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get partialNodes => 'Partial Nodes';
 
   @override
-  String get nodeGroup => 'Node Group';
+  String get nodeGroup => 'Group';
 
   @override
   String get lowestLatency => 'Lowest Latency';
@@ -720,6 +720,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ipToDomain => 'IP -> Domain';
+
+  @override
+  String get showSessionOngoingIndicator => 'Show session ongoing indicator';
+
+  @override
+  String get hideSessionOngoingIndicator => 'Hide session ongoing indicator';
+
+  @override
+  String get showRealtimeUsage => 'Show realtime usage';
+
+  @override
+  String get hideRealtimeUsage => 'Hide realtime usage';
 
   @override
   String get proFeatureDescription => 'This is a Pro feature. Upgrade to Pro to unlock all features';

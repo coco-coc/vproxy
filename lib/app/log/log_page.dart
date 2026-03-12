@@ -121,6 +121,28 @@ class _LogPageState extends State<LogPage> {
                   ? AppLocalizations.of(context)!.hideHandler
                   : AppLocalizations.of(context)!.showHandler),
             ),
+            MenuItemButton(
+              onPressed: () => context
+                  .read<LogBloc>()
+                  .add(SessionOngoingPressedEvent(!state.showSessionOngoing)),
+              child: Text(
+                state.showSessionOngoing
+                    ? AppLocalizations.of(context)!
+                        .hideSessionOngoingIndicator
+                    : AppLocalizations.of(context)!
+                        .showSessionOngoingIndicator,
+              ),
+            ),
+            MenuItemButton(
+              onPressed: () => context
+                  .read<LogBloc>()
+                  .add(RealtimeUsagePressedEvent(!state.showRealtimeUsage)),
+              child: Text(
+                state.showRealtimeUsage
+                    ? AppLocalizations.of(context)!.hideRealtimeUsage
+                    : AppLocalizations.of(context)!.showRealtimeUsage,
+              ),
+            ),
           ],
           builder: (context, controller, child) {
             return IconButton(
@@ -1157,6 +1179,15 @@ class _LogListState extends State<LogList> {
                     Text(formatTime(l.timestamp, compact), style: textStyle),
                     const Gap(10),
                     frontChip,
+                    if (state.showSessionOngoing && !l.ended)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 2, right: 2),
+                        child: Icon(
+                          Icons.circle,
+                          size: 8,
+                          color: ShimmerPurple,
+                        ),
+                      ),
                     InkWell(
                         borderRadius: BorderRadius.circular(15),
                         overlayColor:
@@ -1194,6 +1225,25 @@ class _LogListState extends State<LogList> {
                                               .primary)),
                                 ),
                               Text(l.displayDst, style: textStyle),
+                              if (state.showRealtimeUsage &&
+                                  l.up != null &&
+                                  l.down != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8),
+                                  child: Text(
+                                    '↑${l.up}  ↓${l.down}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelSmall!
+                                        .copyWith(fontFeatures: [
+                                      const FontFeature.tabularFigures(),
+                                    ]).copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                    ),
+                                  ),
+                                ),
                             ],
                           ),
                         )),

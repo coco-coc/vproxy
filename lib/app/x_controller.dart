@@ -207,19 +207,16 @@ class XController implements MessageFlutterApi {
     return client.getStatsStream(GetStatsRequest(interval: interval));
   }
 
-  Future<void> toggleAppIdLogging(bool enable) async {
+  Future<void> resetUserLogging(
+      bool enable, bool appId, bool sessionEnd, bool realtimeUsage) async {
     await waitForConnectedIfConnecting();
     if (Tm.instance.state == TmStatus.connected) {
       final client = await getXClient();
-      await client.toggleLogAppId(ToggleLogAppIdRequest(enable: enable));
-    }
-  }
-
-  Future<void> stopUserLogging() async {
-    await waitForConnectedIfConnecting();
-    if (Tm.instance.state == TmStatus.connected) {
-      final client = await getXClient();
-      client.toggleUserLog(ToggleUserLogRequest(enable: false));
+      await client.resetUserLogging(ResetUserLoggingRequest(
+          enable: enable,
+          appId: appId,
+          sessionEnd: sessionEnd,
+          realtimeUsage: realtimeUsage));
     }
   }
 

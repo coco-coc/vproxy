@@ -708,6 +708,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get ipToDomain => 'IP -> 域名';
 
   @override
+  String get showSessionOngoingIndicator => '显示会话进行中指示器';
+
+  @override
+  String get hideSessionOngoingIndicator => '隐藏会话进行中指示器';
+
+  @override
+  String get showRealtimeUsage => '显示实时使用情况';
+
+  @override
+  String get hideRealtimeUsage => '隐藏实时使用情况';
+
+  @override
   String get proFeatureDescription => '该功能为Pro功能，升级为Pro用户即可解锁全部功能';
 
   @override

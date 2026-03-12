@@ -142,6 +142,8 @@ class XConfigHelper {
         userLog: l.UserLoggerConfig(
           enable: _persistentStateRepo.enableLog,
           logAppId: _persistentStateRepo.showApp,
+          logSessionEnd: _persistentStateRepo.showSessionOngoing,
+          logRealtimeUsage: _persistentStateRepo.showRealtimeUsage,
         ));
     // redirect std err
     if (!isProduction() ||
@@ -348,20 +350,6 @@ class XConfigHelper {
 
   static const _dnsTag = 'dns';
   static const _tunTag = 'tun';
-
-  final _dnsRule = RuleConfig(
-    ruleName: 'default-dns go dns handler',
-    inboundTags: [_tunTag],
-    dstCidrs: ['172.23.27.2/32', 'fc20::2/128'],
-    dstPortRanges: [PortRange(from: 53, to: 53)],
-    outboundTag: _dnsTag,
-  );
-  // reject dns over tls for default dns ns
-  final _dnsReject = RuleConfig(
-    ruleName: 'reject default dns over tls',
-    dstCidrs: ['172.23.27.2/32', 'fc20::2/128'],
-    dstPortRanges: [PortRange(from: 853, to: 853)],
-  );
 
   Future<SelectorsConfig> getSelectorsConfig(RouterConfig routerConfig) async {
     if (!_authBloc.state.pro) {
@@ -585,8 +573,27 @@ class XConfigHelper {
         .database.managers.customRouteModes
         .filter((e) => e.name.equals(mode))
         .getSingle();
-    routerConfig = RouterConfig(
-        rules: [_dnsRule, _dnsReject, ...ruleConfig.routerConfig.rules]);
+    routerConfig = RouterConfig(rules: [
+      RuleConfig(
+        ruleName: 'default-dns go dns handler',
+        inboundTags: [_tunTag],
+        dstCidrs: [
+          '${_persistentStateRepo.tunDns4}/32',
+          '${_persistentStateRepo.tunDns6}/128'
+        ],
+        dstPortRanges: [PortRange(from: 53, to: 53)],
+        outboundTag: _dnsTag,
+      ),
+      RuleConfig(
+        ruleName: 'reject default dns over tls',
+        dstCidrs: [
+          '${_persistentStateRepo.tunDns4}/32',
+          '${_persistentStateRepo.tunDns6}/128'
+        ],
+        dstPortRanges: [PortRange(from: 853, to: 853)],
+      ),
+      ...ruleConfig.routerConfig.rules
+    ]);
     //   default:
     //     throw ConfigException('未知的路由模式 $mode');
     // }
@@ -1151,7 +1158,10 @@ class XConfigHelper {
       logLevel = l.Level.DISABLED;
     }
     return l.LoggerConfig(
-        consoleWriter: true, showCaller: true, logLevel: logLevel);
+      consoleWriter: true,
+      showCaller: true,
+      logLevel: logLevel,
+    );
   }
 
   SysProxyConfig? _getSysProxyConfig(InboundManagerConfig inboundConfig) {

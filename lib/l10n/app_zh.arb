@@ -945,5 +945,9 @@
   },
   "dnsRecord": "本地DNS记录",
   "dnsServer": "DNS服务器",
-  "addDnsRecord": "添加本地DNS记录"
+  "addDnsRecord": "添加本地DNS记录",
+  "hideSessionOngoingIndicator": "隐藏会话进行中指示器",
+  "showSessionOngoingIndicator": "显示会话进行中指示器",
+  "hideRealtimeUsage": "隐藏实时使用情况",
+  "showRealtimeUsage": "显示实时使用情况"
 }

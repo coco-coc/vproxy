@@ -722,6 +722,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get ipToDomain => 'IP -> Домен';
 
   @override
+  String get showSessionOngoingIndicator => 'Show session ongoing indicator';
+
+  @override
+  String get hideSessionOngoingIndicator => 'Hide session ongoing indicator';
+
+  @override
+  String get showRealtimeUsage => 'Show realtime usage';
+
+  @override
+  String get hideRealtimeUsage => 'Hide realtime usage';
+
+  @override
   String get proFeatureDescription => 'Это функция Pro. Перейдите на Pro, чтобы получить доступ ко всем функциям.';
 
   @override

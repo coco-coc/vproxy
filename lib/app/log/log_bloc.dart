@@ -55,6 +55,8 @@ class LogBloc extends Bloc<LogEvent, LogState> {
             enableLog: pref.enableLog,
             showApp: pref.showApp,
             showHandler: pref.showHandler,
+            showSessionOngoing: pref.showSessionOngoing,
+            showRealtimeUsage: pref.showRealtimeUsage,
             logs: CircularBuffer<XLog>(maxSize: maxLogSize),
             filter: const LogFilter(
                 showDirect: true, showProxy: true, errorOnly: false))) {
@@ -73,6 +75,8 @@ class LogBloc extends Bloc<LogEvent, LogState> {
     on<LogBlocInitialEvent>(_onInitialEvent);
     on<AppPressedEvent>(_onAppPressedEvent);
     on<HandlerPressedEvent>(_onHandlerPressedEvent);
+    on<SessionOngoingPressedEvent>(_onSessionOngoingPressedEvent);
+    on<RealtimeUsagePressedEvent>(_onRealtimeUsagePressedEvent);
     _logs = state.logs;
     isIOSSimulator().then((value) {
       if (value) {
@@ -114,7 +118,6 @@ class LogBloc extends Bloc<LogEvent, LogState> {
     return;
   }
 
-
   void _onInitialEvent(
       LogBlocInitialEvent event, Emitter<LogState> emit) async {
     await emit.forEach(Tm.instance.stateStream, onData: (statusChange) {
@@ -148,7 +151,24 @@ class LogBloc extends Bloc<LogEvent, LogState> {
   void _onAppPressedEvent(AppPressedEvent event, Emitter<LogState> emit) {
     _pref.setShowApp(event.showApp);
     emit(state.copyWith(showApp: event.showApp));
-    _xController.toggleAppIdLogging(event.showApp);
+    _xController.resetUserLogging(state.enableLog, event.showApp,
+        state.showSessionOngoing, state.showRealtimeUsage);
+  }
+
+  void _onSessionOngoingPressedEvent(
+      SessionOngoingPressedEvent event, Emitter<LogState> emit) {
+    _pref.setShowSessionOngoing(event.showSessionOngoing);
+    emit(state.copyWith(showSessionOngoing: event.showSessionOngoing));
+    _xController.resetUserLogging(state.enableLog, state.showApp,
+        event.showSessionOngoing, state.showRealtimeUsage);
+  }
+
+  void _onRealtimeUsagePressedEvent(
+      RealtimeUsagePressedEvent event, Emitter<LogState> emit) {
+    _pref.setShowRealtimeUsage(event.showRealtimeUsage);
+    emit(state.copyWith(showRealtimeUsage: event.showRealtimeUsage));
+    _xController.resetUserLogging(state.enableLog, state.showApp,
+        state.showSessionOngoing, event.showRealtimeUsage);
   }
 
   void _onHandlerPressedEvent(
@@ -243,13 +263,31 @@ class LogBloc extends Bloc<LogEvent, LogState> {
         if (newLog != null) {
           emit(newLog);
         }
-      case UserLogMessage_Message.sessionError:
-        final index = _logs.indexOfBackwardsFunction((e) {
+      case UserLogMessage_Message.sessionUsage:
+        final indexUsage = _findSessionIndexBackwards(l.sessionUsage.sid);
+        if (indexUsage != -1) {
+          final e = _logs[indexUsage];
           if (e is SessionInfo) {
-            return e.sessionId == l.sessionError.sid;
+            final updated = e.copyWith(
+              up: l.sessionUsage.up.toInt(),
+              down: l.sessionUsage.down.toInt(),
+            );
+            _logs[indexUsage] = updated;
+            if (state.showRealtimeUsage) {
+              if (state.filter.showAll()) {
+                emit(state.copyWith(logs: _logs));
+              } else {
+                final newLogs =
+                    _logs.where((e) => state.filter.show(e)).toList();
+                emit(state.copyWith(
+                    logs: CircularBuffer<XLog>(
+                        maxSize: maxLogSize, initialList: newLogs)));
+              }
+            }
           }
-          return false;
-        });
+        }
+      case UserLogMessage_Message.sessionError:
+        final index = _findSessionIndexBackwards(l.sessionError.sid);
         if (index != -1) {
           final e = _logs[index];
           if (e is SessionInfo) {
@@ -257,8 +295,31 @@ class LogBloc extends Bloc<LogEvent, LogState> {
                 up: l.sessionError.up,
                 down: l.sessionError.down,
                 resolver: l.sessionError.dns,
-                error: l.sessionError.message);
+                error: l.sessionError.message,
+                ended: true);
             _logs[index] = newLog;
+            if (state.filter.showAll()) {
+              emit(state.copyWith(logs: _logs));
+            } else {
+              final newLogs = _logs.where((e) => state.filter.show(e)).toList();
+              emit(state.copyWith(
+                  logs: CircularBuffer<XLog>(
+                      maxSize: maxLogSize, initialList: newLogs)));
+            }
+          }
+        }
+      case UserLogMessage_Message.sessionEnd:
+        logger.d('session end: ${l.sessionEnd.sid}');
+        final indexEnd = _findSessionIndexBackwards(l.sessionEnd.sid);
+        if (indexEnd != -1) {
+          final e = _logs[indexEnd];
+          if (e is SessionInfo) {
+            final updated = e.copyWith(
+              up: l.sessionEnd.up.toInt(),
+              down: l.sessionEnd.down.toInt(),
+              ended: true,
+            );
+            _logs[indexEnd] = updated;
             if (state.filter.showAll()) {
               emit(state.copyWith(logs: _logs));
             } else {
@@ -313,6 +374,16 @@ class LogBloc extends Bloc<LogEvent, LogState> {
       default:
         return;
     }
+  }
+
+  int _findSessionIndexBackwards(int sid) {
+    for (var i = _logs.length - 1; i >= 0; i--) {
+      final e = _logs[i];
+      if (e is SessionInfo && e.sessionId == sid) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   LogState? _addNewLog(XLog log) {
@@ -379,7 +450,7 @@ class LogBloc extends Bloc<LogEvent, LogState> {
         _subscribe();
       } else {
         _disconnectLogStream();
-        await _xController.stopUserLogging();
+        await _xController.resetUserLogging(false, false, false, false);
       }
     }
   }
@@ -413,6 +484,7 @@ class SessionInfo extends XLog {
     this.network,
     this.sniffProtocol,
     this.source,
+    this.ended = false,
   });
   final DateTime timestamp;
   // the handler id or "direct" or "1-2-3"(handler chain)
@@ -436,6 +508,7 @@ class SessionInfo extends XLog {
   final String? network;
   final String? sniffProtocol;
   final String? source;
+  final bool ended;
 
   String get displayDst {
     if (isDomain(dst)) {
@@ -446,10 +519,7 @@ class SessionInfo extends XLog {
     return dst;
   }
 
-  bool get abnormal =>
-      (error.isNotEmpty) ||
-      (up != null && up! <= 0) ||
-      (down != null && down! <= 0);
+  bool get abnormal => (error.isNotEmpty);
 
   Color? abnormalColor(BuildContext contect) {
     if (error.contains('XTLS rejected QUIC') ||
@@ -477,6 +547,7 @@ class SessionInfo extends XLog {
     String? fallbackTag,
     String? fallbackHandlerName,
     String? handlerName,
+    bool? ended,
   }) {
     return SessionInfo(
       timestamp: timestamp,
@@ -500,6 +571,7 @@ class SessionInfo extends XLog {
       source: source ?? source,
       routeRuleMatched: routeRuleMatched ?? routeRuleMatched,
       icon: icon ?? this.icon,
+      ended: ended ?? this.ended,
     );
   }
 }
