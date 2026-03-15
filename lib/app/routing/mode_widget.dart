@@ -27,6 +27,7 @@ import 'package:vx/app/routing/add_dialog.dart';
 import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/routing/default_mode_dialog.dart';
 import 'package:vx/app/routing/repo.dart';
+import 'package:vx/app/routing/selector_widget.dart';
 import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/data/database_provider.dart';
 import 'package:vx/l10n/app_localizations.dart';
@@ -955,13 +956,18 @@ extension RuleConfigExtension on RuleConfig {
               ...fallbacks.map(
                 (e) => e.selectorTag.isNotEmpty
                     ? Text(
-                        '${e.selectorTag} ',
+                        '${localizedSelectorName(context, e.selectorTag)} ',
                         style: Theme.of(context).textTheme.labelSmall,
                       )
-                    : HandlerLabel(
-                        handlerIdString: e.outboundTag,
-                        style: Theme.of(context).textTheme.labelSmall,
-                      ),
+                    : (e.outboundTag != directHandlerTag
+                          ? HandlerLabel(
+                              handlerIdString: e.outboundTag,
+                              style: Theme.of(context).textTheme.labelSmall,
+                            )
+                          : Text(
+                              AppLocalizations.of(context)!.direct,
+                              style: Theme.of(context).textTheme.labelSmall,
+                            )),
               ),
             ],
           ),

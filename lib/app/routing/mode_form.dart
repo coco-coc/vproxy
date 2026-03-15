@@ -607,7 +607,7 @@ class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
                   ],
                 ),
               const Gap(10),
-              RetryList(
+              _Fallbacks(
                 rule: _ruleConfig,
                 selectors: _selectors,
                 outboundHandlers: _outboundHandlers,
@@ -620,8 +620,8 @@ class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
   }
 }
 
-class RetryList extends StatefulWidget {
-  const RetryList({
+class _Fallbacks extends StatefulWidget {
+  const _Fallbacks({
     super.key,
     required this.rule,
     required this.selectors,
@@ -633,10 +633,10 @@ class RetryList extends StatefulWidget {
   final List<OutboundHandler>? outboundHandlers;
 
   @override
-  State<RetryList> createState() => _RetryListState();
+  State<_Fallbacks> createState() => _FallbacksState();
 }
 
-class _RetryListState extends State<RetryList> {
+class _FallbacksState extends State<_Fallbacks> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -657,7 +657,7 @@ class _RetryListState extends State<RetryList> {
         Column(
           children: [
             for (final fallback in fallbacks)
-              _Retry(
+              _Fallback(
                 fallback: fallback,
                 onDelete: () {
                   setState(() {
@@ -679,7 +679,7 @@ class _RetryListState extends State<RetryList> {
               });
             },
             icon: const Icon(Icons.add_rounded, size: 18),
-            label: Text(l10n.retry),
+            label: Text(l10n.fallback),
           ),
         ),
       ],
@@ -687,8 +687,8 @@ class _RetryListState extends State<RetryList> {
   }
 }
 
-class _Retry extends StatefulWidget {
-  _Retry({
+class _Fallback extends StatefulWidget {
+  _Fallback({
     super.key,
     required this.fallback,
     this.selectors,
@@ -701,10 +701,10 @@ class _Retry extends StatefulWidget {
   Function onDelete;
 
   @override
-  State<_Retry> createState() => __RetryState();
+  State<_Fallback> createState() => _FallbackState();
 }
 
-class __RetryState extends State<_Retry> {
+class _FallbackState extends State<_Fallback> {
   final List<bool> _isExpanded = List.filled(2, false);
   final Map<Condition, bool> _nontrivial = Map.fromEntries(
     Condition.values.map((e) => MapEntry(e, false)),
@@ -808,7 +808,6 @@ class __RetryState extends State<_Retry> {
                 onSelected: (value) {
                   setState(() {
                     if (value == null) {
-                      widget.fallback.outboundTag = '';
                     } else if (value == directHandler) {
                       widget.fallback.outboundTag = directHandlerTag;
                     } else {
@@ -831,7 +830,6 @@ class __RetryState extends State<_Retry> {
                   initialSelection: _getSelectorForFallback(widget.fallback),
                   onSelected: (value) {
                     setState(() {
-                      widget.fallback.selectorTag = '';
                       if (value == proxySelector) {
                         widget.fallback.selectorTag = defaultProxySelectorTag;
                       } else if (value != null) {
@@ -883,8 +881,8 @@ class __RetryState extends State<_Retry> {
                     setState(() {
                       widget.fallback.matchAll = value;
                       if (widget.fallback.matchAll) {
-                        widget.fallback.clear();
-                        widget.fallback.matchAll = true;
+                        widget.fallback.domainTags.clear();
+                        widget.fallback.dstIpTags.clear();
                         _updateNontrivial();
                       }
                     });
