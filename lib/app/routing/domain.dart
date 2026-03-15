@@ -16,11 +16,12 @@
 part of 'routing_page.dart';
 
 class AtomicDomainSetWidget extends StatefulWidget {
-  const AtomicDomainSetWidget(
-      {super.key,
-      required this.domainSetName,
-      this.addButtonInWrap = false,
-      this.showLabel = true});
+  const AtomicDomainSetWidget({
+    super.key,
+    required this.domainSetName,
+    this.addButtonInWrap = false,
+    this.showLabel = true,
+  });
   final String domainSetName;
   final bool addButtonInWrap;
   final bool showLabel;
@@ -39,12 +40,13 @@ class _AtomicDomainSetWidgetState extends State<AtomicDomainSetWidget> {
   }
 
   void _subscribe() {
-    _geoDomainSubscription =
-        domainRepo.getGeoDomainsStream(widget.domainSetName).listen((q) {
-      setState(() {
-        _geoDomains = q;
-      });
-    });
+    _geoDomainSubscription = domainRepo
+        .getGeoDomainsStream(widget.domainSetName)
+        .listen((q) {
+          setState(() {
+            _geoDomains = q;
+          });
+        });
   }
 
   @override
@@ -74,9 +76,10 @@ class _AtomicDomainSetWidgetState extends State<AtomicDomainSetWidget> {
 
   void _onAddDomain() async {
     final result = await showDialog(
-        barrierDismissible: desktopPlatforms ? true : false,
-        context: context,
-        builder: (context) => const AddDialog(domain: true));
+      barrierDismissible: desktopPlatforms ? true : false,
+      context: context,
+      builder: (context) => const AddDialog(domain: true),
+    );
     if (result != null && result is Domain) {
       await domainRepo.addGeoDomain(widget.domainSetName, result);
       context.read<XController>().addGeoDomain(widget.domainSetName, result);
@@ -92,11 +95,13 @@ class _AtomicDomainSetWidgetState extends State<AtomicDomainSetWidget> {
     );
     if (result != null) {
       try {
-        final response = await context
-            .read<XApiClient>()
-            .parseClashRuleFile(result.files.first.bytes!.toList());
+        final response = await context.read<XApiClient>().parseClashRuleFile(
+          result.files.first.bytes!.toList(),
+        );
         await domainRepo.bulkAddGeoDomain(
-            widget.domainSetName, response.domains);
+          widget.domainSetName,
+          response.domains,
+        );
       } catch (e) {
         snack(e.toString());
       }
@@ -105,74 +110,103 @@ class _AtomicDomainSetWidgetState extends State<AtomicDomainSetWidget> {
 
   void _onDeleteDomain(GeoDomain domain) {
     domainRepo.removeGeoDomain(domain);
-    context
-        .read<XController>()
-        .removeGeoDomain(widget.domainSetName, domain.geoDomain);
+    context.read<XController>().removeGeoDomain(
+      widget.domainSetName,
+      domain.geoDomain,
+    );
   }
 
   List<Widget> _buildWrapChildrenForDomains(BuildContext context) {
     final children = <Widget>[];
-    children.add(WrapChild(
-      shape: chipBorderRadius,
-      text: AppLocalizations.of(context)!.keyword,
-      backgroundColor: pinkColorTheme.secondaryContainer,
-      foregroundColor: pinkColorTheme.onSecondaryContainer,
-    ));
-    children.addAll(_geoDomains
-        .where((domain) => domain.geoDomain.type == Domain_Type.Plain)
-        .map((domain) => WrapChild(
+    children.add(
+      WrapChild(
+        shape: chipBorderRadius,
+        text: AppLocalizations.of(context)!.keyword,
+        backgroundColor: pinkColorTheme.secondaryContainer,
+        foregroundColor: pinkColorTheme.onSecondaryContainer,
+      ),
+    );
+    children.addAll(
+      _geoDomains
+          .where((domain) => domain.geoDomain.type == Domain_Type.Plain)
+          .map(
+            (domain) => WrapChild(
               shape: chipBorderRadius,
               text: domain.geoDomain.value,
-              backgroundColor:
-                  Theme.of(context).colorScheme.surfaceContainerLow,
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.surfaceContainerLow,
               onDelete: () => _onDeleteDomain(domain),
-            )));
+            ),
+          ),
+    );
 
-    children.add(WrapChild(
-      shape: chipBorderRadius,
-      text: AppLocalizations.of(context)!.rootDomain,
-      backgroundColor: greenColorTheme.secondaryContainer,
-      foregroundColor: greenColorTheme.onSecondaryContainer,
-    ));
-    children.addAll(_geoDomains
-        .where((domain) => domain.geoDomain.type == Domain_Type.RootDomain)
-        .map((domain) => WrapChild(
+    children.add(
+      WrapChild(
+        shape: chipBorderRadius,
+        text: AppLocalizations.of(context)!.rootDomain,
+        backgroundColor: greenColorTheme.secondaryContainer,
+        foregroundColor: greenColorTheme.onSecondaryContainer,
+      ),
+    );
+    children.addAll(
+      _geoDomains
+          .where((domain) => domain.geoDomain.type == Domain_Type.RootDomain)
+          .map(
+            (domain) => WrapChild(
               shape: chipBorderRadius,
               text: domain.geoDomain.value,
-              backgroundColor:
-                  Theme.of(context).colorScheme.surfaceContainerLow,
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.surfaceContainerLow,
               onDelete: () => _onDeleteDomain(domain),
-            )));
-    children.add(WrapChild(
-      shape: chipBorderRadius,
-      text: AppLocalizations.of(context)!.exact,
-      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-      foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
-    ));
-    children.addAll(_geoDomains
-        .where((domain) => domain.geoDomain.type == Domain_Type.Full)
-        .map((domain) => WrapChild(
+            ),
+          ),
+    );
+    children.add(
+      WrapChild(
+        shape: chipBorderRadius,
+        text: AppLocalizations.of(context)!.exact,
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+      ),
+    );
+    children.addAll(
+      _geoDomains
+          .where((domain) => domain.geoDomain.type == Domain_Type.Full)
+          .map(
+            (domain) => WrapChild(
               shape: chipBorderRadius,
               text: domain.geoDomain.value,
-              backgroundColor:
-                  Theme.of(context).colorScheme.surfaceContainerLow,
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.surfaceContainerLow,
               onDelete: () => _onDeleteDomain(domain),
-            )));
-    children.add(WrapChild(
-      shape: chipBorderRadius,
-      text: AppLocalizations.of(context)!.regularExpression,
-      backgroundColor: purpleColorTheme.secondaryContainer,
-      foregroundColor: purpleColorTheme.onSecondaryContainer,
-    ));
-    children.addAll(_geoDomains
-        .where((domain) => domain.geoDomain.type == Domain_Type.Regex)
-        .map((domain) => WrapChild(
+            ),
+          ),
+    );
+    children.add(
+      WrapChild(
+        shape: chipBorderRadius,
+        text: AppLocalizations.of(context)!.regularExpression,
+        backgroundColor: purpleColorTheme.secondaryContainer,
+        foregroundColor: purpleColorTheme.onSecondaryContainer,
+      ),
+    );
+    children.addAll(
+      _geoDomains
+          .where((domain) => domain.geoDomain.type == Domain_Type.Regex)
+          .map(
+            (domain) => WrapChild(
               shape: chipBorderRadius,
               text: domain.geoDomain.value,
-              backgroundColor:
-                  Theme.of(context).colorScheme.surfaceContainerLow,
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.surfaceContainerLow,
               onDelete: () => _onDeleteDomain(domain),
-            )));
+            ),
+          ),
+    );
 
     return children;
   }
@@ -194,104 +228,109 @@ class _AtomicDomainSetWidgetState extends State<AtomicDomainSetWidget> {
       ],
       builder: (context, controller, child) {
         return IconButton.filledTonal(
-            visualDensity: VisualDensity.compact,
-            padding: const EdgeInsets.all(0),
-            onPressed: () => controller.open(),
-            icon: const Icon(Icons.add_rounded));
+          visualDensity: VisualDensity.compact,
+          padding: const EdgeInsets.all(0),
+          onPressed: () => controller.open(),
+          icon: const Icon(Icons.add_rounded),
+        );
       },
     );
 
-    return LayoutBuilder(builder: (ctx, c) {
-      final header = widget.addButtonInWrap
-          ? const SizedBox.shrink()
-          : Row(
-              children: [
-                if (widget.showLabel)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10.0),
-                    child: Chip(
-                      side: const BorderSide(color: Colors.transparent),
-                      shape: chipBorderRadius,
-                      backgroundColor:
-                          Theme.of(context).colorScheme.primaryContainer,
-                      label: Text(AppLocalizations.of(context)!.domain,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
+    return LayoutBuilder(
+      builder: (ctx, c) {
+        final header = widget.addButtonInWrap
+            ? const SizedBox.shrink()
+            : Row(
+                children: [
+                  if (widget.showLabel)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10.0),
+                      child: Chip(
+                        side: const BorderSide(color: Colors.transparent),
+                        shape: chipBorderRadius,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer,
+                        label: Text(
+                          AppLocalizations.of(context)!.domain,
+                          style: Theme.of(context).textTheme.bodyMedium!
                               .copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer,
-                                  fontWeight: FontWeight.w500)),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onPrimaryContainer,
+                                fontWeight: FontWeight.w500,
+                              ),
+                        ),
+                      ),
+                    ),
+                  addButton,
+                  const Gap(10),
+                ],
+              );
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            header,
+            const Gap(10),
+            Expanded(
+              child:
+                  // c.isCompact
+                  // ? CustomScrollView(slivers: [
+                  //     SliverToBoxAdapter(
+                  //       child: Wrap(
+                  //         runSpacing: 10,
+                  //         spacing: 10,
+                  //         children: _buildWrapChildren(context, true),
+                  //       ),
+                  //     ),
+                  //     SliverToBoxAdapter(
+                  //       child: SizedBox(
+                  //         height: 10,
+                  //       ),
+                  //     ),
+                  //     SliverFixedExtentList(
+                  //       itemExtent: 60,
+                  //       delegate: SliverChildBuilderDelegate(
+                  //         (ctx, index) {
+                  //           final domain = _fullAndRegexDomains[index];
+                  //           return ListTile(
+                  //             contentPadding:
+                  //                 const EdgeInsets.only(left: 5, right: 5),
+                  //             title: Text(domain.geoDomain.value),
+                  //             subtitle:
+                  //                 Text(domain.geoDomain.type.localName(context)),
+                  //             visualDensity: VisualDensity.compact,
+                  //             trailing: IconButton(
+                  //               onPressed: () {
+                  //                 (database.delete(database.geoDomains)
+                  //                       ..where((t) => t.id.equals(domain.id)))
+                  //                     .go();
+                  //               },
+                  //               icon: const Icon(Icons.delete_outline),
+                  //             ),
+                  //           );
+                  //         },
+                  //         childCount: _fullAndRegexDomains.length,
+                  //       ),
+                  //     )
+                  //   ])
+                  // :
+                  SingleChildScrollView(
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      runSpacing: 10,
+                      spacing: 10,
+                      children: [
+                        ..._buildWrapChildrenForDomains(context),
+                        if (widget.addButtonInWrap) addButton,
+                      ],
                     ),
                   ),
-                addButton,
-                const Gap(10),
-              ],
-            );
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          header,
-          const Gap(10),
-          Expanded(
-            child:
-                // c.isCompact
-                // ? CustomScrollView(slivers: [
-                //     SliverToBoxAdapter(
-                //       child: Wrap(
-                //         runSpacing: 10,
-                //         spacing: 10,
-                //         children: _buildWrapChildren(context, true),
-                //       ),
-                //     ),
-                //     SliverToBoxAdapter(
-                //       child: SizedBox(
-                //         height: 10,
-                //       ),
-                //     ),
-                //     SliverFixedExtentList(
-                //       itemExtent: 60,
-                //       delegate: SliverChildBuilderDelegate(
-                //         (ctx, index) {
-                //           final domain = _fullAndRegexDomains[index];
-                //           return ListTile(
-                //             contentPadding:
-                //                 const EdgeInsets.only(left: 5, right: 5),
-                //             title: Text(domain.geoDomain.value),
-                //             subtitle:
-                //                 Text(domain.geoDomain.type.localName(context)),
-                //             visualDensity: VisualDensity.compact,
-                //             trailing: IconButton(
-                //               onPressed: () {
-                //                 (database.delete(database.geoDomains)
-                //                       ..where((t) => t.id.equals(domain.id)))
-                //                     .go();
-                //               },
-                //               icon: const Icon(Icons.delete_outline),
-                //             ),
-                //           );
-                //         },
-                //         childCount: _fullAndRegexDomains.length,
-                //       ),
-                //     )
-                //   ])
-                // :
-                SingleChildScrollView(
-              child: Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                runSpacing: 10,
-                spacing: 10,
-                children: [
-                  ..._buildWrapChildrenForDomains(context),
-                  if (widget.addButtonInWrap) addButton,
-                ],
-              ),
             ),
-          )
-        ],
-      );
-    });
+          ],
+        );
+      },
+    );
   }
 }
 

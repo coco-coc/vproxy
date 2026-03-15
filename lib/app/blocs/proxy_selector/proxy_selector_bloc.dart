@@ -38,25 +38,29 @@ part 'tm_state.dart';
 part 'tm_event.dart';
 
 class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
-  ProxySelectorBloc(
-      {required SharedPreferences pref,
-      required XController xConfigController,
-      required DatabaseProvider databaseProvider,
-      required AuthBloc authBloc})
-      : _pref = pref,
-        _xController = xConfigController,
-        _databaseProvider = databaseProvider,
-        super(ProxySelectorState(
-          routeMode: pref.routingMode,
-          showProxySelector: pref.routingMode is DefaultRouteMode ? true : null,
-          proxySelectorEnabled: authBloc.state.pro,
-          proxySelectorMode: pref.proxySelectorMode,
-          manualNodeSetting: ManualNodeSetting(
-            nodeMode: pref.proxySelectorManualMode,
-            balanceStrategy: pref.proxySelectorManualMultipleBalanceStrategy,
-            landHandlers: pref.proxySelectorManualLandHandlers,
-          ),
-        )) {
+  ProxySelectorBloc({
+    required SharedPreferences pref,
+    required XController xConfigController,
+    required DatabaseProvider databaseProvider,
+    required AuthBloc authBloc,
+  }) : _pref = pref,
+       _xController = xConfigController,
+       _databaseProvider = databaseProvider,
+       super(
+         ProxySelectorState(
+           routeMode: pref.routingMode,
+           showProxySelector: pref.routingMode is DefaultRouteMode
+               ? true
+               : null,
+           proxySelectorEnabled: authBloc.state.pro,
+           proxySelectorMode: pref.proxySelectorMode,
+           manualNodeSetting: ManualNodeSetting(
+             nodeMode: pref.proxySelectorManualMode,
+             balanceStrategy: pref.proxySelectorManualMultipleBalanceStrategy,
+             landHandlers: pref.proxySelectorManualLandHandlers,
+           ),
+         ),
+       ) {
     on<XBlocInitialEvent>(_initial);
     on<AuthUserChangedEvent>(_authUserChanged);
     on<RoutingModeSelectionChangeEvent>(_routingModeSelectionChange);
@@ -78,20 +82,27 @@ class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
   // }
 
   Future<void> _initial(
-      XBlocInitialEvent e, Emitter<ProxySelectorState> emit) async {
+    XBlocInitialEvent e,
+    Emitter<ProxySelectorState> emit,
+  ) async {
     // update routeMode and showProxySelector
     // when it is null, it means _pref.routingMode is a custom route mode
     final rm = _pref.routingMode;
     if (rm != null) {
       try {
         final customRouteMode = await _databaseProvider
-            .database.managers.customRouteModes
+            .database
+            .managers
+            .customRouteModes
             .filter((e) => e.name(rm))
             .getSingleOrNull();
         if (customRouteMode != null) {
-          emit(state.copyWith(
+          emit(
+            state.copyWith(
               routeMode: customRouteMode.name,
-              showProxySelector: customRouteMode.hasDefaultProxySelector));
+              showProxySelector: customRouteMode.hasDefaultProxySelector,
+            ),
+          );
         }
       } catch (e) {
         logger.e("cannot get custom route mode", error: e);
@@ -111,13 +122,17 @@ class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
   }
 
   Future<void> _authUserChanged(
-      AuthUserChangedEvent e, Emitter<ProxySelectorState> emit) async {
+    AuthUserChangedEvent e,
+    Emitter<ProxySelectorState> emit,
+  ) async {
     logger.d("authUserChanged: $e");
     await makeSureConssitency(e.unlockPro, emit);
   }
 
   Future<void> makeSureConssitency(
-      bool unlockPro, Emitter<ProxySelectorState> emit) async {
+    bool unlockPro,
+    Emitter<ProxySelectorState> emit,
+  ) async {
     logger.d("makeSureConssitency: $unlockPro");
     if (unlockPro) {
       emit(state.copyWith(proxySelectorEnabled: true));
@@ -130,7 +145,9 @@ class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
       }
       if (rootNavigationKey.currentContext != null && state.routeMode != null) {
         if (isDefaultRouteMode(
-            state.routeMode!, rootNavigationKey.currentContext!)) {
+          state.routeMode!,
+          rootNavigationKey.currentContext!,
+        )) {
           ideal = false;
         }
       }
@@ -144,33 +161,43 @@ class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
           _pref.proxySelectorManualMode !=
               ProxySelectorManualNodeSelectionMode.single) {
         _pref.setProxySelectorManualMode(
-            ProxySelectorManualNodeSelectionMode.single);
+          ProxySelectorManualNodeSelectionMode.single,
+        );
         ideal = false;
       }
       if (ideal) {
-        emit(state.copyWith(
-            proxySelectorEnabled: false, showProxySelector: true));
+        emit(
+          state.copyWith(proxySelectorEnabled: false, showProxySelector: true),
+        );
         return;
       }
       await _xController.stop();
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           outboundMode: ProxySelectorMode.manual,
           manualNodeSetting: const ManualNodeSetting(),
           proxySelectorEnabled: false,
-          showProxySelector: true));
+          showProxySelector: true,
+        ),
+      );
     }
   }
 
-  Future<void> _routingModeSelectionChange(RoutingModeSelectionChangeEvent e,
-      Emitter<ProxySelectorState> emit) async {
+  Future<void> _routingModeSelectionChange(
+    RoutingModeSelectionChangeEvent e,
+    Emitter<ProxySelectorState> emit,
+  ) async {
     final oldRouteMode = state.routeMode;
     // if (e.routeMode is DefaultRouteMode) {
     //   emit(state.copyWith(routeMode: e.routeMode, showProxySelector: true));
     //   _pref.setRoutingMode(e.routeMode as DefaultRouteMode);
     // } else {
-    emit(state.copyWith(
+    emit(
+      state.copyWith(
         showProxySelector: (e.routeMode).hasDefaultProxySelector,
-        routeMode: e.routeMode.name));
+        routeMode: e.routeMode.name,
+      ),
+    );
     _pref.setRoutingMode(e.routeMode.name);
     // }
     try {
@@ -183,16 +210,22 @@ class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
   }
 
   Future<void> _customRouteModeChange(
-      CustomRouteModeChangeEvent e, Emitter<ProxySelectorState> emit) async {
+    CustomRouteModeChangeEvent e,
+    Emitter<ProxySelectorState> emit,
+  ) async {
     print("customRouteModeChange: ${e.routeMode.name}");
     if (state.routeMode == e.routeMode.name) {
       await _routingModeSelectionChange(
-          RoutingModeSelectionChangeEvent(e.routeMode), emit);
+        RoutingModeSelectionChangeEvent(e.routeMode),
+        emit,
+      );
     }
   }
 
   Future<void> _customRouteModeDelete(
-      CustomRouteModeDeleteEvent e, Emitter<ProxySelectorState> emit) async {
+    CustomRouteModeDeleteEvent e,
+    Emitter<ProxySelectorState> emit,
+  ) async {
     if (state.routeMode == e.routeMode.name) {
       // await _routingModeSelectionChange(
       //     const RoutingModeSelectionChangeEvent(DefaultRouteMode.black), emit);
@@ -205,60 +238,86 @@ class ProxySelectorBloc extends Bloc<ProxySelectorEvent, ProxySelectorState> {
   }
 
   void _proxySelectorChange(
-      ProxySelectorModeChangeEvent e, Emitter<ProxySelectorState> emit) async {
+    ProxySelectorModeChangeEvent e,
+    Emitter<ProxySelectorState> emit,
+  ) async {
     _pref.setProxySelectorMode(e.mode);
     emit(state.copyWith(outboundMode: e.mode));
     if (e.mode == ProxySelectorMode.manual) {
       await _xController.selectorSelectStrategyOrLandhandlerChange(
-          _pref.manualSelectorConfig);
+        _pref.manualSelectorConfig,
+      );
     } else {
-      await _xController
-          .selectorSelectStrategyOrLandhandlerChange(state.autoNodeSetting!);
+      await _xController.selectorSelectStrategyOrLandhandlerChange(
+        state.autoNodeSetting!,
+      );
     }
   }
 
-  void _manualNodeModeChange(ManualSelectionModeChangeEvent e,
-      Emitter<ProxySelectorState> emit) async {
-    emit(state.copyWith(
-        manualNodeSetting: state.manualNodeSetting.copyWith(nodeMode: e.mode)));
+  void _manualNodeModeChange(
+    ManualSelectionModeChangeEvent e,
+    Emitter<ProxySelectorState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        manualNodeSetting: state.manualNodeSetting.copyWith(nodeMode: e.mode),
+      ),
+    );
     _pref.setProxySelectorManualMode(e.mode);
     // if single, routeModeChange is called by outboundBloc
     if (e.mode == ProxySelectorManualNodeSelectionMode.multiple) {
       await _xController.selectorBalancingStrategyChange(
-          defaultProxySelectorTag,
-          _pref.proxySelectorManualMultipleBalanceStrategy);
+        defaultProxySelectorTag,
+        _pref.proxySelectorManualMultipleBalanceStrategy,
+      );
     }
   }
 
-  void _manualNodeBalanceStrategyChange(ManualNodeBalanceStrategyChangeEvent e,
-      Emitter<ProxySelectorState> emit) async {
-    emit(state.copyWith(
-        manualNodeSetting:
-            state.manualNodeSetting.copyWith(balanceStrategy: e.strategy)));
+  void _manualNodeBalanceStrategyChange(
+    ManualNodeBalanceStrategyChangeEvent e,
+    Emitter<ProxySelectorState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        manualNodeSetting: state.manualNodeSetting.copyWith(
+          balanceStrategy: e.strategy,
+        ),
+      ),
+    );
     _pref.setProxySelectorManualMultipleBalanceStrategy(e.strategy);
     await _xController.selectorBalancingStrategyChange(
-        defaultProxySelectorTag, e.strategy);
+      defaultProxySelectorTag,
+      e.strategy,
+    );
   }
 
-  void _manualModeLandHandlersChange(ManualModeLandHandlersChangeEvent e,
-      Emitter<ProxySelectorState> emit) async {
+  void _manualModeLandHandlersChange(
+    ManualModeLandHandlersChangeEvent e,
+    Emitter<ProxySelectorState> emit,
+  ) async {
     // emit(state.copyWith(
     //     manualNodeSetting:
     //         state.manualNodeSetting.copyWith(landHandlers: e.landHandlers)));
     _pref.setProxySelectorLandHandlers(state.manualNodeSetting.landHandlers);
-    await _xController
-        .selectorSelectStrategyOrLandhandlerChange(_pref.manualSelectorConfig);
+    await _xController.selectorSelectStrategyOrLandhandlerChange(
+      _pref.manualSelectorConfig,
+    );
   }
 
-  void _autoNodeSelectorConfigChange(AutoNodeSelectorConfigChangeEvent e,
-      Emitter<ProxySelectorState> emit) async {
+  void _autoNodeSelectorConfigChange(
+    AutoNodeSelectorConfigChangeEvent e,
+    Emitter<ProxySelectorState> emit,
+  ) async {
     // emit(state.copyWith(autoNodeSetting: state.autoNodeSetting));
     if (e.selectorStrategyOrLandHandlers) {
-      await _xController
-          .selectorSelectStrategyOrLandhandlerChange(state.autoNodeSetting!);
+      await _xController.selectorSelectStrategyOrLandhandlerChange(
+        state.autoNodeSetting!,
+      );
     } else if (e.balancingStragegy) {
       await _xController.selectorBalancingStrategyChange(
-          defaultProxySelectorTag, state.autoNodeSetting!.balanceStrategy);
+        defaultProxySelectorTag,
+        state.autoNodeSetting!.balanceStrategy,
+      );
     } else if (e.filterLandHandlers) {
       await _xController.selectorFilterChange(state.autoNodeSetting!);
     }

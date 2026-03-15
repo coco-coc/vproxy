@@ -46,4 +46,3 @@ class AppBlocObserver extends BlocObserver {
     logger.d(transition);
   }
 }
-

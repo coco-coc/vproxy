@@ -22,25 +22,35 @@ class LogState {
     required this.filter,
     this.showApp = true,
     this.showHandler = false,
+    this.showSessionOngoing = true,
+    this.showRealtimeUsage = false,
   });
   final bool enableLog;
   final LogFilter filter;
   final CircularBuffer<XLog> logs;
   final bool showApp;
   final bool showHandler;
+  final bool showSessionOngoing;
+  final bool showRealtimeUsage;
 
-  LogState copyWith(
-      {bool? enableLog,
-      CircularBuffer<XLog>? logs,
-      LogFilter? filter,
-      bool? showApp,
-      bool? showHandler}) {
+  LogState copyWith({
+    bool? enableLog,
+    CircularBuffer<XLog>? logs,
+    LogFilter? filter,
+    bool? showApp,
+    bool? showHandler,
+    bool? showSessionOngoing,
+    bool? showRealtimeUsage,
+  }) {
     return LogState(
-        enableLog: enableLog ?? this.enableLog,
-        logs: logs ?? this.logs,
-        filter: filter ?? this.filter,
-        showApp: showApp ?? this.showApp,
-        showHandler: showHandler ?? this.showHandler);
+      enableLog: enableLog ?? this.enableLog,
+      logs: logs ?? this.logs,
+      filter: filter ?? this.filter,
+      showApp: showApp ?? this.showApp,
+      showHandler: showHandler ?? this.showHandler,
+      showSessionOngoing: showSessionOngoing ?? this.showSessionOngoing,
+      showRealtimeUsage: showRealtimeUsage ?? this.showRealtimeUsage,
+    );
   }
 }
 
@@ -66,15 +76,20 @@ class LogFilter {
     bool? showReject,
   }) {
     return LogFilter(
-        showDirect: isDirectSelected ?? showDirect,
-        showProxy: isProxySelected ?? showProxy,
-        substring: substring ?? this.substring,
-        errorOnly: errorOnly ?? this.errorOnly,
-        showReject: showReject ?? this.showReject);
+      showDirect: isDirectSelected ?? showDirect,
+      showProxy: isProxySelected ?? showProxy,
+      substring: substring ?? this.substring,
+      errorOnly: errorOnly ?? this.errorOnly,
+      showReject: showReject ?? this.showReject,
+    );
   }
 
   bool showAll() {
-    return showDirect && showProxy && substring.isEmpty && !errorOnly && showReject;
+    return showDirect &&
+        showProxy &&
+        substring.isEmpty &&
+        !errorOnly &&
+        showReject;
   }
 
   bool show(XLog log) {

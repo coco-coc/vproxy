@@ -63,34 +63,37 @@ class _SetWidgetState extends State<SetWidget>
                 Padding(
                   padding: const EdgeInsets.only(right: 5.0),
                   child: ChoiceChip(
-                      label: Text(AppLocalizations.of(context)!.domain),
-                      selected: _category == RouteCategory.domain,
-                      onSelected: (value) {
-                        setState(() {
-                          _category = RouteCategory.domain;
-                        });
-                      }),
+                    label: Text(AppLocalizations.of(context)!.domain),
+                    selected: _category == RouteCategory.domain,
+                    onSelected: (value) {
+                      setState(() {
+                        _category = RouteCategory.domain;
+                      });
+                    },
+                  ),
                 ),
                 if (showApp)
                   Padding(
                     padding: const EdgeInsets.only(right: 5.0),
                     child: ChoiceChip(
-                        label: Text(AppLocalizations.of(context)!.app),
-                        selected: _category == RouteCategory.app,
-                        onSelected: (value) {
-                          setState(() {
-                            _category = RouteCategory.app;
-                          });
-                        }),
+                      label: Text(AppLocalizations.of(context)!.app),
+                      selected: _category == RouteCategory.app,
+                      onSelected: (value) {
+                        setState(() {
+                          _category = RouteCategory.app;
+                        });
+                      },
+                    ),
                   ),
                 ChoiceChip(
-                    label: const Text('IP'),
-                    selected: _category == RouteCategory.ip,
-                    onSelected: (value) {
-                      setState(() {
-                        _category = RouteCategory.ip;
-                      });
-                    }),
+                  label: const Text('IP'),
+                  selected: _category == RouteCategory.ip,
+                  onSelected: (value) {
+                    setState(() {
+                      _category = RouteCategory.ip;
+                    });
+                  },
+                ),
                 const Gap(5),
                 MenuAnchor(
                   menuChildren: [
@@ -102,8 +105,9 @@ class _SetWidgetState extends State<SetWidget>
                         final formData = await showMyAdaptiveDialog(
                           context,
                           ClashRuleSet(key: k),
-                          title:
-                              AppLocalizations.of(context)!.addDomainIpAppSet,
+                          title: AppLocalizations.of(
+                            context,
+                          )!.addDomainIpAppSet,
                           onSave: (p0) {
                             final formData =
                                 (k.currentState as FormDataGetter).formData;
@@ -116,16 +120,26 @@ class _SetWidgetState extends State<SetWidget>
                           final setName = formData.name;
                           final clashRuleUrls = formData.clashRuleUrls;
                           try {
-                            await repo.addAppSet(AppSet(
-                                name: setName, clashRuleUrls: clashRuleUrls));
-                            await repo.addAtomicDomainSet(AtomicDomainSet(
+                            await repo.addAppSet(
+                              AppSet(
+                                name: setName,
+                                clashRuleUrls: clashRuleUrls,
+                              ),
+                            );
+                            await repo.addAtomicDomainSet(
+                              AtomicDomainSet(
                                 useBloomFilter: false,
                                 name: setName,
-                                clashRuleUrls: clashRuleUrls));
-                            await repo.addAtomicIpSet(AtomicIpSet(
+                                clashRuleUrls: clashRuleUrls,
+                              ),
+                            );
+                            await repo.addAtomicIpSet(
+                              AtomicIpSet(
                                 name: setName,
                                 inverse: false,
-                                clashRuleUrls: clashRuleUrls));
+                                clashRuleUrls: clashRuleUrls,
+                              ),
+                            );
                             context
                                 .read<GeoDataHelper>()
                                 .makeGeoDataAvailable();
@@ -137,35 +151,40 @@ class _SetWidgetState extends State<SetWidget>
                       child: Text(AppLocalizations.of(context)!.addSet),
                     ),
                     MenuItemButton(
-                      leadingIcon:
-                          const Icon(Icons.info_outline_rounded, size: 18),
+                      leadingIcon: const Icon(
+                        Icons.info_outline_rounded,
+                        size: 18,
+                      ),
                       onPressed: () async {
                         showDialog(
-                            context: context,
-                            builder: (context) => InfoDialog(children: [
-                                  AppLocalizations.of(context)!
-                                      .greatSetDescription1,
-                                  AppLocalizations.of(context)!
-                                      .greatSetDescription2,
-                                  AppLocalizations.of(context)!
-                                      .directAppSetDesc,
-                                ]));
+                          context: context,
+                          builder: (context) => InfoDialog(
+                            children: [
+                              AppLocalizations.of(
+                                context,
+                              )!.greatSetDescription1,
+                              AppLocalizations.of(
+                                context,
+                              )!.greatSetDescription2,
+                              AppLocalizations.of(context)!.directAppSetDesc,
+                            ],
+                          ),
+                        );
                       },
                       child: Text(AppLocalizations.of(context)!.info),
-                    )
+                    ),
                   ],
                   builder: (context, controller, child) {
                     return IconButton(
-                        onPressed: () {
-                          controller.open();
-                        },
-                        icon: const Icon(Icons.more_vert, size: 18));
+                      onPressed: () {
+                        controller.open();
+                      },
+                      icon: const Icon(Icons.more_vert, size: 18),
+                    );
                   },
                 ),
-                const Expanded(
-                  child: SizedBox(),
-                ),
-                widget.switchModeButton ?? const SizedBox.shrink()
+                const Expanded(child: SizedBox()),
+                widget.switchModeButton ?? const SizedBox.shrink(),
               ],
             ),
             const Gap(10),
@@ -214,12 +233,14 @@ class _AppSetWidgetState extends State<AppSetWidget> {
   void _onAppSetTap(AppSet? appSet) async {
     final repo = context.read<SetRepo>();
     final newAppSet = await showDialog<AppSet>(
-        context: context,
-        builder: (context) => AppSetForm(
-            appSet: appSet,
-            title: appSet == null
-                ? AppLocalizations.of(context)!.addAppSet
-                : AppLocalizations.of(context)!.editAppSet));
+      context: context,
+      builder: (context) => AppSetForm(
+        appSet: appSet,
+        title: appSet == null
+            ? AppLocalizations.of(context)!.addAppSet
+            : AppLocalizations.of(context)!.editAppSet,
+      ),
+    );
     if (newAppSet != null) {
       // if creating, check if name conflict
       if (appSet == null && _appSets.any((e) => e.name == newAppSet.name)) {
@@ -239,8 +260,10 @@ class _AppSetWidgetState extends State<AppSetWidget> {
       if (appSet == null) {
         await repo.addAppSet(newAppSet);
       } else {
-        await repo.updateAppSet(appSet.name,
-            clashRuleUrls: newAppSet.clashRuleUrls);
+        await repo.updateAppSet(
+          appSet.name,
+          clashRuleUrls: newAppSet.clashRuleUrls,
+        );
       }
       context.read<GeoDataHelper>().makeGeoDataAvailable();
     }
@@ -256,47 +279,50 @@ class _AppSetWidgetState extends State<AppSetWidget> {
           runSpacing: desktopPlatforms ? 5 : 0,
           children: [
             ..._appSets.map((e) {
-              final isDefault = e.name == getProxySetName(context) ||
+              final isDefault =
+                  e.name == getProxySetName(context) ||
                   e.name == getDirectSetName(context);
               return WrapChoiceChip(
-                  text: localizedSetName(context, e.name),
-                  labelStyle: Theme.of(context).textTheme.bodySmall,
-                  selected: e.name == _selectedAppSet?.name,
-                  onEdit: isDefault
-                      ? null
-                      : () {
-                          _onAppSetTap(e);
-                        },
-                  onDelete: isDefault
-                      ? null
-                      : () async {
-                          setState(() {
-                            _appSets.remove(e);
-                          });
-                          context.read<SetRepo>().removeAppSet(e.name);
-                        },
-                  onTap: (value) {
-                    setState(() {
-                      _selectedAppSet = e;
-                    });
+                text: localizedSetName(context, e.name),
+                labelStyle: Theme.of(context).textTheme.bodySmall,
+                selected: e.name == _selectedAppSet?.name,
+                onEdit: isDefault
+                    ? null
+                    : () {
+                        _onAppSetTap(e);
+                      },
+                onDelete: isDefault
+                    ? null
+                    : () async {
+                        setState(() {
+                          _appSets.remove(e);
+                        });
+                        context.read<SetRepo>().removeAppSet(e.name);
+                      },
+                onTap: (value) {
+                  setState(() {
+                    _selectedAppSet = e;
                   });
+                },
+              );
             }),
             FilledButton.tonal(
-                onPressed: () {
-                  _onAppSetTap(null);
-                },
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size(36, 36),
-                ),
-                child: Text(AppLocalizations.of(context)!.addAppSet)),
+              onPressed: () {
+                _onAppSetTap(null);
+              },
+              style: FilledButton.styleFrom(minimumSize: const Size(36, 36)),
+              child: Text(AppLocalizations.of(context)!.addAppSet),
+            ),
           ],
         ),
         if (_selectedAppSet != null)
           SizedBox(
             height: 400,
             child: AppWidget(
-                appSetName: _selectedAppSet!.name, addButtonInWrap: true),
-          )
+              appSetName: _selectedAppSet!.name,
+              addButtonInWrap: true,
+            ),
+          ),
       ],
     );
   }
@@ -333,13 +359,15 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
     // ]).then((value) {
     //   setState(() {});
     // });
-    _domainSetSubscription =
-        _setRepo.getGreatDomainSetsStream().listen((value) {
+    _domainSetSubscription = _setRepo.getGreatDomainSetsStream().listen((
+      value,
+    ) {
       _domainSets = value;
       setState(() {});
     });
-    _atomicDomainSetSubscription =
-        _setRepo.getAtomicDomainSetsStream().listen((value) {
+    _atomicDomainSetSubscription = _setRepo.getAtomicDomainSetsStream().listen((
+      value,
+    ) {
       _atomicDomainSets = value;
       if (_atomicDomainSets.isNotEmpty && _selectedAtomicDomainSet == null) {
         _selectedAtomicDomainSet = _atomicDomainSets.first;
@@ -366,26 +394,23 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
               preferBelow: false,
               message:
                   '${AppLocalizations.of(context)!.greatSetDescription1}\n${AppLocalizations.of(context)!.greatSetDescription2}',
-              child: Text(AppLocalizations.of(context)!.greatDomainSet,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleSmall
-                      ?.copyWith(fontWeight: FontWeight.bold)),
+              child: Text(
+                AppLocalizations.of(context)!.greatDomainSet,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+              ),
             ),
             const Gap(5),
             IconButton.filledTonal(
-                onPressed: () {
-                  _onGreatDomainSetTap(null);
-                },
-                padding: const EdgeInsets.all(0),
-                visualDensity: VisualDensity.compact,
-                style: IconButton.styleFrom(
-                  minimumSize: const Size(36, 36),
-                ),
-                icon: const Icon(
-                  Icons.add_rounded,
-                  size: 18,
-                )),
+              onPressed: () {
+                _onGreatDomainSetTap(null);
+              },
+              padding: const EdgeInsets.all(0),
+              visualDensity: VisualDensity.compact,
+              style: IconButton.styleFrom(minimumSize: const Size(36, 36)),
+              icon: const Icon(Icons.add_rounded, size: 18),
+            ),
           ],
         ),
         Padding(
@@ -395,12 +420,10 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
             physics: const NeverScrollableScrollPhysics(),
             children: [
               ..._domainSets.map((e) {
-                const cannotDelete =
-                    false /* e.name == blackListProxy ||
+                const cannotDelete = false /* e.name == blackListProxy ||
                     e.name == whiteListDirect ||
                     e.name == proxyAllDirect ||
-                    e.name == gfwWithoutCustomDirect */
-                    ;
+                    e.name == gfwWithoutCustomDirect */;
                 return MenuAnchor(
                   menuChildren: [
                     MenuItemButton(
@@ -417,14 +440,18 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
                     return GestureDetector(
                       onLongPressStart: (details) {
                         controller.open(
-                          position: Offset(details.localPosition.dx,
-                              details.localPosition.dy),
+                          position: Offset(
+                            details.localPosition.dx,
+                            details.localPosition.dy,
+                          ),
                         );
                       },
                       onSecondaryTapDown: (details) {
                         controller.open(
-                          position: Offset(details.localPosition.dx,
-                              details.localPosition.dy),
+                          position: Offset(
+                            details.localPosition.dx,
+                            details.localPosition.dy,
+                          ),
                         );
                       },
                       child: child,
@@ -436,30 +463,33 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
                       visualDensity: VisualDensity.compact,
                       dense: true,
                       title: RichText(
-                          text: TextSpan(
-                              text: localizedSetName(context, e.name),
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              children: [
+                        text: TextSpan(
+                          text: localizedSetName(context, e.name),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          children: [
                             if (e.set.oppositeName.isNotEmpty)
                               TextSpan(
-                                  text:
-                                      ' ↔ ${localizedSetName(context, e.set.oppositeName)}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurfaceVariant))
-                          ])),
+                                text:
+                                    ' ↔ ${localizedSetName(context, e.set.oppositeName)}',
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
+                              ),
+                          ],
+                        ),
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                         side: BorderSide(
                           color: Theme.of(context).colorScheme.outlineVariant,
                         ),
                       ),
-                      onTap:
-                          cannotDelete ? null : () => _onGreatDomainSetTap(e),
+                      onTap: cannotDelete
+                          ? null
+                          : () => _onGreatDomainSetTap(e),
                       // tileColor:
                       //     Theme.of(context).colorScheme.surfaceContainerLow,
                       subtitle: Column(
@@ -474,23 +504,23 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
                           //                 .colorScheme
                           //                 .onSurfaceVariant)),
                           Text(
-                              '${AppLocalizations.of(context)!.include}：${e.set.inNames.map((e) => localizedSetName(context, e)).join(', ')}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant)),
+                            '${AppLocalizations.of(context)!.include}：${e.set.inNames.map((e) => localizedSetName(context, e)).join(', ')}',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
+                          ),
                           Text(
-                              '${AppLocalizations.of(context)!.exclude}：${e.set.exNames.map((e) => localizedSetName(context, e)).join(', ')}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant)),
+                            '${AppLocalizations.of(context)!.exclude}：${e.set.exNames.map((e) => localizedSetName(context, e)).join(', ')}',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
+                          ),
                         ],
                       ),
                     ),
@@ -504,25 +534,22 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
           padding: const EdgeInsets.only(top: 10),
           child: Row(
             children: [
-              Text(AppLocalizations.of(context)!.atmoicDomainSet,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleSmall
-                      ?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                AppLocalizations.of(context)!.atmoicDomainSet,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+              ),
               const Gap(5),
               IconButton.filledTonal(
-                  onPressed: () {
-                    _onAtomicDomainSetTap(null, true);
-                  },
-                  padding: const EdgeInsets.all(0),
-                  visualDensity: VisualDensity.compact,
-                  style: IconButton.styleFrom(
-                    minimumSize: const Size(36, 36),
-                  ),
-                  icon: const Icon(
-                    Icons.add_rounded,
-                    size: 18,
-                  )),
+                onPressed: () {
+                  _onAtomicDomainSetTap(null, true);
+                },
+                padding: const EdgeInsets.all(0),
+                visualDensity: VisualDensity.compact,
+                style: IconButton.styleFrom(minimumSize: const Size(36, 36)),
+                icon: const Icon(Icons.add_rounded, size: 18),
+              ),
             ],
           ),
         ),
@@ -533,37 +560,35 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
             runSpacing: desktopPlatforms ? 5 : 0,
             children: [
               ..._atomicDomainSets.map((e) {
-                final cannotDelete = e.name == getCustomDirect(context) ||
-                        e.name ==
-                            getCustomProxy(
-                                context) /* ||
+                final cannotDelete =
+                    e.name == getCustomDirect(context) ||
+                    e.name ==
+                        getCustomProxy(context) /* ||
                     e.name == gfw ||
                     e.name == cn ||
                     e.name == cnGames ||
-                    e.name == private */
-                    ;
+                    e.name == private */;
                 return WrapChoiceChip(
-                    text: localizedSetName(context, e.name),
-                    labelStyle: Theme.of(context).textTheme.bodySmall,
-                    selected: e.name == _selectedAtomicDomainSet?.name,
-                    onDelete: cannotDelete
-                        ? null
-                        : () async {
-                            setState(() {
-                              _atomicDomainSets.remove(e);
-                            });
-                            context
-                                .read<SetRepo>()
-                                .removeAtomicDomainSet(e.name);
-                          },
-                    onEdit: () {
-                      _onAtomicDomainSetTap(e, !cannotDelete);
-                    },
-                    onTap: (value) {
-                      setState(() {
-                        _selectedAtomicDomainSet = e;
-                      });
+                  text: localizedSetName(context, e.name),
+                  labelStyle: Theme.of(context).textTheme.bodySmall,
+                  selected: e.name == _selectedAtomicDomainSet?.name,
+                  onDelete: cannotDelete
+                      ? null
+                      : () async {
+                          setState(() {
+                            _atomicDomainSets.remove(e);
+                          });
+                          context.read<SetRepo>().removeAtomicDomainSet(e.name);
+                        },
+                  onEdit: () {
+                    _onAtomicDomainSetTap(e, !cannotDelete);
+                  },
+                  onTap: (value) {
+                    setState(() {
+                      _selectedAtomicDomainSet = e;
                     });
+                  },
+                );
               }),
             ],
           ),
@@ -572,9 +597,10 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
           SizedBox(
             height: 400,
             child: AtomicDomainSetWidget(
-                addButtonInWrap: true,
-                domainSetName: _selectedAtomicDomainSet!.name),
-          )
+              addButtonInWrap: true,
+              domainSetName: _selectedAtomicDomainSet!.name,
+            ),
+          ),
       ],
     );
   }
@@ -583,22 +609,25 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
     final repo = context.read<SetRepo>();
     final k = GlobalKey();
     final config = await showMyAdaptiveDialog<GreatDomainSetConfig?>(
-        context, GreatDomainSetForm(key: k, domainSetConfig: set?.set),
-        title: set == null
-            ? AppLocalizations.of(context)!.createGreatDomainSet
-            : AppLocalizations.of(context)!.editGreatDomainSet,
-        onSave: (BuildContext context) {
-      final formData = (k.currentState as FormDataGetter).formData;
-      if (formData != null) {
-        context.pop(formData);
-      }
-    });
+      context,
+      GreatDomainSetForm(key: k, domainSetConfig: set?.set),
+      title: set == null
+          ? AppLocalizations.of(context)!.createGreatDomainSet
+          : AppLocalizations.of(context)!.editGreatDomainSet,
+      onSave: (BuildContext context) {
+        final formData = (k.currentState as FormDataGetter).formData;
+        if (formData != null) {
+          context.pop(formData);
+        }
+      },
+    );
     if (config != null) {
       if (set?.name != config.name &&
           (_atomicDomainSets.any((e) => e.name == config.name) ||
-              _domainSets.any((e) =>
-                  e.name == config.name ||
-                  e.set.oppositeName == config.name))) {
+              _domainSets.any(
+                (e) =>
+                    e.name == config.name || e.set.oppositeName == config.name,
+              ))) {
         snack(AppLocalizations.of(context)!.setNameDuplicate);
         return;
       }
@@ -630,16 +659,19 @@ class _DomainSetWidgetState extends State<DomainSetWidget> {
     final repo = context.read<SetRepo>();
     final k = GlobalKey();
     final config = await showMyAdaptiveDialog<AtomicDomainSet?>(
-        context, SmallDomainSetForm(key: k, atomicDomainSet: set),
-        title: set == null
-            ? AppLocalizations.of(context)!.createSmallDomainSet
-            : AppLocalizations.of(context)!.editSmallDomainSet,
-        editable: editable, onSave: (BuildContext context) {
-      final formData = (k.currentState as FormDataGetter).formData;
-      if (formData != null) {
-        context.pop(formData);
-      }
-    });
+      context,
+      SmallDomainSetForm(key: k, atomicDomainSet: set),
+      title: set == null
+          ? AppLocalizations.of(context)!.createSmallDomainSet
+          : AppLocalizations.of(context)!.editSmallDomainSet,
+      editable: editable,
+      onSave: (BuildContext context) {
+        final formData = (k.currentState as FormDataGetter).formData;
+        if (formData != null) {
+          context.pop(formData);
+        }
+      },
+    );
     if (config != null) {
       if (set?.name != config.name &&
           (_atomicDomainSets.any((e) => e.name == config.name) ||
@@ -735,26 +767,23 @@ class _IPSetWidgetState extends State<IPSetWidget> {
               preferBelow: false,
               message:
                   '${AppLocalizations.of(context)!.greatSetDescription1}\n${AppLocalizations.of(context)!.greatSetDescription2}',
-              child: Text(AppLocalizations.of(context)!.greatIpSet,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleSmall
-                      ?.copyWith(fontWeight: FontWeight.bold)),
+              child: Text(
+                AppLocalizations.of(context)!.greatIpSet,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+              ),
             ),
             const Gap(5),
             IconButton.filledTonal(
-                onPressed: () {
-                  _onGreatIpSetTap(null);
-                },
-                padding: const EdgeInsets.all(0),
-                visualDensity: VisualDensity.compact,
-                style: IconButton.styleFrom(
-                  minimumSize: const Size(36, 36),
-                ),
-                icon: const Icon(
-                  Icons.add_rounded,
-                  size: 18,
-                )),
+              onPressed: () {
+                _onGreatIpSetTap(null);
+              },
+              padding: const EdgeInsets.all(0),
+              visualDensity: VisualDensity.compact,
+              style: IconButton.styleFrom(minimumSize: const Size(36, 36)),
+              icon: const Icon(Icons.add_rounded, size: 18),
+            ),
           ],
         ),
         Padding(
@@ -764,11 +793,9 @@ class _IPSetWidgetState extends State<IPSetWidget> {
             physics: const NeverScrollableScrollPhysics(),
             children: [
               ..._ipSets.map((e) {
-                const cannotDel =
-                    false /* e.name == blackListProxy ||
+                const cannotDel = false /* e.name == blackListProxy ||
                     e.name == whiteListDirect ||
-                    e.name == proxyAllDirect */
-                    ;
+                    e.name == proxyAllDirect */;
                 return MenuAnchor(
                   menuChildren: [
                     MenuItemButton(
@@ -785,14 +812,18 @@ class _IPSetWidgetState extends State<IPSetWidget> {
                     return GestureDetector(
                       onLongPressStart: (details) {
                         controller.open(
-                          position: Offset(details.localPosition.dx,
-                              details.localPosition.dy),
+                          position: Offset(
+                            details.localPosition.dx,
+                            details.localPosition.dy,
+                          ),
                         );
                       },
                       onSecondaryTapDown: (details) {
                         controller.open(
-                          position: Offset(details.localPosition.dx,
-                              details.localPosition.dy),
+                          position: Offset(
+                            details.localPosition.dx,
+                            details.localPosition.dy,
+                          ),
                         );
                       },
                       child: child,
@@ -803,7 +834,25 @@ class _IPSetWidgetState extends State<IPSetWidget> {
                     child: ListTile(
                       visualDensity: VisualDensity.compact,
                       dense: true,
-                      title: Text(localizedSetName(context, e.name)),
+                      title: RichText(
+                        text: TextSpan(
+                          text: localizedSetName(context, e.name),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          children: [
+                            if (e.greatIpSetConfig.oppositeName.isNotEmpty)
+                              TextSpan(
+                                text:
+                                    ' ↔ ${localizedSetName(context, e.greatIpSetConfig.oppositeName)}',
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
+                              ),
+                          ],
+                        ),
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                         side: BorderSide(
@@ -815,23 +864,23 @@ class _IPSetWidgetState extends State<IPSetWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                              '${AppLocalizations.of(context)!.include}：${e.greatIpSetConfig.inNames.map((e) => localizedSetName(context, e)).join(', ')}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant)),
+                            '${AppLocalizations.of(context)!.include}：${e.greatIpSetConfig.inNames.map((e) => localizedSetName(context, e)).join(', ')}',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
+                          ),
                           Text(
-                              '${AppLocalizations.of(context)!.exclude}：${e.greatIpSetConfig.exNames.map((e) => localizedSetName(context, e)).join(', ')}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant)),
+                            '${AppLocalizations.of(context)!.exclude}：${e.greatIpSetConfig.exNames.map((e) => localizedSetName(context, e)).join(', ')}',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
+                          ),
                         ],
                       ),
                     ),
@@ -845,25 +894,22 @@ class _IPSetWidgetState extends State<IPSetWidget> {
           padding: const EdgeInsets.only(top: 10),
           child: Row(
             children: [
-              Text(AppLocalizations.of(context)!.atmoicIpSet,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleSmall
-                      ?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                AppLocalizations.of(context)!.atmoicIpSet,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+              ),
               const Gap(5),
               IconButton.filledTonal(
-                  onPressed: () {
-                    _onAtomicIpSetTap(null, true);
-                  },
-                  padding: const EdgeInsets.all(0),
-                  visualDensity: VisualDensity.compact,
-                  style: IconButton.styleFrom(
-                    minimumSize: const Size(36, 36),
-                  ),
-                  icon: const Icon(
-                    Icons.add_rounded,
-                    size: 18,
-                  )),
+                onPressed: () {
+                  _onAtomicIpSetTap(null, true);
+                },
+                padding: const EdgeInsets.all(0),
+                visualDensity: VisualDensity.compact,
+                style: IconButton.styleFrom(minimumSize: const Size(36, 36)),
+                icon: const Icon(Icons.add_rounded, size: 18),
+              ),
             ],
           ),
         ),
@@ -874,40 +920,43 @@ class _IPSetWidgetState extends State<IPSetWidget> {
             runSpacing: desktopPlatforms ? 5 : 0,
             children: [
               ..._atomicIpSets.map((e) {
-                final cannotDelete = e.name == getCustomDirect(context) ||
-                        e.name ==
-                            getCustomProxy(
-                                context) /* ||
+                final cannotDelete =
+                    e.name == getCustomDirect(context) ||
+                    e.name ==
+                        getCustomProxy(context) /* ||
                     e.name == gfw ||
                     e.name == cn ||
-                    e.name == private */
-                    ;
+                    e.name == private */;
                 return WrapChoiceChip(
-                    text: localizedSetName(context, e.name),
-                    selected: e.name == _selectedAtomicIpSet?.name,
-                    labelStyle: Theme.of(context).textTheme.bodySmall,
-                    onDelete: cannotDelete
-                        ? null
-                        : () async {
-                            setState(() {
-                              _atomicIpSets.remove(e);
-                            });
-                            context.read<SetRepo>().removeAtomicIpSet(e.name);
-                          },
-                    onEdit: () {
-                      _onAtomicIpSetTap(e, !cannotDelete);
-                    },
-                    onTap: (value) {
-                      setState(() {
-                        _selectedAtomicIpSet = e;
-                      });
+                  text: localizedSetName(context, e.name),
+                  selected: e.name == _selectedAtomicIpSet?.name,
+                  labelStyle: Theme.of(context).textTheme.bodySmall,
+                  onDelete: cannotDelete
+                      ? null
+                      : () async {
+                          setState(() {
+                            _atomicIpSets.remove(e);
+                          });
+                          context.read<SetRepo>().removeAtomicIpSet(e.name);
+                        },
+                  onEdit: () {
+                    _onAtomicIpSetTap(e, !cannotDelete);
+                  },
+                  onTap: (value) {
+                    setState(() {
+                      _selectedAtomicIpSet = e;
                     });
+                  },
+                );
               }),
             ],
           ),
         ),
         if (_selectedAtomicIpSet != null)
-          IPWidget(ipSetName: _selectedAtomicIpSet!.name, addButtonInWrap: true)
+          IPWidget(
+            ipSetName: _selectedAtomicIpSet!.name,
+            addButtonInWrap: true,
+          ),
       ],
     );
   }
@@ -916,20 +965,26 @@ class _IPSetWidgetState extends State<IPSetWidget> {
     final repo = context.read<SetRepo>();
     final k = GlobalKey();
     final config = await showMyAdaptiveDialog<GreatIPSetConfig?>(
-        context, GreatIpSetForm(key: k, ipSetConfig: set?.greatIpSetConfig),
-        title: set == null
-            ? AppLocalizations.of(context)!.createGreatIpSet
-            : AppLocalizations.of(context)!.editGreatIpSet,
-        onSave: (BuildContext context) {
-      final formData = (k.currentState as FormDataGetter).formData;
-      if (formData != null) {
-        context.pop(formData);
-      }
-    });
+      context,
+      GreatIpSetForm(key: k, ipSetConfig: set?.greatIpSetConfig),
+      title: set == null
+          ? AppLocalizations.of(context)!.createGreatIpSet
+          : AppLocalizations.of(context)!.editGreatIpSet,
+      onSave: (BuildContext context) {
+        final formData = (k.currentState as FormDataGetter).formData;
+        if (formData != null) {
+          context.pop(formData);
+        }
+      },
+    );
     if (config != null) {
       if (set?.name != config.name &&
           (_atomicIpSets.any((e) => e.name == config.name) ||
-              _ipSets.any((e) => e.name == config.name))) {
+              _ipSets.any(
+                (e) =>
+                    e.name == config.name ||
+                    e.greatIpSetConfig.oppositeName == config.name,
+              ))) {
         snack(AppLocalizations.of(context)!.setNameDuplicate);
         return;
       }
@@ -956,16 +1011,19 @@ class _IPSetWidgetState extends State<IPSetWidget> {
     final repo = context.read<SetRepo>();
     final k = GlobalKey();
     final config = await showMyAdaptiveDialog<AtomicIpSet?>(
-        context, SmallIpSetForm(key: k, atomicIpSet: set),
-        title: set == null
-            ? AppLocalizations.of(context)!.createIpSmallSet
-            : AppLocalizations.of(context)!.editIpSmallSet,
-        editable: editable, onSave: (BuildContext context) {
-      final formData = (k.currentState as FormDataGetter).formData;
-      if (formData != null) {
-        context.pop(formData);
-      }
-    });
+      context,
+      SmallIpSetForm(key: k, atomicIpSet: set),
+      title: set == null
+          ? AppLocalizations.of(context)!.createIpSmallSet
+          : AppLocalizations.of(context)!.editIpSmallSet,
+      editable: editable,
+      onSave: (BuildContext context) {
+        final formData = (k.currentState as FormDataGetter).formData;
+        if (formData != null) {
+          context.pop(formData);
+        }
+      },
+    );
     if (config != null) {
       if (set?.name != config.name &&
           (_atomicIpSets.any((e) => e.name == config.name) ||
@@ -981,6 +1039,7 @@ class _IPSetWidgetState extends State<IPSetWidget> {
           geoIpConfig: config.geoIpConfig,
           clashRuleUrls: config.clashRuleUrls,
           geoUrl: config.geoUrl,
+          inverse: config.inverse,
         );
       }
       context.read<GeoDataHelper>().makeGeoDataAvailable();
@@ -1007,48 +1066,56 @@ class WrapChoiceChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chip = MenuAnchor(
-        menuChildren: [
-          if (onEdit != null)
-            MenuItemButton(
-              onPressed: onEdit,
-              child: Text(AppLocalizations.of(context)!.edit),
-            ),
-          if (onDelete != null && onEdit != null) const Divider(),
-          if (onDelete != null)
-            MenuItemButton(
-              onPressed: onDelete,
-              child: Text(AppLocalizations.of(context)!.delete),
-            ),
-        ],
-        builder: (context, controller, child) {
-          return GestureDetector(
-            onLongPressStart: (details) {
-              controller.open(
-                  position: Offset(
-                      details.localPosition.dx, details.localPosition.dy));
-            },
-            onSecondaryTapDown: (details) {
-              controller.open(
-                position:
-                    Offset(details.localPosition.dx, details.localPosition.dy),
-              );
-            },
-            child: ChoiceChip(
-                selected: selected,
-                onSelected: onTap,
-                label: Text(text, style: labelStyle)),
-          );
-        });
+      menuChildren: [
+        if (onEdit != null)
+          MenuItemButton(
+            onPressed: onEdit,
+            child: Text(AppLocalizations.of(context)!.edit),
+          ),
+        if (onDelete != null && onEdit != null) const Divider(),
+        if (onDelete != null)
+          MenuItemButton(
+            onPressed: onDelete,
+            child: Text(AppLocalizations.of(context)!.delete),
+          ),
+      ],
+      builder: (context, controller, child) {
+        return GestureDetector(
+          onLongPressStart: (details) {
+            controller.open(
+              position: Offset(
+                details.localPosition.dx,
+                details.localPosition.dy,
+              ),
+            );
+          },
+          onSecondaryTapDown: (details) {
+            controller.open(
+              position: Offset(
+                details.localPosition.dx,
+                details.localPosition.dy,
+              ),
+            );
+          },
+          child: ChoiceChip(
+            selected: selected,
+            onSelected: onTap,
+            label: Text(text, style: labelStyle),
+          ),
+        );
+      },
+    );
     return chip;
   }
 }
 
 class GreatSetCard extends StatelessWidget {
-  const GreatSetCard(
-      {super.key,
-      required this.name,
-      required this.include,
-      required this.exclude});
+  const GreatSetCard({
+    super.key,
+    required this.name,
+    required this.include,
+    required this.exclude,
+  });
   final String name;
   final List<String> include;
   final List<String> exclude;
@@ -1062,37 +1129,49 @@ class GreatSetCard extends StatelessWidget {
           children: [
             Text(name, style: Theme.of(context).textTheme.titleSmall),
             const Gap(5),
-            Text(AppLocalizations.of(context)!.include,
-                style: Theme.of(context).textTheme.labelSmall),
+            Text(
+              AppLocalizations.of(context)!.include,
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
             const Gap(5),
             Wrap(
               spacing: 5,
               runSpacing: 5,
               children: include
-                  .map((e) => Chip(
+                  .map(
+                    (e) => Chip(
                       visualDensity: VisualDensity.compact,
-                      label: Text(e,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith())))
+                      label: Text(
+                        e,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.copyWith(),
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
             const Gap(5),
-            Text(AppLocalizations.of(context)!.exclude,
-                style: Theme.of(context).textTheme.labelSmall),
+            Text(
+              AppLocalizations.of(context)!.exclude,
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
             const Gap(5),
             Wrap(
               spacing: 5,
               runSpacing: 5,
               children: exclude
-                  .map((e) => Chip(
+                  .map(
+                    (e) => Chip(
                       visualDensity: VisualDensity.compact,
-                      label: Text(e,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith())))
+                      label: Text(
+                        e,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.copyWith(),
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
           ],
@@ -1141,34 +1220,39 @@ class _AppSetFormState extends State<AppSetForm> {
             readOnly: widget.appSet != null,
             controller: _nameController,
             decoration: InputDecoration(
-                helperText: AppLocalizations.of(context)!.setNameDuplicate,
-                helperStyle: Theme.of(context).textTheme.labelSmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                labelText: AppLocalizations.of(context)!.name,
-                border: const OutlineInputBorder()),
+              helperText: AppLocalizations.of(context)!.setNameDuplicate,
+              helperStyle: Theme.of(context).textTheme.labelSmall!.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+              labelText: AppLocalizations.of(context)!.name,
+              border: const OutlineInputBorder(),
+            ),
           ),
           const Gap(5),
           const TextDivider(text: 'Clash Rules'),
           const Gap(5),
-          ClashRule(clashRuleUrls: _clashRuleUrls)
+          ClashRule(clashRuleUrls: _clashRuleUrls),
         ],
       ),
       actions: [
         TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel)),
+          onPressed: () => Navigator.pop(context),
+          child: Text(AppLocalizations.of(context)!.cancel),
+        ),
         TextButton(
-            onPressed: () {
-              if (_nameController.text.isNotEmpty) {
-                Navigator.pop(
-                    context,
-                    AppSet(
-                        name: _nameController.text,
-                        clashRuleUrls: _clashRuleUrls));
-              }
-            },
-            child: Text(AppLocalizations.of(context)!.confirm)),
+          onPressed: () {
+            if (_nameController.text.isNotEmpty) {
+              Navigator.pop(
+                context,
+                AppSet(
+                  name: _nameController.text,
+                  clashRuleUrls: _clashRuleUrls,
+                ),
+              );
+            }
+          },
+          child: Text(AppLocalizations.of(context)!.confirm),
+        ),
       ],
     );
   }

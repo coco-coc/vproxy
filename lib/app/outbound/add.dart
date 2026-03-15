@@ -45,133 +45,159 @@ import 'package:provider/provider.dart';
 import 'package:vx/l10n/app_localizations.dart';
 
 class AddMenuAnchor extends StatelessWidget {
-  const AddMenuAnchor(
-      {super.key, this.colored = false, this.elevatedButton = false});
+  const AddMenuAnchor({
+    super.key,
+    this.colored = false,
+    this.elevatedButton = false,
+  });
   final bool colored;
   final bool elevatedButton;
   @override
   Widget build(BuildContext context) {
     return MenuAnchor(
-        menuChildren: [
+      menuChildren: [
+        MenuItemButton(
+          leadingIcon: const Icon(Icons.content_paste),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: Text(AppLocalizations.of(context)!.clipboard),
+          ),
+          onPressed: () => _onClipboardClicked(context),
+        ),
+        if (Platform.isAndroid || Platform.isIOS)
           MenuItemButton(
-              leadingIcon: const Icon(Icons.content_paste),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Text(AppLocalizations.of(context)!.clipboard),
-              ),
-              onPressed: () => _onClipboardClicked(context)),
-          if (Platform.isAndroid || Platform.isIOS)
-            MenuItemButton(
-              leadingIcon: const Icon(Icons.qr_code_scanner_rounded),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Text(AppLocalizations.of(context)!.qrCode),
-              ),
-              onPressed: () async {
-                final outbloc = context.read<OutboundBloc>();
-                final subBloc = context.read<SubscriptionBloc>();
-                final barcode = await Navigator.of(context, rootNavigator: true)
-                    .push<Barcode?>(MaterialPageRoute(builder: (ctx) {
-                  return const ScanQrCode();
-                }));
-                if (barcode == null || barcode.displayValue == null) {
-                  return;
-                }
-                logger.d(barcode.displayValue);
-                // final imageBytes = barcode.rawBytes;
-                // if (imageBytes == null) {
-                //   return;
-                // }
-                // late String data;
-                // try {
-                //   final image = img.decodeImage(imageBytes);
-                //   if (image == null) {
-                //     throw Exception('Failed to decode image');
-                //   }
-                //   data = getQrCodeData(image);
-                //   if (data.isEmpty) {
-                //     throw Exception('Failed to decode QR code');
-                //   }
-                // } catch (e) {
-                //   logger.d('decode qr code error', error: e);
-                //   rootScaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
-                //       content:
-                //           Text(AppLocalizations.of(context)!.decodeQrCode)));
-                //   return;
-                // }
-                await getNodesFromUrls(
-                    barcode.displayValue!, context, outbloc, subBloc);
-              },
-            ),
-          MenuItemButton(
-              leadingIcon: const Icon(Icons.edit_outlined),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Text(AppLocalizations.of(context)!.inputManually),
-              ),
-              onPressed: () async {
-                final outBloc = context.read<OutboundBloc>();
-                final subBloc = context.read<SubscriptionBloc>();
-                late Object? result;
-                if (Provider.of<MyLayout>(context, listen: false)
-                    .fullScreen()) {
-                  result = await Navigator.of(context, rootNavigator: true)
-                      .push(CupertinoPageRoute(builder: (ctx) {
-                    return const AddDialog(
-                      fullScreen: true,
-                      initialIndex: 1,
-                    );
-                  }));
-                } else {
-                  result = await showGeneralDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      barrierLabel: AppLocalizations.of(context)!.edit,
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          const AddDialog(
-                            fullScreen: false,
-                            initialIndex: 1,
-                          ));
-                }
-                if (result != null) {
-                  if (result is HandlerConfig) {
-                    outBloc.add(AddHandlerEvent(result));
-                  } else if (result is SubscriptionFormData) {
-                    subBloc.add(AddSubscriptionEvent(result.name, result.link));
-                  } else if (result is ChainHandlerConfig) {
-                    outBloc.add(AddHandlerEvent(HandlerConfig(chain: result)));
-                  }
-                }
-              }),
-          MenuItemButton(
-            leadingIcon: const Icon(Icons.file_open_rounded),
+            leadingIcon: const Icon(Icons.qr_code_scanner_rounded),
             child: Padding(
               padding: const EdgeInsets.only(left: 4),
-              child: Text(AppLocalizations.of(context)!.selectFromFile),
+              child: Text(AppLocalizations.of(context)!.qrCode),
             ),
             onPressed: () async {
               final outbloc = context.read<OutboundBloc>();
               final subBloc = context.read<SubscriptionBloc>();
-              final result = await FilePicker.platform.pickFiles(
-                type: FileType.any,
-                withData: true,
-              );
-              if (result == null) {
+              final barcode = await Navigator.of(context, rootNavigator: true)
+                  .push<Barcode?>(
+                    MaterialPageRoute(
+                      builder: (ctx) {
+                        return const ScanQrCode();
+                      },
+                    ),
+                  );
+              if (barcode == null || barcode.displayValue == null) {
                 return;
               }
-              await getNodesFromUrls(utf8.decode(result.files.first.bytes!),
-                  context, outbloc, subBloc);
+              logger.d(barcode.displayValue);
+              // final imageBytes = barcode.rawBytes;
+              // if (imageBytes == null) {
+              //   return;
+              // }
+              // late String data;
+              // try {
+              //   final image = img.decodeImage(imageBytes);
+              //   if (image == null) {
+              //     throw Exception('Failed to decode image');
+              //   }
+              //   data = getQrCodeData(image);
+              //   if (data.isEmpty) {
+              //     throw Exception('Failed to decode QR code');
+              //   }
+              // } catch (e) {
+              //   logger.d('decode qr code error', error: e);
+              //   rootScaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
+              //       content:
+              //           Text(AppLocalizations.of(context)!.decodeQrCode)));
+              //   return;
+              // }
+              await getNodesFromUrls(
+                barcode.displayValue!,
+                context,
+                outbloc,
+                subBloc,
+              );
             },
           ),
-        ],
-        builder: (context, controller, child) {
-          if (colored) {
-            return IconButton.filledTonal(
-                style: IconButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  iconSize: 20,
-                  minimumSize: const Size(30, 30),
+        MenuItemButton(
+          leadingIcon: const Icon(Icons.edit_outlined),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: Text(AppLocalizations.of(context)!.inputManually),
+          ),
+          onPressed: () async {
+            final outBloc = context.read<OutboundBloc>();
+            final subBloc = context.read<SubscriptionBloc>();
+            late Object? result;
+            if (Provider.of<MyLayout>(context, listen: false).fullScreen()) {
+              result = await Navigator.of(context, rootNavigator: true).push(
+                CupertinoPageRoute(
+                  builder: (ctx) {
+                    return const AddDialog(fullScreen: true, initialIndex: 1);
+                  },
                 ),
+              );
+            } else {
+              result = await showGeneralDialog(
+                context: context,
+                barrierDismissible: false,
+                barrierLabel: AppLocalizations.of(context)!.edit,
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    const AddDialog(fullScreen: false, initialIndex: 1),
+              );
+            }
+            if (result != null) {
+              if (result is HandlerConfig) {
+                outBloc.add(AddHandlerEvent(result));
+              } else if (result is SubscriptionFormData) {
+                subBloc.add(AddSubscriptionEvent(result.name, result.link));
+              } else if (result is ChainHandlerConfig) {
+                outBloc.add(AddHandlerEvent(HandlerConfig(chain: result)));
+              }
+            }
+          },
+        ),
+        MenuItemButton(
+          leadingIcon: const Icon(Icons.file_open_rounded),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: Text(AppLocalizations.of(context)!.selectFromFile),
+          ),
+          onPressed: () async {
+            final outbloc = context.read<OutboundBloc>();
+            final subBloc = context.read<SubscriptionBloc>();
+            final result = await FilePicker.platform.pickFiles(
+              type: FileType.any,
+              withData: true,
+            );
+            if (result == null) {
+              return;
+            }
+            await getNodesFromUrls(
+              utf8.decode(result.files.first.bytes!),
+              context,
+              outbloc,
+              subBloc,
+            );
+          },
+        ),
+      ],
+      builder: (context, controller, child) {
+        if (colored) {
+          return IconButton.filledTonal(
+            style: IconButton.styleFrom(
+              padding: EdgeInsets.zero,
+              iconSize: 20,
+              minimumSize: const Size(30, 30),
+            ),
+            onPressed: () {
+              if (controller.isOpen) {
+                controller.close();
+              } else {
+                controller.open();
+              }
+            },
+            icon: const Icon(Icons.add_rounded),
+          );
+        }
+        return elevatedButton
+            ? FilledButton.icon(
                 onPressed: () {
                   if (controller.isOpen) {
                     controller.close();
@@ -179,82 +205,90 @@ class AddMenuAnchor extends StatelessWidget {
                     controller.open();
                   }
                 },
-                icon: const Icon(Icons.add_rounded));
-          }
-          return elevatedButton
-              ? FilledButton.icon(
-                  onPressed: () {
-                    if (controller.isOpen) {
-                      controller.close();
-                    } else {
-                      controller.open();
-                    }
-                  },
-                  label: Text(AppLocalizations.of(context)!.addNode),
-                  icon: const Icon(Icons.add_rounded),
-                )
-              : IconButton(
-                  onPressed: () {
-                    if (controller.isOpen) {
-                      controller.close();
-                    } else {
-                      controller.open();
-                    }
-                  },
-                  icon: const Icon(Icons.add_rounded));
-        });
+                label: Text(AppLocalizations.of(context)!.addNode),
+                icon: const Icon(Icons.add_rounded),
+              )
+            : IconButton(
+                onPressed: () {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    controller.open();
+                  }
+                },
+                icon: const Icon(Icons.add_rounded),
+              );
+      },
+    );
   }
 
   void _onClipboardClicked(BuildContext context) async {
     final outbloc = context.read<OutboundBloc>();
     final subBloc = context.read<SubscriptionBloc>();
-    rootScaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
-      duration: const Duration(seconds: 10),
-      behavior: SnackBarBehavior.floating,
-      content: Text(AppLocalizations.of(context)!.gettingNodesSubscriptions),
-      width: 300,
-    ));
+    rootScaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 10),
+        behavior: SnackBarBehavior.floating,
+        content: Text(AppLocalizations.of(context)!.gettingNodesSubscriptions),
+        width: 300,
+      ),
+    );
     // get data from clipboard
     String? data = await Pasteboard.text;
     // if the text clipboard is empty, try to get image from clipboard
     if ((data?.isEmpty ?? true)) {
       final raw = await Pasteboard.image;
       if (raw == null || raw.isEmpty) {
-        rootScaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
+        rootScaffoldMessengerKey.currentState?.showSnackBar(
+          SnackBar(
             content: Text(
-                AppLocalizations.of(context)!.unableToGetNodesEmptyClipboard)));
+              AppLocalizations.of(context)!.unableToGetNodesEmptyClipboard,
+            ),
+          ),
+        );
         return;
       }
       final image = img.decodeImage(raw);
       if (image == null) {
         if (context.mounted) {
-          rootScaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
-              content: Text(AppLocalizations.of(context)!.decodeQrCode)));
+          rootScaffoldMessengerKey.currentState?.showSnackBar(
+            SnackBar(content: Text(AppLocalizations.of(context)!.decodeQrCode)),
+          );
         }
         return;
       }
       data = getQrCodeData(image);
     }
     if (data == null || data.isEmpty) {
-      rootScaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
+      rootScaffoldMessengerKey.currentState?.showSnackBar(
+        SnackBar(
           content: Text(
-              AppLocalizations.of(context)!.unableToGetNodesEmptyClipboard)));
+            AppLocalizations.of(context)!.unableToGetNodesEmptyClipboard,
+          ),
+        ),
+      );
       return;
     }
     await getNodesFromUrls(data, context, outbloc, subBloc);
   }
 }
 
-Future<void> getNodesFromUrls(String data, BuildContext context,
-    OutboundBloc outbloc, SubscriptionBloc subBloc) async {
+Future<void> getNodesFromUrls(
+  String data,
+  BuildContext context,
+  OutboundBloc outbloc,
+  SubscriptionBloc subBloc,
+) async {
   try {
     final outboundRepo = context.read<OutboundRepo>();
     final isSubscription = data.startsWith('http');
     rootScaffoldMessengerKey.currentState?.hideCurrentSnackBar();
     if (isSubscription) {
       String tag = '';
-      final t = await showStringForm(context,
-          title: AppLocalizations.of(context)!.addRemark);
+      final t = await showStringForm(
+        context,
+        title: AppLocalizations.of(context)!.addRemark,
+      );
       if (t != null && t.isNotEmpty) tag = t;
       if (tag.isEmpty) {
         // generate a random and unique tag
@@ -279,9 +313,11 @@ Future<void> getNodesFromUrls(String data, BuildContext context,
       }
       if (configs.isNotEmpty) {
         String group = defaultGroupName;
-        final t = await showStringForm(context,
-            title: AppLocalizations.of(context)!.addToGroup,
-            cancelText: AppLocalizations.of(context)!.addToDefault);
+        final t = await showStringForm(
+          context,
+          title: AppLocalizations.of(context)!.addToGroup,
+          cancelText: AppLocalizations.of(context)!.addToDefault,
+        );
         if (t != null && t.isNotEmpty) group = t;
         outbloc.add(AddHandlersEvent(groupName: group, configs));
         return;
@@ -289,56 +325,70 @@ Future<void> getNodesFromUrls(String data, BuildContext context,
         // decode as urls
         final result = await context.read<XApiClient>().decode(data);
         String group = defaultGroupName;
-        final t = await showStringForm(context,
-            title: AppLocalizations.of(context)!.addToGroup,
-            cancelText: AppLocalizations.of(context)!.addToDefault);
+        final t = await showStringForm(
+          context,
+          title: AppLocalizations.of(context)!.addToGroup,
+          cancelText: AppLocalizations.of(context)!.addToDefault,
+        );
         if (t != null && t.isNotEmpty) group = t;
-        outbloc.add(AddHandlersEvent(
+        outbloc.add(
+          AddHandlersEvent(
             groupName: group,
-            result.handlers
-                .map((e) => HandlerConfig(
-                      outbound: e,
-                    ))
-                .toList()));
-        rootScaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
+            result.handlers.map((e) => HandlerConfig(outbound: e)).toList(),
+          ),
+        );
+        rootScaffoldMessengerKey.currentState?.showSnackBar(
+          SnackBar(
             action: SnackBarAction(
-                label: rootLocalizations()?.failedNodes ?? '',
-                onPressed: () {
-                  showDialog(
-                      context: rootNavigationKey.currentContext!,
-                      builder: (context) => SimpleDialog(
-                            title:
-                                Text(AppLocalizations.of(context)!.failedNodes),
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 16),
-                            children:
-                                result.failedNodes.map((e) => Text(e)).toList(),
-                          ));
-                }),
-            content: Text(rootLocalizations()?.decodeResult(
-                    result.handlers.length, result.failedNodes.length) ??
-                '')));
+              label: rootLocalizations()?.failedNodes ?? '',
+              onPressed: () {
+                showDialog(
+                  context: rootNavigationKey.currentContext!,
+                  builder: (context) => SimpleDialog(
+                    title: Text(AppLocalizations.of(context)!.failedNodes),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16,
+                    ),
+                    children: result.failedNodes.map((e) => Text(e)).toList(),
+                  ),
+                );
+              },
+            ),
+            content: Text(
+              rootLocalizations()?.decodeResult(
+                    result.handlers.length,
+                    result.failedNodes.length,
+                  ) ??
+                  '',
+            ),
+          ),
+        );
       }
     }
   } catch (e) {
     logger.d('getNodes error', error: e);
 
     // TODO: inform a user why it failed
-    rootScaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
+    rootScaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(
         duration: const Duration(seconds: 10),
-        content: Text(AppLocalizations.of(context)!.unableToGetNodes)));
+        content: Text(AppLocalizations.of(context)!.unableToGetNodes),
+      ),
+    );
   }
 }
 
 String getQrCodeData(img.Image image) {
   final source = RGBLuminanceSource(
-      image.width,
-      image.height,
-      image
-          .convert(numChannels: 4)
-          .getBytes(order: img.ChannelOrder.abgr)
-          .buffer
-          .asInt32List());
+    image.width,
+    image.height,
+    image
+        .convert(numChannels: 4)
+        .getBytes(order: img.ChannelOrder.abgr)
+        .buffer
+        .asInt32List(),
+  );
   // decode qr code
   final bitMap = BinaryBitmap(GlobalHistogramBinarizer(source));
   final qr = QRCodeReader().decode(bitMap);
@@ -366,7 +416,10 @@ class _AddDialogState extends State<AddDialog>
   @override
   void initState() {
     _tabController = TabController(
-        vsync: this, length: 3, initialIndex: widget.initialIndex);
+      vsync: this,
+      length: 3,
+      initialIndex: widget.initialIndex,
+    );
     super.initState();
   }
 
@@ -400,15 +453,22 @@ class _AddDialogState extends State<AddDialog>
         ChainHandlerConfig config =
             (_chainFormWidgetKey.currentState as ChainHandlerFormState).config;
         if (config.handlers.length <= 1) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
               duration: const Duration(seconds: 5),
-              content: Text(AppLocalizations.of(context)!.atLeastTwoNodes)));
+              content: Text(AppLocalizations.of(context)!.atLeastTwoNodes),
+            ),
+          );
           return;
         }
         context.pop(config);
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            duration: const Duration(seconds: 5), content: Text(e.toString())));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            duration: const Duration(seconds: 5),
+            content: Text(e.toString()),
+          ),
+        );
       }
     }
   }
@@ -441,7 +501,7 @@ class _AddDialogState extends State<AddDialog>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(AppLocalizations.of(context)!.chainProxy),
-                    proIconSmall
+                    proIconSmall,
                   ],
                 ),
         ),
@@ -460,124 +520,134 @@ class _AddDialogState extends State<AddDialog>
               actions: [
                 if (Platform.isMacOS)
                   TextButton(
-                      onPressed: () => context.pop(),
-                      child: Text(AppLocalizations.of(context)!.cancel)),
+                    onPressed: () => context.pop(),
+                    child: Text(AppLocalizations.of(context)!.cancel),
+                  ),
                 TextButton(
-                    onPressed: () => _onPressed(context),
-                    child: Text(AppLocalizations.of(context)!.save))
+                  onPressed: () => _onPressed(context),
+                  child: Text(AppLocalizations.of(context)!.save),
+                ),
               ],
               bottom: tabBar,
             ),
-            body: TabBarView(controller: _tabController, children: [
-              SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: OutboundHandlerForm(
-                    formKey: _formKey,
-                    key: _widgetKey,
+            body: TabBarView(
+              controller: _tabController,
+              children: [
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: OutboundHandlerForm(
+                      formKey: _formKey,
+                      key: _widgetKey,
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SubscriptionForm(
-                  data: _subFormData,
-                  formKey: _subFormKey,
-                ),
-              ),
-              SingleChildScrollView(
-                child: Padding(
+                Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: context.read<AuthBloc>().state.pro
-                      ? ChainHandlerForm(
-                          formKey: _chainFormKey,
-                          key: _chainFormWidgetKey,
-                        )
-                      : const ProPromotion(),
+                  child: SubscriptionForm(
+                    data: _subFormData,
+                    formKey: _subFormKey,
+                  ),
                 ),
-              ),
-            ]),
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: context.read<AuthBloc>().state.pro
+                        ? ChainHandlerForm(
+                            formKey: _chainFormKey,
+                            key: _chainFormWidgetKey,
+                          )
+                        : const ProPromotion(),
+                  ),
+                ),
+              ],
+            ),
           )
         : ScaffoldMessenger(
             child: Dialog(
-                clipBehavior: Clip.antiAlias,
-                child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 450),
-                    child: Scaffold(
-                      appBar: AppBar(
-                        toolbarHeight: 0,
-                        automaticallyImplyLeading: false,
-                        bottom: tabBar,
-                      ),
-                      body: Column(
-                        children: [
-                          Expanded(
-                            child: TabBarView(
-                                controller: _tabController,
-                                children: [
-                                  SingleChildScrollView(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(24.0),
-                                      child: OutboundHandlerForm(
-                                        formKey: _formKey,
-                                        key: _widgetKey,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(24.0),
-                                    child: SubscriptionForm(
-                                      data: _subFormData,
-                                      formKey: _subFormKey,
-                                    ),
-                                  ),
-                                  ScaffoldMessenger(
-                                    child: SingleChildScrollView(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(24.0),
-                                        child:
-                                            context.read<AuthBloc>().state.pro
-                                                ? ChainHandlerForm(
-                                                    formKey: _chainFormKey,
-                                                    key: _chainFormWidgetKey,
-                                                  )
-                                                : const ProPromotion(),
-                                      ),
-                                    ),
-                                  ),
-                                ]),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(right: 20, bottom: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                FilledButton.tonal(
-                                  style: FilledButton.styleFrom(
-                                      fixedSize: const Size(100, 40),
-                                      elevation: 1),
-                                  onPressed: () => context.pop(),
-                                  child: Text(
-                                      AppLocalizations.of(context)!.cancel),
+              clipBehavior: Clip.antiAlias,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 450),
+                child: Scaffold(
+                  appBar: AppBar(
+                    toolbarHeight: 0,
+                    automaticallyImplyLeading: false,
+                    bottom: tabBar,
+                  ),
+                  body: Column(
+                    children: [
+                      Expanded(
+                        child: TabBarView(
+                          controller: _tabController,
+                          children: [
+                            SingleChildScrollView(
+                              child: Padding(
+                                padding: const EdgeInsets.all(24.0),
+                                child: OutboundHandlerForm(
+                                  formKey: _formKey,
+                                  key: _widgetKey,
                                 ),
-                                const Gap(10),
-                                Builder(builder: (context) {
-                                  return FilledButton(
-                                    style: FilledButton.styleFrom(
-                                        fixedSize: const Size(100, 40),
-                                        elevation: 1),
-                                    onPressed: () => _onPressed(context),
-                                    child: Text(
-                                        AppLocalizations.of(context)!.save),
-                                  );
-                                })
-                              ],
+                              ),
                             ),
-                          )
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: SubscriptionForm(
+                                data: _subFormData,
+                                formKey: _subFormKey,
+                              ),
+                            ),
+                            ScaffoldMessenger(
+                              child: SingleChildScrollView(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(24.0),
+                                  child: context.read<AuthBloc>().state.pro
+                                      ? ChainHandlerForm(
+                                          formKey: _chainFormKey,
+                                          key: _chainFormWidgetKey,
+                                        )
+                                      : const ProPromotion(),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ))),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20, bottom: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            FilledButton.tonal(
+                              style: FilledButton.styleFrom(
+                                fixedSize: const Size(100, 40),
+                                elevation: 1,
+                              ),
+                              onPressed: () => context.pop(),
+                              child: Text(AppLocalizations.of(context)!.cancel),
+                            ),
+                            const Gap(10),
+                            Builder(
+                              builder: (context) {
+                                return FilledButton(
+                                  style: FilledButton.styleFrom(
+                                    fixedSize: const Size(100, 40),
+                                    elevation: 1,
+                                  ),
+                                  onPressed: () => _onPressed(context),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.save,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           );
   }
 }

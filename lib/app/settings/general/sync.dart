@@ -13,9 +13,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gap/gap.dart';
+import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
@@ -44,26 +46,31 @@ class _SyncPageState extends State<SyncPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: getAdaptiveAppBar(
-          context, Text(AppLocalizations.of(context)!.syncBackup)),
+        context,
+        Text(AppLocalizations.of(context)!.syncBackup),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: !context.watch<AuthBloc>().state.pro
               ? Center(
                   child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: useStripe ? const ProPromotion() : const IAPPurchase(),
-                ))
+                    padding: const EdgeInsets.all(8.0),
+                    child: useStripe
+                        ? const ProPromotion()
+                        : const IAPPurchase(),
+                  ),
+                )
               : SingleChildScrollView(
                   child: Column(
                     children: [
                       const _Sync(),
                       TextDivider(text: AppLocalizations.of(context)!.backup),
-                      const _Backup()
+                      const _Backup(),
                     ],
                   ),
                 ),
-              ),
+        ),
       ),
     );
   }
@@ -90,10 +97,9 @@ class __BackupState extends State<_Backup> {
         _latestBackup = value;
       });
     });
-    context
-        .read<FlutterSecureStorage>()
-        .read(key: 'backupPassword')
-        .then((value) {
+    context.read<FlutterSecureStorage>().read(key: 'backupPassword').then((
+      value,
+    ) {
       setState(() {
         _passwordController.text = value ?? '';
         _password = value;
@@ -108,9 +114,10 @@ class __BackupState extends State<_Backup> {
   }
 
   void _setPassword(String value) {
-    context
-        .read<FlutterSecureStorage>()
-        .write(key: 'backupPassword', value: value);
+    context.read<FlutterSecureStorage>().write(
+      key: 'backupPassword',
+      value: value,
+    );
     setState(() {
       _password = value;
       _errorText = null;
@@ -125,18 +132,11 @@ class __BackupState extends State<_Backup> {
       children: [
         if (_latestBackup != null)
           Padding(
-            padding: const EdgeInsets.only(
-              left: 4.0,
-              right: 4.0,
-              top: 10,
-            ),
+            padding: const EdgeInsets.only(left: 4.0, right: 4.0, top: 10),
             child: Text(
-                '${AppLocalizations.of(context)!.currentBackup} ${DateTime.parse(_latestBackup!.replaceAll('.db', ''))
-                        .toLocal()
-                        .toString()
-                        .split('.')
-                        .first}',
-                style: Theme.of(context).textTheme.bodyMedium),
+              '${AppLocalizations.of(context)!.currentBackup} ${DateTime.parse(_latestBackup!.replaceAll('.db', '')).toLocal().toString().split('.').first}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
           ),
         const Gap(10),
         SingleChildScrollView(
@@ -144,77 +144,157 @@ class __BackupState extends State<_Backup> {
           child: Row(
             children: [
               FilledButton(
-                  onPressed: () async {
-                    try {
-                      final fileName = await backupService.uploadBackup();
-                      snack(rootLocalizations()!.uploadDbSuccess);
-                      if (fileName != null) {
-                        setState(() {
-                          _latestBackup = fileName;
-                        });
-                      }
-                    } catch (e) {
-                      logger.e("uploadBackup", error: e);
-                      snack(e.toString());
-                    }
-                  },
-                  child: backupService.uploading
-                      ? SizedBox(
-                          width: 12,
-                          height: 12,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                        )
-                      : Text(AppLocalizations.of(context)!.uploadDb)),
+                onPressed: backupService.uploading
+                    ? null
+                    : () async {
+                        try {
+                          final fileName = await backupService.uploadBackup();
+                          snack(rootLocalizations()!.uploadDbSuccess);
+                          if (fileName != null) {
+                            setState(() {
+                              _latestBackup = fileName;
+                            });
+                          }
+                        } catch (e) {
+                          logger.e("uploadBackup", error: e);
+                          snack(e.toString());
+                        }
+                      },
+                child: backupService.uploading
+                    ? SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      )
+                    : Text(AppLocalizations.of(context)!.uploadDb),
+              ),
               const Gap(10),
               FilledButton(
-                  onPressed: () async {
-                    try {
-                      final appState = App.of(context);
-                      final outBloc = context.read<OutboundBloc>();
-                      await backupService.restoreBackup();
-                      snack(rootLocalizations()!.restoreDbSuccess);
-                      appState?.rebuildAllChildren();
-                      // to stop query stream and relisten
-                      outBloc.add(InitialEvent());
-                    } catch (e) {
-                      logger.e("restoreBackup", error: e);
-                      snack(e.toString());
-                    }
-                  },
-                  child: backupService.restoring
-                      ? SizedBox(
-                          width: 12,
-                          height: 12,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                        )
-                      : Text(AppLocalizations.of(context)!.restoreDb)),
+                onPressed: backupService.restoring
+                    ? null
+                    : () async {
+                        try {
+                          final appState = App.of(context);
+                          final outBloc = context.read<OutboundBloc>();
+                          await backupService.restoreBackup();
+                          snack(rootLocalizations()!.restoreDbSuccess);
+                          appState?.rebuildAllChildren();
+                          // to stop query stream and relisten
+                          outBloc.add(InitialEvent());
+                        } catch (e) {
+                          logger.e("restoreBackup", error: e);
+                          snack(e.toString());
+                        }
+                      },
+                child: backupService.restoring
+                    ? SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      )
+                    : Text(AppLocalizations.of(context)!.restoreDb),
+              ),
               const Gap(10),
               FilledButton.tonal(
-                  style: FilledButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.errorContainer,
-                  ),
-                  onPressed: () async {
-                    try {
-                      await backupService.deleteBackup();
-                      snack(rootLocalizations()!.deleteDbSuccess);
-                      setState(() {
-                        _latestBackup = null;
-                      });
-                    } catch (e) {
-                      logger.e("deleteBackup", error: e);
-                      snack(e.toString());
-                    }
-                  },
-                  child: Text(AppLocalizations.of(context)!.deleteCloudDb)),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.errorContainer,
+                ),
+                onPressed: () async {
+                  try {
+                    await backupService.deleteBackup();
+                    snack(rootLocalizations()!.deleteDbSuccess);
+                    setState(() {
+                      _latestBackup = null;
+                    });
+                  } catch (e) {
+                    logger.e("deleteBackup", error: e);
+                    snack(e.toString());
+                  }
+                },
+                child: Text(AppLocalizations.of(context)!.deleteCloudDb),
+              ),
             ],
           ),
+        ),
+        const Gap(10),
+        Row(
+          children: [
+            FilledButton.tonal(
+              onPressed: backupService.uploading
+                  ? null
+                  : () async {
+                      try {
+                        final directoryPath = await FilePicker.platform
+                            .getDirectoryPath();
+                        if (directoryPath == null) {
+                          return;
+                        }
+                        final fileName =
+                            'vx_backup_${DateTime.now().toIso8601String().replaceAll(':', '-')}.db';
+                        final destPath = p.join(directoryPath, fileName);
+                        await backupService.saveLocalBackup(destPath);
+                        snack('Local backup saved');
+                      } catch (e) {
+                        logger.e("saveLocalBackup", error: e);
+                        snack(e.toString());
+                      }
+                    },
+              child: backupService.uploading
+                  ? SizedBox(
+                      width: 12,
+                      height: 12,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    )
+                  : const Text('Export to file'),
+            ),
+            const Gap(10),
+            FilledButton.tonal(
+              onPressed: backupService.restoring
+                  ? null
+                  : () async {
+                      try {
+                        final result = await FilePicker.platform.pickFiles(
+                          type: FileType.custom,
+                          allowedExtensions: ['db', 'encrypted'],
+                        );
+                        if (result == null ||
+                            result.files.single.path == null) {
+                          return;
+                        }
+                        final path = result.files.single.path!;
+                        final appState = App.of(context);
+                        final outBloc = context.read<OutboundBloc>();
+                        await backupService.restoreFromLocalBackup(path);
+                        snack('Local backup restored');
+                        appState?.rebuildAllChildren();
+                        outBloc.add(InitialEvent());
+                      } catch (e) {
+                        logger.e("restoreFromLocalBackup", error: e);
+                        snack(e.toString());
+                      }
+                    },
+              child: backupService.restoring
+                  ? SizedBox(
+                      width: 12,
+                      height: 12,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    )
+                  : const Text('Import from file'),
+            ),
+            const Gap(10),
+          ],
         ),
         const Gap(10),
         TextField(
@@ -229,20 +309,22 @@ class __BackupState extends State<_Backup> {
             }
           },
           decoration: InputDecoration(
-              errorText: _errorText,
-              border: const OutlineInputBorder(),
-              labelText: AppLocalizations.of(context)!.password,
-              helperText: AppLocalizations.of(context)!.backupPasswordDesc,
-              helperMaxLines: 2),
+            errorText: _errorText,
+            border: const OutlineInputBorder(),
+            labelText: AppLocalizations.of(context)!.password,
+            helperText: AppLocalizations.of(context)!.backupPasswordDesc,
+            helperMaxLines: 2,
+          ),
         ),
         const Gap(5),
         Align(
           alignment: Alignment.centerRight,
           child: FilledButton(
-              onPressed: () {
-                _setPassword(_passwordController.text);
-              },
-              child: Text(AppLocalizations.of(context)!.save)),
+            onPressed: () {
+              _setPassword(_passwordController.text);
+            },
+            child: Text(AppLocalizations.of(context)!.save),
+          ),
         ),
       ],
     );
@@ -293,13 +375,15 @@ class __SyncState extends State<_Sync> {
         Row(
           children: [
             ChoiceChip(
-                onSelected: (value) {},
-                label: Text(AppLocalizations.of(context)!.cloudSync),
-                selected: _cloudSync),
+              onSelected: (value) {},
+              label: Text(AppLocalizations.of(context)!.cloudSync),
+              selected: _cloudSync,
+            ),
             const Gap(10),
             ChoiceChip(
-                label: Text(AppLocalizations.of(context)!.lanSync),
-                selected: !_cloudSync),
+              label: Text(AppLocalizations.of(context)!.lanSync),
+              selected: !_cloudSync,
+            ),
             const Expanded(child: SizedBox()),
             Consumer<SyncService>(
               builder: (context, syncService, child) {
@@ -307,32 +391,37 @@ class __SyncState extends State<_Sync> {
                   return mdCircularProgressIndicator;
                 }
                 return IconButton(
-                    tooltip: AppLocalizations.of(context)!.sync,
-                    onPressed: syncService.syncing
-                        ? null
-                        : () {
-                            context.read<SyncService>().sync();
-                          },
-                    icon: syncService.syncing
-                        ? smallCircularProgressIndicator
-                        : const Icon(Icons.sync));
+                  tooltip: AppLocalizations.of(context)!.sync,
+                  onPressed: syncService.syncing
+                      ? null
+                      : () {
+                          context.read<SyncService>().sync();
+                        },
+                  icon: syncService.syncing
+                      ? smallCircularProgressIndicator
+                      : const Icon(Icons.sync),
+                );
               },
-            )
+            ),
           ],
         ),
         const Gap(10),
         Row(
           children: [
-            Text('•',
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    )),
+            Text(
+              '•',
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
             const Gap(5),
             Expanded(
-              child: Text(AppLocalizations.of(context)!.cloudSyncDesc1,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      )),
+              child: Text(
+                AppLocalizations.of(context)!.cloudSyncDesc1,
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
             ),
           ],
         ),
@@ -340,16 +429,20 @@ class __SyncState extends State<_Sync> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('•',
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    )),
+            Text(
+              '•',
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
             const Gap(5),
             Expanded(
-              child: Text(AppLocalizations.of(context)!.cloudSyncDesc2,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      )),
+              child: Text(
+                AppLocalizations.of(context)!.cloudSyncDesc2,
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
             ),
           ],
         ),
@@ -357,16 +450,20 @@ class __SyncState extends State<_Sync> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('•',
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    )),
+            Text(
+              '•',
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
             const Gap(5),
             Expanded(
-              child: Text(AppLocalizations.of(context)!.cloudSyncDesc3,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      )),
+              child: Text(
+                AppLocalizations.of(context)!.cloudSyncDesc3,
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
             ),
           ],
         ),
@@ -380,14 +477,15 @@ class __SyncState extends State<_Sync> {
                 children: [
                   Text(AppLocalizations.of(context)!.nodeSub),
                   Switch(
-                      value: _nodeSub,
-                      onChanged: (value) {
-                        setState(() {
-                          _nodeSub = value;
-                        });
-                        context.read<SharedPreferences>().setSyncNodeSub(value);
-                        context.read<SyncService>().reset();
-                      })
+                    value: _nodeSub,
+                    onChanged: (value) {
+                      setState(() {
+                        _nodeSub = value;
+                      });
+                      context.read<SharedPreferences>().setSyncNodeSub(value);
+                      context.read<SyncService>().reset();
+                    },
+                  ),
                 ],
               ),
               const Gap(10),
@@ -396,16 +494,17 @@ class __SyncState extends State<_Sync> {
                 children: [
                   Text(AppLocalizations.of(context)!.routeSetDNSSelector),
                   Switch(
-                      value: _route,
-                      onChanged: (value) {
-                        setState(() {
-                          _route = value;
-                        });
-                        context
-                            .read<SharedPreferences>()
-                            .setSyncRuleDnsSet(value);
-                        context.read<SyncService>().reset();
-                      })
+                    value: _route,
+                    onChanged: (value) {
+                      setState(() {
+                        _route = value;
+                      });
+                      context.read<SharedPreferences>().setSyncRuleDnsSet(
+                        value,
+                      );
+                      context.read<SyncService>().reset();
+                    },
+                  ),
                 ],
               ),
               const Gap(10),
@@ -414,16 +513,17 @@ class __SyncState extends State<_Sync> {
                 children: [
                   Text(AppLocalizations.of(context)!.selectorSetting),
                   Switch(
-                      value: _selector,
-                      onChanged: (value) {
-                        setState(() {
-                          _selector = value;
-                        });
-                        context
-                            .read<SharedPreferences>()
-                            .setSyncSelectorSetting(value);
-                        context.read<SyncService>().reset();
-                      })
+                    value: _selector,
+                    onChanged: (value) {
+                      setState(() {
+                        _selector = value;
+                      });
+                      context.read<SharedPreferences>().setSyncSelectorSetting(
+                        value,
+                      );
+                      context.read<SyncService>().reset();
+                    },
+                  ),
                 ],
               ),
               const Gap(10),
@@ -432,16 +532,17 @@ class __SyncState extends State<_Sync> {
                 children: [
                   Text(AppLocalizations.of(context)!.serverKey),
                   Switch(
-                      value: _server,
-                      onChanged: (value) {
-                        setState(() {
-                          _server = value;
-                        });
-                        context.read<SharedPreferences>().setSyncServer(value);
-                        context.read<SyncService>().reset();
-                      })
+                    value: _server,
+                    onChanged: (value) {
+                      setState(() {
+                        _server = value;
+                      });
+                      context.read<SharedPreferences>().setSyncServer(value);
+                      context.read<SyncService>().reset();
+                    },
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -458,25 +559,25 @@ class __SyncState extends State<_Sync> {
             }
           },
           decoration: InputDecoration(
-              errorText: _errorText,
-              border: const OutlineInputBorder(),
-              labelText: AppLocalizations.of(context)!.password,
-              helperText: AppLocalizations.of(context)!.syncPasswordDesc,
-              helperMaxLines: 2),
+            errorText: _errorText,
+            border: const OutlineInputBorder(),
+            labelText: AppLocalizations.of(context)!.password,
+            helperText: AppLocalizations.of(context)!.syncPasswordDesc,
+            helperMaxLines: 2,
+          ),
         ),
         const Gap(5),
         Align(
           alignment: Alignment.centerRight,
           child: FilledButton(
-              onPressed: () {
-                context
-                    .read<SyncService>()
-                    .setPassword(_passwordController.text);
-                setState(() {
-                  _errorText = null;
-                });
-              },
-              child: Text(AppLocalizations.of(context)!.save)),
+            onPressed: () {
+              context.read<SyncService>().setPassword(_passwordController.text);
+              setState(() {
+                _errorText = null;
+              });
+            },
+            child: Text(AppLocalizations.of(context)!.save),
+          ),
         ),
       ],
     );

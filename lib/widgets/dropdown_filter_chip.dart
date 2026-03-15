@@ -16,11 +16,12 @@
 import 'package:flutter/material.dart';
 
 class ChipDropdownMenu<T> extends StatelessWidget {
-  const ChipDropdownMenu(
-      {super.key,
-      required this.selected,
-      required this.items,
-      required this.onChanged});
+  const ChipDropdownMenu({
+    super.key,
+    required this.selected,
+    required this.items,
+    required this.onChanged,
+  });
 
   final T? selected;
   final List<T> items;
@@ -45,7 +46,11 @@ class ChipDropdownMenu<T> extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 12),
         isDense: true,
         suffixIconConstraints: const BoxConstraints(
-            minHeight: 40, maxHeight: 40, minWidth: 40, maxWidth: 40),
+          minHeight: 40,
+          maxHeight: 40,
+          minWidth: 40,
+          maxWidth: 40,
+        ),
         filled: true,
         fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
         constraints: const BoxConstraints(minHeight: 40, maxHeight: 40),
@@ -69,4 +74,3 @@ class ChipDropdownMenu<T> extends StatelessWidget {
     );
   }
 }
-

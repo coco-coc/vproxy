@@ -79,7 +79,8 @@ class SyncService with ChangeNotifier {
 
   void reset() async {
     logger.d('reset');
-    enable = ((authBloc.state.user?.pro ?? false) &&
+    enable =
+        ((authBloc.state.user?.pro ?? false) &&
         (prefHelper.syncNodeSub ||
             prefHelper.syncRoute ||
             prefHelper.syncServer ||
@@ -96,10 +97,10 @@ class SyncService with ChangeNotifier {
           logger.e('Failed to get FCM token', error: e);
           errorGettingFcmToken = true;
         }
-        fcmTokenSubscription ??=
-            FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
-          this.fcmToken = fcmToken;
-        });
+        fcmTokenSubscription ??= FirebaseMessaging.instance.onTokenRefresh
+            .listen((fcmToken) {
+              this.fcmToken = fcmToken;
+            });
       }
       await updateDeviceIdToken();
 
@@ -136,7 +137,8 @@ class SyncService with ChangeNotifier {
     });
 
     logger.i(
-        'Periodic sync started (every ${_periodicSyncInterval.inMinutes} minutes)');
+      'Periodic sync started (every ${_periodicSyncInterval.inMinutes} minutes)',
+    );
     await sync();
   }
 
@@ -150,19 +152,17 @@ class SyncService with ChangeNotifier {
     // if never uploaded
     if (prefHelper.deviceIdRefreshTime == null) {
       // create a new device_id_token
-      final body = {
-        'deviceId': deviceId,
-        'fcmToken': fcmToken,
-      };
+      final body = {'deviceId': deviceId, 'fcmToken': fcmToken};
       final token = supabase.auth.currentSession?.accessToken ?? '';
-      await supabase.functions.invoke('insert-deviceIdToken',
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-          body: jsonEncode(body));
+      await supabase.functions.invoke(
+        'insert-deviceIdToken',
+        headers: {'Authorization': 'Bearer $token'},
+        body: jsonEncode(body),
+      );
       prefHelper.setDeviceIdUpdateTime(DateTime.now());
-    } else if (prefHelper.deviceIdRefreshTime!
-            .isBefore(DateTime.now().subtract(const Duration(days: 15))) ||
+    } else if (prefHelper.deviceIdRefreshTime!.isBefore(
+          DateTime.now().subtract(const Duration(days: 15)),
+        ) ||
         (prefHelper.fcmToken != fcmToken)) {
       final Map<String, dynamic> m = {
         'user_id': supabase.auth.currentUser!.id,
@@ -216,26 +216,27 @@ class SyncService with ChangeNotifier {
 
     try {
       // Create a copy and clear the cache
-      final operationsToUpload =
-          List<SyncOperation>.from(_outgoingOperationsCache);
+      final operationsToUpload = List<SyncOperation>.from(
+        _outgoingOperationsCache,
+      );
       _outgoingOperationsCache.clear();
 
       logger.i('Uploading ${operationsToUpload.length} batched operations');
 
       final body = {
         'deviceId': deviceId,
-        'data': _getSyncData(SyncOperations(operations: operationsToUpload))
+        'data': _getSyncData(SyncOperations(operations: operationsToUpload)),
       };
       logger.d(body);
       if (fcmToken != null) {
         body['fcmToken'] = fcmToken!;
       }
       final token = supabase.auth.currentSession?.accessToken ?? '';
-      final rsp = await supabase.functions.invoke('syncrhonization',
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-          body: jsonEncode(body));
+      final rsp = await supabase.functions.invoke(
+        'syncrhonization',
+        headers: {'Authorization': 'Bearer $token'},
+        body: jsonEncode(body),
+      );
       logger.i('Syncrhonization response: ${rsp.status}');
     } catch (e) {
       logger.e('Failed to upload batched operations: $e');
@@ -247,67 +248,100 @@ class SyncService with ChangeNotifier {
 
   Future<void> sqlOperation(SqlOperation operation) async {
     if (_shouldSync(operation.table)) {
-      return _uploadSyncOperation(SyncOperation(
+      return _uploadSyncOperation(
+        SyncOperation(
           time: Int64(DateTime.now().millisecondsSinceEpoch),
-          sqlOperation: operation));
+          sqlOperation: operation,
+        ),
+      );
     }
   }
 
   Future<void> addServerOperation(
-      SshServer server, SshServerSecureStorage sss, String sssKey) async {
+    SshServer server,
+    SshServerSecureStorage sss,
+    String sssKey,
+  ) async {
     if (_shouldSync('ssh_servers')) {
-      return _uploadSyncOperation(SyncOperation(
+      return _uploadSyncOperation(
+        SyncOperation(
           time: Int64(DateTime.now().millisecondsSinceEpoch),
           serverOperation: ServerOperation(
-              type: ServerOperation_Type.ADD,
-              row: jsonEncode(server.toJson()),
-              storageKey: sssKey,
-              secureStorage: jsonEncode(sss.toJson()))));
+            type: ServerOperation_Type.ADD,
+            row: jsonEncode(server.toJson()),
+            storageKey: sssKey,
+            secureStorage: jsonEncode(sss.toJson()),
+          ),
+        ),
+      );
     }
   }
 
   Future<void> updateServerOperation(
-      SshServer server, SshServerSecureStorage sss, String sssKey) async {
+    SshServer server,
+    SshServerSecureStorage sss,
+    String sssKey,
+  ) async {
     if (_shouldSync('ssh_servers')) {
-      return _uploadSyncOperation(SyncOperation(
+      return _uploadSyncOperation(
+        SyncOperation(
           time: Int64(DateTime.now().millisecondsSinceEpoch),
           serverOperation: ServerOperation(
-              type: ServerOperation_Type.UPDATE,
-              row: jsonEncode(server.toJson()),
-              storageKey: sssKey,
-              secureStorage: jsonEncode(sss.toJson()))));
+            type: ServerOperation_Type.UPDATE,
+            row: jsonEncode(server.toJson()),
+            storageKey: sssKey,
+            secureStorage: jsonEncode(sss.toJson()),
+          ),
+        ),
+      );
     }
   }
 
   Future<void> removeServerOperation(SshServer server) async {
     if (_shouldSync('ssh_servers')) {
-      return _uploadSyncOperation(SyncOperation(
+      return _uploadSyncOperation(
+        SyncOperation(
           time: Int64(DateTime.now().millisecondsSinceEpoch),
           serverOperation: ServerOperation(
-              type: ServerOperation_Type.DELETE, id: Int64(server.id))));
+            type: ServerOperation_Type.DELETE,
+            id: Int64(server.id),
+          ),
+        ),
+      );
     }
   }
 
-  Future<void> addCommonSshKeyOperation(CommonSshKey commonSshKey,
-      String sssKey, CommonSshKeySecureStorage sss) async {
+  Future<void> addCommonSshKeyOperation(
+    CommonSshKey commonSshKey,
+    String sssKey,
+    CommonSshKeySecureStorage sss,
+  ) async {
     if (_shouldSync('common_ssh_keys')) {
-      return _uploadSyncOperation(SyncOperation(
+      return _uploadSyncOperation(
+        SyncOperation(
           time: Int64(DateTime.now().millisecondsSinceEpoch),
           commonSshKeyOperation: CommonSshKeyOperation(
-              type: CommonSshKeyOperation_Type.ADD,
-              row: jsonEncode(commonSshKey.toJson()),
-              storageKey: sssKey,
-              secureStorage: jsonEncode(sss.toJson()))));
+            type: CommonSshKeyOperation_Type.ADD,
+            row: jsonEncode(commonSshKey.toJson()),
+            storageKey: sssKey,
+            secureStorage: jsonEncode(sss.toJson()),
+          ),
+        ),
+      );
     }
   }
 
   Future<void> removeCommonSshKeyOperation(CommonSshKey commonSshKey) async {
     if (_shouldSync('common_ssh_keys')) {
-      return _uploadSyncOperation(SyncOperation(
+      return _uploadSyncOperation(
+        SyncOperation(
           time: Int64(DateTime.now().millisecondsSinceEpoch),
           commonSshKeyOperation: CommonSshKeyOperation(
-              type: CommonSshKeyOperation_Type.DELETE,
-              id: Int64(commonSshKey.id))));
+            type: CommonSshKeyOperation_Type.DELETE,
+            id: Int64(commonSshKey.id),
+          ),
+        ),
+      );
     }
   }
 
@@ -405,12 +439,16 @@ class SyncService with ChangeNotifier {
       await _applySqlOperation(operation.sqlOperation);
       if (operation.sqlOperation.table == 'outbound_handlers') {
         outboundBloc?.add(SyncEvent());
-        database.markTablesUpdated(
-            {database.subscriptions, database.outboundHandlerGroups});
+        database.markTablesUpdated({
+          database.subscriptions,
+          database.outboundHandlerGroups,
+        });
       } else if (operation.sqlOperation.table.contains('selector')) {
         database.notifyUpdates({
-          TableUpdate.onTable(database.handlerSelectors,
-              kind: UpdateKind.update)
+          TableUpdate.onTable(
+            database.handlerSelectors,
+            kind: UpdateKind.update,
+          ),
         });
       }
     } else if (operation.hasServerOperation()) {
@@ -428,25 +466,31 @@ class SyncService with ChangeNotifier {
             .into(database.sshServers)
             .insert(SshServer.fromJson(jsonDecode(operation.row)));
         await storage.write(
-            key: operation.storageKey, value: operation.secureStorage);
+          key: operation.storageKey,
+          value: operation.secureStorage,
+        );
       } else if (operation.type == ServerOperation_Type.UPDATE) {
         await database
             .update(database.sshServers)
             .replace(SshServer.fromJson(jsonDecode(operation.row)));
         await storage.write(
-            key: operation.storageKey, value: operation.secureStorage);
+          key: operation.storageKey,
+          value: operation.secureStorage,
+        );
       } else {
-        final server = (await (database.delete(database.sshServers)
-                  ..where((t) => t.id.equals(operation.id.toInt())))
-                .goAndReturn())
-            .single;
+        final server =
+            (await (database.delete(database.sshServers)
+                      ..where((t) => t.id.equals(operation.id.toInt())))
+                    .goAndReturn())
+                .single;
         await storage.delete(key: server.storageKey);
       }
     }
   }
 
   Future<void> _applyCommonSshKeyOperation(
-      CommonSshKeyOperation operation) async {
+    CommonSshKeyOperation operation,
+  ) async {
     final database = databaseProvider.database;
     if (_shouldSync('common_ssh_keys')) {
       if (operation.type == CommonSshKeyOperation_Type.ADD) {
@@ -455,10 +499,9 @@ class SyncService with ChangeNotifier {
             .insert(CommonSshKey.fromJson(jsonDecode(operation.row)));
       }
     } else {
-      final commonSshKey = (await (database.delete(database.commonSshKeys)
-                ..where((t) => t.id.equals(operation.id.toInt())))
-              .goAndReturn())
-          .single;
+      final commonSshKey = (await (database.delete(
+        database.commonSshKeys,
+      )..where((t) => t.id.equals(operation.id.toInt()))).goAndReturn()).single;
       await storage.delete(key: "common_ssh_key_${commonSshKey.name}");
     }
   }
@@ -467,7 +510,7 @@ class SyncService with ChangeNotifier {
     'outbound_handlers',
     'subscriptions',
     'outbound_handler_groups',
-    'outbound_handler_group_relations'
+    'outbound_handler_group_relations',
   };
   static const routeTables = {
     'great_ip_sets',
@@ -481,17 +524,14 @@ class SyncService with ChangeNotifier {
     'dns_records',
     'apps',
     'custom_route_modes',
-    'handler_selectors'
+    'handler_selectors',
   };
   static const selectorSetting = {
     'selector_handler_relations',
     'selector_handler_group_relations',
     'selector_subscription_relations',
   };
-  static const serverTables = {
-    'ssh_servers',
-    'common_ssh_keys',
-  };
+  static const serverTables = {'ssh_servers', 'common_ssh_keys'};
   bool _shouldSync(String table) {
     if (nodeSubTables.contains(table) && prefHelper.syncNodeSub) {
       return true;
@@ -543,33 +583,37 @@ class SyncService with ChangeNotifier {
         case SQLType.DELETE:
           final columnsByName = table.columnsByName;
           for (final id in operation.ids) {
-            await (database.delete(table)
-                  ..where((t) {
-                    final idColumn = columnsByName['id'];
-                    if (idColumn == null) {
-                      throw ArgumentError.value(
-                          this, 'this', 'Must be a table with an id column');
-                    }
-                    if (idColumn.type != DriftSqlType.int) {
-                      throw ArgumentError('Column `id` is not an integer');
-                    }
-                    return idColumn.equals(id.toInt());
-                  }))
+            await (database.delete(table)..where((t) {
+                  final idColumn = columnsByName['id'];
+                  if (idColumn == null) {
+                    throw ArgumentError.value(
+                      this,
+                      'this',
+                      'Must be a table with an id column',
+                    );
+                  }
+                  if (idColumn.type != DriftSqlType.int) {
+                    throw ArgumentError('Column `id` is not an integer');
+                  }
+                  return idColumn.equals(id.toInt());
+                }))
                 .go();
           }
           for (final name in operation.names) {
-            await (database.delete(table)
-                  ..where((t) {
-                    final nameColumn = columnsByName['name'];
-                    if (nameColumn == null) {
-                      throw ArgumentError.value(
-                          this, 'this', 'Must be a table with an name column');
-                    }
-                    if (nameColumn.type != DriftSqlType.string) {
-                      throw ArgumentError('Column `name` is not a string');
-                    }
-                    return nameColumn.equals(name);
-                  }))
+            await (database.delete(table)..where((t) {
+                  final nameColumn = columnsByName['name'];
+                  if (nameColumn == null) {
+                    throw ArgumentError.value(
+                      this,
+                      'this',
+                      'Must be a table with an name column',
+                    );
+                  }
+                  if (nameColumn.type != DriftSqlType.string) {
+                    throw ArgumentError('Column `name` is not a string');
+                  }
+                  return nameColumn.equals(name);
+                }))
                 .go();
           }
         default:
@@ -592,8 +636,9 @@ class SyncService with ChangeNotifier {
       case 'outbound_handler_groups':
         return OutboundHandlerGroup.fromJson(jsonDecode(json)).toCompanion();
       case 'outbound_handler_group_relations':
-        return OutboundHandlerGroupRelation.fromJson(jsonDecode(json))
-            .toCompanion(true);
+        return OutboundHandlerGroupRelation.fromJson(
+          jsonDecode(json),
+        ).toCompanion(true);
       case 'great_ip_sets':
         return GreatIpSet.fromJson(jsonDecode(json)).toCompanion(true);
       case 'atomic_ip_sets':
@@ -619,14 +664,17 @@ class SyncService with ChangeNotifier {
       case 'great_domain_sets':
         return GreatDomainSet.fromJson(jsonDecode(json)).toCompanion(true);
       case 'selector_handler_relations':
-        return SelectorHandlerRelation.fromJson(jsonDecode(json))
-            .toCompanion(true);
+        return SelectorHandlerRelation.fromJson(
+          jsonDecode(json),
+        ).toCompanion(true);
       case 'selector_handler_group_relations':
-        return SelectorHandlerGroupRelation.fromJson(jsonDecode(json))
-            .toCompanion(true);
+        return SelectorHandlerGroupRelation.fromJson(
+          jsonDecode(json),
+        ).toCompanion(true);
       case 'selector_subscription_relations':
-        return SelectorSubscriptionRelation.fromJson(jsonDecode(json))
-            .toCompanion(true);
+        return SelectorSubscriptionRelation.fromJson(
+          jsonDecode(json),
+        ).toCompanion(true);
       default:
         throw Exception('Invalid table: $table');
     }
@@ -637,26 +685,35 @@ class SyncService with ChangeNotifier {
     final database = databaseProvider.database;
     if (enable) {
       // interceptor.pause = true;
-      logger
-          .d('Applying sync operation: ${query.statement} ${query.arguments}');
+      logger.d(
+        'Applying sync operation: ${query.statement} ${query.arguments}',
+      );
       try {
         switch (query.type) {
           case SQLType.INSERT:
-            await database.customInsert(query.statement,
-                variables: query.arguments
-                    .map((e) => Variable<Object>(e.toObject()))
-                    .toList());
+            await database.customInsert(
+              query.statement,
+              variables: query.arguments
+                  .map((e) => Variable<Object>(e.toObject()))
+                  .toList(),
+            );
           case SQLType.UPDATE:
-            await database.customUpdate(query.statement,
-                variables: query.arguments
-                    .map((e) => Variable<Object>(e.toObject()))
-                    .toList());
+            await database.customUpdate(
+              query.statement,
+              variables: query.arguments
+                  .map((e) => Variable<Object>(e.toObject()))
+                  .toList(),
+            );
           case SQLType.DELETE:
-            await database.customStatement(query.statement,
-                query.arguments.map((e) => e.toObject()).toList());
+            await database.customStatement(
+              query.statement,
+              query.arguments.map((e) => e.toObject()).toList(),
+            );
           case SQLType.CUSTOM:
-            await database.customStatement(query.statement,
-                query.arguments.map((e) => e.toObject()).toList());
+            await database.customStatement(
+              query.statement,
+              query.arguments.map((e) => e.toObject()).toList(),
+            );
           case SQLType.BATCH:
             await database.customStatement(query.statement);
         }

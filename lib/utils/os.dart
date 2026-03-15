@@ -15,7 +15,7 @@
 
 import 'dart:io';
 
-bool isRpm()  {
+bool isRpm() {
   print('isrpm $_rpm');
   return _rpm || isRpmBasedSystem();
 }
@@ -30,7 +30,7 @@ bool isRpmBasedSystem() {
     '/etc/centos-release',
     '/etc/rocky-release',
     '/etc/slackware-release',
-    '/etc/oracle-release'
+    '/etc/oracle-release',
   ];
 
   for (var releaseFile in rpmReleaseFiles) {

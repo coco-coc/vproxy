@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 /// Keeps a buffer of the last [maxSize] elements.
 class CircularBuffer<T> extends Iterable<T> {
   final int _maxSize;
@@ -22,8 +21,8 @@ class CircularBuffer<T> extends Iterable<T> {
   int _count = 0;
 
   CircularBuffer({int maxSize = 100, List<T>? initialList})
-      : _maxSize = maxSize,
-        _buffer = List<T?>.filled(maxSize, null) {
+    : _maxSize = maxSize,
+      _buffer = List<T?>.filled(maxSize, null) {
     if (initialList != null) {
       _buffer.setAll(0, initialList);
       _count = initialList.length;
@@ -81,7 +80,7 @@ class CircularBuffer<T> extends Iterable<T> {
     return -1;
   }
 
-   int indexOfBackwardsFunction(bool Function(T) test) {
+  int indexOfBackwardsFunction(bool Function(T) test) {
     for (int i = _count - 1; i >= 0; i--) {
       final e = _buffer[(_start + i) % _maxSize];
       if (e != null && test(e)) return i;

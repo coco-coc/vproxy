@@ -129,20 +129,26 @@ class _AddEditServerDialogState extends State<AddEditServerDialog> {
           final storageKey =
               'server_${_nameController.text}_${Random().nextInt(1000000)}';
           await storage.write(
-              key: storageKey,
-              value: jsonEncode(_serverSecureStorage.toJson()));
+            key: storageKey,
+            value: jsonEncode(_serverSecureStorage.toJson()),
+          );
           final server = await database
               .into(database.sshServers)
-              .insertReturning(SshServersCompanion(
-                id: Value(SnowflakeId.generate()),
-                name: Value(_nameController.text),
-                address: Value(_serverAddressController.text),
-                storageKey: Value(storageKey),
-                authMethod: Value(_authMethod),
-              ));
+              .insertReturning(
+                SshServersCompanion(
+                  id: Value(SnowflakeId.generate()),
+                  name: Value(_nameController.text),
+                  address: Value(_serverAddressController.text),
+                  storageKey: Value(storageKey),
+                  authMethod: Value(_authMethod),
+                ),
+              );
           id = server.id;
           syncService.addServerOperation(
-              server, _serverSecureStorage, storageKey);
+            server,
+            _serverSecureStorage,
+            storageKey,
+          );
         } else {
           id = widget.server!.id;
           // if a user changes the address, delete the existing pubkey
@@ -150,25 +156,30 @@ class _AddEditServerDialogState extends State<AddEditServerDialog> {
             _serverSecureStorage.pubKey = null;
           }
           await storage.write(
-              key: widget.server!.storageKey,
-              value: jsonEncode(_serverSecureStorage.toJson()));
-          final server = (await (database.update(database.sshServers)
-                    ..where((f) => f.id.equals(id)))
-                  .writeReturning(SshServersCompanion(
-            name: Value(_nameController.text),
-            address: Value(_serverAddressController.text),
-            authMethod: Value(_authMethod),
-            updatedAt: Value(DateTime.now()),
-          )))
-              .single;
+            key: widget.server!.storageKey,
+            value: jsonEncode(_serverSecureStorage.toJson()),
+          );
+          final server =
+              (await (database.update(
+                    database.sshServers,
+                  )..where((f) => f.id.equals(id))).writeReturning(
+                    SshServersCompanion(
+                      name: Value(_nameController.text),
+                      address: Value(_serverAddressController.text),
+                      authMethod: Value(_authMethod),
+                      updatedAt: Value(DateTime.now()),
+                    ),
+                  ))
+                  .single;
           syncService.updateServerOperation(
-              server, _serverSecureStorage, widget.server!.storageKey);
+            server,
+            _serverSecureStorage,
+            widget.server!.storageKey,
+          );
         }
         getCountryCode(_serverAddressController.text).then((value) {
           (database.update(database.sshServers)..where((t) => t.id.equals(id)))
-              .write(SshServersCompanion(
-            country: Value(value),
-          ));
+              .write(SshServersCompanion(country: Value(value)));
         });
         // ignore: use_build_context_synchronously
         Navigator.of(context).pop();
@@ -176,9 +187,9 @@ class _AddEditServerDialogState extends State<AddEditServerDialog> {
         logger.d('save server error', error: e);
 
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(e.toString()),
-          ));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(e.toString())));
         }
       }
     }
@@ -190,8 +201,10 @@ class _AddEditServerDialogState extends State<AddEditServerDialog> {
         ? const Center(child: CircularProgressIndicator())
         : Theme(
             data: Theme.of(context).copyWith(
-                inputDecorationTheme:
-                    const InputDecorationTheme(border: OutlineInputBorder())),
+              inputDecorationTheme: const InputDecorationTheme(
+                border: OutlineInputBorder(),
+              ),
+            ),
             child: Form(
               key: _formKey,
               child: Column(
@@ -213,12 +226,14 @@ class _AddEditServerDialogState extends State<AddEditServerDialog> {
                           controller: _serverAddressController,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return AppLocalizations.of(context)!
-                                  .fieldRequired;
+                              return AppLocalizations.of(
+                                context,
+                              )!.fieldRequired;
                             }
                             if (!isValidIp(value) && !isDomain(value)) {
-                              return AppLocalizations.of(context)!
-                                  .invalidAddress;
+                              return AppLocalizations.of(
+                                context,
+                              )!.invalidAddress;
                             }
                             return null;
                           },
@@ -235,8 +250,9 @@ class _AddEditServerDialogState extends State<AddEditServerDialog> {
                           keyboardType: TextInputType.number,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return AppLocalizations.of(context)!
-                                  .fieldRequired;
+                              return AppLocalizations.of(
+                                context,
+                              )!.fieldRequired;
                             }
                             if (!isValidPort(value)) {
                               return AppLocalizations.of(context)!.invalidPort;
@@ -248,7 +264,7 @@ class _AddEditServerDialogState extends State<AddEditServerDialog> {
                             labelText: AppLocalizations.of(context)!.port,
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                   const Gap(10),
@@ -260,15 +276,14 @@ class _AddEditServerDialogState extends State<AddEditServerDialog> {
                           controller: _userController,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return AppLocalizations.of(context)!
-                                  .fieldRequired;
+                              return AppLocalizations.of(
+                                context,
+                              )!.fieldRequired;
                             }
                             _serverSecureStorage.user = value;
                             return null;
                           },
-                          decoration: const InputDecoration(
-                            labelText: 'User',
-                          ),
+                          decoration: const InputDecoration(labelText: 'User'),
                         ),
                       ),
                       const Gap(10),
@@ -284,11 +299,12 @@ class _AddEditServerDialogState extends State<AddEditServerDialog> {
                             return null;
                           },
                           decoration: InputDecoration(
-                              helperStyle: const TextStyle(fontSize: 10),
-                              labelText: AppLocalizations.of(context)!.password,
-                              errorMaxLines: 2),
+                            helperStyle: const TextStyle(fontSize: 10),
+                            labelText: AppLocalizations.of(context)!.password,
+                            errorMaxLines: 2,
+                          ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                   const Gap(10),
@@ -297,20 +313,21 @@ class _AddEditServerDialogState extends State<AddEditServerDialog> {
                       Text(AppLocalizations.of(context)!.useSshKey),
                       const Gap(10),
                       Switch(
-                          value: _authMethod == AuthMethod.sshKey,
-                          onChanged: (value) {
-                            setState(() {
-                              _authMethod = value
-                                  ? AuthMethod.sshKey
-                                  : AuthMethod.password;
-                              if (_authMethod == AuthMethod.password) {
-                                _serverSecureStorage.globalSshKeyName = null;
-                                _serverSecureStorage.sshKey = null;
-                                _serverSecureStorage.sshKeyPath = null;
-                                _serverSecureStorage.passphrase = null;
-                              }
-                            });
-                          })
+                        value: _authMethod == AuthMethod.sshKey,
+                        onChanged: (value) {
+                          setState(() {
+                            _authMethod = value
+                                ? AuthMethod.sshKey
+                                : AuthMethod.password;
+                            if (_authMethod == AuthMethod.password) {
+                              _serverSecureStorage.globalSshKeyName = null;
+                              _serverSecureStorage.sshKey = null;
+                              _serverSecureStorage.sshKeyPath = null;
+                              _serverSecureStorage.passphrase = null;
+                            }
+                          });
+                        },
+                      ),
                     ],
                   ),
                   const Gap(10),
@@ -340,11 +357,13 @@ class _AddEditServerDialogState extends State<AddEditServerDialog> {
                       return null;
                     },
                     decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.serverPubKey,
-                        helperText:
-                            AppLocalizations.of(context)!.serverPubKeyHelper,
-                        hintText: 'AAAAB3NzaC1yc2EAAAADAQABAAABAQD...',
-                        helperMaxLines: 10),
+                      labelText: AppLocalizations.of(context)!.serverPubKey,
+                      helperText: AppLocalizations.of(
+                        context,
+                      )!.serverPubKeyHelper,
+                      hintText: 'AAAAB3NzaC1yc2EAAAADAQABAAABAQD...',
+                      helperMaxLines: 10,
+                    ),
                   ),
                 ],
               ),
@@ -355,8 +374,9 @@ class _AddEditServerDialogState extends State<AddEditServerDialog> {
         appBar: AppBar(
           actions: [
             TextButton(
-                onPressed: () => _save(context),
-                child: Text(AppLocalizations.of(context)!.save))
+              onPressed: () => _save(context),
+              child: Text(AppLocalizations.of(context)!.save),
+            ),
           ],
         ),
         body: Padding(
@@ -367,25 +387,34 @@ class _AddEditServerDialogState extends State<AddEditServerDialog> {
     }
     return AlertDialog(
       scrollable: true,
-      title: Text(widget.server == null
-          ? AppLocalizations.of(context)!.addServer
-          : AppLocalizations.of(context)!.editServer),
+      title: Text(
+        widget.server == null
+            ? AppLocalizations.of(context)!.addServer
+            : AppLocalizations.of(context)!.editServer,
+      ),
       content: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 350, maxWidth: 350),
-          child: child),
+        constraints: const BoxConstraints(minWidth: 350, maxWidth: 350),
+        child: child,
+      ),
       actions: [
         OutlinedButton(
-            style: FilledButton.styleFrom(
-                fixedSize: const Size(100, 40), elevation: 1),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text(AppLocalizations.of(context)!.cancel)),
+          style: FilledButton.styleFrom(
+            fixedSize: const Size(100, 40),
+            elevation: 1,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text(AppLocalizations.of(context)!.cancel),
+        ),
         FilledButton(
-            style: FilledButton.styleFrom(
-                fixedSize: const Size(100, 40), elevation: 1),
-            onPressed: () => _save(context),
-            child: Text(AppLocalizations.of(context)!.save))
+          style: FilledButton.styleFrom(
+            fixedSize: const Size(100, 40),
+            elevation: 1,
+          ),
+          onPressed: () => _save(context),
+          child: Text(AppLocalizations.of(context)!.save),
+        ),
       ],
     );
   }
@@ -460,39 +489,40 @@ class _SshKeyCredentialGetterState extends State<SshKeyCredentialGetter> {
       children: [
         Center(
           child: Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: SegmentedButton<HowToGetSshKey>(
-                  segments: [
-                    ButtonSegment(
-                      value: HowToGetSshKey.content,
-                      label: Text(HowToGetSshKey.content.localize(context)),
-                    ),
-                    ButtonSegment(
-                        value: HowToGetSshKey.global,
-                        label: Text(HowToGetSshKey.global.localize(context)))
-                  ],
-                  selected: {
-                    _how
-                  },
-                  onSelectionChanged: (Set<HowToGetSshKey> set) => setState(() {
-                        _how = set.first;
-                        if (_how == HowToGetSshKey.content) {
-                          // _sshKeyPathController.text = '';
-                          widget.sshServerJ.globalSshKeyName = null;
-                        }
-                        // else if (_how == HowToGetSshKey.file) {
-                        //   _sshKeyController.text = '';
-                        //   widget.sshServerJ.globalSshKeyName = null;
-                        // }
-                        else {
-                          _sshKeyController.text = '';
-                          _passphraseController.text = '';
-                          widget.sshServerJ.sshKey = null;
-                          widget.sshServerJ.sshKeyPath = null;
-                          widget.sshServerJ.passphrase = null;
-                          // _sshKeyPathController.text = '';
-                        }
-                      }))),
+            padding: const EdgeInsets.only(bottom: 10),
+            child: SegmentedButton<HowToGetSshKey>(
+              segments: [
+                ButtonSegment(
+                  value: HowToGetSshKey.content,
+                  label: Text(HowToGetSshKey.content.localize(context)),
+                ),
+                ButtonSegment(
+                  value: HowToGetSshKey.global,
+                  label: Text(HowToGetSshKey.global.localize(context)),
+                ),
+              ],
+              selected: {_how},
+              onSelectionChanged: (Set<HowToGetSshKey> set) => setState(() {
+                _how = set.first;
+                if (_how == HowToGetSshKey.content) {
+                  // _sshKeyPathController.text = '';
+                  widget.sshServerJ.globalSshKeyName = null;
+                }
+                // else if (_how == HowToGetSshKey.file) {
+                //   _sshKeyController.text = '';
+                //   widget.sshServerJ.globalSshKeyName = null;
+                // }
+                else {
+                  _sshKeyController.text = '';
+                  _passphraseController.text = '';
+                  widget.sshServerJ.sshKey = null;
+                  widget.sshServerJ.sshKeyPath = null;
+                  widget.sshServerJ.passphrase = null;
+                  // _sshKeyPathController.text = '';
+                }
+              }),
+            ),
+          ),
         ),
         if (_how == HowToGetSshKey.content)
           TextFormField(
@@ -527,18 +557,21 @@ class _SshKeyCredentialGetterState extends State<SshKeyCredentialGetter> {
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: OutlinedButton.icon(
-                onPressed: () async {
-                  final result = await FilePicker.platform.pickFiles(
-                      type: FileType.any,
-                      // allowedExtensions: ['pem', 'key', 'txt'],
-                      withData: true);
-                  if (result != null && result.files.single.bytes != null) {
-                    _sshKeyController.text =
-                        utf8.decode(result.files.single.bytes!);
-                  }
-                },
-                icon: const Icon(Icons.folder),
-                label: Text(AppLocalizations.of(context)!.selectFromFile)),
+              onPressed: () async {
+                final result = await FilePicker.platform.pickFiles(
+                  type: FileType.any,
+                  // allowedExtensions: ['pem', 'key', 'txt'],
+                  withData: true,
+                );
+                if (result != null && result.files.single.bytes != null) {
+                  _sshKeyController.text = utf8.decode(
+                    result.files.single.bytes!,
+                  );
+                }
+              },
+              icon: const Icon(Icons.folder),
+              label: Text(AppLocalizations.of(context)!.selectFromFile),
+            ),
           ),
         if (_how == HowToGetSshKey.content)
           Padding(
@@ -557,19 +590,20 @@ class _SshKeyCredentialGetterState extends State<SshKeyCredentialGetter> {
         if (_how == HowToGetSshKey.global)
           DropdownMenu<CommonSshKey>(
             width: 200,
-            initialSelection: _commonSshKeys.indexWhere(
-                        (e) => e.name == widget.sshServerJ.globalSshKeyName) !=
+            initialSelection:
+                _commonSshKeys.indexWhere(
+                      (e) => e.name == widget.sshServerJ.globalSshKeyName,
+                    ) !=
                     -1
                 ? _commonSshKeys[_commonSshKeys.indexWhere(
-                    (e) => e.name == widget.sshServerJ.globalSshKeyName)]
+                    (e) => e.name == widget.sshServerJ.globalSshKeyName,
+                  )]
                 : null,
             requestFocusOnTap: false,
             dropdownMenuEntries: _commonSshKeys
                 .map<DropdownMenuEntry<CommonSshKey>>(
-                  (e) => DropdownMenuEntry<CommonSshKey>(
-                    label: e.name,
-                    value: e,
-                  ),
+                  (e) =>
+                      DropdownMenuEntry<CommonSshKey>(label: e.name, value: e),
                 )
                 .toList(),
             onSelected: (value) {

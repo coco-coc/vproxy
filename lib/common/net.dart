@@ -41,8 +41,9 @@ bool isIpInRange(String ip, String cidr) {
         final bitOffset = i * 8;
         final remainingBits = prefixLength - bitOffset;
         if (remainingBits <= 0) break;
-        final mask =
-            remainingBits >= 8 ? 0xFF : (0xFF00 >> remainingBits) & 0xFF;
+        final mask = remainingBits >= 8
+            ? 0xFF
+            : (0xFF00 >> remainingBits) & 0xFF;
         if ((ipBytes[i] & mask) != (networkBytes[i] & mask)) {
           return false;
         }
@@ -70,8 +71,9 @@ int getRandomPort() {
 ///
 /// https://stackoverflow.com/questions/14093628/how-can-i-find-an-unused-tcp-port-in-dart
 Future<int> getUnusedPort([InternetAddress? address]) {
-  return ServerSocket.bind(address ?? InternetAddress.anyIPv4, 0)
-      .then((socket) async {
+  return ServerSocket.bind(address ?? InternetAddress.anyIPv4, 0).then((
+    socket,
+  ) async {
     var port = socket.port;
     await socket.close();
     return port;
@@ -80,8 +82,9 @@ Future<int> getUnusedPort([InternetAddress? address]) {
 
 // TODO
 bool isDomain(String domain) {
-  final domainRegExp =
-      RegExp(r'^(?!\-)([a-zA-Z0-9\-]{1,63}\.?)+(?!\-)([a-zA-Z]{2,})$');
+  final domainRegExp = RegExp(
+    r'^(?!\-)([a-zA-Z0-9\-]{1,63}\.?)+(?!\-)([a-zA-Z]{2,})$',
+  );
   return domainRegExp.hasMatch(domain);
 }
 
@@ -128,8 +131,9 @@ bool isValidPorts(String portRange) {
 CIDR ipToCidr(String ip) {
   final address = InternetAddress(ip);
   return CIDR(
-      ip: address.rawAddress,
-      prefix: address.type == InternetAddressType.IPv4 ? 32 : 128);
+    ip: address.rawAddress,
+    prefix: address.type == InternetAddressType.IPv4 ? 32 : 128,
+  );
 }
 
 bool isValidAddressPort(String addressPort) {
@@ -194,7 +198,6 @@ String bytesToReadableCompact(int bytes) {
   }
 }
 
-
 String portString(OutboundHandlerConfig config) {
   final ret = portRangesToString(config.ports);
   if (ret.isNotEmpty) {
@@ -231,8 +234,9 @@ bool isValidHttpHttpsUrl(String url) {
     // Check for required components
     return uri.scheme == 'https' &&
         uri.host.isNotEmpty &&
-        uri.host
-            .contains('.'); // Basic domain validation (has at least one dot)
+        uri.host.contains(
+          '.',
+        ); // Basic domain validation (has at least one dot)
   } catch (e) {
     return false;
   }

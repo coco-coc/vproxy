@@ -46,16 +46,15 @@ ThemeData getTheme(Locale? locale) {
   return ThemeData(
     textTheme: getTextTheme(locale),
     colorScheme: colorScheme,
-    tooltipTheme: const TooltipThemeData(
-      preferBelow: false,
-    ),
+    tooltipTheme: const TooltipThemeData(preferBelow: false),
     // switchTheme: SwitchThemeData(
     //   thumbColor: MaterialStateProperty.all(XPink),
     //   trackColor: MaterialStateProperty.all(XPink),
     //   trackOutlineColor: MaterialStateProperty.all(XPink),
     // ),
-    inputDecorationTheme:
-        const InputDecorationTheme(border: OutlineInputBorder()),
+    inputDecorationTheme: const InputDecorationTheme(
+      border: OutlineInputBorder(),
+    ),
     appBarTheme: AppBarTheme(
       scrolledUnderElevation: 0, // Prevents color change when scrolling
       systemOverlayStyle: SystemUiOverlayStyle(
@@ -85,11 +84,10 @@ ThemeData getDarkTheme(Locale? locale) {
     colorScheme: colorScheme,
     brightness: Brightness.dark,
     textTheme: getTextTheme(locale, isDark: true),
-    tooltipTheme: const TooltipThemeData(
-      preferBelow: false,
+    tooltipTheme: const TooltipThemeData(preferBelow: false),
+    inputDecorationTheme: const InputDecorationTheme(
+      border: OutlineInputBorder(),
     ),
-    inputDecorationTheme:
-        const InputDecorationTheme(border: OutlineInputBorder()),
     // switchTheme: SwitchThemeData(
     //   thumbColor: MaterialStateProperty.all(XPink),
     //   trackColor: MaterialStateProperty.all(XPink),

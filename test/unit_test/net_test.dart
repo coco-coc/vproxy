@@ -8,10 +8,16 @@ void main() {
     final response = portRangesToString([PortRange(from: 1, to: 10)]);
     expect(response, '1-10');
 
-    final response2 = portRangesToString([PortRange(from: 1, to: 10), PortRange(from: 11, to: 20)]);
+    final response2 = portRangesToString([
+      PortRange(from: 1, to: 10),
+      PortRange(from: 11, to: 20),
+    ]);
     expect(response2, '1-10,11-20');
 
-    final response3 = portRangesToString([PortRange(from: 1, to: 10), PortRange(from: 11, to: 11)]);
+    final response3 = portRangesToString([
+      PortRange(from: 1, to: 10),
+      PortRange(from: 11, to: 11),
+    ]);
     expect(response3, '1-10,11');
 
     final response4 = portRangesToString([]);

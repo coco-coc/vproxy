@@ -45,16 +45,15 @@ class ContactScreen extends StatelessWidget {
             const SizedBox(height: 10),
             Row(
               children: [
-                const Chip(
-                  label: Text(email),
-                ),
+                const Chip(label: Text(email)),
                 IconButton(
                   onPressed: () {
                     Pasteboard.writeText(email);
                     rootScaffoldMessengerKey.currentState?.showSnackBar(
                       SnackBar(
                         content: Text(
-                            AppLocalizations.of(context)!.copiedToClipboard),
+                          AppLocalizations.of(context)!.copiedToClipboard,
+                        ),
                         duration: const Duration(seconds: 2),
                       ),
                     );
@@ -77,34 +76,44 @@ class ContactScreen extends StatelessWidget {
             Row(
               children: [
                 OutlinedButton.icon(
-                    onPressed: () {
-                      launchUrl(Uri.parse('https://x.com/vproxy5vnetwork'));
-                    },
-                    icon: Image.asset(
-                      MediaQuery.of(context).platformBrightness ==
-                              Brightness.dark
-                          ? 'assets/icons/x_logo_white.png'
-                          : 'assets/icons/x_logo_black.png',
-                      width: 16,
-                      height: 16,
-                    ),
-                    label: const Text(' X')),
+                  onPressed: () {
+                    launchUrl(Uri.parse('https://x.com/vproxy5vnetwork'));
+                  },
+                  icon: Image.asset(
+                    MediaQuery.of(context).platformBrightness == Brightness.dark
+                        ? 'assets/icons/x_logo_white.png'
+                        : 'assets/icons/x_logo_black.png',
+                    width: 16,
+                    height: 16,
+                  ),
+                  label: const Text(' X'),
+                ),
                 const SizedBox(width: 10),
                 OutlinedButton.icon(
-                    onPressed: () {
-                      launchUrl(Uri.parse('https://t.me/vproxygroup'));
-                    },
-                    icon: Image.asset('assets/icons/telegram_icon.png',
-                        width: 20, height: 20),
-                    label: Text(AppLocalizations.of(context)!.telegram)),
+                  onPressed: () {
+                    launchUrl(Uri.parse('https://t.me/vproxygroup'));
+                  },
+                  icon: Image.asset(
+                    'assets/icons/telegram_icon.png',
+                    width: 20,
+                    height: 20,
+                  ),
+                  label: Text(AppLocalizations.of(context)!.telegram),
+                ),
                 const SizedBox(width: 10),
                 OutlinedButton.icon(
-                    onPressed: () {
-                      launchUrl(Uri.parse('https://www.youtube.com/@vproxy5vnetwork'));
-                    },
-                    icon: Image.asset('assets/icons/youtube.png',
-                        width: 24, height: 24),
-                    label: const Text('Youtube')),
+                  onPressed: () {
+                    launchUrl(
+                      Uri.parse('https://www.youtube.com/@vproxy5vnetwork'),
+                    );
+                  },
+                  icon: Image.asset(
+                    'assets/icons/youtube.png',
+                    width: 24,
+                    height: 24,
+                  ),
+                  label: const Text('Youtube'),
+                ),
               ],
             ),
             const SizedBox(height: 10),

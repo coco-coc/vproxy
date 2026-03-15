@@ -32,69 +32,66 @@ class Welcome extends StatelessWidget {
         Text(
           AppLocalizations.of(context)!.sourceCodeAvailable,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
         ),
         const Gap(10),
         Wrap(
-
           spacing: 10,
           runSpacing: 5,
           children: [
             OutlinedButton.icon(
-                onPressed: () {
-                  launchUrl(Uri.parse('https://github.com/5vnetwork/vx'));
-                },
-                icon: SvgPicture.asset(
-                    Theme.of(context).brightness == Brightness.dark
-                        ? 'assets/icons/github-mark-white.svg'
-                        : 'assets/icons/github-mark.svg',
-                    width: 18,
-                    height: 18),
-                label: Text(
-                  AppLocalizations.of(context)!.vxSourceCode,
-                )),
+              onPressed: () {
+                launchUrl(Uri.parse('https://github.com/5vnetwork/vx'));
+              },
+              icon: SvgPicture.asset(
+                Theme.of(context).brightness == Brightness.dark
+                    ? 'assets/icons/github-mark-white.svg'
+                    : 'assets/icons/github-mark.svg',
+                width: 18,
+                height: 18,
+              ),
+              label: Text(AppLocalizations.of(context)!.vxSourceCode),
+            ),
             OutlinedButton.icon(
-                onPressed: () {
-                  launchUrl(Uri.parse('https://github.com/5vnetwork/vx-core'));
-                },
-                icon: SvgPicture.asset(
-                    Theme.of(context).brightness == Brightness.dark
-                        ? 'assets/icons/github-mark-white.svg'
-                        : 'assets/icons/github-mark.svg',
-                    width: 18,
-                    height: 18),
-                label: Text(
-                  AppLocalizations.of(context)!.vxCoreSourceCode,
-                )),
+              onPressed: () {
+                launchUrl(Uri.parse('https://github.com/5vnetwork/vx-core'));
+              },
+              icon: SvgPicture.asset(
+                Theme.of(context).brightness == Brightness.dark
+                    ? 'assets/icons/github-mark-white.svg'
+                    : 'assets/icons/github-mark.svg',
+                width: 18,
+                height: 18,
+              ),
+              label: Text(AppLocalizations.of(context)!.vxCoreSourceCode),
+            ),
           ],
         ),
         const Gap(10),
         Text(
           AppLocalizations.of(context)!.howToUseVX,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
         ),
         const Gap(10),
         OutlinedButton.icon(
-            onPressed: () {
-              launchUrl(Uri.parse('https://www.youtube.com/@vproxy5vnetwork'));
-            },
-            icon:
-                Image.asset('assets/icons/youtube.png', width: 24, height: 24),
-            label: const Text(
-              'VX代理客户端',
-            )),
+          onPressed: () {
+            launchUrl(Uri.parse('https://www.youtube.com/@vproxy5vnetwork'));
+          },
+          icon: Image.asset('assets/icons/youtube.png', width: 24, height: 24),
+          label: const Text('VX代理客户端'),
+        ),
         const Gap(10),
         Text(
           AppLocalizations.of(context)!.contactUsFreely,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
         ),
         const Gap(10),
         Wrap(
@@ -102,37 +99,39 @@ class Welcome extends StatelessWidget {
           runSpacing: 5,
           children: [
             OutlinedButton.icon(
-                onPressed: () {
-                  launchUrl(Uri.parse('https://x.com/vproxy5vnetwork'));
-                },
-                icon: Image.asset(
-                  MediaQuery.of(context).platformBrightness == Brightness.light
-                      ? 'assets/icons/x_logo_black.png'
-                      : 'assets/icons/x_logo_white.png',
-                  width: 16,
-                  height: 16,
-                ),
-                label: const Text(' X')),
+              onPressed: () {
+                launchUrl(Uri.parse('https://x.com/vproxy5vnetwork'));
+              },
+              icon: Image.asset(
+                MediaQuery.of(context).platformBrightness == Brightness.light
+                    ? 'assets/icons/x_logo_black.png'
+                    : 'assets/icons/x_logo_white.png',
+                width: 16,
+                height: 16,
+              ),
+              label: const Text(' X'),
+            ),
             OutlinedButton.icon(
               label: Text(AppLocalizations.of(context)!.email),
               onPressed: () {
-                final Uri emailLaunchUri = Uri(
-                  scheme: 'mailto',
-                  path: email,
-                );
+                final Uri emailLaunchUri = Uri(scheme: 'mailto', path: email);
                 launchUrl(emailLaunchUri);
               },
               icon: const Icon(Icons.email_outlined),
             ),
             OutlinedButton.icon(
-                onPressed: () {
-                  launchUrl(Uri.parse('https://t.me/vproxygroup'));
-                },
-                icon: Image.asset('assets/icons/telegram_icon.png',
-                    width: 20, height: 20),
-                label: Text(AppLocalizations.of(context)!.telegram)),
+              onPressed: () {
+                launchUrl(Uri.parse('https://t.me/vproxygroup'));
+              },
+              icon: Image.asset(
+                'assets/icons/telegram_icon.png',
+                width: 20,
+                height: 20,
+              ),
+              label: Text(AppLocalizations.of(context)!.telegram),
+            ),
           ],
-        )
+        ),
       ],
     );
   }

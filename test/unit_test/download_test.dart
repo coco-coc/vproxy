@@ -59,7 +59,10 @@ void main() {
       // Verify download throws exception
       expect(
         () => directDownloadToFile(
-            'https://example.com/file', destPath, mockClient),
+          'https://example.com/file',
+          destPath,
+          mockClient,
+        ),
         throwsException,
       );
 
@@ -82,7 +85,10 @@ void main() {
       // Verify stream error throws exception
       expect(
         () => directDownloadToFile(
-            'https://example.com/file', destPath, mockClient),
+          'https://example.com/file',
+          destPath,
+          mockClient,
+        ),
         throwsException,
       );
 
@@ -103,7 +109,10 @@ void main() {
       // Verify invalid status throws exception
       expect(
         () => directDownloadToFile(
-            'https://example.com/file', destPath, mockClient),
+          'https://example.com/file',
+          destPath,
+          mockClient,
+        ),
         throwsException,
       );
     });
@@ -128,10 +137,9 @@ void main() {
       } catch (_) {}
 
       // Verify no temp files are left
-      final tempFiles = Directory(tempDir)
-          .listSync()
-          .where((f) => f.path.contains('.tmp.'))
-          .toList();
+      final tempFiles = Directory(
+        tempDir,
+      ).listSync().where((f) => f.path.contains('.tmp.')).toList();
       expect(tempFiles, isEmpty);
     });
   });

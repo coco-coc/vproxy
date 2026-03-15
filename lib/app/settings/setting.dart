@@ -61,15 +61,11 @@ enum SettingItem {
   privacyPolicy(icon: Icon(Icons.info), pathSegment: 'privacy'),
   contactUs(icon: Icon(Icons.email_outlined), pathSegment: 'contactUs'),
   openSourceSoftwareNotice(
-      icon: Icon(Icons.code_rounded), pathSegment: 'openSourceSoftwareNotice'),
+    icon: Icon(Icons.code_rounded),
+    pathSegment: 'openSourceSoftwareNotice',
+  ),
   debugLog(icon: Icon(Icons.bug_report_rounded), pathSegment: 'debugLog'),
-  ads(
-      icon: ImageIcon(
-        AssetImage(
-          'assets/icons/ad.png',
-        ),
-      ),
-      pathSegment: 'ads');
+  ads(icon: ImageIcon(AssetImage('assets/icons/ad.png')), pathSegment: 'ads');
 
   final Widget icon;
   final String pathSegment;
@@ -97,13 +93,15 @@ enum SettingItem {
   Widget getIcon(BuildContext context) {
     switch (this) {
       case SettingItem.account:
-        return BlocBuilder<AuthBloc, AuthState>(builder: (ctx, state) {
-          if (state.pro) {
-            return proIcon;
-          } else {
-            return icon;
-          }
-        });
+        return BlocBuilder<AuthBloc, AuthState>(
+          builder: (ctx, state) {
+            if (state.pro) {
+              return proIcon;
+            } else {
+              return icon;
+            }
+          },
+        );
       default:
         return icon;
     }
@@ -211,8 +209,7 @@ class _LargeSettingSreenState extends State<LargeSettingSreen> {
             },
           ),
         );
-      }).toList()
-        ..addAll(_getBottomButtons(context, user)),
+      }).toList()..addAll(_getBottomButtons(context, user)),
     );
 
     late Widget detail;
@@ -224,7 +221,7 @@ class _LargeSettingSreenState extends State<LargeSettingSreen> {
             context.go('/setting');
           },
           pages: const [
-            MaterialPage(child: GeneralSettingPage(showAppBar: false))
+            MaterialPage(child: GeneralSettingPage(showAppBar: false)),
           ],
         );
       case SettingItem.privacyPolicy:
@@ -256,7 +253,7 @@ class _LargeSettingSreenState extends State<LargeSettingSreen> {
         children: [
           Expanded(child: list),
           const VerticalDivider(),
-          Expanded(child: detail)
+          Expanded(child: detail),
         ],
       ),
     );
@@ -265,9 +262,7 @@ class _LargeSettingSreenState extends State<LargeSettingSreen> {
 
 List<Widget> _getBottomButtons(BuildContext context, User? user) {
   return [
-    const SizedBox(
-      height: 5,
-    ),
+    const SizedBox(height: 5),
     if (context.watch<AuthBloc>().state.isActivated)
       const Align(
         alignment: Alignment.centerLeft,
@@ -287,13 +282,16 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
                 onPressed: () {
                   if (useStripe) {
                     launchUrl(
-                        getProPaymentLink(user?.email ?? '', user?.id ?? ''));
+                      getProPaymentLink(user?.email ?? '', user?.id ?? ''),
+                    );
                   } else {
                     showProPromotionDialog(context);
                   }
                 },
-                icon: Icon(Icons.stars_rounded,
-                    color: Theme.of(context).colorScheme.primary),
+                icon: Icon(
+                  Icons.stars_rounded,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 label: AutoSizeText(
                   AppLocalizations.of(context)!.upgradeToPermanentPro,
                   maxLines: 1,
@@ -316,9 +314,7 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
         ),
       ],
     ),
-    const SizedBox(
-      height: 5,
-    ),
+    const SizedBox(height: 5),
     Row(
       children: [
         if ((!useStripe && (user == null || (user.lifetimePro == false))))
@@ -329,24 +325,27 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
                 onPressed: () {
                   if (user == null) {
                     showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                              title: Text(AppLocalizations.of(context)!
-                                  .loginBeforePurchase),
-                              actions: [
-                                TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                    child: Text(
-                                        AppLocalizations.of(context)!.close)),
-                              ],
-                            ));
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(
+                          AppLocalizations.of(context)!.loginBeforePurchase,
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text(AppLocalizations.of(context)!.close),
+                          ),
+                        ],
+                      ),
+                    );
                   } else {
                     context.read<ProPurchases>().restore();
                   }
                 },
-                icon: Icon(Icons.history_rounded,
-                    color: Theme.of(context).colorScheme.primary),
+                icon: Icon(
+                  Icons.history_rounded,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 label: AutoSizeText(
                   AppLocalizations.of(context)!.restoreIAP,
                   maxLines: 1,
@@ -364,8 +363,9 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
                   inAppReview.requestReview();
                 } else {
                   inAppReview.openStoreListing(
-                      appStoreId: '6744701950',
-                      microsoftStoreId: '9PHBCBZ9R1FX');
+                    appStoreId: '6744701950',
+                    microsoftStoreId: '9PHBCBZ9R1FX',
+                  );
                 }
               },
               label: Text(AppLocalizations.of(context)!.rateApp),
@@ -380,12 +380,15 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         child: OutlinedButton.icon(
-            onPressed: () {
-              launchUrl(Uri.parse(adWantedUrl));
-            },
-            label: Text(AppLocalizations.of(context)!.adWanted),
-            icon: Icon(Icons.campaign_rounded,
-                color: Theme.of(context).colorScheme.primary)),
+          onPressed: () {
+            launchUrl(Uri.parse(adWantedUrl));
+          },
+          label: Text(AppLocalizations.of(context)!.adWanted),
+          icon: Icon(
+            Icons.campaign_rounded,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
       ),
     const Gap(5),
     const Version(),
@@ -413,9 +416,9 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
               if (!Directory(dstDir).existsSync()) {
                 Directory(dstDir).createSync(recursive: true);
               }
-              final newFile =
-                  await File(await getDbPath(context.read<SharedPreferences>()))
-                      .copy(join(dstDir, "db.sqlite"));
+              final newFile = await File(
+                await getDbPath(context.read<SharedPreferences>()),
+              ).copy(join(dstDir, "db.sqlite"));
               print('copied, ${newFile.path}');
             },
             child: const Text('Copy Database'),
@@ -437,7 +440,7 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
               throw StateError('This is test exception');
             },
             child: const Text('Verify Sentry Setup'),
-          )
+          ),
         ],
       ),
   ];
@@ -456,10 +459,11 @@ class CompactSettingScreen extends StatelessWidget {
           ? AppBar(
               title: Text(AppLocalizations.of(context)!.settings),
               leading: IconButton(
-                  onPressed: () {
-                    context.pop();
-                  },
-                  icon: const Icon(Icons.arrow_back_rounded)),
+                onPressed: () {
+                  context.pop();
+                },
+                icon: const Icon(Icons.arrow_back_rounded),
+              ),
               automaticallyImplyLeading: true,
             )
           : null,
@@ -477,12 +481,11 @@ class CompactSettingScreen extends StatelessWidget {
               subtitle: se.subtitle(context),
               trailing: const Icon(Icons.keyboard_arrow_right_rounded),
               onTap: () async {
-                final currentPath = GoRouterState.of(context).fullPath ??
-                    GoRouter.of(context)
-                        .routeInformationProvider
-                        .value
-                        .uri
-                        .toString();
+                final currentPath =
+                    GoRouterState.of(context).fullPath ??
+                    GoRouter.of(
+                      context,
+                    ).routeInformationProvider.value.uri.toString();
                 final basePath = currentPath.endsWith('/')
                     ? currentPath.substring(0, currentPath.length - 1)
                     : currentPath;
@@ -491,8 +494,7 @@ class CompactSettingScreen extends StatelessWidget {
               },
             ),
           );
-        }).toList()
-          ..addAll(_getBottomButtons(context, user)),
+        }).toList()..addAll(_getBottomButtons(context, user)),
       ),
     );
   }
@@ -513,29 +515,32 @@ class Version extends StatelessWidget {
           final packageInfo = snapshot.data!;
           int count = 0;
           return Center(
-            child: StatefulBuilder(builder: (context, setState) {
-              return GestureDetector(
-                onTap: () async {
-                  setState(() {
-                    print('count: $count');
-                    count++;
-                  });
-                  if (count >= 10) {
-                    demo = true;
-                    App.of(context)?.rebuildAllChildren();
-                    if (Platform.isMacOS) {
-                      await windowManager.setSize(const Size(1280, 800));
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                return GestureDetector(
+                  onTap: () async {
+                    setState(() {
+                      print('count: $count');
+                      count++;
+                    });
+                    if (count >= 10) {
+                      demo = true;
+                      App.of(context)?.rebuildAllChildren();
+                      if (Platform.isMacOS) {
+                        await windowManager.setSize(const Size(1280, 800));
+                      }
+                      context.read<RealtimeSpeedNotifier>().demo();
                     }
-                    context.read<RealtimeSpeedNotifier>().demo();
-                  }
-                },
-                child: Text(
+                  },
+                  child: Text(
                     'Version: ${packageInfo.version} (${packageInfo.buildNumber})',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        )),
-              );
-            }),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                );
+              },
+            ),
           );
         }
       },

@@ -59,15 +59,15 @@ part 'deploy.dart';
 
 class Deployer with ChangeNotifier {
   late XApiClient xApiClient;
-  Deployer({
-    required this.xApiClient,
-  });
+  Deployer({required this.xApiClient});
 
   /// Set of servers that are under deployment
   final deploying = <int>{};
 
   Future<DeployResult> deploy(
-      SshServer server, QuickDeployOption option) async {
+    SshServer server,
+    QuickDeployOption option,
+  ) async {
     if (deploying.contains(server.id)) {
       throw Exception('Server is under deployment');
     }
@@ -90,7 +90,8 @@ class Deployer with ChangeNotifier {
 
 extension SshServerX on SshServer {
   Future<SshServerSecureStorage> secureStorage(
-      FlutterSecureStorage storage) async {
+    FlutterSecureStorage storage,
+  ) async {
     final json = await storage.read(key: storageKey);
     if (json == null) {
       throw Exception('Storage not found');

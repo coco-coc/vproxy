@@ -43,14 +43,17 @@ class OutboundHandlerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isSelected = selectedAs4 ||
+    final isSelected =
+        selectedAs4 ||
         (proxySelectorMode == ProxySelectorMode.manual && handler.selected);
 
     return Card(
       elevation: isSelected ? 8 : 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: isSelected ? const BorderSide(color: XBlue, width: 2) : BorderSide.none,
+        side: isSelected
+            ? const BorderSide(color: XBlue, width: 2)
+            : BorderSide.none,
       ),
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -60,10 +63,7 @@ class OutboundHandlerCard extends StatelessWidget {
               ? LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    XBlue.withOpacity(0.1),
-                    XBlue.withOpacity(0.05),
-                  ],
+                  colors: [XBlue.withOpacity(0.1), XBlue.withOpacity(0.05)],
                 )
               : null,
         ),
@@ -84,7 +84,8 @@ class OutboundHandlerCard extends StatelessWidget {
                             height: 32,
                             width: 32,
                             AssetBytesLoader(
-                                'assets/icons/flags/${handler.countryCode.toLowerCase()}.svg.vec'),
+                              'assets/icons/flags/${handler.countryCode.toLowerCase()}.svg.vec',
+                            ),
                           )
                         : const Icon(Icons.language, size: 32),
                   ),
@@ -120,15 +121,15 @@ class OutboundHandlerCard extends StatelessWidget {
               ],
             ),
             const Gap(16),
-      
+
             // Address (Optional)
             if (showAddress) ...[
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest
-                      .withOpacity(0.5),
+                  color: theme.colorScheme.surfaceContainerHighest.withOpacity(
+                    0.5,
+                  ),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -155,34 +156,38 @@ class OutboundHandlerCard extends StatelessWidget {
               ),
               const Gap(12),
             ],
-      
+
             // Metrics Row
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // Usability
                 _MetricItem(
-                  head: Text(AppLocalizations.of(context)!.usable,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontSize: 10,
-                        color: theme.colorScheme.outline,
-                      )),
+                  head: Text(
+                    AppLocalizations.of(context)!.usable,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontSize: 10,
+                      color: theme.colorScheme.outline,
+                    ),
+                  ),
                   label: 'Status',
                   value: _getUsabilityWidget(),
                   onTap: () {
-                    context
-                        .read<OutboundBloc>()
-                        .add(StatusTestEvent(handlers: [handler]));
+                    context.read<OutboundBloc>().add(
+                      StatusTestEvent(handlers: [handler]),
+                    );
                   },
                 ),
-      
+
                 // Speed
                 _MetricItem(
-                  head: Text(AppLocalizations.of(context)!.speed,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontSize: 10,
-                        color: theme.colorScheme.outline,
-                      )),
+                  head: Text(
+                    AppLocalizations.of(context)!.speed,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontSize: 10,
+                      color: theme.colorScheme.outline,
+                    ),
+                  ),
                   label: 'Speed',
                   value: handler.speedTesting
                       ? const SizedBox(
@@ -200,24 +205,26 @@ class OutboundHandlerCard extends StatelessWidget {
                             color: handler.speed > 10
                                 ? Colors.green
                                 : handler.speed > 5
-                                    ? Colors.orange
-                                    : theme.colorScheme.onSurface,
+                                ? Colors.orange
+                                : theme.colorScheme.onSurface,
                           ),
                         ),
                   onTap: () {
-                    context
-                        .read<OutboundBloc>()
-                        .add(SpeedTestEvent(handlers: [handler]));
+                    context.read<OutboundBloc>().add(
+                      SpeedTestEvent(handlers: [handler]),
+                    );
                   },
                 ),
-      
+
                 // Latency
                 _MetricItem(
-                  head: Text(AppLocalizations.of(context)!.latency,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontSize: 10,
-                        color: theme.colorScheme.outline,
-                      )),
+                  head: Text(
+                    AppLocalizations.of(context)!.latency,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontSize: 10,
+                      color: theme.colorScheme.outline,
+                    ),
+                  ),
                   label: 'Ping',
                   value: handler.usableTesting
                       ? const SizedBox(
@@ -235,16 +242,16 @@ class OutboundHandlerCard extends StatelessWidget {
                             color: handler.ping > 0 && handler.ping < 1000
                                 ? Colors.green
                                 : handler.ping >= 1000 && handler.ping < 2000
-                                    ? Colors.orange
-                                    : handler.ping >= 2000
-                                        ? Colors.red
-                                        : theme.colorScheme.onSurface,
+                                ? Colors.orange
+                                : handler.ping >= 2000
+                                ? Colors.red
+                                : theme.colorScheme.onSurface,
                           ),
                         ),
                   onTap: () {
-                    context
-                        .read<OutboundBloc>()
-                        .add(StatusTestEvent(handlers: [handler]));
+                    context.read<OutboundBloc>().add(
+                      StatusTestEvent(handlers: [handler]),
+                    );
                   },
                 ),
               ],
@@ -286,13 +293,7 @@ class _MetricItem extends StatelessWidget {
       borderRadius: BorderRadius.circular(8),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        child: Column(
-          children: [
-            head,
-            const Gap(5),
-            value,
-          ],
-        ),
+        child: Column(children: [head, const Gap(5), value]),
       ),
     );
   }

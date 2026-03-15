@@ -16,6 +16,7 @@ import 'package:vx/utils/xapi_client.dart';
   MockSpec<DbHelper>(),
 ])
 import 'geodata_auto_update_test.mocks.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -91,8 +92,9 @@ void main() {
         when(mockPref.autoUpdateGeoFiles).thenReturn(true);
         when(mockPref.geoUpdateInterval).thenReturn(1);
         when(mockPref.lastGeoUpdate).thenReturn(null);
-        when(mockDownloader.downloadProxyFirst(any, any))
-            .thenAnswer((_) async => {});
+        when(
+          mockDownloader.downloadProxyFirst(any, any),
+        ).thenAnswer((_) async => {});
         when(mockXApiClient.processGeoFiles()).thenAnswer((_) async => {});
 
         // Act
@@ -112,8 +114,9 @@ void main() {
         when(mockPref.autoUpdateGeoFiles).thenReturn(true);
         when(mockPref.geoUpdateInterval).thenReturn(1);
         when(mockPref.lastGeoUpdate).thenReturn(null);
-        when(mockDownloader.downloadProxyFirst(any, any))
-            .thenAnswer((_) async => {});
+        when(
+          mockDownloader.downloadProxyFirst(any, any),
+        ).thenAnswer((_) async => {});
         when(mockXApiClient.processGeoFiles()).thenAnswer((_) async => {});
 
         // Act
@@ -128,8 +131,10 @@ void main() {
       test('should respect 1 day interval', () {
         // Arrange
         final now = DateTime.now();
-        final lastUpdate = now.subtract(const Duration(hours: 23)); // Less than 1 day
-        
+        final lastUpdate = now.subtract(
+          const Duration(hours: 23),
+        ); // Less than 1 day
+
         when(mockPref.autoUpdateGeoFiles).thenReturn(true);
         when(mockPref.geoUpdateInterval).thenReturn(1);
         when(mockPref.lastGeoUpdate).thenReturn(lastUpdate);
@@ -145,8 +150,10 @@ void main() {
       test('should respect 7 day interval', () {
         // Arrange
         final now = DateTime.now();
-        final lastUpdate = now.subtract(const Duration(days: 6)); // Less than 7 days
-        
+        final lastUpdate = now.subtract(
+          const Duration(days: 6),
+        ); // Less than 7 days
+
         when(mockPref.autoUpdateGeoFiles).thenReturn(true);
         when(mockPref.geoUpdateInterval).thenReturn(7);
         when(mockPref.lastGeoUpdate).thenReturn(lastUpdate);
@@ -161,13 +168,16 @@ void main() {
       test('should update immediately if interval has passed', () async {
         // Arrange
         final now = DateTime.now();
-        final lastUpdate = now.subtract(const Duration(days: 2)); // More than 1 day
-        
+        final lastUpdate = now.subtract(
+          const Duration(days: 2),
+        ); // More than 1 day
+
         when(mockPref.autoUpdateGeoFiles).thenReturn(true);
         when(mockPref.geoUpdateInterval).thenReturn(1);
         when(mockPref.lastGeoUpdate).thenReturn(lastUpdate);
-        when(mockDownloader.downloadProxyFirst(any, any))
-            .thenAnswer((_) async => {});
+        when(
+          mockDownloader.downloadProxyFirst(any, any),
+        ).thenAnswer((_) async => {});
         when(mockXApiClient.processGeoFiles()).thenAnswer((_) async => {});
 
         // Act
@@ -183,9 +193,11 @@ void main() {
       test('should calculate next update correctly from last update', () {
         // Arrange
         final now = DateTime.now();
-        final lastUpdate = now.subtract(const Duration(hours: 12)); // Half day ago
+        final lastUpdate = now.subtract(
+          const Duration(hours: 12),
+        ); // Half day ago
         final expectedNext = lastUpdate.add(const Duration(days: 1));
-        
+
         when(mockPref.autoUpdateGeoFiles).thenReturn(true);
         when(mockPref.geoUpdateInterval).thenReturn(1);
         when(mockPref.lastGeoUpdate).thenReturn(lastUpdate);
@@ -203,12 +215,13 @@ void main() {
         // Arrange
         final now = DateTime.now();
         final lastUpdate = now.subtract(const Duration(days: 30)); // Very old
-        
+
         when(mockPref.autoUpdateGeoFiles).thenReturn(true);
         when(mockPref.geoUpdateInterval).thenReturn(1);
         when(mockPref.lastGeoUpdate).thenReturn(lastUpdate);
-        when(mockDownloader.downloadProxyFirst(any, any))
-            .thenAnswer((_) async => {});
+        when(
+          mockDownloader.downloadProxyFirst(any, any),
+        ).thenAnswer((_) async => {});
         when(mockXApiClient.processGeoFiles()).thenAnswer((_) async => {});
 
         // Act
@@ -229,7 +242,7 @@ void main() {
 
         // Act - Start timer
         geoDataHelper.reset();
-        
+
         // Reset again
         geoDataHelper.reset();
 
@@ -246,7 +259,7 @@ void main() {
         // Act
         geoDataHelper.reset();
         final firstCallCount = verify(mockPref.geoUpdateInterval).callCount;
-        
+
         geoDataHelper.reset();
         final secondCallCount = verify(mockPref.geoUpdateInterval).callCount;
 
@@ -272,7 +285,7 @@ void main() {
 
         // Act
         geoDataHelper.reset(); // Start timer
-        
+
         // Disable and reset
         when(mockPref.autoUpdateGeoFiles).thenReturn(false);
         geoDataHelper.reset(); // Should cancel timer
@@ -320,8 +333,7 @@ void main() {
     group('Concurrent Access', () {
       test('should handle concurrent makeGeoDataAvailable calls', () async {
         // Arrange
-        when(mockDownloader.downloadProxyFirst(any, any))
-            .thenAnswer((_) async {
+        when(mockDownloader.downloadProxyFirst(any, any)).thenAnswer((_) async {
           await Future.delayed(const Duration(milliseconds: 100));
         });
         when(mockXApiClient.processGeoFiles()).thenAnswer((_) async => {});
@@ -336,7 +348,9 @@ void main() {
         await Future.wait(futures);
 
         // Assert - Should only download once due to completer
-        verify(mockDownloader.downloadProxyFirst(any, any)).called(2); // 2 files
+        verify(
+          mockDownloader.downloadProxyFirst(any, any),
+        ).called(2); // 2 files
       });
     });
 

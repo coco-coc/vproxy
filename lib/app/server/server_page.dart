@@ -56,10 +56,12 @@ class _ServerScreenState extends State<ServerScreen> {
         length: 2,
         child: Column(
           children: [
-            TabBar(tabs: [
-              Tab(text: AppLocalizations.of(context)!.server),
-              Tab(text: AppLocalizations.of(context)!.sshKey),
-            ]),
+            TabBar(
+              tabs: [
+                Tab(text: AppLocalizations.of(context)!.server),
+                Tab(text: AppLocalizations.of(context)!.sshKey),
+              ],
+            ),
             const Gap(10),
             const Expanded(
               child: Padding(
@@ -83,23 +85,25 @@ class _ServerScreenState extends State<ServerScreen> {
                   label: Text(AppLocalizations.of(context)!.server),
                 ),
                 ButtonSegment(
-                    value: ServerScreenSegment.keys,
-                    label: Text(AppLocalizations.of(context)!.sshKey))
+                  value: ServerScreenSegment.keys,
+                  label: Text(AppLocalizations.of(context)!.sshKey),
+                ),
               ],
               selected: {_segment},
               onSelectionChanged: (Set<ServerScreenSegment> set) =>
                   setState(() {
-                _segment = set.first;
-              }),
+                    _segment = set.first;
+                  }),
             ),
             const Gap(10),
             Expanded(
-                child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: _segment == ServerScreenSegment.servers
-                  ? const Servers()
-                  : const SshKeys(),
-            ))
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: _segment == ServerScreenSegment.servers
+                    ? const Servers()
+                    : const SshKeys(),
+              ),
+            ),
           ],
         ),
       ),
@@ -124,8 +128,9 @@ class _ServersState extends State<Servers> {
 
   void _subscribe() {
     final database = context.read<DatabaseProvider>().database;
-    _serverSubscription =
-        database.select(database.sshServers).watch().listen((l) {
+    _serverSubscription = database.select(database.sshServers).watch().listen((
+      l,
+    ) {
       setState(() {
         _servers = l;
       });
@@ -153,19 +158,18 @@ class _ServersState extends State<Servers> {
 
     final fullScreen = Provider.of<MyLayout>(context, listen: false).isCompact;
     if (fullScreen) {
-      Navigator.of(context, rootNavigator: true)
-          .push(CupertinoPageRoute(builder: (ctx) {
-        return AddEditServerDialog(
-          fullScreen: fullScreen,
-        );
-      }));
+      Navigator.of(context, rootNavigator: true).push(
+        CupertinoPageRoute(
+          builder: (ctx) {
+            return AddEditServerDialog(fullScreen: fullScreen);
+          },
+        ),
+      );
     } else {
       showDialog(
         barrierDismissible: false,
         context: context,
-        builder: (context) => AddEditServerDialog(
-          fullScreen: fullScreen,
-        ),
+        builder: (context) => AddEditServerDialog(fullScreen: fullScreen),
       );
     }
   }
@@ -183,78 +187,92 @@ class _ServersState extends State<Servers> {
           ),
           const Gap(10),
           Expanded(
-            child: LayoutBuilder(builder: (ctx, c) {
-              const cardWidth = 230;
-              const cartHeight = 64;
-              final count = c.maxWidth ~/ (cardWidth + 10);
-              // BoxConstraints(
-              //         maxWidth: (count * cardWidth + (count - 1) * 10),
-              //       )
-              return CustomScrollView(
-                slivers: [
-                  SliverConstrainedCrossAxis(
-                    maxExtent: count * cardWidth + (count - 1) * 10,
-                    sliver: SliverGrid(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: count,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
-                        childAspectRatio: cardWidth / cartHeight,
+            child: LayoutBuilder(
+              builder: (ctx, c) {
+                const cardWidth = 230;
+                const cartHeight = 64;
+                final count = c.maxWidth ~/ (cardWidth + 10);
+                // BoxConstraints(
+                //         maxWidth: (count * cardWidth + (count - 1) * 10),
+                //       )
+                return CustomScrollView(
+                  slivers: [
+                    SliverConstrainedCrossAxis(
+                      maxExtent: count * cardWidth + (count - 1) * 10,
+                      sliver: SliverGrid(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: count,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                          childAspectRatio: cardWidth / cartHeight,
+                        ),
+                        delegate: SliverChildBuilderDelegate(
+                          childCount: _servers.length,
+                          (context, index) {
+                            final server = _servers[index];
+                            return Hero(
+                              tag: 'server${server.id}',
+                              child: ServerCard(
+                                server: server,
+                                onTap: () {
+                                  final fullScreen = Provider.of<MyLayout>(
+                                    context,
+                                    listen: false,
+                                  ).isCompact;
+                                  Navigator.of(
+                                    context,
+                                    rootNavigator: fullScreen,
+                                  ).push(
+                                    fullScreen
+                                        ? CupertinoPageRoute(
+                                            builder: (ctx) {
+                                              return ServerDetail(
+                                                server: _servers[index],
+                                                fullScreen: fullScreen,
+                                              );
+                                            },
+                                          )
+                                        : PageRouteBuilder(
+                                            pageBuilder:
+                                                (
+                                                  ctx,
+                                                  animation,
+                                                  secondaryAnimation,
+                                                ) {
+                                                  return ServerDetail(
+                                                    server: _servers[index],
+                                                    fullScreen: fullScreen,
+                                                  );
+                                                },
+                                            transitionsBuilder:
+                                                (
+                                                  context,
+                                                  animation,
+                                                  secondaryAnimation,
+                                                  child,
+                                                ) {
+                                                  return FadeTransition(
+                                                    opacity: animation,
+                                                    child: child,
+                                                  );
+                                                },
+                                          ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                      delegate: SliverChildBuilderDelegate(
-                          childCount: _servers.length, (context, index) {
-                        final server = _servers[index];
-                        return Hero(
-                          tag: 'server${server.id}',
-                          child: ServerCard(
-                            server: server,
-                            onTap: () {
-                              final fullScreen =
-                                  Provider.of<MyLayout>(context, listen: false)
-                                      .isCompact;
-                              Navigator.of(context, rootNavigator: fullScreen)
-                                  .push(
-                                fullScreen
-                                    ? CupertinoPageRoute(builder: (ctx) {
-                                        return ServerDetail(
-                                          server: _servers[index],
-                                          fullScreen: fullScreen,
-                                        );
-                                      })
-                                    : PageRouteBuilder(
-                                        pageBuilder: (ctx, animation,
-                                            secondaryAnimation) {
-                                          return ServerDetail(
-                                            server: _servers[index],
-                                            fullScreen: fullScreen,
-                                          );
-                                        },
-                                        transitionsBuilder: (context, animation,
-                                            secondaryAnimation, child) {
-                                          return FadeTransition(
-                                            opacity: animation,
-                                            child: child,
-                                          );
-                                        },
-                                      ),
-                              );
-                            },
-                          ),
-                        );
-                      }),
                     ),
-                  ),
-                  const SliverToBoxAdapter(
-                    child: SizedBox(height: 10),
-                  ),
-                  if (!context.watch<AuthBloc>().state.pro) const Ads(),
-                  const SliverToBoxAdapter(
-                    child: SizedBox(height: 70),
-                  ),
-                ],
-              );
-            }),
-          )
+                    const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                    if (!context.watch<AuthBloc>().state.pro) const Ads(),
+                    const SliverToBoxAdapter(child: SizedBox(height: 70)),
+                  ],
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -281,10 +299,16 @@ class ServerCard extends StatelessWidget {
           leadingIcon: const Icon(Icons.edit),
           onPressed: () {
             if (Provider.of<MyLayout>(context, listen: false).isCompact) {
-              Navigator.of(context, rootNavigator: true)
-                  .push(CupertinoPageRoute(builder: (ctx) {
-                return AddEditServerDialog(server: server, fullScreen: true);
-              }));
+              Navigator.of(context, rootNavigator: true).push(
+                CupertinoPageRoute(
+                  builder: (ctx) {
+                    return AddEditServerDialog(
+                      server: server,
+                      fullScreen: true,
+                    );
+                  },
+                ),
+              );
             } else {
               showDialog(
                 context: context,
@@ -300,9 +324,9 @@ class ServerCard extends StatelessWidget {
           leadingIcon: const Icon(Icons.delete_outline),
           onPressed: () async {
             try {
-              await context
-                  .read<FlutterSecureStorage>()
-                  .delete(key: server.storageKey);
+              await context.read<FlutterSecureStorage>().delete(
+                key: server.storageKey,
+              );
               final database = context.read<DatabaseProvider>().database;
               await database.delete(database.sshServers).delete(server);
             } catch (e) {
@@ -321,9 +345,7 @@ class ServerCard extends StatelessWidget {
         color: Theme.of(context).colorScheme.surfaceContainerLow,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.outlineVariant,
-          ),
+          side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
         ),
         child: SingleChildScrollView(
           child: Column(
@@ -334,26 +356,27 @@ class ServerCard extends StatelessWidget {
                 ),
                 onTap: onTap,
                 title: Text(server.name),
-                subtitle: AutoSizeText(
-                  server.address,
-                  maxLines: 1,
-                ),
-                trailing:
-                    showStatus ? ServerActionButtons(server: server) : null,
+                subtitle: AutoSizeText(server.address, maxLines: 1),
+                trailing: showStatus
+                    ? ServerActionButtons(server: server)
+                    : null,
                 contentPadding: const EdgeInsets.only(left: 16, right: 8),
                 leading: server.country != null && server.country!.isNotEmpty
                     ? SvgPicture(
                         height: 24,
                         width: 24,
                         AssetBytesLoader(
-                            'assets/icons/flags/${server.country!.toLowerCase()}.svg.vec'),
+                          'assets/icons/flags/${server.country!.toLowerCase()}.svg.vec',
+                        ),
                       )
                     : const Icon(Icons.language),
               ),
               if (showStatus)
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 16),
+                    horizontal: 16.0,
+                    vertical: 16,
+                  ),
                   child: ServerStatus(key: serverStatusKey, server: server),
                 ),
             ],

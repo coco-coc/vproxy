@@ -45,17 +45,13 @@ class VXConfig extends StatelessWidget {
           case VXInstalledState():
             return const _Config();
           case VXLoadingState():
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           case VXNotInstalledState():
             return Center(
               child: Text(AppLocalizations.of(context)!.installVXCoreFirst),
             );
           case VXErrorState():
-            return Center(
-              child: Text(state.error),
-            );
+            return Center(child: Text(state.error));
         }
       },
     );
@@ -78,46 +74,52 @@ class _Config extends StatelessWidget {
     //   );
     // }
     // print('object');
-    return BlocBuilder<VXBloc, VXState>(buildWhen: (previous, current) {
-      if (previous is VXInstalledState && current is VXInstalledState) {
-        print(previous.config != current.config);
-        return previous.config != current.config;
-      }
-      return false;
-    }, builder: (context, state) {
-      if (state is! VXInstalledState || state.config == null) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }
+    return BlocBuilder<VXBloc, VXState>(
+      buildWhen: (previous, current) {
+        if (previous is VXInstalledState && current is VXInstalledState) {
+          print(previous.config != current.config);
+          return previous.config != current.config;
+        }
+        return false;
+      },
+      builder: (context, state) {
+        if (state is! VXInstalledState || state.config == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-      return DefaultTabController(
-        length: 2,
-        child: Column(
-          children: [
-            TabBar(tabs: [
-              Tab(text: AppLocalizations.of(context)!.inbound),
-              // Tab(text: AppLocalizations.of(context)!.routing),
-              // Tab(text: AppLocalizations.of(context)!.set),
-              // Tab(text: AppLocalizations.of(context)!.outboundMode),
-              Tab(text: AppLocalizations.of(context)!.others),
-            ]),
-            const Gap(10),
-            Expanded(
+        return DefaultTabController(
+          length: 2,
+          child: Column(
+            children: [
+              TabBar(
+                tabs: [
+                  Tab(text: AppLocalizations.of(context)!.inbound),
+                  // Tab(text: AppLocalizations.of(context)!.routing),
+                  // Tab(text: AppLocalizations.of(context)!.set),
+                  // Tab(text: AppLocalizations.of(context)!.outboundMode),
+                  Tab(text: AppLocalizations.of(context)!.others),
+                ],
+              ),
+              const Gap(10),
+              Expanded(
                 child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TabBarView(children: [
-                _Inbounds(config: state.config!),
-                // _Routing(config: state.config!),
-                // const _Geo(),
-                // const _Outbounds(),
-                const _Others(),
-              ]),
-            )),
-          ],
-        ),
-      );
-    });
+                  padding: const EdgeInsets.all(8.0),
+                  child: TabBarView(
+                    children: [
+                      _Inbounds(config: state.config!),
+                      // _Routing(config: state.config!),
+                      // const _Geo(),
+                      // const _Outbounds(),
+                      const _Others(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -170,28 +172,23 @@ class _LoggerConfigExpansionTile extends StatelessWidget {
         subtitle: Text(
           'Configure logger settings',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-        collapsedBackgroundColor:
-            Theme.of(context).colorScheme.surfaceContainerLow,
+        collapsedBackgroundColor: Theme.of(
+          context,
+        ).colorScheme.surfaceContainerLow,
         collapsedShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.outline,
-          ),
+          side: BorderSide(color: Theme.of(context).colorScheme.outline),
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.outline,
-          ),
+          side: BorderSide(color: Theme.of(context).colorScheme.outline),
         ),
         childrenPadding: const EdgeInsets.all(16),
-        children: const [
-          _LoggerConfig(),
-        ],
+        children: const [_LoggerConfig()],
       ),
     );
   }
@@ -230,14 +227,16 @@ class _LoggerConfigState extends State<_LoggerConfig> {
 
     final current = state.config!.hasLog() ? state.config!.log : LoggerConfig();
     // Create a new LoggerConfig with all current values, then apply updates
-    final updated = updater(LoggerConfig()
-      ..logLevel = current.logLevel
-      ..filePath = current.filePath
-      ..consoleWriter = current.consoleWriter
-      ..showColor = current.showColor
-      ..showCaller = current.showCaller
-      ..logFileDir = current.logFileDir
-      ..redact = current.redact);
+    final updated = updater(
+      LoggerConfig()
+        ..logLevel = current.logLevel
+        ..filePath = current.filePath
+        ..consoleWriter = current.consoleWriter
+        ..showColor = current.showColor
+        ..showCaller = current.showCaller
+        ..logFileDir = current.logFileDir
+        ..redact = current.redact,
+    );
 
     context.read<VXBloc>().add(VXSetLoggerConfigEvent(updated));
   }
@@ -273,25 +272,28 @@ class _LoggerConfigState extends State<_LoggerConfig> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(AppLocalizations.of(context)!.logLevel,
-            style: Theme.of(context).textTheme.titleSmall),
+        Text(
+          AppLocalizations.of(context)!.logLevel,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
         const Gap(5),
         Wrap(
           spacing: 5,
           runSpacing: 5,
           children: Level.values
-              .map((e) => ChoiceChip(
-                    label: Text(e.name),
-                    selected: config.logLevel == e,
-                    onSelected: (selected) {
-                      _updateLoggerConfig((c) => c..logLevel = e);
-                    },
-                  ))
+              .map(
+                (e) => ChoiceChip(
+                  label: Text(e.name),
+                  selected: config.logLevel == e,
+                  onSelected: (selected) {
+                    _updateLoggerConfig((c) => c..logLevel = e);
+                  },
+                ),
+              )
               .toList(),
         ),
         const Gap(20),
-        Text('File Path',
-            style: Theme.of(context).textTheme.titleSmall),
+        Text('File Path', style: Theme.of(context).textTheme.titleSmall),
         const Gap(5),
         TextField(
           controller: _filePathController,
@@ -308,13 +310,16 @@ class _LoggerConfigState extends State<_LoggerConfig> {
           },
         ),
         const Gap(15),
-        Text('Log File Directory',
-            style: Theme.of(context).textTheme.titleSmall),
+        Text(
+          'Log File Directory',
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
         const Gap(5),
         TextField(
           controller: _logFileDirController,
           decoration: InputDecoration(
-            helperText: 'If specified and file_path is not set, logs will be written to the directory. Log file name will be the current timestamp: 2006-01-02T15:04:05.txt',
+            helperText:
+                'If specified and file_path is not set, logs will be written to the directory. Log file name will be the current timestamp: 2006-01-02T15:04:05.txt',
             border: const OutlineInputBorder(),
             helperStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -343,7 +348,9 @@ class _LoggerConfigState extends State<_LoggerConfig> {
         ),
         SwitchListTile(
           title: const Text('Show Caller'),
-          subtitle: const Text('Show caller information (file and line number) in logs'),
+          subtitle: const Text(
+            'Show caller information (file and line number) in logs',
+          ),
           value: config.showCaller,
           onChanged: (value) {
             _updateLoggerConfig((c) => c..showCaller = value);

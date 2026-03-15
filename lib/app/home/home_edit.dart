@@ -42,7 +42,8 @@ class _HomeConfigDialog extends StatefulWidget {
 class _HomeConfigDialogState extends State<_HomeConfigDialog> {
   @override
   Widget build(BuildContext context) {
-    final _useCustomizable = context.watch<HomePageCubit>().state &&
+    final _useCustomizable =
+        context.watch<HomePageCubit>().state &&
         context.read<AuthBloc>().state.pro;
     final l10n = AppLocalizations.of(context)!;
     return Dialog(
@@ -57,10 +58,7 @@ class _HomeConfigDialogState extends State<_HomeConfigDialog> {
           children: [
             Row(
               children: [
-                Text(
-                  l10n.home,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
+                Text(l10n.home, style: Theme.of(context).textTheme.titleLarge),
                 const Spacer(),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -69,42 +67,50 @@ class _HomeConfigDialogState extends State<_HomeConfigDialog> {
               ],
             ),
             const SizedBox(height: 12),
-            Row(
-              children: [
-                ChoiceChip(
-                  label: Text(l10n.homeEditStandardLayout),
-                  selected: !_useCustomizable,
-                  onSelected: (selected) {
-                    if (!selected) return;
-                    context
-                        .read<HomePageCubit>()
-                        .setUseCustomizableHomePage(false);
-                  },
-                ),
-                const SizedBox(width: 8),
-                ChoiceChip(
-                  label: AppendProIcon(
-                      child: Text(l10n.homeEditCustomizableLayout)),
-                  selected: _useCustomizable,
-                  onSelected: context.read<AuthBloc>().state.pro
-                      ? (selected) {
-                          if (!selected) return;
-                          context
-                              .read<HomePageCubit>()
-                              .setUseCustomizableHomePage(true);
-                        }
-                      : null,
-                ),
-              ],
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  ChoiceChip(
+                    label: Text(l10n.homeEditStandardLayout),
+                    selected: !_useCustomizable,
+                    onSelected: (selected) {
+                      if (!selected) return;
+                      context.read<HomePageCubit>().setUseCustomizableHomePage(
+                        false,
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  ChoiceChip(
+                    label: AppendProIcon(
+                      child: Text(l10n.homeEditCustomizableLayout),
+                    ),
+                    selected: _useCustomizable,
+                    onSelected: context.read<AuthBloc>().state.pro
+                        ? (selected) {
+                            if (!selected) return;
+                            context
+                                .read<HomePageCubit>()
+                                .setUseCustomizableHomePage(true);
+                          }
+                        : null,
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
-            if (!_useCustomizable) const _StandardHomeWidgetSetting(),
+            if (!_useCustomizable)
+              Expanded(child: const _StandardHomeWidgetSetting()),
             if (_useCustomizable)
               Expanded(
-                  child: ChangeNotifierProvider(
-                      create: (context) => CustomizeHomeWidgetNotifier(
-                          context.read<HomeLayoutRepo>()),
-                      child: const _HomeEditDialog())),
+                child: ChangeNotifierProvider(
+                  create: (context) => CustomizeHomeWidgetNotifier(
+                    context.read<HomeLayoutRepo>(),
+                  ),
+                  child: const _HomeEditDialog(),
+                ),
+              ),
           ],
         ),
       ),

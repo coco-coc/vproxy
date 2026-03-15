@@ -31,11 +31,7 @@ import 'package:vx/widgets/circular_progress_indicator.dart';
 final destination = <_Destination>[
   _Destination(
     path: '/home',
-    outlinedIcon: const ImageIcon(
-      AssetImage(
-        'assets/icons/home_outline.png',
-      ),
-    ),
+    outlinedIcon: const ImageIcon(AssetImage('assets/icons/home_outline.png')),
     filledIcon: const Icon(Icons.home_rounded),
     label: (ctx) => AppLocalizations.of(ctx)!.home,
   ),
@@ -47,16 +43,8 @@ final destination = <_Destination>[
   ),
   _Destination(
     path: '/log',
-    outlinedIcon: const ImageIcon(
-      AssetImage(
-        'assets/icons/log_outline.png',
-      ),
-    ),
-    filledIcon: const ImageIcon(
-      AssetImage(
-        'assets/icons/log_fill.png',
-      ),
-    ),
+    outlinedIcon: const ImageIcon(AssetImage('assets/icons/log_outline.png')),
+    filledIcon: const ImageIcon(AssetImage('assets/icons/log_fill.png')),
     label: (ctx) => AppLocalizations.of(ctx)!.log,
   ),
   _Destination(
@@ -103,7 +91,7 @@ enum NaviDestination {
   log(prefix: '/log'),
   route(prefix: '/route'),
   server(prefix: '/server'),
-  settings(prefix: '/setting'),
+  settings(prefix: '/setting')
   // compass(prefix: '/guide'),
   // ad(prefix: '/ad')
   ;
@@ -152,11 +140,13 @@ class _MyNavigationRailState extends State<MyNavigationRail> {
     super.didChangeDependencies();
 
     _railChildren = destination
-        .map((e) => NavigationRailDestination(
-              icon: e.outlinedIcon,
-              selectedIcon: e.filledIcon,
-              label: Text(e.label(context)),
-            ))
+        .map(
+          (e) => NavigationRailDestination(
+            icon: e.outlinedIcon,
+            selectedIcon: e.filledIcon,
+            label: Text(e.label(context)),
+          ),
+        )
         .toList();
     _leading = Padding(
       padding: const EdgeInsets.only(bottom: 10, top: 0),
@@ -172,30 +162,33 @@ class _MyNavigationRailState extends State<MyNavigationRail> {
   @override
   Widget build(BuildContext context) {
     return NavigationRail(
-        trailing: (Platform.isIOS && !isProduction())
-            ? Column(
-                children: [
-                  const IconButton(
-                      onPressed: saveLogToApplicationDocumentsDir,
-                      icon: Icon(Icons.file_copy)),
-                  IconButton(
-                      onPressed: () async {
-                        (getTunnelLogDir()).delete(recursive: true);
-                      },
-                      icon: const Icon(Icons.delete))
-                ],
-              )
-            : Platform.isMacOS
-                ? const SyncButton()
-                : null,
-        leading: _leading,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        labelType: NavigationRailLabelType.all,
-        destinations: _railChildren,
-        selectedIndex: widget.naviDestination?.index,
-        onDestinationSelected: (int index) {
-          context.go(destination[index].path);
-        });
+      trailing: (Platform.isIOS && !isProduction())
+          ? Column(
+              children: [
+                const IconButton(
+                  onPressed: saveLogToApplicationDocumentsDir,
+                  icon: Icon(Icons.file_copy),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    (getTunnelLogDir()).delete(recursive: true);
+                  },
+                  icon: const Icon(Icons.delete),
+                ),
+              ],
+            )
+          : Platform.isMacOS
+          ? const SyncButton()
+          : null,
+      leading: _leading,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      labelType: NavigationRailLabelType.all,
+      destinations: _railChildren,
+      selectedIndex: widget.naviDestination?.index,
+      onDestinationSelected: (int index) {
+        context.go(destination[index].path);
+      },
+    );
   }
 }
 
@@ -225,14 +218,18 @@ class _SyncButtonState extends State<SyncButton> {
             },
             icon: syncing
                 ? smallCircularProgressIndicator
-                : const Icon(Icons.sync_rounded))
+                : const Icon(Icons.sync_rounded),
+          )
         : const SizedBox.shrink();
   }
 }
 
 class MyNavigationDrawer extends StatelessWidget {
-  const MyNavigationDrawer(
-      {super.key, required this.naviDestination, this.showButton = false});
+  const MyNavigationDrawer({
+    super.key,
+    required this.naviDestination,
+    this.showButton = false,
+  });
   final NaviDestination? naviDestination;
   final bool showButton;
   @override
@@ -263,9 +260,7 @@ class MyNavigationDrawer extends StatelessWidget {
                   ),
                 ),
               )
-            : const SizedBox(
-                height: 50,
-              ),
+            : const SizedBox(height: 50),
         if (showButton)
           const Padding(
             padding: EdgeInsets.fromLTRB(20, 10, 0, 20),
@@ -277,22 +272,25 @@ class MyNavigationDrawer extends StatelessWidget {
               ),
             ),
           ),
-        ...destination.map((e) => NavigationDrawerDestination(
-              icon: e.outlinedIcon,
-              label: Text(e.label(context)),
-              selectedIcon: e.filledIcon,
-            ))
+        ...destination.map(
+          (e) => NavigationDrawerDestination(
+            icon: e.outlinedIcon,
+            label: Text(e.label(context)),
+            selectedIcon: e.filledIcon,
+          ),
+        ),
       ],
     );
   }
 }
 
 class _Destination {
-  const _Destination(
-      {required this.path,
-      required this.label,
-      required this.outlinedIcon,
-      required this.filledIcon});
+  const _Destination({
+    required this.path,
+    required this.label,
+    required this.outlinedIcon,
+    required this.filledIcon,
+  });
   final String path;
   final Widget outlinedIcon;
   final Widget filledIcon;

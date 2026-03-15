@@ -34,17 +34,23 @@ class _DesktopBackForwardHandler extends StatelessWidget {
       onPointerDown: (PointerDownEvent event) {
         if (event.kind != PointerDeviceKind.mouse) return;
         if (event.buttons & kBackMouseButton != 0) {
-          logger.d('mouse back button → desktopNavigateBack, history: $_historyStack');
+          logger.d(
+            'mouse back button → desktopNavigateBack, history: $_historyStack',
+          );
           desktopNavigateBack();
         } else if (event.buttons & kForwardMouseButton != 0) {
-          logger.d('mouse forward button → desktopNavigateForward, forward: $_forwardStack');
+          logger.d(
+            'mouse forward button → desktopNavigateForward, forward: $_forwardStack',
+          );
           desktopNavigateForward();
         }
       },
       child: Shortcuts(
         shortcuts: <ShortcutActivator, Intent>{
-          const SingleActivator(LogicalKeyboardKey.browserBack): const _BackIntent(),
-          const SingleActivator(LogicalKeyboardKey.browserForward): const _ForwardIntent(),
+          const SingleActivator(LogicalKeyboardKey.browserBack):
+              const _BackIntent(),
+          const SingleActivator(LogicalKeyboardKey.browserForward):
+              const _ForwardIntent(),
         },
         child: Actions(
           actions: <Type, Action<Intent>>{
@@ -166,8 +172,11 @@ class _DesktopTrayState extends State<DesktopTray>
         iconPath = 'assets/icons/V_outline.png';
       }
     }
-    await trayManager.setIcon(iconPath,
-        isTemplate: true, iconSize: Platform.isWindows ? 12 : 14);
+    await trayManager.setIcon(
+      iconPath,
+      isTemplate: true,
+      iconSize: Platform.isWindows ? 12 : 14,
+    );
     if (!Platform.isLinux) {
       await trayManager.setToolTip('VX');
     }
@@ -195,11 +204,12 @@ class _DesktopTrayState extends State<DesktopTray>
     switch (status) {
       case XStatus.connected:
         connectMenuItem = MenuItem(
-            key: 'toggle_connection',
-            label: AppLocalizations.of(context)!.disconnect,
-            onClick: (menuItem) {
-              Provider.of<StartCloseCubit>(context, listen: false).stop();
-            });
+          key: 'toggle_connection',
+          label: AppLocalizations.of(context)!.disconnect,
+          onClick: (menuItem) {
+            Provider.of<StartCloseCubit>(context, listen: false).stop();
+          },
+        );
       case XStatus.disconnected:
         connectMenuItem = MenuItem(
           key: 'toggle_connection',
@@ -210,24 +220,28 @@ class _DesktopTrayState extends State<DesktopTray>
         );
       case XStatus.connecting || XStatus.preparing:
         connectMenuItem = MenuItem(
-            key: 'toggle_connection',
-            label: AppLocalizations.of(context)!.connecting,
-            disabled: true);
+          key: 'toggle_connection',
+          label: AppLocalizations.of(context)!.connecting,
+          disabled: true,
+        );
       case XStatus.disconnecting:
         connectMenuItem = MenuItem(
-            key: 'toggle_connection',
-            label: AppLocalizations.of(context)!.disconnecting,
-            disabled: true);
+          key: 'toggle_connection',
+          label: AppLocalizations.of(context)!.disconnecting,
+          disabled: true,
+        );
       case XStatus.reconnecting:
         connectMenuItem = MenuItem(
-            key: 'toggle_connection',
-            label: AppLocalizations.of(context)!.reconnecting,
-            disabled: true);
+          key: 'toggle_connection',
+          label: AppLocalizations.of(context)!.reconnecting,
+          disabled: true,
+        );
       case XStatus.unknown:
         connectMenuItem = MenuItem(
-            key: 'unknown',
-            label: AppLocalizations.of(context)!.unknown,
-            disabled: true);
+          key: 'unknown',
+          label: AppLocalizations.of(context)!.unknown,
+          disabled: true,
+        );
       default:
         connectMenuItem = null;
     }

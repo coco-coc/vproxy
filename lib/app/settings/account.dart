@@ -79,11 +79,11 @@ class _AccountPageState extends State<AccountPage> {
         uniqueId = const Uuid().v4();
         await storage.write(key: uniqueIdKey, value: uniqueId);
       }
-      final response = await supabase.functions.invoke('licence',
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-          body: (await getConstDeviceInfo(uniqueId)).hash());
+      final response = await supabase.functions.invoke(
+        'licence',
+        headers: {'Authorization': 'Bearer $token'},
+        body: (await getConstDeviceInfo(uniqueId)).hash(),
+      );
       if (response.status == 200) {
         await storage.write(key: 'licence', value: jsonEncode(response.data));
         logger.d('licence: ${response.data}');
@@ -138,8 +138,10 @@ class _AccountPageState extends State<AccountPage> {
                     termOfServiceUrl: termOfServiceUrl,
                     privacyPolicyUrl: privacyPolicyUrl,
                   ),
-                  Text(AppLocalizations.of(context)!.newUserProTrial,
-                      style: Theme.of(context).textTheme.bodySmall),
+                  Text(
+                    AppLocalizations.of(context)!.newUserProTrial,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ],
               ),
             );
@@ -150,14 +152,18 @@ class _AccountPageState extends State<AccountPage> {
               children: [
                 Row(
                   children: [
-                    Text(AppLocalizations.of(context)!.email,
-                        style: Theme.of(context).textTheme.titleMedium),
+                    Text(
+                      AppLocalizations.of(context)!.email,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: AutoSizeText(state.user!.email,
-                          maxLines: 2,
-                          minFontSize: 12,
-                          style: Theme.of(context).textTheme.bodyLarge),
+                      child: AutoSizeText(
+                        state.user!.email,
+                        maxLines: 2,
+                        minFontSize: 12,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
                     ),
                   ],
                 ),
@@ -167,8 +173,9 @@ class _AccountPageState extends State<AccountPage> {
                     child: Chip(
                       avatar: proIcon,
                       label: Text(
-                          AppLocalizations.of(context)!.lifetimeProAccount,
-                          style: Theme.of(context).textTheme.bodySmall),
+                        AppLocalizations.of(context)!.lifetimeProAccount,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
@@ -177,19 +184,23 @@ class _AccountPageState extends State<AccountPage> {
                 if (state.user!.lifetimePro == false)
                   Row(
                     children: [
-                      Text(AppLocalizations.of(context)!.proExpiredAt,
-                          style: Theme.of(context).textTheme.titleMedium),
+                      Text(
+                        AppLocalizations.of(context)!.proExpiredAt,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                       const SizedBox(width: 10),
                       Text(
-                          state.user!.proExpiredAt != null
-                              ? DateFormat('yyyy-MM-dd')
-                                  .format(state.user!.proExpiredAt!.toLocal())
-                              : AppLocalizations.of(context)!.expired,
-                          style: Theme.of(context).textTheme.bodyLarge),
+                        state.user!.proExpiredAt != null
+                            ? DateFormat(
+                                'yyyy-MM-dd',
+                              ).format(state.user!.proExpiredAt!.toLocal())
+                            : AppLocalizations.of(context)!.expired,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
                       IconButton(
                         onPressed: _canRefresh ? _refreshUser : null,
                         icon: const Icon(Icons.refresh),
-                      )
+                      ),
                     ],
                   ),
                 const SizedBox(height: 10),
@@ -202,8 +213,9 @@ class _AccountPageState extends State<AccountPage> {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).colorScheme.error,
-                          foregroundColor:
-                              Theme.of(context).colorScheme.onError,
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onError,
                         ),
                         child: Text(AppLocalizations.of(context)!.logout),
                       ),
@@ -214,35 +226,46 @@ class _AccountPageState extends State<AccountPage> {
                             context: context,
                             builder: (context) => AlertDialog(
                               title: Text(
-                                  AppLocalizations.of(context)!.deleteAccount),
-                              content: Text(AppLocalizations.of(context)!
-                                  .deleteAccountConfirm),
+                                AppLocalizations.of(context)!.deleteAccount,
+                              ),
+                              content: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.deleteAccountConfirm,
+                              ),
                               actions: [
                                 TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: Text(
-                                        AppLocalizations.of(context)!.cancel)),
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.cancel,
+                                  ),
+                                ),
                                 TextButton(
-                                    onPressed: () {
-                                      context
-                                          .read<AuthProvider>()
-                                          .deleteAccount();
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                        AppLocalizations.of(context)!.delete))
+                                  onPressed: () {
+                                    context
+                                        .read<AuthProvider>()
+                                        .deleteAccount();
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    AppLocalizations.of(context)!.delete,
+                                  ),
+                                ),
                               ],
                             ),
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.errorContainer,
-                          foregroundColor:
-                              Theme.of(context).colorScheme.onErrorContainer,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.errorContainer,
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onErrorContainer,
                         ),
-                        child:
-                            Text(AppLocalizations.of(context)!.deleteAccount),
+                        child: Text(
+                          AppLocalizations.of(context)!.deleteAccount,
+                        ),
                       ),
                     ],
                   ),
@@ -262,8 +285,9 @@ class _AccountPageState extends State<AccountPage> {
                                   height: 12,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimary,
                                   ),
                                 )
                               : const Icon(Icons.verified_user, size: 20),
@@ -281,13 +305,13 @@ class _AccountPageState extends State<AccountPage> {
                           child: Text(
                             AppLocalizations.of(context)!.activateDesc,
                             textAlign: TextAlign.center,
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant,
-                                      height: 1.4,
-                                    ),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                  height: 1.4,
+                                ),
                           ),
                         ),
                       ],
@@ -380,11 +404,11 @@ class __InvitationState extends State<_Invitation> {
       if (token == null) {
         throw 'No Token';
       }
-      final response = await supabase.functions.invoke('invitation',
-          headers: {
-            'Authorization': 'Bearer $token',
-          },
-          body: code);
+      final response = await supabase.functions.invoke(
+        'invitation',
+        headers: {'Authorization': 'Bearer $token'},
+        body: code,
+      );
       if (response.status == 200) {
         setState(() {
           _invitationEnjoyed = true;
@@ -425,14 +449,10 @@ class __InvitationState extends State<_Invitation> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
     if (_error != null) {
-      return Center(
-        child: Text(_error!),
-      );
+      return Center(child: Text(_error!));
     }
 
     return Column(
@@ -455,8 +475,8 @@ class __InvitationState extends State<_Invitation> {
                   Text(
                     AppLocalizations.of(context)!.myInvitationCode,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
@@ -467,8 +487,9 @@ class __InvitationState extends State<_Invitation> {
                   color: Theme.of(context).colorScheme.surfaceContainer,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color:
-                        Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.outline.withOpacity(0.2),
                   ),
                 ),
                 child: SelectableText(
@@ -482,8 +503,8 @@ class __InvitationState extends State<_Invitation> {
                 child: Text(
                   AppLocalizations.of(context)!.myInvitationCodeDesc,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
               const Gap(5),
@@ -508,10 +529,10 @@ class __InvitationState extends State<_Invitation> {
                 child: Text(
                   '$_remainingTime ${AppLocalizations.of(context)!.remainingTime}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
-              )
+              ),
             ],
           ),
         // Divider between sections
@@ -537,8 +558,8 @@ class __InvitationState extends State<_Invitation> {
                   Text(
                     AppLocalizations.of(context)!.useInvitationCode,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
@@ -547,15 +568,17 @@ class __InvitationState extends State<_Invitation> {
                 controller: _invitationCodeController,
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.confirmation_number),
-                  helperText:
-                      AppLocalizations.of(context)!.useInvitationCodeDesc,
+                  helperText: AppLocalizations.of(
+                    context,
+                  )!.useInvitationCodeDesc,
                   helperMaxLines: 3,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor:
-                      Theme.of(context).colorScheme.surfaceContainerHighest,
+                  fillColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest,
                 ),
                 enabled: !_applying,
               ),
@@ -593,10 +616,16 @@ class __InvitationState extends State<_Invitation> {
                 FilledButton.icon(
                   onPressed: () async {
                     final barcode =
-                        await Navigator.of(context, rootNavigator: true)
-                            .push<Barcode?>(MaterialPageRoute(builder: (ctx) {
-                      return const ScanQrCode();
-                    }));
+                        await Navigator.of(
+                          context,
+                          rootNavigator: true,
+                        ).push<Barcode?>(
+                          MaterialPageRoute(
+                            builder: (ctx) {
+                              return const ScanQrCode();
+                            },
+                          ),
+                        );
                     if (barcode == null || barcode.displayValue == null) {
                       return;
                     }
@@ -621,7 +650,7 @@ class __InvitationState extends State<_Invitation> {
                   ),
                 ),
             ],
-          )
+          ),
       ],
     );
   }

@@ -16,10 +16,12 @@ void main() {
   late OutboundRepo repo;
 
   setUp(() {
-    database = AppDatabase(DatabaseConnection(
-      NativeDatabase.memory(),
-      closeStreamsSynchronously: true,
-    ));
+    database = AppDatabase(
+      DatabaseConnection(
+        NativeDatabase.memory(),
+        closeStreamsSynchronously: true,
+      ),
+    );
     repo = OutboundRepo(database);
   });
 
@@ -49,7 +51,10 @@ void main() {
       countryCode: countryCode,
       remark: remark,
       config: OutboundHandlerConfig(
-          address: address, port: 443, protocol: Any.pack(VmessClientConfig())),
+        address: address,
+        port: 443,
+        protocol: Any.pack(VmessClientConfig()),
+      ),
       speed1MB: speed1MB,
       ping: ping,
     );
@@ -121,8 +126,11 @@ void main() {
       expect(savedHandlers.length, 3);
 
       // Verify the handlers were saved correctly
-      expect(savedHandlers.map((h) => h.remark).toList()..sort(),
-          ['Handler 1', 'Handler 2', 'Handler 3']);
+      expect(savedHandlers.map((h) => h.remark).toList()..sort(), [
+        'Handler 1',
+        'Handler 2',
+        'Handler 3',
+      ]);
     });
 
     test('clearHandlerFields should reset specified fields to zero', () async {
@@ -184,23 +192,26 @@ void main() {
       // Insert test data
       final handlers = [
         createTestHandler(
-            remark: 'Fast',
-            protocol: 'vmess',
-            selected: true,
-            speed1MB: 100.0,
-            ping: 20),
+          remark: 'Fast',
+          protocol: 'vmess',
+          selected: true,
+          speed1MB: 100.0,
+          ping: 20,
+        ),
         createTestHandler(
-            remark: 'Medium',
-            protocol: 'trojan',
-            enabled: true,
-            speed1MB: 50.0,
-            ping: 50),
+          remark: 'Medium',
+          protocol: 'trojan',
+          enabled: true,
+          speed1MB: 50.0,
+          ping: 50,
+        ),
         createTestHandler(
-            remark: 'Slow',
-            protocol: 'shadowsocks',
-            enabled: false,
-            speed1MB: 10.0,
-            ping: 200),
+          remark: 'Slow',
+          protocol: 'shadowsocks',
+          enabled: false,
+          speed1MB: 10.0,
+          ping: 200,
+        ),
       ];
 
       await repo.insertHandlers(handlers);
@@ -228,8 +239,11 @@ void main() {
     test('getHandlers with orderBySpeed1MBDesc', () async {
       final handlers = await repo.getHandlers(orderBySpeed1MBDesc: true);
       expect(handlers.length, 3);
-      expect(
-          handlers.map((h) => h.remark).toList(), ['Fast', 'Medium', 'Slow']);
+      expect(handlers.map((h) => h.remark).toList(), [
+        'Fast',
+        'Medium',
+        'Slow',
+      ]);
     });
 
     test('getHandlers with limit', () async {
@@ -238,85 +252,100 @@ void main() {
     });
 
     test(
-        'getHandlersStream with selected filter should emit only selected handlers',
-        () async {
-      // First, remove any existing selected handlers
-      final allHandlers = await repo.getAllHandlers();
-      for (var handler in allHandlers.where((h) => h.selected)) {
-        final updatedHandler = handler.copyWith(selected: false);
-        await repo.replaceHandler(updatedHandler);
-      }
+      'getHandlersStream with selected filter should emit only selected handlers',
+      () async {
+        // First, remove any existing selected handlers
+        final allHandlers = await repo.getAllHandlers();
+        for (var handler in allHandlers.where((h) => h.selected)) {
+          final updatedHandler = handler.copyWith(selected: false);
+          await repo.replaceHandler(updatedHandler);
+        }
 
-      // Insert a single selected handler
-      await repo.insertHandler(createTestHandler(
-        remark: 'Selected Handler',
-        selected: true,
-      ));
+        // Insert a single selected handler
+        await repo.insertHandler(
+          createTestHandler(remark: 'Selected Handler', selected: true),
+        );
 
-      // Create a stream that filters for selected handlers
-      final stream = repo.getHandlersStream(selected: true);
+        // Create a stream that filters for selected handlers
+        final stream = repo.getHandlersStream(selected: true);
 
-      // Initial emission should have only the one selected handler we just added
-      expect(
+        // Initial emission should have only the one selected handler we just added
+        expect(
           stream,
-          emits(isA<List<OutboundHandler>>()
-              .having((list) => list.length, 'selected handler count', 1)));
+          emits(
+            isA<List<OutboundHandler>>().having(
+              (list) => list.length,
+              'selected handler count',
+              1,
+            ),
+          ),
+        );
 
-      // Add another selected handler
-      await repo.insertHandler(createTestHandler(
-        remark: 'Another Selected',
-        selected: true,
-      ));
+        // Add another selected handler
+        await repo.insertHandler(
+          createTestHandler(remark: 'Another Selected', selected: true),
+        );
 
-      // Stream should emit a list containing both selected handlers
-      expect(
+        // Stream should emit a list containing both selected handlers
+        expect(
           stream,
-          emits(isA<List<OutboundHandler>>()
-              .having((list) => list.length, 'selected handler count', 2)));
-    });
+          emits(
+            isA<List<OutboundHandler>>().having(
+              (list) => list.length,
+              'selected handler count',
+              2,
+            ),
+          ),
+        );
+      },
+    );
   });
 
   group('Subscription operations', () {
-    test('insertSubscription should add a subscription to the database',
-        () async {
-      final sub = SubscriptionsCompanion.insert(
-        name: 'Test Sub',
-        lastUpdate: DateTime.now().millisecondsSinceEpoch,
-        link: 'https://example.com/sub',
-        updateInterval: const Value(24),
-      );
+    test(
+      'insertSubscription should add a subscription to the database',
+      () async {
+        final sub = SubscriptionsCompanion.insert(
+          name: 'Test Sub',
+          lastUpdate: DateTime.now().millisecondsSinceEpoch,
+          link: 'https://example.com/sub',
+          updateInterval: const Value(24),
+        );
 
-      await repo.insertSubscription(sub);
+        await repo.insertSubscription(sub);
 
-      final subs = await repo.getAllSubs();
-      expect(subs.length, 1);
-      expect(subs.first.name, 'Test Sub');
-      expect(subs.first.link, 'https://example.com/sub');
-    });
+        final subs = await repo.getAllSubs();
+        expect(subs.length, 1);
+        expect(subs.first.name, 'Test Sub');
+        expect(subs.first.link, 'https://example.com/sub');
+      },
+    );
 
-    test('getSubsByName should return subscriptions with matching name',
-        () async {
-      final sub1 = SubscriptionsCompanion.insert(
-        name: 'Sub A',
-        link: 'https://example.com/a',
-        updateInterval: const Value(24),
-        lastUpdate: DateTime.now().millisecondsSinceEpoch,
-      );
+    test(
+      'getSubsByName should return subscriptions with matching name',
+      () async {
+        final sub1 = SubscriptionsCompanion.insert(
+          name: 'Sub A',
+          link: 'https://example.com/a',
+          updateInterval: const Value(24),
+          lastUpdate: DateTime.now().millisecondsSinceEpoch,
+        );
 
-      final sub2 = SubscriptionsCompanion.insert(
-        name: 'Sub B',
-        link: 'https://example.com/b',
-        lastUpdate: DateTime.now().millisecondsSinceEpoch,
-        updateInterval: const Value(12),
-      );
+        final sub2 = SubscriptionsCompanion.insert(
+          name: 'Sub B',
+          link: 'https://example.com/b',
+          lastUpdate: DateTime.now().millisecondsSinceEpoch,
+          updateInterval: const Value(12),
+        );
 
-      await repo.insertSubscription(sub1);
-      await repo.insertSubscription(sub2);
+        await repo.insertSubscription(sub1);
+        await repo.insertSubscription(sub2);
 
-      final subs = await repo.getSubsByName('Sub A');
-      expect(subs.length, 1);
-      expect(subs.first.name, 'Sub A');
-    });
+        final subs = await repo.getSubsByName('Sub A');
+        expect(subs.length, 1);
+        expect(subs.first.name, 'Sub A');
+      },
+    );
 
     test('removeSubscription should delete the subscription', () async {
       final sub = SubscriptionsCompanion.insert(
@@ -337,8 +366,7 @@ void main() {
       expect(subsAfterRemoval.length, 0);
     });
 
-    test('insertSubscription with handlers should create relationship',
-        () async {
+    test('insertSubscription with handlers should create relationship', () async {
       final sub = SubscriptionsCompanion.insert(
         name: 'Test Sub',
         link: 'https://example.com/sub',
@@ -423,38 +451,52 @@ void main() {
 
       // The stream should emit the new list with the handler
       expect(
-          stream,
-          emits(isA<List<OutboundHandler>>()
-              .having((list) => list.length, 'length', 1)));
-    });
-
-    test('getStreamOfSubs should emit subscriptions when data changes',
-        () async {
-      // First, clear the database completely
-      final allSubs = await repo.getAllSubs();
-      for (final sub in allSubs) {
-        await repo.removeSubscription(sub.id);
-      }
-
-      final stream = repo.getStreamOfSubs();
-
-      expect(stream, emits(isEmpty));
-
-      // Insert a subscription
-      final sub = SubscriptionsCompanion.insert(
-        name: 'Stream Test Sub',
-        lastUpdate: DateTime.now().millisecondsSinceEpoch,
-        lastSuccessUpdate: DateTime.now().millisecondsSinceEpoch,
-        link: 'https://example.com/stream',
+        stream,
+        emits(
+          isA<List<OutboundHandler>>().having(
+            (list) => list.length,
+            'length',
+            1,
+          ),
+        ),
       );
-      await repo.insertSubscription(sub);
-
-      // The stream should emit the new list with the subscription
-      expect(
-          stream,
-          emits(isA<List<Subscription>>()
-              .having((list) => list.length, 'length', 1)));
     });
+
+    test(
+      'getStreamOfSubs should emit subscriptions when data changes',
+      () async {
+        // First, clear the database completely
+        final allSubs = await repo.getAllSubs();
+        for (final sub in allSubs) {
+          await repo.removeSubscription(sub.id);
+        }
+
+        final stream = repo.getStreamOfSubs();
+
+        expect(stream, emits(isEmpty));
+
+        // Insert a subscription
+        final sub = SubscriptionsCompanion.insert(
+          name: 'Stream Test Sub',
+          lastUpdate: DateTime.now().millisecondsSinceEpoch,
+          lastSuccessUpdate: DateTime.now().millisecondsSinceEpoch,
+          link: 'https://example.com/stream',
+        );
+        await repo.insertSubscription(sub);
+
+        // The stream should emit the new list with the subscription
+        expect(
+          stream,
+          emits(
+            isA<List<Subscription>>().having(
+              (list) => list.length,
+              'length',
+              1,
+            ),
+          ),
+        );
+      },
+    );
   });
 
   group('Utility functions', () {

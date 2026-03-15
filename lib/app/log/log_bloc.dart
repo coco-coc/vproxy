@@ -44,27 +44,37 @@ part 'log_state.dart';
 const int maxLogSize = 1000;
 
 class LogBloc extends Bloc<LogEvent, LogState> {
-  LogBloc(
-      {required SharedPreferences pref,
-      required OutboundRepo outboundRepo,
-      required XController xController})
-      : _pref = pref,
-        _outboundRepo = outboundRepo,
-        _xController = xController,
-        super(LogState(
-            enableLog: pref.enableLog,
-            showApp: pref.showApp,
-            showHandler: pref.showHandler,
-            logs: CircularBuffer<XLog>(maxSize: maxLogSize),
-            filter: const LogFilter(
-                showDirect: true, showProxy: true, errorOnly: false))) {
+  LogBloc({
+    required SharedPreferences pref,
+    required OutboundRepo outboundRepo,
+    required XController xController,
+  }) : _pref = pref,
+       _outboundRepo = outboundRepo,
+       _xController = xController,
+       super(
+         LogState(
+           enableLog: pref.enableLog,
+           showApp: pref.showApp,
+           showHandler: pref.showHandler,
+           showSessionOngoing: pref.showSessionOngoing,
+           showRealtimeUsage: pref.showRealtimeUsage,
+           logs: CircularBuffer<XLog>(maxSize: maxLogSize),
+           filter: const LogFilter(
+             showDirect: true,
+             showProxy: true,
+             errorOnly: false,
+           ),
+         ),
+       ) {
     on<_NewLogEvent>(_onLogEvent);
-    on<SubstringChangedEvent>(_onSubstringChangedEvent,
-        transformer: (events, mapper) {
-      return events
-          .debounceTime(const Duration(milliseconds: 500))
-          .switchMap(mapper);
-    });
+    on<SubstringChangedEvent>(
+      _onSubstringChangedEvent,
+      transformer: (events, mapper) {
+        return events
+            .debounceTime(const Duration(milliseconds: 500))
+            .switchMap(mapper);
+      },
+    );
     on<DirectPressedEvent>(_onDirectPressedEvent);
     on<ProxyPressedEvent>(_onProxyPressedEvent);
     on<RejectPressedEvent>(_onRejectPressedEvent);
@@ -73,27 +83,31 @@ class LogBloc extends Bloc<LogEvent, LogState> {
     on<LogBlocInitialEvent>(_onInitialEvent);
     on<AppPressedEvent>(_onAppPressedEvent);
     on<HandlerPressedEvent>(_onHandlerPressedEvent);
+    on<SessionOngoingPressedEvent>(_onSessionOngoingPressedEvent);
+    on<RealtimeUsagePressedEvent>(_onRealtimeUsagePressedEvent);
     _logs = state.logs;
     isIOSSimulator().then((value) {
       if (value) {
         for (var i = 0; i < 5; i++) {
           sleep(const Duration(milliseconds: 1000));
-          _logs.add(SessionInfo(
-            timestamp: DateTime.now(),
-            tag: i.isEven ? 'direct' : '1234',
-            handlerName: i.isEven ? 'Direct' : 'Proxy',
-            selector: i.isEven ? '' : proxySelector.name,
-            resolver: '1.1.1.1',
-            ipToDomain: '1.1.1.1',
-            inboundTag: i.isEven ? 'TUN' : 'SOCKS',
-            network: i.isEven ? 'tcp' : 'udp',
-            sniffProtocol: i.isEven ? 'http' : 'https',
-            source: i.isEven ? '127.0.0.1:23412' : '127.0.0.1:23413',
-            dst: i.isEven ? 'vx.5vnetwork.com' : 'www.google.com',
-            app: '',
-            routeRuleMatched: "Default Deirect",
-            sessionId: i * 1000000,
-          ));
+          _logs.add(
+            SessionInfo(
+              timestamp: DateTime.now(),
+              tag: i.isEven ? 'direct' : '1234',
+              handlerName: i.isEven ? 'Direct' : 'Proxy',
+              selector: i.isEven ? '' : proxySelector.name,
+              resolver: '1.1.1.1',
+              ipToDomain: '1.1.1.1',
+              inboundTag: i.isEven ? 'TUN' : 'SOCKS',
+              network: i.isEven ? 'tcp' : 'udp',
+              sniffProtocol: i.isEven ? 'http' : 'https',
+              source: i.isEven ? '127.0.0.1:23412' : '127.0.0.1:23413',
+              dst: i.isEven ? 'vx.5vnetwork.com' : 'www.google.com',
+              app: '',
+              routeRuleMatched: "Default Deirect",
+              sessionId: i * 1000000,
+            ),
+          );
         }
       }
     });
@@ -114,45 +128,86 @@ class LogBloc extends Bloc<LogEvent, LogState> {
     return;
   }
 
-
   void _onInitialEvent(
-      LogBlocInitialEvent event, Emitter<LogState> emit) async {
-    await emit.forEach(Tm.instance.stateStream, onData: (statusChange) {
-      logger.d('log tm status changed: ${statusChange.status}');
-      if (!state.enableLog) {
-        return state;
-      }
-      switch (statusChange.status) {
-        case TmStatus.connecting:
-          break;
-        case TmStatus.connected:
-          if (state.enableLog) {
-            _subscribe();
-          }
-        case TmStatus.disconnecting:
-          _disconnectLogStream();
-        case TmStatus.disconnected:
-          _disconnectLogStream();
-        case TmStatus.reconnecting:
-        case TmStatus.unknown:
+    LogBlocInitialEvent event,
+    Emitter<LogState> emit,
+  ) async {
+    await emit.forEach(
+      Tm.instance.stateStream,
+      onData: (statusChange) {
+        logger.d('log tm status changed: ${statusChange.status}');
+        if (!state.enableLog) {
           return state;
-      }
-      final newLog =
-          XStatusLog(DateTime.now(), XStatus.fromTmStatus(statusChange.status));
-      _logs.add(newLog);
+        }
+        switch (statusChange.status) {
+          case TmStatus.connecting:
+            break;
+          case TmStatus.connected:
+            if (state.enableLog) {
+              _subscribe();
+            }
+          case TmStatus.disconnecting:
+            _disconnectLogStream();
+          case TmStatus.disconnected:
+            _disconnectLogStream();
+          case TmStatus.reconnecting:
+          case TmStatus.unknown:
+            return state;
+        }
+        final newLog = XStatusLog(
+          DateTime.now(),
+          XStatus.fromTmStatus(statusChange.status),
+        );
+        _logs.add(newLog);
 
-      return state.copyWith(logs: state.logs);
-    });
+        return state.copyWith(logs: state.logs);
+      },
+    );
   }
 
   void _onAppPressedEvent(AppPressedEvent event, Emitter<LogState> emit) {
     _pref.setShowApp(event.showApp);
     emit(state.copyWith(showApp: event.showApp));
-    _xController.toggleAppIdLogging(event.showApp);
+    _xController.resetUserLogging(
+      state.enableLog,
+      event.showApp,
+      state.showSessionOngoing,
+      state.showRealtimeUsage,
+    );
+  }
+
+  void _onSessionOngoingPressedEvent(
+    SessionOngoingPressedEvent event,
+    Emitter<LogState> emit,
+  ) {
+    _pref.setShowSessionOngoing(event.showSessionOngoing);
+    emit(state.copyWith(showSessionOngoing: event.showSessionOngoing));
+    _xController.resetUserLogging(
+      state.enableLog,
+      state.showApp,
+      event.showSessionOngoing,
+      state.showRealtimeUsage,
+    );
+  }
+
+  void _onRealtimeUsagePressedEvent(
+    RealtimeUsagePressedEvent event,
+    Emitter<LogState> emit,
+  ) {
+    _pref.setShowRealtimeUsage(event.showRealtimeUsage);
+    emit(state.copyWith(showRealtimeUsage: event.showRealtimeUsage));
+    _xController.resetUserLogging(
+      state.enableLog,
+      state.showApp,
+      state.showSessionOngoing,
+      event.showRealtimeUsage,
+    );
   }
 
   void _onHandlerPressedEvent(
-      HandlerPressedEvent event, Emitter<LogState> emit) {
+    HandlerPressedEvent event,
+    Emitter<LogState> emit,
+  ) {
     _pref.setShowHandler(event.showHandler);
     emit(state.copyWith(showHandler: event.showHandler));
   }
@@ -183,22 +238,26 @@ class LogBloc extends Bloc<LogEvent, LogState> {
       return;
     }
     logger.d('log stream connected');
-    _logStream!.listen((l) {
-      add(_NewLogEvent(l));
-    }, onDone: () {
-      _disconnectLogStream();
-      logger.d('log stream done');
-    }, onError: (e) async {
-      if (e is GrpcError && e.code == StatusCode.cancelled) {
-        return;
-      }
-      logger.e('log stream error: $e');
-      _disconnectLogStream();
-      await Future.delayed(const Duration(seconds: 1));
-      if (_tm.state == TmStatus.connected && _pref.enableLog) {
-        _subscribe();
-      }
-    });
+    _logStream!.listen(
+      (l) {
+        add(_NewLogEvent(l));
+      },
+      onDone: () {
+        _disconnectLogStream();
+        logger.d('log stream done');
+      },
+      onError: (e) async {
+        if (e is GrpcError && e.code == StatusCode.cancelled) {
+          return;
+        }
+        logger.e('log stream error: $e');
+        _disconnectLogStream();
+        await Future.delayed(const Duration(seconds: 1));
+        if (_tm.state == TmStatus.connected && _pref.enableLog) {
+          _subscribe();
+        }
+      },
+    );
   }
 
   Future<void> _onLogEvent(_NewLogEvent event, Emitter<LogState> emit) async {
@@ -206,29 +265,32 @@ class LogBloc extends Bloc<LogEvent, LogState> {
     switch (l.whichMessage()) {
       case UserLogMessage_Message.routeMessage:
         final routeInfo = SessionInfo(
-            sessionId: l.routeMessage.sid,
-            timestamp: DateTime.fromMillisecondsSinceEpoch(
-                l.routeMessage.timestamp.toInt() * 1000),
-            //TODO
-            tag: l.routeMessage.tag,
-            handlerName: state.showHandler
-                ? await _outboundRepo.getHandlerName(l.routeMessage.tag)
-                : null,
-            dst: l.routeMessage.dst,
-            sniffDomain: l.routeMessage.sniffDomain,
-            app: l.routeMessage.appId,
-            ipToDomain: l.routeMessage.ipToDomain,
-            selector: l.routeMessage.selectorTag,
-            routeRuleMatched: l.routeMessage.matchedRule,
-            inboundTag: l.routeMessage.inboundTag,
-            network: l.routeMessage.network,
-            sniffProtocol: l.routeMessage.sniffProtofol,
-            source: l.routeMessage.source,
-            icon: (l.routeMessage.appId.isEmpty ||
-                    !state.showApp ||
-                    !Platform.isAndroid)
-                ? null
-                : await _getAppIcon(l.routeMessage.appId));
+          sessionId: l.routeMessage.sid,
+          timestamp: DateTime.fromMillisecondsSinceEpoch(
+            l.routeMessage.timestamp.toInt() * 1000,
+          ),
+          //TODO
+          tag: l.routeMessage.tag,
+          handlerName: state.showHandler
+              ? await _outboundRepo.getHandlerName(l.routeMessage.tag)
+              : null,
+          dst: l.routeMessage.dst,
+          sniffDomain: l.routeMessage.sniffDomain,
+          app: l.routeMessage.appId,
+          ipToDomain: l.routeMessage.ipToDomain,
+          selector: l.routeMessage.selectorTag,
+          routeRuleMatched: l.routeMessage.matchedRule,
+          inboundTag: l.routeMessage.inboundTag,
+          network: l.routeMessage.network,
+          sniffProtocol: l.routeMessage.sniffProtofol,
+          source: l.routeMessage.source,
+          icon:
+              (l.routeMessage.appId.isEmpty ||
+                  !state.showApp ||
+                  !Platform.isAndroid)
+              ? null
+              : await _getAppIcon(l.routeMessage.appId),
+        );
         // dismiss same RouteInfo
         if (state.logs.isNotEmpty) {
           final last = state.logs.last;
@@ -243,52 +305,115 @@ class LogBloc extends Bloc<LogEvent, LogState> {
         if (newLog != null) {
           emit(newLog);
         }
-      case UserLogMessage_Message.sessionError:
-        final index = _logs.indexOfBackwardsFunction((e) {
+      case UserLogMessage_Message.sessionUsage:
+        final indexUsage = _findSessionIndexBackwards(l.sessionUsage.sid);
+        if (indexUsage != -1) {
+          final e = _logs[indexUsage];
           if (e is SessionInfo) {
-            return e.sessionId == l.sessionError.sid;
+            final updated = e.copyWith(
+              up: l.sessionUsage.up.toInt(),
+              down: l.sessionUsage.down.toInt(),
+            );
+            _logs[indexUsage] = updated;
+            if (state.showRealtimeUsage) {
+              if (state.filter.showAll()) {
+                emit(state.copyWith(logs: _logs));
+              } else {
+                final newLogs = _logs
+                    .where((e) => state.filter.show(e))
+                    .toList();
+                emit(
+                  state.copyWith(
+                    logs: CircularBuffer<XLog>(
+                      maxSize: maxLogSize,
+                      initialList: newLogs,
+                    ),
+                  ),
+                );
+              }
+            }
           }
-          return false;
-        });
+        }
+      case UserLogMessage_Message.sessionError:
+        final index = _findSessionIndexBackwards(l.sessionError.sid);
         if (index != -1) {
           final e = _logs[index];
           if (e is SessionInfo) {
             final newLog = e.copyWith(
-                up: l.sessionError.up,
-                down: l.sessionError.down,
-                resolver: l.sessionError.dns,
-                error: l.sessionError.message);
+              up: l.sessionError.up,
+              down: l.sessionError.down,
+              resolver: l.sessionError.dns,
+              error: l.sessionError.message,
+              ended: true,
+            );
             _logs[index] = newLog;
             if (state.filter.showAll()) {
               emit(state.copyWith(logs: _logs));
             } else {
               final newLogs = _logs.where((e) => state.filter.show(e)).toList();
-              emit(state.copyWith(
+              emit(
+                state.copyWith(
                   logs: CircularBuffer<XLog>(
-                      maxSize: maxLogSize, initialList: newLogs)));
+                    maxSize: maxLogSize,
+                    initialList: newLogs,
+                  ),
+                ),
+              );
+            }
+          }
+        }
+      case UserLogMessage_Message.sessionEnd:
+        final indexEnd = _findSessionIndexBackwards(l.sessionEnd.sid);
+        if (indexEnd != -1) {
+          final e = _logs[indexEnd];
+          if (e is SessionInfo) {
+            final updated = e.copyWith(
+              up: l.sessionEnd.up.toInt(),
+              down: l.sessionEnd.down.toInt(),
+              ended: true,
+            );
+            _logs[indexEnd] = updated;
+            if (state.filter.showAll()) {
+              emit(state.copyWith(logs: _logs));
+            } else {
+              final newLogs = _logs.where((e) => state.filter.show(e)).toList();
+              emit(
+                state.copyWith(
+                  logs: CircularBuffer<XLog>(
+                    maxSize: maxLogSize,
+                    initialList: newLogs,
+                  ),
+                ),
+              );
             }
           }
         }
       case UserLogMessage_Message.rejectMessage:
-        final newLog = _addNewLog(RejectMessage(
+        final newLog = _addNewLog(
+          RejectMessage(
             timestamp: DateTime.fromMillisecondsSinceEpoch(
-                l.rejectMessage.timestamp.toInt() * 1000),
+              l.rejectMessage.timestamp.toInt() * 1000,
+            ),
             dst: l.rejectMessage.dst,
             domain: l.rejectMessage.domain,
             app: l.rejectMessage.appId,
             reason: l.rejectMessage.reason,
-            icon: (l.rejectMessage.appId.isEmpty ||
+            icon:
+                (l.rejectMessage.appId.isEmpty ||
                     !state.showApp ||
                     !Platform.isAndroid)
                 ? null
-                : await _getAppIcon(l.rejectMessage.appId)));
+                : await _getAppIcon(l.rejectMessage.appId),
+          ),
+        );
         if (newLog != null) {
           emit(newLog);
         }
       case UserLogMessage_Message.fallback:
+        logger.d('fallback: ${l.fallback.tag}');
         final index = _logs.indexOfBackwardsFunction((e) {
           if (e is SessionInfo) {
-            return e.sessionId == l.sessionError.sid;
+            return e.sessionId == l.fallback.sid;
           }
           return false;
         });
@@ -296,23 +421,40 @@ class LogBloc extends Bloc<LogEvent, LogState> {
           final e = _logs[index];
           if (e is SessionInfo) {
             final newLog = e.copyWith(
-                fallbackTag: l.fallback.tag,
-                fallbackHandlerName:
-                    await _outboundRepo.getHandlerName(l.fallback.tag));
+              fallbackTag: l.fallback.tag,
+              fallbackHandlerName: await _outboundRepo.getHandlerName(
+                l.fallback.tag,
+              ),
+            );
             _logs[index] = newLog;
             if (state.filter.showAll()) {
               emit(state.copyWith(logs: _logs));
             } else {
               final newLogs = _logs.where((e) => state.filter.show(e)).toList();
-              emit(state.copyWith(
+              emit(
+                state.copyWith(
                   logs: CircularBuffer<XLog>(
-                      maxSize: maxLogSize, initialList: newLogs)));
+                    maxSize: maxLogSize,
+                    initialList: newLogs,
+                  ),
+                ),
+              );
             }
           }
         }
       default:
         return;
     }
+  }
+
+  int _findSessionIndexBackwards(int sid) {
+    for (var i = _logs.length - 1; i >= 0; i--) {
+      final e = _logs[i];
+      if (e is SessionInfo && e.sessionId == sid) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   LogState? _addNewLog(XLog log) {
@@ -327,24 +469,33 @@ class LogBloc extends Bloc<LogEvent, LogState> {
 
   void _onDirectPressedEvent(DirectPressedEvent event, Emitter<LogState> emit) {
     _onFilterChanged(
-        state.filter.copyWith(isDirectSelected: !state.filter.showDirect),
-        emit);
+      state.filter.copyWith(isDirectSelected: !state.filter.showDirect),
+      emit,
+    );
   }
 
   void _onProxyPressedEvent(ProxyPressedEvent event, Emitter<LogState> emit) {
     _onFilterChanged(
-        state.filter.copyWith(isProxySelected: !state.filter.showProxy), emit);
+      state.filter.copyWith(isProxySelected: !state.filter.showProxy),
+      emit,
+    );
   }
 
   void _onRejectPressedEvent(RejectPressedEvent event, Emitter<LogState> emit) {
     _onFilterChanged(
-        state.filter.copyWith(showReject: !state.filter.showReject), emit);
+      state.filter.copyWith(showReject: !state.filter.showReject),
+      emit,
+    );
   }
 
   void _onErrorOnlyPressedEvent(
-      ErrorOnlyPressedEvent event, Emitter<LogState> emit) {
+    ErrorOnlyPressedEvent event,
+    Emitter<LogState> emit,
+  ) {
     _onFilterChanged(
-        state.filter.copyWith(errorOnly: !state.filter.errorOnly), emit);
+      state.filter.copyWith(errorOnly: !state.filter.errorOnly),
+      emit,
+    );
   }
 
   void _onFilterChanged(LogFilter filter, Emitter<LogState> emit) {
@@ -352,15 +503,19 @@ class LogBloc extends Bloc<LogEvent, LogState> {
       emit(state.copyWith(filter: filter, logs: _logs));
     } else {
       final newLogs = _logs.where((e) => filter.show(e)).toList();
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           filter: filter,
-          logs:
-              CircularBuffer<XLog>(maxSize: maxLogSize, initialList: newLogs)));
+          logs: CircularBuffer<XLog>(maxSize: maxLogSize, initialList: newLogs),
+        ),
+      );
     }
   }
 
   void _onSubstringChangedEvent(
-      SubstringChangedEvent event, Emitter<LogState> emit) {
+    SubstringChangedEvent event,
+    Emitter<LogState> emit,
+  ) {
     _onFilterChanged(state.filter.copyWith(substring: event.substring), emit);
   }
 
@@ -370,7 +525,9 @@ class LogBloc extends Bloc<LogEvent, LogState> {
   }
 
   void _onLogSwitchPressedEvent(
-      LogSwitchPressedEvent event, Emitter<LogState> emit) async {
+    LogSwitchPressedEvent event,
+    Emitter<LogState> emit,
+  ) async {
     _pref.enableLog = event.enableLog;
     _logs.clear();
     emit(state.copyWith(enableLog: event.enableLog, logs: _logs));
@@ -379,7 +536,7 @@ class LogBloc extends Bloc<LogEvent, LogState> {
         _subscribe();
       } else {
         _disconnectLogStream();
-        await _xController.stopUserLogging();
+        await _xController.resetUserLogging(false, false, false, false);
       }
     }
   }
@@ -413,6 +570,7 @@ class SessionInfo extends XLog {
     this.network,
     this.sniffProtocol,
     this.source,
+    this.ended = false,
   });
   final DateTime timestamp;
   // the handler id or "direct" or "1-2-3"(handler chain)
@@ -436,6 +594,7 @@ class SessionInfo extends XLog {
   final String? network;
   final String? sniffProtocol;
   final String? source;
+  final bool ended;
 
   String get displayDst {
     if (isDomain(dst)) {
@@ -446,10 +605,7 @@ class SessionInfo extends XLog {
     return dst;
   }
 
-  bool get abnormal =>
-      (error.isNotEmpty) ||
-      (up != null && up! <= 0) ||
-      (down != null && down! <= 0);
+  bool get abnormal => (error.isNotEmpty);
 
   Color? abnormalColor(BuildContext contect) {
     if (error.contains('XTLS rejected QUIC') ||
@@ -477,6 +633,7 @@ class SessionInfo extends XLog {
     String? fallbackTag,
     String? fallbackHandlerName,
     String? handlerName,
+    bool? ended,
   }) {
     return SessionInfo(
       timestamp: timestamp,
@@ -500,15 +657,19 @@ class SessionInfo extends XLog {
       source: source ?? source,
       routeRuleMatched: routeRuleMatched ?? routeRuleMatched,
       icon: icon ?? this.icon,
+      ended: ended ?? this.ended,
     );
   }
 }
 
 String getAppName(String app) {
   if (Platform.isMacOS) {
-    return app.split('/').firstWhere((e) {
-      return e.endsWith('.app');
-    }, orElse: () => '').replaceFirst('.app', '');
+    return app
+        .split('/')
+        .firstWhere((e) {
+          return e.endsWith('.app');
+        }, orElse: () => '')
+        .replaceFirst('.app', '');
   } else if (Platform.isWindows) {
     return app.split('\\').last.replaceFirst('.exe', '');
   } else if (Platform.isAndroid) {
@@ -532,13 +693,14 @@ class ErrorMessage extends XLog {
 }
 
 class RejectMessage extends XLog {
-  RejectMessage(
-      {required this.timestamp,
-      required this.dst,
-      this.domain = '',
-      this.app = '',
-      required this.reason,
-      this.icon});
+  RejectMessage({
+    required this.timestamp,
+    required this.dst,
+    this.domain = '',
+    this.app = '',
+    required this.reason,
+    this.icon,
+  });
   final DateTime timestamp;
   final String dst;
   final String domain;

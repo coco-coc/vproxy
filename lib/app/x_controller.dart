@@ -85,12 +85,12 @@ class XController implements MessageFlutterApi {
     required XApiClient xApiClient,
     required LogUploadService logUploadService,
     required DatabaseProvider databaseProvider,
-  })  : _xConfigHelper = xConfigHelper,
-        _pref = pref,
-        _xApiClient = xApiClient,
-        _autoSubscriptionUpdater = autoSubscriptionUpdater,
-        _logUploadService = logUploadService,
-        _databaseProvider = databaseProvider {
+  }) : _xConfigHelper = xConfigHelper,
+       _pref = pref,
+       _xApiClient = xApiClient,
+       _autoSubscriptionUpdater = autoSubscriptionUpdater,
+       _logUploadService = logUploadService,
+       _databaseProvider = databaseProvider {
     Tm.instance.stateStream.listen(_onTmStatusChange);
 
     // Set up shutdown notification handling on macOS
@@ -123,7 +123,8 @@ class XController implements MessageFlutterApi {
       _cancelListenGeoRoute();
       if (statusChange.error != null && statusChange.error!.isNotEmpty) {
         snack(
-            rootLocalizations()?.disconnectedUnexpectedly(statusChange.error!));
+          rootLocalizations()?.disconnectedUnexpectedly(statusChange.error!),
+        );
         logger.e("disconnected!", error: statusChange.error);
         reportError("disconnected due to", statusChange.error!);
         if (_pref.shareLog) {
@@ -175,13 +176,19 @@ class XController implements MessageFlutterApi {
         );
         channelOptions = ChannelOptions(credentials: channelCredentials);
       } else {
-        address = InternetAddress(await grpcListenAddrUnix(),
-            type: InternetAddressType.unix);
-        channelOptions =
-            const ChannelOptions(credentials: ChannelCredentials.insecure());
+        address = InternetAddress(
+          await grpcListenAddrUnix(),
+          type: InternetAddressType.unix,
+        );
+        channelOptions = const ChannelOptions(
+          credentials: ChannelCredentials.insecure(),
+        );
       }
-      _grpcChannel =
-          ClientChannel(address, port: grpcPort ?? 0, options: channelOptions);
+      _grpcChannel = ClientChannel(
+        address,
+        port: grpcPort ?? 0,
+        options: channelOptions,
+      );
       _grpcServiceClient = GrpcServiceClient(_grpcChannel!);
       _completer?.complete(_grpcServiceClient!);
       return _grpcServiceClient!;
@@ -202,33 +209,39 @@ class XController implements MessageFlutterApi {
   }
 
   Future<ResponseStream<StatsResponse>> outboundStatsStream(
-      int interval) async {
+    int interval,
+  ) async {
     final client = await getXClient();
     return client.getStatsStream(GetStatsRequest(interval: interval));
   }
 
-  Future<void> toggleAppIdLogging(bool enable) async {
+  Future<void> resetUserLogging(
+    bool enable,
+    bool appId,
+    bool sessionEnd,
+    bool realtimeUsage,
+  ) async {
     await waitForConnectedIfConnecting();
     if (Tm.instance.state == TmStatus.connected) {
       final client = await getXClient();
-      await client.toggleLogAppId(ToggleLogAppIdRequest(enable: enable));
-    }
-  }
-
-  Future<void> stopUserLogging() async {
-    await waitForConnectedIfConnecting();
-    if (Tm.instance.state == TmStatus.connected) {
-      final client = await getXClient();
-      client.toggleUserLog(ToggleUserLogRequest(enable: false));
+      await client.resetUserLogging(
+        ResetUserLoggingRequest(
+          enable: enable,
+          appId: appId,
+          sessionEnd: sessionEnd,
+          realtimeUsage: realtimeUsage,
+        ),
+      );
     }
   }
 
   Future<TmConfig> _getTmConfig() async {
     return await _xConfigHelper.getAndOrStoreConfig(
-        dbSecretAndPort: isPkg ? (_dbSecret ?? '', _dbServerPort ?? 0) : null,
-        certBytes: _certificate == null
-            ? null
-            : Uint8List.fromList(_certificate!.certificate));
+      dbSecretAndPort: isPkg ? (_dbSecret ?? '', _dbServerPort ?? 0) : null,
+      certBytes: _certificate == null
+          ? null
+          : Uint8List.fromList(_certificate!.certificate),
+    );
   }
 
   String? _sudoPassword;
@@ -270,63 +283,69 @@ class XController implements MessageFlutterApi {
           _pref.showRpmNotice &&
           isRpm()) {
         final value = await showDialog(
-            context: rootNavigationKey.currentContext!,
-            barrierDismissible: false,
-            builder: (ctx) {
-              return AlertDialog(
-                content: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 400),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(rootLocalizations()!.rpmTunNotice),
-                      const Gap(10),
-                      TextButton.icon(
-                          onPressed: () {
-                            launchUrl(Uri.parse(
-                                'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/6/html/security_guide/sect-security_guide-server_security-reverse_path_forwarding'));
-                          },
-                          label: Text(rootLocalizations()!.website),
-                          icon: const Icon(Icons.link)),
-                      const Gap(10),
-                      StatefulBuilder(
-                        builder: (context, setState) {
-                          return Row(
-                            children: [
-                              Checkbox(
-                                value: _pref.showRpmNotice,
-                                onChanged: (v) {
-                                  _pref.setShowRpmNotice(v ?? false);
-                                  setState(() {});
-                                },
-                              ),
-                              Text(
-                                rootLocalizations()!.doNotShowAgain,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall!
-                                    .copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurfaceVariant),
-                              )
-                            ],
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+          context: rootNavigationKey.currentContext!,
+          barrierDismissible: false,
+          builder: (ctx) {
+            return AlertDialog(
+              content: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(rootLocalizations()!.rpmTunNotice),
+                    const Gap(10),
+                    TextButton.icon(
+                      onPressed: () {
+                        launchUrl(
+                          Uri.parse(
+                            'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/6/html/security_guide/sect-security_guide-server_security-reverse_path_forwarding',
+                          ),
+                        );
+                      },
+                      label: Text(rootLocalizations()!.website),
+                      icon: const Icon(Icons.link),
+                    ),
+                    const Gap(10),
+                    StatefulBuilder(
+                      builder: (context, setState) {
+                        return Row(
+                          children: [
+                            Checkbox(
+                              value: _pref.showRpmNotice,
+                              onChanged: (v) {
+                                _pref.setShowRpmNotice(v ?? false);
+                                setState(() {});
+                              },
+                            ),
+                            Text(
+                              rootLocalizations()!.doNotShowAgain,
+                              style: Theme.of(context).textTheme.bodySmall!
+                                  .copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
                 ),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(ctx, false),
-                      child: Text(rootLocalizations()!.cancel)),
-                  FilledButton(
-                      onPressed: () => Navigator.pop(ctx, true),
-                      child: Text(rootLocalizations()!.okay)),
-                ],
-              );
-            });
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: Text(rootLocalizations()!.cancel),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: Text(rootLocalizations()!.okay),
+                ),
+              ],
+            );
+          },
+        );
         _pref.setShowRpmNotice(false);
         if (value == false) {
           _statusStreamCtrl.add(XStatus.disconnected);
@@ -340,11 +359,12 @@ class XController implements MessageFlutterApi {
           _pref.inboundMode == InboundMode.tun &&
           !isRunningAsAdmin) {
         final result = await showDialog<(String, bool)>(
-            context: rootNavigationKey.currentContext!,
-            barrierDismissible: false,
-            builder: (ctx) {
-              return const _SudoPasswordDialog();
-            });
+          context: rootNavigationKey.currentContext!,
+          barrierDismissible: false,
+          builder: (ctx) {
+            return const _SudoPasswordDialog();
+          },
+        );
         if (result != null) {
           sudoPassword = result.$1;
           if (result.$2) {
@@ -363,21 +383,23 @@ class XController implements MessageFlutterApi {
 
     try {
       await _tm.start(
-          config: config,
-          onSelfShutdown: (String e) {
-            logger.e('onSelfShutdown', error: e);
-          },
-          configPath: Platform.isWindows || Platform.isMacOS || Platform.isLinux
-              ? await configFilePath()
-              : null,
-          sudoPassword: sudoPassword);
+        config: config,
+        onSelfShutdown: (String e) {
+          logger.e('onSelfShutdown', error: e);
+        },
+        configPath: Platform.isWindows || Platform.isMacOS || Platform.isLinux
+            ? await configFilePath()
+            : null,
+        sudoPassword: sudoPassword,
+      );
     } catch (e) {
       if (e.toString().contains('needs user approval')) {
         showDialog(
-            context: rootNavigationKey.currentContext!,
-            builder: (context) => AlertDialog(
-                  title: Text(rootLocalizations()!.enableSystemExtension),
-                ));
+          context: rootNavigationKey.currentContext!,
+          builder: (context) => AlertDialog(
+            title: Text(rootLocalizations()!.enableSystemExtension),
+          ),
+        );
       } else {
         rethrow;
       }
@@ -428,19 +450,20 @@ class XController implements MessageFlutterApi {
     if (kDebugMode) {
       print(Directory.current.path);
       final process = await Process.run(
-          'powershell.exe',
-          [
-            '-Command',
-            'Start-Process',
-            '..\\vx-core\\win_service\\service\\service_install.exe',
-            'install',
-            '-Verb',
-            'RunAs'
-          ],
-          stderrEncoding: utf8,
-          stdoutEncoding: utf8,
-          /* runInShell: true */
-          runInShell: true);
+        'powershell.exe',
+        [
+          '-Command',
+          'Start-Process',
+          '..\\vx-core\\win_service\\service\\service_install.exe',
+          'install',
+          '-Verb',
+          'RunAs',
+        ],
+        stderrEncoding: utf8,
+        stdoutEncoding: utf8,
+        /* runInShell: true */
+        runInShell: true,
+      );
       final exitCode = process.exitCode;
       logger.d('Windows service installed with exit code: $exitCode');
       // get stdout and stderr
@@ -450,7 +473,8 @@ class XController implements MessageFlutterApi {
       logger.d('Windows service installed with stderr: $stderr');
       if (exitCode != 0) {
         throw Exception(
-            'Windows service installation failed with exit code: $exitCode. stdout: $stdout, stderr: $stderr');
+          'Windows service installation failed with exit code: $exitCode. stdout: $stdout, stderr: $stderr',
+        );
       }
       // the process might takes some time to finish. so wait for 1 second
       await Future.delayed(const Duration(seconds: 1));
@@ -478,14 +502,16 @@ class XController implements MessageFlutterApi {
           .port,
     );
     if (Platform.isWindows) {
-      await SystemProxy.setSystemProxy(SystemProxySettings(
-        bypass:
-            'localhost;127.*;10.*;172.16.*;172.17.*;172.18.*;172.19.*;172.20.*;172.21.*;172.22.*;172.23.*;172.24.*;172.25.*;172.26.*;172.27.*;172.28.*;172.29.*;172.30.*;172.31.*;192.168.*',
-        httpProxy: '${sysConfig.httpProxyAddress}:${sysConfig.httpProxyPort}',
-        socksProxy: Platform.isWindows
-            ? null
-            : 'socks=${sysConfig.socksProxyAddress}:${sysConfig.socksProxyPort}',
-      ));
+      await SystemProxy.setSystemProxy(
+        SystemProxySettings(
+          bypass:
+              'localhost;127.*;10.*;172.16.*;172.17.*;172.18.*;172.19.*;172.20.*;172.21.*;172.22.*;172.23.*;172.24.*;172.25.*;172.26.*;172.27.*;172.28.*;172.29.*;172.30.*;172.31.*;192.168.*',
+          httpProxy: '${sysConfig.httpProxyAddress}:${sysConfig.httpProxyPort}',
+          socksProxy: Platform.isWindows
+              ? null
+              : 'socks=${sysConfig.socksProxyAddress}:${sysConfig.socksProxyPort}',
+        ),
+      );
     } else if (Platform.isLinux) {
       await LinuxSystemProxy.setSystemProxy(sysConfig);
     } else if (isPkg) {
@@ -525,13 +551,15 @@ class XController implements MessageFlutterApi {
           snack(rootLocalizations()?.failedToRemoveSystemProxy);
         }
       } else if (dnsBlocked) {
-        await _undoBlockDns().then((_) {
-          dnsBlocked = false;
-        }).catchError((e) {
-          logger.e('undoBlockDns error', error: e);
-          reportError("undoBlockDns error", e);
-          snack(rootLocalizations()?.failedToUndoBlockDns);
-        });
+        await _undoBlockDns()
+            .then((_) {
+              dnsBlocked = false;
+            })
+            .catchError((e) {
+              logger.e('undoBlockDns error', error: e);
+              reportError("undoBlockDns error", e);
+              snack(rootLocalizations()?.failedToUndoBlockDns);
+            });
       }
     }
   }
@@ -578,7 +606,9 @@ class XController implements MessageFlutterApi {
   String? _dbSecret;
 
   FutureOr<GrpcError?> _grpcAuthInterceptor(
-      ServiceCall call, ServiceMethod<dynamic, dynamic> method) {
+    ServiceCall call,
+    ServiceMethod<dynamic, dynamic> method,
+  ) {
     final metadata = call.clientMetadata;
     if (metadata == null) {
       return const GrpcError.unauthenticated('Missing metadata');
@@ -595,17 +625,16 @@ class XController implements MessageFlutterApi {
     }
     _dbServer = Server.create(
       services: [DatabaseServer(database: _databaseProvider.database)],
-      interceptors: [
-        _grpcAuthInterceptor,
-      ],
+      interceptors: [_grpcAuthInterceptor],
     );
     await _dbServer!.serve(
-        address: InternetAddress.loopbackIPv4,
-        port: 0,
-        security: ServerTlsCredentials(
-          certificate: _certificate!.certificate,
-          privateKey: _certificate!.key,
-        ));
+      address: InternetAddress.loopbackIPv4,
+      port: 0,
+      security: ServerTlsCredentials(
+        certificate: _certificate!.certificate,
+        privateKey: _certificate!.key,
+      ),
+    );
     _dbServerPort = _dbServer!.port;
     logger.d('db server started on port $_dbServerPort');
   }
@@ -683,8 +712,11 @@ class XController implements MessageFlutterApi {
     if (sudoPassword != null) {
       // Try nscd (Name Service Cache Daemon)
       try {
-        final result =
-            await runCmds(['systemctl', 'restart', 'nscd'], sudoPassword);
+        final result = await runCmds([
+          'systemctl',
+          'restart',
+          'nscd',
+        ], sudoPassword);
         if (result == 0) {
           logger.d("DNS cache flushed successfully by restarting nscd");
           return;
@@ -695,8 +727,11 @@ class XController implements MessageFlutterApi {
 
       // Try dnsmasq
       try {
-        final result =
-            await runCmds(['systemctl', 'restart', 'dnsmasq'], sudoPassword);
+        final result = await runCmds([
+          'systemctl',
+          'restart',
+          'dnsmasq',
+        ], sudoPassword);
         if (result == 0) {
           logger.d("DNS cache flushed successfully by restarting dnsmasq");
           return;
@@ -707,7 +742,8 @@ class XController implements MessageFlutterApi {
     }
 
     logger.w(
-        "Could not flush DNS cache - no supported DNS caching service found");
+      "Could not flush DNS cache - no supported DNS caching service found",
+    );
   }
 
   StreamSubscription<CommunicateMessage>? _commuStreamSub;
@@ -721,31 +757,32 @@ class XController implements MessageFlutterApi {
     if (_tm.state == TmStatus.connected) {
       final client = await getXClient();
       _commuStreamSub ??= (client.communicate(CommunicateRequest())).listen(
-          (m) {
-            if (m.hasHandlerError()) _onHandlerError(m.handlerError);
-            if (m.hasHandlerBeingUsed()) _onHandlerUsing(m.handlerBeingUsed);
-            if (m.hasHandlerUpdated()) _onHandlerUpdated(m.handlerUpdated);
-            if (m.hasSubscriptionUpdate()) {
-              _onSubscriptionUpdate(m.subscriptionUpdate);
-            }
-          },
-          onDone: cancelCommuStream,
-          onError: (e) async {
-            // for windows, this might due to the service crashes, so query the service state
-            if (Platform.isWindows) {
-              _statusStreamCtrl.add(XStatus.fromTmStatus(Tm.instance.state));
-            }
-            logger.e("communicate stream on error", error: e);
-            cancelCommuStream();
-            // on windows platform, this can trigger a status sync
-            final status = Tm.instance.state;
-            logger.d("current status: $status");
-            // reconnect to the server
-            await Future.delayed(const Duration(seconds: 1));
-            if (status == TmStatus.connected) {
-              _communicate();
-            }
-          });
+        (m) {
+          if (m.hasHandlerError()) _onHandlerError(m.handlerError);
+          if (m.hasHandlerBeingUsed()) _onHandlerUsing(m.handlerBeingUsed);
+          if (m.hasHandlerUpdated()) _onHandlerUpdated(m.handlerUpdated);
+          if (m.hasSubscriptionUpdate()) {
+            _onSubscriptionUpdate(m.subscriptionUpdate);
+          }
+        },
+        onDone: cancelCommuStream,
+        onError: (e) async {
+          // for windows, this might due to the service crashes, so query the service state
+          if (Platform.isWindows) {
+            _statusStreamCtrl.add(XStatus.fromTmStatus(Tm.instance.state));
+          }
+          logger.e("communicate stream on error", error: e);
+          cancelCommuStream();
+          // on windows platform, this can trigger a status sync
+          final status = Tm.instance.state;
+          logger.d("current status: $status");
+          // reconnect to the server
+          await Future.delayed(const Duration(seconds: 1));
+          if (status == TmStatus.connected) {
+            _communicate();
+          }
+        },
+      );
     }
   }
 
@@ -782,7 +819,8 @@ class XController implements MessageFlutterApi {
 
   void _onHandlerUsing(HandlerBeingUsed handlerBeingUsed) {
     logger.i(
-        "handler being used, ${handlerBeingUsed.tag4}, ${handlerBeingUsed.tag6}");
+      "handler being used, ${handlerBeingUsed.tag4}, ${handlerBeingUsed.tag6}",
+    );
     // if (_handlerBeingUsedController.hasListener) {
     _handlerBeingUsedController.add(handlerBeingUsed);
     // }
@@ -820,42 +858,47 @@ class XController implements MessageFlutterApi {
         .watch()
         .skip(1)
         .listen((e) async {
-      logger.d("atomic domain set update");
-      updateGeo();
-    });
+          logger.d("atomic domain set update");
+          updateGeo();
+        });
     _greatDomainSetsSub = database
         .select(database.greatDomainSets)
         .watch()
         .skip(1)
         .listen((e) async {
-      logger.d("geo domain set update");
-      updateGeo();
-    });
+          logger.d("geo domain set update");
+          updateGeo();
+        });
     _atomicIpSetsSub = database
         .select(database.atomicIpSets)
         .watch()
         .skip(1)
         .listen((e) async {
-      logger.d("atomic ip set update");
-      updateGeo();
-    });
-    _greatIpSetsSub =
-        database.select(database.greatIpSets).watch().skip(1).listen((e) async {
-      logger.d("great ip set update");
-      updateGeo();
-    });
+          logger.d("atomic ip set update");
+          updateGeo();
+        });
+    _greatIpSetsSub = database
+        .select(database.greatIpSets)
+        .watch()
+        .skip(1)
+        .listen((e) async {
+          logger.d("great ip set update");
+          updateGeo();
+        });
     // _geoDomainSub =
     //     database.select(database.geoDomains).watch().skip(1).listen((e) async {
     //   logger.d("geo update");
     //   updateGeo();
     // });
-    _cidrSub =
-        database.select(database.cidrs).watch().skip(1).listen((e) async {
+    _cidrSub = database.select(database.cidrs).watch().skip(1).listen((
+      e,
+    ) async {
       logger.d("cidr update");
       updateGeo();
     });
-    _appIdSub =
-        database.select(database.apps).watch().skip(1).listen((e) async {
+    _appIdSub = database.select(database.apps).watch().skip(1).listen((
+      e,
+    ) async {
       logger.d("app id update");
       if (Platform.isAndroid) {
         await stop();
@@ -872,7 +915,8 @@ class XController implements MessageFlutterApi {
       final client = await getXClient();
       try {
         await client.addGeoDomain(
-            AddGeoDomainRequest(domainSetName: setName, domain: domain));
+          AddGeoDomainRequest(domainSetName: setName, domain: domain),
+        );
       } catch (e) {
         logger.e("addGeoDomain error", error: e);
         snack(e.toString());
@@ -887,7 +931,8 @@ class XController implements MessageFlutterApi {
       final client = await getXClient();
       try {
         await client.removeGeoDomain(
-            RemoveGeoDomainRequest(domainSetName: setName, domain: domain));
+          RemoveGeoDomainRequest(domainSetName: setName, domain: domain),
+        );
       } catch (e) {
         logger.e("removeGeoDomain error", error: e);
         snack(e.toString());
@@ -914,9 +959,11 @@ class XController implements MessageFlutterApi {
   Future<void> waitForConnectedIfConnecting() async {
     if (_statusStreamCtrl.value == XStatus.connecting ||
         _statusStreamCtrl.value == XStatus.preparing) {
-      await _statusStreamCtrl.stream.firstWhere((e) =>
-          _statusStreamCtrl.value != XStatus.connecting &&
-          _statusStreamCtrl.value != XStatus.preparing);
+      await _statusStreamCtrl.stream.firstWhere(
+        (e) =>
+            _statusStreamCtrl.value != XStatus.connecting &&
+            _statusStreamCtrl.value != XStatus.preparing,
+      );
     }
   }
 
@@ -924,8 +971,9 @@ class XController implements MessageFlutterApi {
     if (Tm.instance.state == TmStatus.disconnected) {
       return;
     }
-    await Tm.instance.stateStream
-        .firstWhere((e) => e.status == TmStatus.disconnected);
+    await Tm.instance.stateStream.firstWhere(
+      (e) => e.status == TmStatus.disconnected,
+    );
   }
 
   Future<List<String>> getCurrentSelectors() async {
@@ -933,7 +981,9 @@ class XController implements MessageFlutterApi {
       return [defaultProxySelectorTag];
     } else {
       final customRouteMode = await _databaseProvider
-          .database.managers.customRouteModes
+          .database
+          .managers
+          .customRouteModes
           .filter((e) => e.name.equals(_pref.routingMode as String))
           .getSingleOrNull();
       if (customRouteMode != null) {
@@ -945,7 +995,8 @@ class XController implements MessageFlutterApi {
 
   // when selector's strategy or land handlers is changed
   Future<void> selectorSelectStrategyOrLandhandlerChange(
-      SelectorConfig selector) async {
+    SelectorConfig selector,
+  ) async {
     logger.d('selector select strategy or land handler change');
     await waitForConnectedIfConnecting();
     if (Tm.instance.state == TmStatus.connected) {
@@ -953,7 +1004,8 @@ class XController implements MessageFlutterApi {
         try {
           final client = await getXClient();
           await client.changeSelector(
-              ChangeSelectorRequest(selectorsToAdd: [selector]));
+            ChangeSelectorRequest(selectorsToAdd: [selector]),
+          );
           if (selector.tag == defaultProxySelectorTag) {
             if (selector.strategy !=
                     SelectorConfig_SelectingStrategy.MOST_THROUGHPUT &&
@@ -979,8 +1031,12 @@ class XController implements MessageFlutterApi {
       if ((await getCurrentSelectors()).contains(selector.tag)) {
         try {
           final client = await getXClient();
-          await client.updateSelectorFilter(UpdateSelectorFilterRequest(
-              tag: selector.tag, filter: selector.filter));
+          await client.updateSelectorFilter(
+            UpdateSelectorFilterRequest(
+              tag: selector.tag,
+              filter: selector.filter,
+            ),
+          );
           await _getTmConfig();
         } catch (e) {
           stop();
@@ -991,15 +1047,21 @@ class XController implements MessageFlutterApi {
   }
 
   Future<void> selectorBalancingStrategyChange(
-      String tag, SelectorConfig_BalanceStrategy balanceStrategy) async {
+    String tag,
+    SelectorConfig_BalanceStrategy balanceStrategy,
+  ) async {
     logger.d('selector balancing strategy change');
     await waitForConnectedIfConnecting();
     if (Tm.instance.state == TmStatus.connected) {
       if ((await getCurrentSelectors()).contains(tag)) {
         try {
           final client = await getXClient();
-          await client.updateSelectorBalancer(UpdateSelectorBalancerRequest(
-              tag: tag, balanceStrategy: balanceStrategy));
+          await client.updateSelectorBalancer(
+            UpdateSelectorBalancerRequest(
+              tag: tag,
+              balanceStrategy: balanceStrategy,
+            ),
+          );
           await _getTmConfig();
         } catch (e) {
           stop();
@@ -1014,8 +1076,9 @@ class XController implements MessageFlutterApi {
     if (Tm.instance.state == TmStatus.connected) {
       try {
         final client = await getXClient();
-        await client
-            .changeSelector(ChangeSelectorRequest(selectorToRemove: tag));
+        await client.changeSelector(
+          ChangeSelectorRequest(selectorToRemove: tag),
+        );
         await _getTmConfig();
       } catch (e) {
         stop();
@@ -1039,7 +1102,9 @@ class XController implements MessageFlutterApi {
   }
 
   Future<void> routingModeChange(
-      String? oldRouteMode, String newRouteMode) async {
+    String? oldRouteMode,
+    String newRouteMode,
+  ) async {
     await waitForConnectedIfConnecting();
     if (Tm.instance.state == TmStatus.connected) {
       if (oldRouteMode is DefaultRouteMode &&
@@ -1047,8 +1112,12 @@ class XController implements MessageFlutterApi {
         try {
           final config = await _getTmConfig();
           final client = await getXClient();
-          client.changeRoutingMode(ChangeRoutingModeRequest(
-              geoConfig: config.geo, routerConfig: config.router));
+          client.changeRoutingMode(
+            ChangeRoutingModeRequest(
+              geoConfig: config.geo,
+              routerConfig: config.router,
+            ),
+          );
         } catch (e) {
           stop();
           rethrow;
@@ -1063,8 +1132,9 @@ class XController implements MessageFlutterApi {
     if (_statusStreamCtrl.value == XStatus.connected) {
       final (nodeDomainSet, nodeIpSet) = await _xConfigHelper.getNodeSet();
       final client = await getXClient();
-      await client
-          .replaceGeoDomains(ReplaceDomainSetRequest(set: nodeDomainSet));
+      await client.replaceGeoDomains(
+        ReplaceDomainSetRequest(set: nodeDomainSet),
+      );
       await client.replaceGeoIPs(ReplaceIPSetRequest(set: nodeIpSet));
     }
   }
@@ -1106,7 +1176,8 @@ class XController implements MessageFlutterApi {
     if (Tm.instance.state == TmStatus.connected) {
       final client = await getXClient();
       client.setSubscriptionInterval(
-          SetSubscriptionIntervalRequest(interval: interval));
+        SetSubscriptionIntervalRequest(interval: interval),
+      );
     }
   }
 
@@ -1114,10 +1185,9 @@ class XController implements MessageFlutterApi {
     if (Tm.instance.state == TmStatus.connected &&
         _pref.proxySelectorMode == ProxySelectorMode.auto) {
       final client = await getXClient();
-      client.setOutboundHandlerSpeed(SetOutboundHandlerSpeedRequest(
-        tag: tag,
-        speed: speed,
-      ));
+      client.setOutboundHandlerSpeed(
+        SetOutboundHandlerSpeedRequest(tag: tag, speed: speed),
+      );
     }
   }
 
@@ -1128,9 +1198,13 @@ class XController implements MessageFlutterApi {
       final config = await _getTmConfig();
       if (_pref.proxyShare) {
         try {
-          await client.addInbound(AddInboundRequest(
-              handlerConfig: config.inboundManager.handlers
-                  .firstWhere((c) => c.tag == 'proxyShare')));
+          await client.addInbound(
+            AddInboundRequest(
+              handlerConfig: config.inboundManager.handlers.firstWhere(
+                (c) => c.tag == 'proxyShare',
+              ),
+            ),
+          );
           logger.d("proxyShare inbound added");
         } catch (e) {
           logger.d("add proxyShare inbound error", error: e);
@@ -1151,7 +1225,8 @@ class XController implements MessageFlutterApi {
     if (Tm.instance.state == TmStatus.connected) {
       final client = await getXClient();
       client.setAutoSubscriptionUpdate(
-          SetAutoSubscriptionUpdateRequest(enable: autoUpdate));
+        SetAutoSubscriptionUpdateRequest(enable: autoUpdate),
+      );
     }
   }
 
@@ -1179,8 +1254,9 @@ class XController implements MessageFlutterApi {
     await waitForConnectedIfConnecting();
     if (Tm.instance.state == TmStatus.connected) {
       final client = await getXClient();
-      return (await client.rttTest(RttTestRequest(addr: addr, port: port)))
-          .ping;
+      return (await client.rttTest(
+        RttTestRequest(addr: addr, port: port),
+      )).ping;
     }
     throw Exception("not connected");
   }
@@ -1200,8 +1276,9 @@ class __SudoPasswordDialogState extends State<_SudoPasswordDialog> {
   @override
   void initState() {
     super.initState();
-    _rememberPassword =
-        context.read<SharedPreferences>().storeSudoPasswordInMemory;
+    _rememberPassword = context
+        .read<SharedPreferences>()
+        .storeSudoPasswordInMemory;
   }
 
   @override
@@ -1222,8 +1299,9 @@ class __SudoPasswordDialogState extends State<_SudoPasswordDialog> {
             controller: _passwordController,
             obscureText: true,
             onEditingComplete: () {
-              Navigator.of(context)
-                  .pop((_passwordController.text, _rememberPassword));
+              Navigator.of(
+                context,
+              ).pop((_passwordController.text, _rememberPassword));
             },
             decoration: InputDecoration(
               labelText: AppLocalizations.of(context)!.sudoPassword,
@@ -1237,17 +1315,18 @@ class __SudoPasswordDialogState extends State<_SudoPasswordDialog> {
               const Gap(10),
               const Spacer(),
               Switch(
-                  value: _rememberPassword,
-                  onChanged: (value) {
-                    setState(() {
-                      _rememberPassword = value;
-                      context
-                          .read<SharedPreferences>()
-                          .setStoreSudoPasswordInMemory(value);
-                    });
-                  }),
+                value: _rememberPassword,
+                onChanged: (value) {
+                  setState(() {
+                    _rememberPassword = value;
+                    context
+                        .read<SharedPreferences>()
+                        .setStoreSudoPasswordInMemory(value);
+                  });
+                },
+              ),
             ],
-          )
+          ),
         ],
       ),
       actions: [
@@ -1259,8 +1338,9 @@ class __SudoPasswordDialogState extends State<_SudoPasswordDialog> {
         ),
         FilledButton(
           onPressed: () {
-            Navigator.of(context)
-                .pop((_passwordController.text, _rememberPassword));
+            Navigator.of(
+              context,
+            ).pop((_passwordController.text, _rememberPassword));
           },
           child: Text(AppLocalizations.of(context)!.confirm),
         ),

@@ -15,7 +15,6 @@
 
 part of 'log_bloc.dart';
 
-
 class LogEvent extends Equatable {
   const LogEvent();
 
@@ -61,6 +60,16 @@ class AppPressedEvent extends LogEvent {
 class HandlerPressedEvent extends LogEvent {
   const HandlerPressedEvent(this.showHandler);
   final bool showHandler;
+}
+
+class SessionOngoingPressedEvent extends LogEvent {
+  const SessionOngoingPressedEvent(this.showSessionOngoing);
+  final bool showSessionOngoing;
+}
+
+class RealtimeUsagePressedEvent extends LogEvent {
+  const RealtimeUsagePressedEvent(this.showRealtimeUsage);
+  final bool showRealtimeUsage;
 }
 
 class SubstringChangedEvent extends LogEvent {

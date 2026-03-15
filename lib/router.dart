@@ -18,11 +18,7 @@ part of 'main.dart';
 // Router globals
 GlobalKey<NavigatorState> rootNavigationKey = GlobalKey<NavigatorState>();
 final ValueNotifier<RoutingConfig> myRoutingConfig =
-    ValueNotifier<RoutingConfig>(
-  const RoutingConfig(
-    routes: <RouteBase>[],
-  ),
-);
+    ValueNotifier<RoutingConfig>(const RoutingConfig(routes: <RouteBase>[]));
 late final GoRouter _router;
 
 // Desktop browser-like back/forward history (separate from navigator stack).
@@ -58,28 +54,31 @@ void desktopNavigateForward() {
 
 /// Initialize the router after preferences are loaded
 void initRouter(SharedPreferences pref) {
-  _router = GoRouter.routingConfig(
-      debugLogDiagnostics: true,
-      initialLocation: pref.initialLocation,
-      navigatorKey: rootNavigationKey,
-      routingConfig: myRoutingConfig)
-    ..routerDelegate.addListener(() {
-      try {
-        final location = _router.routeInformationProvider.value.uri.toString();
-        if (location.isNotEmpty && location != '/') {
-          logger.d('set initial location: $location');
-          pref.setInitialLocation(location);
-          if (_isBackForwardNav) {
-            // Location change triggered by our own back/forward — don't record.
-            _isBackForwardNav = false;
-          } else {
-            _recordLocation(location);
+  _router =
+      GoRouter.routingConfig(
+          debugLogDiagnostics: true,
+          initialLocation: pref.initialLocation,
+          navigatorKey: rootNavigationKey,
+          routingConfig: myRoutingConfig,
+        )
+        ..routerDelegate.addListener(() {
+          try {
+            final location = _router.routeInformationProvider.value.uri
+                .toString();
+            if (location.isNotEmpty && location != '/') {
+              logger.d('set initial location: $location');
+              pref.setInitialLocation(location);
+              if (_isBackForwardNav) {
+                // Location change triggered by our own back/forward — don't record.
+                _isBackForwardNav = false;
+              } else {
+                _recordLocation(location);
+              }
+            }
+          } catch (e) {
+            // Ignore errors during initialization
           }
-        }
-      } catch (e) {
-        // Ignore errors during initialization
-      }
-    });
+        });
 }
 
 // final nodeNavigatorKey1 = GlobalKey<NavigatorState>();
@@ -91,9 +90,8 @@ GoRoute settingRoute() {
   return GoRoute(
     path: '/setting',
     parentNavigatorKey: rootNavigationKey,
-    pageBuilder: (context, state) => const CupertinoPage(
-      child: CompactSettingScreen(showAppBar: true),
-    ),
+    pageBuilder: (context, state) =>
+        const CupertinoPage(child: CompactSettingScreen(showAppBar: true)),
     routes: [
       GoRoute(
         parentNavigatorKey: rootNavigationKey,
@@ -155,20 +153,118 @@ GoRoute settingRoute() {
 }
 
 final compactRouteConfig = RoutingConfig(
+  redirect: (context, state) {
+    if (state.matchedLocation == '/') {
+      return '/home';
+    }
+    return null;
+  },
+  routes: [
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) =>
+          ShellPage(state: state, child: navigationShell),
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/home',
+              pageBuilder: (context, state) {
+                return CustomTransitionPage(
+                  key: state.pageKey,
+                  child: const HomePage(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) => child,
+                );
+              },
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          // navigatorKey: nodeNavigatorKey1,
+          routes: [
+            GoRoute(
+              path: '/node',
+              pageBuilder: (context, state) {
+                return CustomTransitionPage(
+                  key: state.pageKey,
+                  child: const OutboundPage(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) => child,
+                );
+              },
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          // navigatorKey: logNavigatorKey1,
+          routes: [
+            GoRoute(
+              path: '/log',
+              pageBuilder: (context, state) => CustomTransitionPage(
+                key: state.pageKey,
+                child: const LogPage(),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) => child,
+              ),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          // navigatorKey: routeNavigatorKey1,
+          routes: [
+            GoRoute(
+              path: '/route',
+              pageBuilder: (context, state) => CustomTransitionPage(
+                key: state.pageKey,
+                child: const RoutePage(),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) => child,
+              ),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          // navigatorKey: serverNavigatorKey1,
+          routes: [
+            GoRoute(
+              path: '/server',
+              pageBuilder: (context, state) => CustomTransitionPage(
+                key: state.pageKey,
+                child: const ServerScreen(),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) => child,
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+    settingRoute(),
+  ],
+);
+
+// final nodeNavigatorKey = GlobalKey<NavigatorState>();
+// final logNavigatorKey = GlobalKey<NavigatorState>();
+// final routeNavigatorKey = GlobalKey<NavigatorState>();
+// final serverNavigatorKey = GlobalKey<NavigatorState>();
+// final settingNavigatorKey = GlobalKey<NavigatorState>();
+// final shellNavigationKey = GlobalKey<NavigatorState>();
+RoutingConfig largeScreenRouteConfig(SharedPreferences pref) {
+  return RoutingConfig(
     redirect: (context, state) {
       if (state.matchedLocation == '/') {
-        return '/home';
+        return pref.initialLocation;
       }
       return null;
     },
     routes: [
       StatefulShellRoute.indexedStack(
-          builder: (context, state, navigationShell) => ShellPage(
-                state: state,
-                child: navigationShell,
-              ),
-          branches: [
-            StatefulShellBranch(routes: [
+        builder: (context, state, navigationShell) =>
+            ShellPage(state: state, child: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            // navigatorKey: nodeNavigatorKey,
+            routes: [
               GoRoute(
                 path: '/home',
                 pageBuilder: (context, state) {
@@ -181,189 +277,97 @@ final compactRouteConfig = RoutingConfig(
                   );
                 },
               ),
-            ]),
-            StatefulShellBranch(
-                // navigatorKey: nodeNavigatorKey1,
-                routes: [
-                  GoRoute(
-                    path: '/node',
-                    pageBuilder: (context, state) {
-                      return CustomTransitionPage(
-                        key: state.pageKey,
-                        child: const OutboundPage(),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) =>
-                                child,
-                      );
-                    },
-                  ),
-                ]),
-            StatefulShellBranch(
-                // navigatorKey: logNavigatorKey1,
-                routes: [
-                  GoRoute(
-                    path: '/log',
-                    pageBuilder: (context, state) => CustomTransitionPage(
-                      key: state.pageKey,
-                      child: const LogPage(),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) =>
-                              child,
-                    ),
-                  ),
-                ]),
-            StatefulShellBranch(
-                // navigatorKey: routeNavigatorKey1,
-                routes: [
-                  GoRoute(
-                    path: '/route',
-                    pageBuilder: (context, state) => CustomTransitionPage(
-                      key: state.pageKey,
-                      child: const RoutePage(),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) =>
-                              child,
-                    ),
-                  ),
-                ]),
-            StatefulShellBranch(
-                // navigatorKey: serverNavigatorKey1,
-                routes: [
-                  GoRoute(
-                    path: '/server',
-                    pageBuilder: (context, state) => CustomTransitionPage(
-                      key: state.pageKey,
-                      child: const ServerScreen(),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) =>
-                              child,
-                    ),
-                  ),
-                ]),
-          ]),
-      settingRoute(),
-    ]);
-
-// final nodeNavigatorKey = GlobalKey<NavigatorState>();
-// final logNavigatorKey = GlobalKey<NavigatorState>();
-// final routeNavigatorKey = GlobalKey<NavigatorState>();
-// final serverNavigatorKey = GlobalKey<NavigatorState>();
-// final settingNavigatorKey = GlobalKey<NavigatorState>();
-// final shellNavigationKey = GlobalKey<NavigatorState>();
-RoutingConfig largeScreenRouteConfig(SharedPreferences pref) {
-  return RoutingConfig(
-      redirect: (context, state) {
-        if (state.matchedLocation == '/') {
-          return pref.initialLocation;
-        }
-        return null;
-      },
-      routes: [
-        StatefulShellRoute.indexedStack(
-            builder: (context, state, navigationShell) => ShellPage(
-                  state: state,
-                  child: navigationShell,
+            ],
+          ),
+          StatefulShellBranch(
+            // navigatorKey: nodeNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/node',
+                pageBuilder: (context, state) {
+                  return CustomTransitionPage(
+                    key: state.pageKey,
+                    child: const OutboundPage(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) =>
+                            child,
+                  );
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            // navigatorKey: logNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/log',
+                pageBuilder: (context, state) => CustomTransitionPage(
+                  key: state.pageKey,
+                  child: const LogPage(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) => child,
                 ),
-            branches: [
-              StatefulShellBranch(
-                  // navigatorKey: nodeNavigatorKey,
-                  routes: [
-                    GoRoute(
-                      path: '/home',
-                      pageBuilder: (context, state) {
-                        return CustomTransitionPage(
-                          key: state.pageKey,
-                          child: const HomePage(),
-                          transitionsBuilder:
-                              (context, animation, secondaryAnimation, child) =>
-                                  child,
-                        );
-                      },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            // navigatorKey: routeNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/route',
+                pageBuilder: (context, state) => CustomTransitionPage(
+                  key: state.pageKey,
+                  child: const RoutePage(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) => child,
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            // navigatorKey: serverNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/server',
+                pageBuilder: (context, state) => CustomTransitionPage(
+                  key: state.pageKey,
+                  child: const ServerScreen(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) => child,
+                ),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            // navigatorKey: settingNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/setting',
+                redirect: (context, state) {
+                  return '/setting/account';
+                },
+              ),
+              GoRoute(
+                path: '/setting/:settingItem',
+                pageBuilder: (context, state) {
+                  return CustomTransitionPage(
+                    key: state.pageKey,
+                    child: LargeSettingSreen(
+                      settingItem: SettingItem.fromPathSegment(
+                        state.pathParameters['settingItem']!,
+                      )!,
                     ),
-                  ]),
-              StatefulShellBranch(
-                  // navigatorKey: nodeNavigatorKey,
-                  routes: [
-                    GoRoute(
-                      path: '/node',
-                      pageBuilder: (context, state) {
-                        return CustomTransitionPage(
-                          key: state.pageKey,
-                          child: const OutboundPage(),
-                          transitionsBuilder:
-                              (context, animation, secondaryAnimation, child) =>
-                                  child,
-                        );
-                      },
-                    ),
-                  ]),
-              StatefulShellBranch(
-                  // navigatorKey: logNavigatorKey,
-                  routes: [
-                    GoRoute(
-                      path: '/log',
-                      pageBuilder: (context, state) => CustomTransitionPage(
-                        key: state.pageKey,
-                        child: const LogPage(),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) =>
-                                child,
-                      ),
-                    ),
-                  ]),
-              StatefulShellBranch(
-                  // navigatorKey: routeNavigatorKey,
-                  routes: [
-                    GoRoute(
-                      path: '/route',
-                      pageBuilder: (context, state) => CustomTransitionPage(
-                        key: state.pageKey,
-                        child: const RoutePage(),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) =>
-                                child,
-                      ),
-                    ),
-                  ]),
-              StatefulShellBranch(
-                  // navigatorKey: serverNavigatorKey,
-                  routes: [
-                    GoRoute(
-                      path: '/server',
-                      pageBuilder: (context, state) => CustomTransitionPage(
-                        key: state.pageKey,
-                        child: const ServerScreen(),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) =>
-                                child,
-                      ),
-                    ),
-                  ]),
-              StatefulShellBranch(
-                  // navigatorKey: settingNavigatorKey,
-                  routes: [
-                    GoRoute(
-                      path: '/setting',
-                      redirect: (context, state) {
-                        return '/setting/account';
-                      },
-                    ),
-                    GoRoute(
-                      path: '/setting/:settingItem',
-                      pageBuilder: (context, state) {
-                        return CustomTransitionPage(
-                          key: state.pageKey,
-                          child: LargeSettingSreen(
-                              settingItem: SettingItem.fromPathSegment(
-                                  state.pathParameters['settingItem']!)!),
-                          transitionsBuilder:
-                              (context, animation, secondaryAnimation, child) {
-                            return child;
-                          },
-                        );
-                      },
-                    ),
-                  ]),
-            ])
-      ]);
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                          return child;
+                        },
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    ],
+  );
 }

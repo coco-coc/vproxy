@@ -92,8 +92,8 @@ class _GreatDomainSetFormState extends State<GreatDomainSetForm>
               labelText: AppLocalizations.of(context)!.name,
               helperText: AppLocalizations.of(context)!.setNameDuplicate,
               helperStyle: Theme.of(context).textTheme.labelSmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
               ),
@@ -109,55 +109,75 @@ class _GreatDomainSetFormState extends State<GreatDomainSetForm>
               labelText: AppLocalizations.of(context)!.mutuallyExclusiveSetName,
               helperText: AppLocalizations.of(context)!.setNameDuplicate,
               helperStyle: Theme.of(context).textTheme.labelSmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
               ),
             ),
           ),
           const Gap(5),
-          Text(AppLocalizations.of(context)!.include,
-              style: Theme.of(context).textTheme.labelSmall),
-          const Gap(5),
-          Wrap(
-            spacing: 5,
-            runSpacing: 5,
-            children: _domainSetConfig.inNames
-                .map<Widget>((e) => WrapChip(
-                    text: localizedSetName(context, e),
-                    onDelete: () {
-                      _domainSetConfig.inNames.remove(e);
-                      setState(() {});
-                    }))
-                .toList()
-              ..add(DomainSetPicker(onChanged: (p0) async {
-                setState(() {
-                  _domainSetConfig.inNames.add(p0);
-                  _domainSetConfig.exNames.remove(p0);
-                });
-              })),
+          Text(
+            AppLocalizations.of(context)!.include,
+            style: Theme.of(context).textTheme.labelSmall,
           ),
           const Gap(5),
-          Text(AppLocalizations.of(context)!.exclude,
-              style: Theme.of(context).textTheme.labelSmall),
+          Wrap(
+            spacing: 5,
+            runSpacing: 5,
+            children:
+                _domainSetConfig.inNames
+                    .map<Widget>(
+                      (e) => WrapChip(
+                        text: localizedSetName(context, e),
+                        onDelete: () {
+                          _domainSetConfig.inNames.remove(e);
+                          setState(() {});
+                        },
+                      ),
+                    )
+                    .toList()
+                  ..add(
+                    DomainSetPicker(
+                      onChanged: (p0) async {
+                        setState(() {
+                          _domainSetConfig.inNames.add(p0);
+                          _domainSetConfig.exNames.remove(p0);
+                        });
+                      },
+                    ),
+                  ),
+          ),
+          const Gap(5),
+          Text(
+            AppLocalizations.of(context)!.exclude,
+            style: Theme.of(context).textTheme.labelSmall,
+          ),
           const Gap(5),
           Wrap(
             spacing: 5,
             runSpacing: 5,
-            children: _domainSetConfig.exNames
-                .map<Widget>((e) => WrapChip(
-                    text: localizedSetName(context, e),
-                    onDelete: () {
-                      _domainSetConfig.exNames.remove(e);
-                      setState(() {});
-                    }))
-                .toList()
-              ..add(DomainSetPicker(onChanged: (p0) async {
-                _domainSetConfig.exNames.add(p0);
-                _domainSetConfig.inNames.remove(p0);
-                setState(() {});
-              })),
+            children:
+                _domainSetConfig.exNames
+                    .map<Widget>(
+                      (e) => WrapChip(
+                        text: localizedSetName(context, e),
+                        onDelete: () {
+                          _domainSetConfig.exNames.remove(e);
+                          setState(() {});
+                        },
+                      ),
+                    )
+                    .toList()
+                  ..add(
+                    DomainSetPicker(
+                      onChanged: (p0) async {
+                        _domainSetConfig.exNames.add(p0);
+                        _domainSetConfig.inNames.remove(p0);
+                        setState(() {});
+                      },
+                    ),
+                  ),
           ),
         ],
       ),
@@ -178,10 +198,13 @@ class _GreatIpSetFormState extends State<GreatIpSetForm> with FormDataGetter {
   final _nameController = TextEditingController();
   final GreatIPSetConfig _greatIpSetConfig = GreatIPSetConfig();
   List<AtomicIpSet> _atomicIpSetConfigs = [];
+  final _oppositeNameController = TextEditingController();
+
   @override
   Object? get formData {
     if (_formKey.currentState!.validate()) {
       _greatIpSetConfig.name = _nameController.text;
+      _greatIpSetConfig.oppositeName = _oppositeNameController.text;
       return _greatIpSetConfig;
     } else {
       return null;
@@ -195,6 +218,7 @@ class _GreatIpSetFormState extends State<GreatIpSetForm> with FormDataGetter {
     if (widget.ipSetConfig != null) {
       _greatIpSetConfig.mergeFromMessage(widget.ipSetConfig!);
       _nameController.text = _greatIpSetConfig.name;
+      _oppositeNameController.text = _greatIpSetConfig.oppositeName;
     }
     final database = context.read<DatabaseProvider>().database;
     database.managers.atomicIpSets.get().then((value) {
@@ -217,95 +241,130 @@ class _GreatIpSetFormState extends State<GreatIpSetForm> with FormDataGetter {
               if (value == null || value.isEmpty) {
                 return AppLocalizations.of(context)!.nameCannotBeEmpty;
               }
-
               return null;
             },
             decoration: InputDecoration(
               labelText: AppLocalizations.of(context)!.name,
               helperText: AppLocalizations.of(context)!.setNameDuplicate,
               helperStyle: Theme.of(context).textTheme.labelSmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5),
               ),
             ),
           ),
-          const Gap(5),
-          Text(AppLocalizations.of(context)!.include,
-              style: Theme.of(context).textTheme.labelSmall),
-          const Gap(5),
-          Wrap(
-            spacing: 5,
-            runSpacing: 5,
-            children: _greatIpSetConfig.inNames
-                .map<Widget>((e) => WrapChip(
-                    text: localizedSetName(context, e),
-                    onDelete: () {
-                      _greatIpSetConfig.inNames.remove(e);
-                      setState(() {});
-                    }))
-                .toList()
-              ..add(MenuAnchor(
-                menuChildren: _atomicIpSetConfigs
-                    .where((e) => !_greatIpSetConfig.inNames.contains(e.name))
-                    .map((e) => MenuItemButton(
-                          onPressed: () {
-                            _greatIpSetConfig.inNames.add(e.name);
-                            _greatIpSetConfig.exNames.remove(e.name);
-                            setState(() {});
-                          },
-                          child: Text(localizedSetName(context, e.name)),
-                        ))
-                    .toList(),
-                builder: (context, controller, child) {
-                  return IconButton.filledTonal(
-                      onPressed: () => controller.open(),
-                      style: IconButton.styleFrom(
-                        visualDensity: VisualDensity.compact,
-                        padding: const EdgeInsets.all(0),
-                      ),
-                      icon: const Icon(Icons.add_rounded, size: 18));
-                },
-              )),
+          const Gap(10),
+          TextFormField(
+            controller: _oppositeNameController,
+            validator: (value) {
+              return null;
+            },
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.mutuallyExclusiveSetName,
+            ),
           ),
           const Gap(5),
-          Text(AppLocalizations.of(context)!.exclude,
-              style: Theme.of(context).textTheme.labelSmall),
+          Text(
+            AppLocalizations.of(context)!.include,
+            style: Theme.of(context).textTheme.labelSmall,
+          ),
           const Gap(5),
           Wrap(
             spacing: 5,
             runSpacing: 5,
-            children: _greatIpSetConfig.exNames
-                .map<Widget>((e) => WrapChip(
-                    text: localizedSetName(context, e),
-                    onDelete: () {
-                      _greatIpSetConfig.exNames.remove(e);
-                      setState(() {});
-                    }))
-                .toList()
-              ..add(MenuAnchor(
-                menuChildren: _atomicIpSetConfigs
-                    .where((e) => !_greatIpSetConfig.exNames.contains(e.name))
-                    .map((e) => MenuItemButton(
-                          onPressed: () {
-                            _greatIpSetConfig.exNames.add(e.name);
-                            _greatIpSetConfig.inNames.remove(e.name);
-                            setState(() {});
-                          },
-                          child: Text(localizedSetName(context, e.name)),
-                        ))
-                    .toList(),
-                builder: (context, controller, child) {
-                  return IconButton.filledTonal(
-                      onPressed: () => controller.open(),
-                      style: IconButton.styleFrom(
-                        visualDensity: VisualDensity.compact,
-                        padding: const EdgeInsets.all(0),
+            children:
+                _greatIpSetConfig.inNames
+                    .map<Widget>(
+                      (e) => WrapChip(
+                        text: localizedSetName(context, e),
+                        onDelete: () {
+                          _greatIpSetConfig.inNames.remove(e);
+                          setState(() {});
+                        },
                       ),
-                      icon: const Icon(Icons.add_rounded, size: 18));
-                },
-              )),
+                    )
+                    .toList()
+                  ..add(
+                    MenuAnchor(
+                      menuChildren: _atomicIpSetConfigs
+                          .where(
+                            (e) => !_greatIpSetConfig.inNames.contains(e.name),
+                          )
+                          .map(
+                            (e) => MenuItemButton(
+                              onPressed: () {
+                                _greatIpSetConfig.inNames.add(e.name);
+                                _greatIpSetConfig.exNames.remove(e.name);
+                                setState(() {});
+                              },
+                              child: Text(localizedSetName(context, e.name)),
+                            ),
+                          )
+                          .toList(),
+                      builder: (context, controller, child) {
+                        return IconButton.filledTonal(
+                          onPressed: () => controller.open(),
+                          style: IconButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.all(0),
+                          ),
+                          icon: const Icon(Icons.add_rounded, size: 18),
+                        );
+                      },
+                    ),
+                  ),
+          ),
+          const Gap(5),
+          Text(
+            AppLocalizations.of(context)!.exclude,
+            style: Theme.of(context).textTheme.labelSmall,
+          ),
+          const Gap(5),
+          Wrap(
+            spacing: 5,
+            runSpacing: 5,
+            children:
+                _greatIpSetConfig.exNames
+                    .map<Widget>(
+                      (e) => WrapChip(
+                        text: localizedSetName(context, e),
+                        onDelete: () {
+                          _greatIpSetConfig.exNames.remove(e);
+                          setState(() {});
+                        },
+                      ),
+                    )
+                    .toList()
+                  ..add(
+                    MenuAnchor(
+                      menuChildren: _atomicIpSetConfigs
+                          .where(
+                            (e) => !_greatIpSetConfig.exNames.contains(e.name),
+                          )
+                          .map(
+                            (e) => MenuItemButton(
+                              onPressed: () {
+                                _greatIpSetConfig.exNames.add(e.name);
+                                _greatIpSetConfig.inNames.remove(e.name);
+                                setState(() {});
+                              },
+                              child: Text(localizedSetName(context, e.name)),
+                            ),
+                          )
+                          .toList(),
+                      builder: (context, controller, child) {
+                        return IconButton.filledTonal(
+                          onPressed: () => controller.open(),
+                          style: IconButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.all(0),
+                          ),
+                          icon: const Icon(Icons.add_rounded, size: 18),
+                        );
+                      },
+                    ),
+                  ),
           ),
         ],
       ),
@@ -314,12 +373,7 @@ class _GreatIpSetFormState extends State<GreatIpSetForm> with FormDataGetter {
 }
 
 class WrapChip extends StatelessWidget {
-  const WrapChip({
-    super.key,
-    required this.text,
-    this.onDelete,
-    this.onTap,
-  });
+  const WrapChip({super.key, required this.text, this.onDelete, this.onTap});
   final String text;
   final Function()? onDelete;
   final Function()? onTap;
@@ -327,39 +381,42 @@ class WrapChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chip = MenuAnchor(
-        menuChildren: [
-          MenuItemButton(
-            onPressed: onDelete,
-            child: Text(AppLocalizations.of(context)!.delete),
-          ),
-        ],
-        builder: (context, controller, child) {
-          return GestureDetector(
-            onDoubleTap: onDelete,
-            onLongPressStart: (details) {
-              controller.open(
-                  position: Offset(
-                      details.localPosition.dx, details.localPosition.dy));
-            },
-            onSecondaryTapDown: (details) {
-              controller.open(
-                position:
-                    Offset(details.localPosition.dx, details.localPosition.dy),
-              );
-            },
-            child: onTap != null
-                ? ActionChip(
-                    onPressed: onTap,
-                    label: Text(
-                      text,
-                    ))
-                : Chip(
-                    label: Text(text,
-                        style:
-                            Theme.of(context).textTheme.bodySmall!.copyWith()),
+      menuChildren: [
+        MenuItemButton(
+          onPressed: onDelete,
+          child: Text(AppLocalizations.of(context)!.delete),
+        ),
+      ],
+      builder: (context, controller, child) {
+        return GestureDetector(
+          onDoubleTap: onDelete,
+          onLongPressStart: (details) {
+            controller.open(
+              position: Offset(
+                details.localPosition.dx,
+                details.localPosition.dy,
+              ),
+            );
+          },
+          onSecondaryTapDown: (details) {
+            controller.open(
+              position: Offset(
+                details.localPosition.dx,
+                details.localPosition.dy,
+              ),
+            );
+          },
+          child: onTap != null
+              ? ActionChip(onPressed: onTap, label: Text(text))
+              : Chip(
+                  label: Text(
+                    text,
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(),
                   ),
-          );
-        });
+                ),
+        );
+      },
+    );
     return chip;
   }
 }
@@ -395,12 +452,15 @@ class _SmallDomainSetFormState extends State<SmallDomainSetForm>
         _geositeAttributes.add(_geositeAttributeController.text);
       }
       return AtomicDomainSet(
-          name: _nameController.text,
-          geoUrl: _geositeUrlController.text,
-          geositeConfig: GeositeConfig(
-              codes: _geositeCodes, attributes: _geositeAttributes),
-          clashRuleUrls: _clashRuleUrls,
-          useBloomFilter: _useBloomFilter);
+        name: _nameController.text,
+        geoUrl: _geositeUrlController.text,
+        geositeConfig: GeositeConfig(
+          codes: _geositeCodes,
+          attributes: _geositeAttributes,
+        ),
+        clashRuleUrls: _clashRuleUrls,
+        useBloomFilter: _useBloomFilter,
+      );
     }
 
     return null;
@@ -413,8 +473,9 @@ class _SmallDomainSetFormState extends State<SmallDomainSetForm>
       _nameController.text = widget.atomicDomainSet!.name;
       widget.atomicDomainSet!.geositeConfig?.filepath ?? '';
       _geositeCodes.addAll(widget.atomicDomainSet!.geositeConfig?.codes ?? []);
-      _geositeAttributes
-          .addAll(widget.atomicDomainSet!.geositeConfig?.attributes ?? []);
+      _geositeAttributes.addAll(
+        widget.atomicDomainSet!.geositeConfig?.attributes ?? [],
+      );
       _clashRuleUrls.addAll(widget.atomicDomainSet!.clashRuleUrls ?? []);
       context
           .read<DatabaseProvider>()
@@ -424,9 +485,9 @@ class _SmallDomainSetFormState extends State<SmallDomainSetForm>
           .filter((e) => e.domainSetName.name(widget.atomicDomainSet!.name))
           .get()
           .then((value) {
-        _domains = value.map((e) => e.geoDomain).toList();
-        setState(() {});
-      });
+            _domains = value.map((e) => e.geoDomain).toList();
+            setState(() {});
+          });
       _geositeUrlController.text = widget.atomicDomainSet!.geoUrl ?? '';
       _useBloomFilter = widget.atomicDomainSet!.useBloomFilter;
     }
@@ -467,22 +528,27 @@ class _SmallDomainSetFormState extends State<SmallDomainSetForm>
                 labelText: AppLocalizations.of(context)!.name,
                 helperText: AppLocalizations.of(context)!.setNameDuplicate,
                 helperStyle: Theme.of(context).textTheme.labelSmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
             const Gap(5),
             CheckboxListTile(
-                value: _useBloomFilter,
-                onChanged: (value) {
-                  setState(() {
-                    _useBloomFilter = value ?? false;
-                  });
-                },
-                title: Text(AppLocalizations.of(context)!.useBloomFilter,
-                    style: Theme.of(context).textTheme.bodyMedium),
-                subtitle: Text(AppLocalizations.of(context)!.useBloomFilterDesc,
-                    style: Theme.of(context).textTheme.bodySmall)),
+              value: _useBloomFilter,
+              onChanged: (value) {
+                setState(() {
+                  _useBloomFilter = value ?? false;
+                });
+              },
+              title: Text(
+                AppLocalizations.of(context)!.useBloomFilter,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              subtitle: Text(
+                AppLocalizations.of(context)!.useBloomFilterDesc,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
             const Gap(5),
             const TextDivider(text: 'GeoSite'),
             const Gap(5),
@@ -495,94 +561,104 @@ class _SmallDomainSetFormState extends State<SmallDomainSetForm>
                 labelText: 'URL',
                 helperText: AppLocalizations.of(context)!.geositeUrlDesc,
                 helperStyle: Theme.of(context).textTheme.labelSmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
             const Gap(5),
             Text(
               'GeoSite Codes',
               style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const Gap(5),
             Wrap(
               spacing: 5,
               runSpacing: 5,
               children: _geositeCodes
-                  .map((e) => WrapChip(
+                  .map(
+                    (e) => WrapChip(
                       text: e,
                       onDelete: () {
                         _geositeCodes.remove(e);
                         setState(() {});
-                      }))
+                      },
+                    ),
+                  )
                   .toList(),
             ),
             const Gap(5),
             Row(
               children: [
                 Expanded(
-                    child: TextFormField(
-                  controller: _geositeCodeController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
+                  child: TextFormField(
+                    controller: _geositeCodeController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      labelText: 'GeoSite Code',
                     ),
-                    labelText: 'GeoSite Code',
                   ),
-                )),
+                ),
                 const Gap(10),
                 IconButton.filledTonal(
-                    onPressed: () {
-                      _geositeCodes.add(_geositeCodeController.text);
-                      _geositeCodeController.clear();
-                      setState(() {});
-                    },
-                    icon: const Icon(Icons.add_rounded)),
+                  onPressed: () {
+                    _geositeCodes.add(_geositeCodeController.text);
+                    _geositeCodeController.clear();
+                    setState(() {});
+                  },
+                  icon: const Icon(Icons.add_rounded),
+                ),
               ],
             ),
             const Gap(10),
             Text(
               'GeoSite Attributes',
               style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const Gap(5),
             Wrap(
               spacing: 5,
               runSpacing: 5,
               children: _geositeAttributes
-                  .map((e) => WrapChip(
+                  .map(
+                    (e) => WrapChip(
                       text: e,
                       onDelete: () {
                         _geositeAttributes.remove(e);
                         setState(() {});
-                      }))
+                      },
+                    ),
+                  )
                   .toList(),
             ),
             const Gap(5),
             Row(
               children: [
                 Expanded(
-                    child: TextFormField(
-                  controller: _geositeAttributeController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
+                  child: TextFormField(
+                    controller: _geositeAttributeController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      labelText: 'GeoSite Attribute',
                     ),
-                    labelText: 'GeoSite Attribute',
                   ),
-                )),
+                ),
                 const Gap(10),
                 IconButton.filledTonal(
-                    onPressed: () {
-                      _geositeAttributes.add(_geositeAttributeController.text);
-                      _geositeAttributeController.clear();
-                      setState(() {});
-                    },
-                    icon: const Icon(Icons.add_rounded)),
+                  onPressed: () {
+                    _geositeAttributes.add(_geositeAttributeController.text);
+                    _geositeAttributeController.clear();
+                    setState(() {});
+                  },
+                  icon: const Icon(Icons.add_rounded),
+                ),
               ],
             ),
             const Gap(5),
@@ -632,7 +708,8 @@ class _ClashRuleState extends State<ClashRule> {
       children: [
         Column(
           children: widget.clashRuleUrls
-              .map((e) => ListTile(
+              .map(
+                (e) => ListTile(
                   dense: true,
                   visualDensity: VisualDensity.compact,
                   shape: Border(
@@ -649,7 +726,9 @@ class _ClashRuleState extends State<ClashRule> {
                     icon: const Icon(Icons.delete_outline),
                   ),
                   tileColor: Theme.of(context).colorScheme.surfaceContainer,
-                  title: Text(e)))
+                  title: Text(e),
+                ),
+              )
               .toList(),
         ),
         const Gap(10),
@@ -657,42 +736,47 @@ class _ClashRuleState extends State<ClashRule> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-                child: TextFormField(
-              controller: _clashRuleUrlController,
-              decoration: InputDecoration(
-                helperText: AppLocalizations.of(context)!.clashFormatSupported,
-                hintText: "https://example.com/clash-rules",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5),
+              child: TextFormField(
+                controller: _clashRuleUrlController,
+                decoration: InputDecoration(
+                  helperText: AppLocalizations.of(
+                    context,
+                  )!.clashFormatSupported,
+                  hintText: "https://example.com/clash-rules",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  labelText: 'Clash Rules Urls',
                 ),
-                labelText: 'Clash Rules Urls',
+                validator: (value) {
+                  if (value != null &&
+                      value.isNotEmpty &&
+                      !widget.clashRuleUrls.contains(value) &&
+                      isValidHttpHttpsUrl(value)) {
+                    widget.clashRuleUrls.add(value);
+                  }
+                  return null;
+                },
               ),
-              validator: (value) {
-                if (value != null &&
-                    value.isNotEmpty &&
-                    !widget.clashRuleUrls.contains(value) &&
-                    isValidHttpHttpsUrl(value)) {
-                  widget.clashRuleUrls.add(value);
-                }
-                return null;
-              },
-            )),
+            ),
             const Gap(10),
             Padding(
               padding: const EdgeInsets.only(top: 2),
               child: IconButton.filledTonal(
-                  onPressed: () {
-                    if (_clashRuleUrlController.text.isEmpty ||
-                        widget.clashRuleUrls
-                            .contains(_clashRuleUrlController.text) ||
-                        !isValidHttpHttpsUrl(_clashRuleUrlController.text)) {
-                      return;
-                    }
-                    widget.clashRuleUrls.add(_clashRuleUrlController.text);
-                    _clashRuleUrlController.clear();
-                    setState(() {});
-                  },
-                  icon: const Icon(Icons.add_rounded)),
+                onPressed: () {
+                  if (_clashRuleUrlController.text.isEmpty ||
+                      widget.clashRuleUrls.contains(
+                        _clashRuleUrlController.text,
+                      ) ||
+                      !isValidHttpHttpsUrl(_clashRuleUrlController.text)) {
+                    return;
+                  }
+                  widget.clashRuleUrls.add(_clashRuleUrlController.text);
+                  _clashRuleUrlController.clear();
+                  setState(() {});
+                },
+                icon: const Icon(Icons.add_rounded),
+              ),
             ),
           ],
         ),
@@ -723,6 +807,10 @@ class _SmallIpSetFormState extends State<SmallIpSetForm> with FormDataGetter {
   @override
   Object? get formData {
     if (_formKey.currentState!.validate()) {
+      if (_geoIpFilePathController.text.isNotEmpty) {
+        _geoIpCodes.add(_geoIpFilePathController.text);
+        _geoIpFilePathController.clear();
+      }
       return AtomicIpSet(
         inverse: _inverse,
         name: _nameController.text,
@@ -756,9 +844,9 @@ class _SmallIpSetFormState extends State<SmallIpSetForm> with FormDataGetter {
           .filter((e) => e.ipSetName.name(widget.atomicIpSet!.name))
           .get()
           .then((value) {
-        _cidrs = value.map((e) => e.cidr).toList();
-        setState(() {});
-      });
+            _cidrs = value.map((e) => e.cidr).toList();
+            setState(() {});
+          });
       _geoUrlController.text = widget.atomicIpSet!.geoUrl ?? '';
     }
   }
@@ -798,9 +886,19 @@ class _SmallIpSetFormState extends State<SmallIpSetForm> with FormDataGetter {
                 labelText: AppLocalizations.of(context)!.name,
                 helperText: AppLocalizations.of(context)!.setNameDuplicate,
                 helperStyle: Theme.of(context).textTheme.labelSmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
+            ),
+            const SizedBox(height: 10),
+            SwitchListTile(
+              title: Text(AppLocalizations.of(context)!.inverse),
+              value: _inverse,
+              onChanged: (value) {
+                setState(() {
+                  _inverse = value;
+                });
+              },
             ),
             const Gap(5),
             const TextDivider(text: 'GeoIP'),
@@ -814,54 +912,59 @@ class _SmallIpSetFormState extends State<SmallIpSetForm> with FormDataGetter {
                 labelText: 'URL',
                 helperText: AppLocalizations.of(context)!.geoUrlDesc,
                 helperStyle: Theme.of(context).textTheme.labelSmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
             const Gap(5),
             Text(
               'GeoIP Codes',
               style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const Gap(5),
             Wrap(
               spacing: 5,
               runSpacing: 5,
               children: _geoIpCodes
-                  .map((e) => WrapChip(
+                  .map(
+                    (e) => WrapChip(
                       text: e,
                       onDelete: () {
                         _geoIpCodes.remove(e);
                         setState(() {});
-                      }))
+                      },
+                    ),
+                  )
                   .toList(),
             ),
             const Gap(5),
             Row(
               children: [
                 Expanded(
-                    child: TextFormField(
-                  controller: _geoIpCodeController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
+                  child: TextFormField(
+                    controller: _geoIpCodeController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      labelText: 'GeoIP Code',
                     ),
-                    labelText: 'GeoIP Code',
                   ),
-                )),
+                ),
                 const Gap(10),
                 IconButton.filledTonal(
-                    onPressed: () {
-                      if (_geoIpCodeController.text.isEmpty) {
-                        return;
-                      }
-                      _geoIpCodes.add(_geoIpCodeController.text);
-                      _geoIpCodeController.clear();
-                      setState(() {});
-                    },
-                    icon: const Icon(Icons.add_rounded)),
+                  onPressed: () {
+                    if (_geoIpCodeController.text.isEmpty) {
+                      return;
+                    }
+                    _geoIpCodes.add(_geoIpCodeController.text);
+                    _geoIpCodeController.clear();
+                    setState(() {});
+                  },
+                  icon: const Icon(Icons.add_rounded),
+                ),
               ],
             ),
             const Gap(5),
@@ -874,8 +977,9 @@ class _SmallIpSetFormState extends State<SmallIpSetForm> with FormDataGetter {
             Wrap(
               runSpacing: 10,
               spacing: 10,
-              children:
-                  _cidrs.map((e) => WrapChip(text: cidrToString(e))).toList(),
+              children: _cidrs
+                  .map((e) => WrapChip(text: cidrToString(e)))
+                  .toList(),
             ),
           ],
         ),
@@ -943,8 +1047,8 @@ class _ClashRuleSetState extends State<ClashRuleSet> with FormDataGetter {
                 ),
                 helperText: AppLocalizations.of(context)!.setNameDuplicate,
                 helperStyle: Theme.of(context).textTheme.labelSmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
             const Gap(10),

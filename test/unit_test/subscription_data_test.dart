@@ -81,15 +81,17 @@ void main() {
     });
 
     group('Chinese format', () {
-      test('should parse Chinese format with remaining data and expiration',
-          () {
-        const description = '剩余流量: 12.165GB。到期: 2025年11月20日 15时。';
-        final result = SubscriptionData.parse(description);
+      test(
+        'should parse Chinese format with remaining data and expiration',
+        () {
+          const description = '剩余流量: 12.165GB。到期: 2025年11月20日 15时。';
+          final result = SubscriptionData.parse(description);
 
-        expect(result, isNotNull);
-        expect(result!.remainingData, '12.165GB');
-        expect(result.expirationDate, DateTime(2025, 11, 20));
-      });
+          expect(result, isNotNull);
+          expect(result!.remainingData, '12.165GB');
+          expect(result.expirationDate, DateTime(2025, 11, 20));
+        },
+      );
 
       test('should parse Chinese format with colon separator', () {
         const description = '剩余流量: 5.5GB。到期: 2024年1月5日';
@@ -178,9 +180,12 @@ void main() {
         expect(result.usedData, '5.00GB');
         expect(result.remainingData, '5.00GB');
         expect(
-            result.expirationDate,
-            DateTime.fromMillisecondsSinceEpoch(expireTimestamp * 1000,
-                isUtc: true));
+          result.expirationDate,
+          DateTime.fromMillisecondsSinceEpoch(
+            expireTimestamp * 1000,
+            isUtc: true,
+          ),
+        );
         expect(result.usagePercentage, closeTo(0.5, 0.01));
       });
 
@@ -279,31 +284,35 @@ void main() {
     });
 
     group('Edge cases', () {
-      test('should return SubscriptionData with null fields for empty string',
-          () {
-        const description = '';
-        final result = SubscriptionData.parse(description);
+      test(
+        'should return SubscriptionData with null fields for empty string',
+        () {
+          const description = '';
+          final result = SubscriptionData.parse(description);
 
-        expect(result, isNotNull);
-        expect(result!.totalData, isNull);
-        expect(result.usedData, isNull);
-        expect(result.remainingData, isNull);
-        expect(result.expirationDate, isNull);
-        expect(result.usagePercentage, isNull);
-      });
+          expect(result, isNotNull);
+          expect(result!.totalData, isNull);
+          expect(result.usedData, isNull);
+          expect(result.remainingData, isNull);
+          expect(result.expirationDate, isNull);
+          expect(result.usagePercentage, isNull);
+        },
+      );
 
-      test('should return SubscriptionData with null fields for invalid format',
-          () {
-        const description = 'This is not a valid subscription description';
-        final result = SubscriptionData.parse(description);
+      test(
+        'should return SubscriptionData with null fields for invalid format',
+        () {
+          const description = 'This is not a valid subscription description';
+          final result = SubscriptionData.parse(description);
 
-        expect(result, isNotNull);
-        expect(result!.totalData, isNull);
-        expect(result.usedData, isNull);
-        expect(result.remainingData, isNull);
-        expect(result.expirationDate, isNull);
-        expect(result.usagePercentage, isNull);
-      });
+          expect(result, isNotNull);
+          expect(result!.totalData, isNull);
+          expect(result.usedData, isNull);
+          expect(result.remainingData, isNull);
+          expect(result.expirationDate, isNull);
+          expect(result.usagePercentage, isNull);
+        },
+      );
 
       test('should handle standard format with missing upload field', () {
         const description = '↓:2GB,TOT:10GB';
@@ -325,14 +334,17 @@ void main() {
         expect(result.remainingData, isNull);
       });
 
-      test('should calculate usage percentage correctly when total is zero',
-          () {
-        const description = 'upload=0; download=0; total=0; expire=2218532293';
-        final result = SubscriptionData.parse(description);
+      test(
+        'should calculate usage percentage correctly when total is zero',
+        () {
+          const description =
+              'upload=0; download=0; total=0; expire=2218532293';
+          final result = SubscriptionData.parse(description);
 
-        expect(result, isNotNull);
-        expect(result!.usagePercentage, 0.0);
-      });
+          expect(result, isNotNull);
+          expect(result!.usagePercentage, 0.0);
+        },
+      );
 
       test('should handle very large byte values', () {
         // 100TB
@@ -379,8 +391,7 @@ void main() {
         expect(result.usedData, isNull);
       });
 
-      test('should use key-value format when Chinese format does not match',
-          () {
+      test('should use key-value format when Chinese format does not match', () {
         const description =
             'upload=10737418240; download=21474836480; total=107374182400; expire=1735689600';
         final result = SubscriptionData.parse(description);
@@ -392,16 +403,17 @@ void main() {
       });
 
       test(
-          'should fall back to standard format when key-value format does not match',
-          () {
-        const description = '↑:1GB,↓:2GB,TOT:10GB';
-        final result = SubscriptionData.parse(description);
+        'should fall back to standard format when key-value format does not match',
+        () {
+          const description = '↑:1GB,↓:2GB,TOT:10GB';
+          final result = SubscriptionData.parse(description);
 
-        expect(result, isNotNull);
-        expect(result!.totalData, '10GB');
-        expect(result.usedData, '3.00GB');
-        expect(result.remainingData, '7.00GB');
-      });
+          expect(result, isNotNull);
+          expect(result!.totalData, '10GB');
+          expect(result.usedData, '3.00GB');
+          expect(result.remainingData, '7.00GB');
+        },
+      );
     });
   });
 }

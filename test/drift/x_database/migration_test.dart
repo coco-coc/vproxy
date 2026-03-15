@@ -41,7 +41,10 @@ void main() {
         for (final toVersion in versions.skip(i + 1)) {
           test('to $toVersion', () async {
             final schema = await verifier.schemaAt(fromVersion);
-            final db = AppDatabase(executor: schema.newConnection());
+            final db = AppDatabase(
+              path: 'test_db.db',
+              executor: schema.newConnection(),
+            );
             await verifier.migrateAndValidate(db, toVersion);
             await db.close();
           });
@@ -88,7 +91,8 @@ void main() {
       newVersion: 2,
       createOld: v1.DatabaseAtV1.new,
       createNew: v2.DatabaseAtV2.new,
-      openTestedDatabase: (executor) => AppDatabase(executor: executor),
+      openTestedDatabase: (executor) =>
+          AppDatabase(path: 'test_db.db', executor: executor),
       createItems: (batch, oldDb) {
         batch.insertAll(oldDb.subscriptions, oldSubscriptionsData);
         batch.insertAll(oldDb.outboundHandlers, oldOutboundHandlersData);
@@ -99,18 +103,28 @@ void main() {
         batch.insertAll(oldDb.sshServers, oldSshServersData);
       },
       validateItems: (newDb) async {
-        expect(expectedNewSubscriptionsData,
-            await newDb.select(newDb.subscriptions).get());
-        expect(expectedNewOutboundHandlersData,
-            await newDb.select(newDb.outboundHandlers).get());
-        expect(expectedNewDnsRecordsData,
-            await newDb.select(newDb.dnsRecords).get());
-        expect(expectedNewGeoDomainsData,
-            await newDb.select(newDb.geoDomains).get());
+        expect(
+          expectedNewSubscriptionsData,
+          await newDb.select(newDb.subscriptions).get(),
+        );
+        expect(
+          expectedNewOutboundHandlersData,
+          await newDb.select(newDb.outboundHandlers).get(),
+        );
+        expect(
+          expectedNewDnsRecordsData,
+          await newDb.select(newDb.dnsRecords).get(),
+        );
+        expect(
+          expectedNewGeoDomainsData,
+          await newDb.select(newDb.geoDomains).get(),
+        );
         expect(expectedNewAppsData, await newDb.select(newDb.apps).get());
         expect(expectedNewCidrsData, await newDb.select(newDb.cidrs).get());
-        expect(expectedNewSshServersData,
-            await newDb.select(newDb.sshServers).get());
+        expect(
+          expectedNewSshServersData,
+          await newDb.select(newDb.sshServers).get(),
+        );
       },
     );
   });
@@ -123,51 +137,68 @@ void main() {
     final oldDb = v2.DatabaseAtV2(schema.newConnection());
     await oldDb
         .into(oldDb.outboundHandlers)
-        .insert(v2.OutboundHandlersCompanion.insert(
-          selected: false,
-          enabled: true,
-          countryCode: 'US',
-          sni: 'example.com',
-          serverIp: '192.168.1.1',
-          config: OutboundHandlerConfig(
-            tag: "old",
-          ).writeToBuffer(),
-        ));
-    await oldDb.into(oldDb.geoDomains).insert(v2.GeoDomainsCompanion.insert(
-          goProxy: true,
-          geoDomain: Domain(value: 'domain').writeToBuffer(),
-        ));
-    await oldDb.into(oldDb.cidrs).insert(v2.CidrsCompanion.insert(
-          proxy: true,
-          cidr: CIDR(ip: List.from([192, 168, 1, 0])).writeToBuffer(),
-        ));
-    await oldDb.into(oldDb.apps).insert(v2.AppsCompanion.insert(
-          proxy: true,
-          appId: AppId(value: 'app_id').writeToBuffer(),
-        ));
+        .insert(
+          v2.OutboundHandlersCompanion.insert(
+            selected: false,
+            enabled: true,
+            countryCode: 'US',
+            sni: 'example.com',
+            serverIp: '192.168.1.1',
+            config: OutboundHandlerConfig(tag: "old").writeToBuffer(),
+          ),
+        );
+    await oldDb
+        .into(oldDb.geoDomains)
+        .insert(
+          v2.GeoDomainsCompanion.insert(
+            goProxy: true,
+            geoDomain: Domain(value: 'domain').writeToBuffer(),
+          ),
+        );
+    await oldDb
+        .into(oldDb.cidrs)
+        .insert(
+          v2.CidrsCompanion.insert(
+            proxy: true,
+            cidr: CIDR(ip: List.from([192, 168, 1, 0])).writeToBuffer(),
+          ),
+        );
+    await oldDb
+        .into(oldDb.apps)
+        .insert(
+          v2.AppsCompanion.insert(
+            proxy: true,
+            appId: AppId(value: 'app_id').writeToBuffer(),
+          ),
+        );
     await oldDb.close();
 
     // Run the migration and verify that it adds the name column.
-    final db = AppDatabase(executor: schema.newConnection());
+    final db = AppDatabase(
+      path: 'test_db.db',
+      executor: schema.newConnection(),
+    );
     await verifier.migrateAndValidate(db, 3);
     await db.close();
 
     // Make sure the entry is still here
     final migratedDb = v3.DatabaseAtV3(schema.newConnection());
-    final entry =
-        await migratedDb.select(migratedDb.outboundHandlers).getSingle();
+    final entry = await migratedDb
+        .select(migratedDb.outboundHandlers)
+        .getSingle();
     expect(entry.id, 1);
     final hc = HandlerConfig.fromBuffer(entry.config);
     expect(hc.outbound.tag, "old"); // default from the migration
-    final geoDomain =
-        await migratedDb.select(migratedDb.geoDomains).getSingle();
+    final geoDomain = await migratedDb
+        .select(migratedDb.geoDomains)
+        .getSingle();
     expect(geoDomain.id, 1);
     expect(geoDomain.geoDomain, Domain(value: 'domain').writeToBuffer());
-    expect(geoDomain.domainSetName, customProxy);
+    expect(geoDomain.domainSetName, 'Custom Proxy');
     final cidr = await migratedDb.select(migratedDb.cidrs).getSingle();
     expect(cidr.id, 1);
     expect(cidr.cidr, CIDR(ip: List.from([192, 168, 1, 0])).writeToBuffer());
-    expect(cidr.ipSetName, customProxy);
+    expect(cidr.ipSetName, 'Custom Proxy');
     final app = await migratedDb.select(migratedDb.apps).getSingle();
     expect(app.id, 1);
     expect(app.appId, AppId(value: 'app_id').writeToBuffer());
@@ -181,43 +212,50 @@ void main() {
     final oldDb = v4.DatabaseAtV4(schema.newConnection());
     await oldDb
         .into(oldDb.customRouteModes)
-        .insert(v4.CustomRouteModesCompanion.insert(
-          name: 'test',
-          routerConfig: RouterConfig().writeToBuffer(),
-          domainSetsProxyDns: jsonEncode([
-            'domain1',
-            'domain2',
-          ]),
-        ));
+        .insert(
+          v4.CustomRouteModesCompanion.insert(
+            name: 'test',
+            routerConfig: RouterConfig().writeToBuffer(),
+            domainSetsProxyDns: jsonEncode(['domain1', 'domain2']),
+          ),
+        );
     await oldDb
         .into(oldDb.greatDomainSets)
-        .insert(v4.GreatDomainSetsCompanion.insert(
-          name: 'test',
-          set: GreatDomainSetConfig(
+        .insert(
+          v4.GreatDomainSetsCompanion.insert(
             name: 'test',
-            oppositeName: 'test2',
-          ).writeToBuffer(),
-        ));
+            set: GreatDomainSetConfig(
+              name: 'test',
+              oppositeName: 'test2',
+            ).writeToBuffer(),
+          ),
+        );
     await oldDb.close();
 
     // Run the migration and verify that it adds the name column.
-    final db = AppDatabase(executor: schema.newConnection());
+    final db = AppDatabase(
+      path: 'test_db.db',
+      executor: schema.newConnection(),
+    );
     await verifier.migrateAndValidate(db, 5);
     await db.close();
 
     // Make sure the entry is still here
     final migratedDb = v5.DatabaseAtV5(schema.newConnection());
-    final entry =
-        await migratedDb.select(migratedDb.customRouteModes).getSingle();
+    final entry = await migratedDb
+        .select(migratedDb.customRouteModes)
+        .getSingle();
     final rules = DnsRules.fromBuffer(entry.dnsRules);
     expect(rules.rules.length, 3);
     expect(rules.rules[0].dnsServerName, dnsServerFake);
-    expect(rules.rules[0].includedTypes,
-        [DnsType.DnsType_A, DnsType.DnsType_AAAA]);
+    expect(rules.rules[0].includedTypes, [
+      DnsType.DnsType_A,
+      DnsType.DnsType_AAAA,
+    ]);
     expect(rules.rules[0].domainTags, ['domain1', 'domain2']);
-    expect(rules.rules[1].dnsServerName, dnsServerProxy);
+    expect(rules.rules[1].dnsServerName, 'Proxy DNS Server');
     expect(rules.rules[1].domainTags, ['domain1', 'domain2']);
-    expect(rules.rules[2].dnsServerName, dnsServerDirect);
+    expect(rules.rules[2].dnsServerName, 'Direct DNS Server');
     expect(rules.rules[2].domainTags.isEmpty, true);
 
     final gds = await migratedDb.select(migratedDb.greatDomainSets).getSingle();

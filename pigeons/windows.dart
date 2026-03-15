@@ -2,11 +2,12 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
   PigeonOptions(
-      dartOut: 'lib/app/windows_host_api.g.dart',
-      dartOptions: DartOptions(),
-      cppOptions: CppOptions(namespace: 'x'),
-      cppHeaderOut: 'windows/runner/messages.g.h',
-      cppSourceOut: 'windows/runner/messages.g.cpp'),
+    dartOut: 'lib/app/windows_host_api.g.dart',
+    dartOptions: DartOptions(),
+    cppOptions: CppOptions(namespace: 'x'),
+    cppHeaderOut: 'windows/runner/messages.g.h',
+    cppSourceOut: 'windows/runner/messages.g.cpp',
+  ),
 )
 @HostApi()
 abstract class WindowsHostApi {

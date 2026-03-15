@@ -21,18 +21,24 @@ import 'package:vx/utils/xapi_client.dart';
 
 /// Test usability of [handler], update it if the result conflicts with
 /// the current value, return the updated handler if successful
-Future<OutboundHandler?> testHandler(XApiClient xApiClient,
-    OutboundHandler handler, OutboundRepo outboundRepo) async {
+Future<OutboundHandler?> testHandler(
+  XApiClient xApiClient,
+  OutboundHandler handler,
+  OutboundRepo outboundRepo,
+) async {
   try {
-    final res = await xApiClient
-        .handlerUsable(HandlerUsableRequest(handler: handler.toConfig()));
+    final res = await xApiClient.handlerUsable(
+      HandlerUsableRequest(handler: handler.toConfig()),
+    );
     final ok = res.ping > 0;
-    return outboundRepo.updateHandler(handler.id,
-        ok: ok ? 1 : -1,
-        speed: ok ? null : 0,
-        ping: res.ping,
-        pingTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-        serverIp: res.ip);
+    return outboundRepo.updateHandler(
+      handler.id,
+      ok: ok ? 1 : -1,
+      speed: ok ? null : 0,
+      ping: res.ping,
+      pingTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      serverIp: res.ip,
+    );
   } catch (e) {
     logger.e("updateHandlerUsability error: $e");
     // await reportError(e, StackTrace.current);

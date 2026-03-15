@@ -22,12 +22,14 @@ class Nodes extends StatelessWidget {
   Widget build(BuildContext context) {
     final realtime = context.watch<RealtimeSpeedNotifier>();
     final mode = context.select<ProxySelectorBloc, ProxySelectorMode>(
-        (b) => b.state.proxySelectorMode);
+      (b) => b.state.proxySelectorMode,
+    );
     final manual = mode == ProxySelectorMode.manual;
     if (realtime.nodeInfos.isNotEmpty) {
       return ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 300),
-          child: const ActiveNodes());
+        constraints: const BoxConstraints(maxHeight: 300),
+        child: const ActiveNodes(),
+      );
     }
     if (realtime.nodeInfos.isEmpty && manual) return const CurrentNodes();
     return const SizedBox();
@@ -43,52 +45,49 @@ class CurrentNodes extends StatelessWidget {
       title: AppLocalizations.of(context)!.currentNodes,
       icon: Icons.outbound_outlined,
       child: StreamBuilder(
-          stream:
-              context.watch<OutboundRepo>().getHandlersStream(selected: true),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data!.isEmpty) {
-                return const Center(
-                    child: AddMenuAnchor(elevatedButton: true));
-              }
-              return ListView.separated(
-                physics: const ClampingScrollPhysics(),
-                shrinkWrap: true,
-                separatorBuilder: (context, index) => Divider(
-                  height: 1,
-                  color: Colors.grey.withOpacity(0.1),
-                ),
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  return Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                        borderRadius: BorderRadius.circular(8),
-                        onTap: () {
-                          context
-                              .read<OutboundBloc>()
-                              .add(SelectedGroupChangeEvent(allGroup));
-                          context
-                              .read<OutboundBloc>()
-                              .add(const SortHandlersEvent((Col.active, -1)));
-                          GoRouter.of(context).go('/node');
-                          (outboundTableKey.currentState
-                                  as OutboundTableState)
-                              .scrollToTop();
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: SizedBox(
-                              height: 54,
-                              child: _NodeListItem(
-                                  handler: snapshot.data![index])),
-                        )),
-                  );
-                },
-              );
+        stream: context.watch<OutboundRepo>().getHandlersStream(selected: true),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data!.isEmpty) {
+              return const Center(child: AddMenuAnchor(elevatedButton: true));
             }
-            return const SizedBox();
-          }),
+            return ListView.separated(
+              physics: const ClampingScrollPhysics(),
+              shrinkWrap: true,
+              separatorBuilder: (context, index) =>
+                  Divider(height: 1, color: Colors.grey.withOpacity(0.1)),
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                return Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: () {
+                      context.read<OutboundBloc>().add(
+                        SelectedGroupChangeEvent(allGroup),
+                      );
+                      context.read<OutboundBloc>().add(
+                        const SortHandlersEvent((Col.active, -1)),
+                      );
+                      GoRouter.of(context).go('/node');
+                      (outboundTableKey.currentState as OutboundTableState)
+                          .scrollToTop();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: SizedBox(
+                        height: 54,
+                        child: _NodeListItem(handler: snapshot.data![index]),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          }
+          return const SizedBox();
+        },
+      ),
     );
     // } else {
     //   return SizedBox();
@@ -106,36 +105,32 @@ class ActiveNodes extends StatelessWidget {
       return const SizedBox();
     }
     return HomeCard(
-        title: AppLocalizations.of(context)!.activeNodes,
-        icon: Icons.outbound,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: desktopPlatforms ? 227 : 235),
+      title: AppLocalizations.of(context)!.activeNodes,
+      icon: Icons.outbound,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: desktopPlatforms ? 227 : 235),
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: true),
           child: ListView.separated(
-              shrinkWrap: true,
-              physics: const ClampingScrollPhysics(),
-              separatorBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Divider(
-                      height: 1,
-                      color: Colors.grey.withOpacity(0.1),
-                    ),
-                  ),
-              itemCount: realtime.nodeInfos.length,
-              itemBuilder: (context, index) {
-                final nodeInfo = realtime.nodeInfos[index];
-                return NodeCard(
-                  nodeInfo: nodeInfo,
-                );
-              }),
-        ));
+            shrinkWrap: true,
+            physics: const ClampingScrollPhysics(),
+            separatorBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Divider(height: 1, color: Colors.grey.withOpacity(0.1)),
+            ),
+            itemCount: realtime.nodeInfos.length,
+            itemBuilder: (context, index) {
+              final nodeInfo = realtime.nodeInfos[index];
+              return NodeCard(nodeInfo: nodeInfo);
+            },
+          ),
+        ),
+      ),
+    );
   }
 }
 
-enum NodesHelperSegment {
-  fastest,
-  lowestLatency,
-  recent,
-}
+enum NodesHelperSegment { fastest, lowestLatency, recent }
 
 class NodesHelper extends StatefulWidget {
   const NodesHelper({super.key});
@@ -212,151 +207,151 @@ class _NodesHelperState extends State<NodesHelper> {
       _handlerStream = outboundRepo
           .getHandlersStream(orderBySpeed1MBDesc: true, limit: 10, usable: true)
           .listen((handlers) {
-        if (mounted) {
-          setState(() {
-            _handlers = handlers;
+            if (mounted) {
+              setState(() {
+                _handlers = handlers;
+              });
+            }
           });
-        }
-      });
     } else if (_selectedSegment == NodesHelperSegment.lowestLatency) {
       _handlerStream = outboundRepo
           .getHandlersStream(orderByPingAsc: true, limit: 10, usable: true)
           .listen((handlers) {
-        if (mounted) {
-          setState(() {
-            _handlers = handlers;
+            if (mounted) {
+              setState(() {
+                _handlers = handlers;
+              });
+            }
           });
-        }
-      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return HomeCard(
-        title: AppLocalizations.of(context)!.recommendedNodes,
-        icon: Icons.recommend_outlined,
-        child: Expanded(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Segmented control
-              SegmentedButton<NodesHelperSegment>(
-                segments: [
-                  ButtonSegment(
-                    value: NodesHelperSegment.fastest,
-                    label: Text(
-                      AppLocalizations.of(context)!.speed,
-                    ),
-                    icon: const Icon(Icons.speed, size: 16),
-                  ),
-                  ButtonSegment(
-                    value: NodesHelperSegment.lowestLatency,
-                    label: Text(AppLocalizations.of(context)!.latency),
-                    icon: const Icon(Icons.network_check, size: 16),
-                  ),
-                  ButtonSegment(
-                    value: NodesHelperSegment.recent,
-                    label: Text(AppLocalizations.of(context)!.recent),
-                    icon: const Icon(Icons.history, size: 16),
-                  ),
-                ],
-                selected: {_selectedSegment},
-                onSelectionChanged: (Set<NodesHelperSegment> set) {
-                  setState(() {
-                    _selectedSegment = set.first;
-                    context
-                        .read<SharedPreferences>()
-                        .setNodesHelperSegment(_selectedSegment);
-                    _loadHandlers();
-                  });
-                },
-              ),
-              const SizedBox(height: 10),
-              // Node list
-              if (_handlers.isEmpty)
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: SizedBox(),
-                  ),
-                )
-              else
-                Expanded(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    physics: const ClampingScrollPhysics(),
-                    separatorBuilder: (context, index) => Divider(
-                      height: 1,
-                      color: Colors.grey.withOpacity(0.1),
-                    ),
-                    itemCount: context.read<MyLayout>().isCompact
-                        ? min(3, _handlers.length)
-                        : _handlers.length,
-                    itemBuilder: (context, index) {
-                      final manualSelect = context
-                              .watch<ProxySelectorBloc>()
-                              .state
-                              .proxySelectorMode ==
-                          ProxySelectorMode.manual;
-                      return SizedBox(
-                        // height: 50,
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: manualSelect
-                                ? () {
-                                    final handler = _handlers[index];
-                                    context
-                                        .read<SharedPreferences>()
-                                        .addRecentlyUsedNodeId(handler.id);
-                                    if (_selectedSegment ==
-                                        NodesHelperSegment.recent) {
-                                      _loadRecentHandlers();
-                                    }
-                                    context.read<OutboundBloc>().add(
-                                          SwitchHandlerEvent(
-                                              handler, !handler.selected),
-                                        );
+      title: AppLocalizations.of(context)!.recommendedNodes,
+      icon: Icons.recommend_outlined,
+      child: Expanded(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Segmented control
+            SegmentedButton<NodesHelperSegment>(
+              segments: [
+                ButtonSegment(
+                  value: NodesHelperSegment.fastest,
+                  label: Text(AppLocalizations.of(context)!.speed),
+                  icon: const Icon(Icons.speed, size: 16),
+                ),
+                ButtonSegment(
+                  value: NodesHelperSegment.lowestLatency,
+                  label: Text(AppLocalizations.of(context)!.latency),
+                  icon: const Icon(Icons.network_check, size: 16),
+                ),
+                ButtonSegment(
+                  value: NodesHelperSegment.recent,
+                  label: Text(AppLocalizations.of(context)!.recent),
+                  icon: const Icon(Icons.history, size: 16),
+                ),
+              ],
+              selected: {_selectedSegment},
+              onSelectionChanged: (Set<NodesHelperSegment> set) {
+                setState(() {
+                  _selectedSegment = set.first;
+                  context.read<SharedPreferences>().setNodesHelperSegment(
+                    _selectedSegment,
+                  );
+                  _loadHandlers();
+                });
+              },
+            ),
+            const SizedBox(height: 10),
+            // Node list
+            if (_handlers.isEmpty)
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: SizedBox(),
+                ),
+              )
+            else
+              Expanded(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  separatorBuilder: (context, index) =>
+                      Divider(height: 1, color: Colors.grey.withOpacity(0.1)),
+                  itemCount: context.read<MyLayout>().isCompact
+                      ? min(3, _handlers.length)
+                      : _handlers.length,
+                  itemBuilder: (context, index) {
+                    final manualSelect =
+                        context
+                            .watch<ProxySelectorBloc>()
+                            .state
+                            .proxySelectorMode ==
+                        ProxySelectorMode.manual;
+                    return SizedBox(
+                      // height: 50,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: manualSelect
+                              ? () {
+                                  final handler = _handlers[index];
+                                  context
+                                      .read<SharedPreferences>()
+                                      .addRecentlyUsedNodeId(handler.id);
+                                  if (_selectedSegment ==
+                                      NodesHelperSegment.recent) {
+                                    _loadRecentHandlers();
                                   }
-                                : null,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                    child: _NodeListItem(
-                                        handler: _handlers[index])),
-                                const SizedBox(width: 4),
-                                if (manualSelect)
-                                  Transform.scale(
-                                    scale: 0.8,
-                                    child: Switch(
-                                        value: _handlers[index].selected,
-                                        onChanged: (value) {
-                                          final handler = _handlers[index];
-                                          context
-                                              .read<SharedPreferences>()
-                                              .addRecentlyUsedNodeId(
-                                                  handler.id);
-                                          if (_selectedSegment ==
-                                              NodesHelperSegment.recent) {
-                                            _loadRecentHandlers();
-                                          }
-                                          context.read<OutboundBloc>().add(
-                                              SwitchHandlerEvent(
-                                                  handler, value));
-                                        }),
-                                  )
-                              ],
-                            ),
+                                  context.read<OutboundBloc>().add(
+                                    SwitchHandlerEvent(
+                                      handler,
+                                      !handler.selected,
+                                    ),
+                                  );
+                                }
+                              : null,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: _NodeListItem(handler: _handlers[index]),
+                              ),
+                              const SizedBox(width: 4),
+                              if (manualSelect)
+                                Transform.scale(
+                                  scale: 0.8,
+                                  child: Switch(
+                                    value: _handlers[index].selected,
+                                    onChanged: (value) {
+                                      final handler = _handlers[index];
+                                      context
+                                          .read<SharedPreferences>()
+                                          .addRecentlyUsedNodeId(handler.id);
+                                      if (_selectedSegment ==
+                                          NodesHelperSegment.recent) {
+                                        _loadRecentHandlers();
+                                      }
+                                      context.read<OutboundBloc>().add(
+                                        SwitchHandlerEvent(handler, value),
+                                      );
+                                    },
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
-            ],
-          ),
-        ));
+              ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -388,15 +383,18 @@ class _NodeListItemState extends State<_NodeListItem> {
       if (pingMode == PingMode.Real) {
         try {
           final res = await xApiClient.handlerUsable(
-              api_pb.HandlerUsableRequest(handler: handler.toConfig()));
+            api_pb.HandlerUsableRequest(handler: handler.toConfig()),
+          );
           final ok = res.ping > 0;
-          await repo.updateHandler(handler.id,
-              ok: ok ? 1 : -1,
-              ping: res.ping,
-              serverIp: res.ip,
-              country: res.country,
-              pingTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-              speed: ok ? null : 0);
+          await repo.updateHandler(
+            handler.id,
+            ok: ok ? 1 : -1,
+            ping: res.ping,
+            serverIp: res.ip,
+            country: res.country,
+            pingTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+            speed: ok ? null : 0,
+          );
         } catch (e) {
           logger.e('handlerUsable error', error: e);
         }
@@ -416,12 +414,15 @@ class _NodeListItemState extends State<_NodeListItem> {
           }
           final ping = Tm.instance.state == TmStatus.connected
               ? await xController.rttTest(addr, port)
-              : await xApiClient
-                  .rtt(api_pb.RttTestRequest(addr: addr, port: port));
-          await repo.updateHandler(handler.id,
-              ok: ping > 0 ? 1 : -1,
-              ping: ping,
-              pingTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000);
+              : await xApiClient.rtt(
+                  api_pb.RttTestRequest(addr: addr, port: port),
+                );
+          await repo.updateHandler(
+            handler.id,
+            ok: ping > 0 ? 1 : -1,
+            ping: ping,
+            pingTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+          );
         } catch (e) {
           logger.e('rtt error', error: e);
         }
@@ -429,17 +430,20 @@ class _NodeListItemState extends State<_NodeListItem> {
 
       // Speed test
       try {
-        final resStream = await xApiClient
-            .speedTest(api_pb.SpeedTestRequest(handlers: [handler.toConfig()]));
+        final resStream = await xApiClient.speedTest(
+          api_pb.SpeedTestRequest(handlers: [handler.toConfig()]),
+        );
         await for (final res in resStream) {
           if (!mounted) return;
           final id = int.parse(res.tag);
           final ok = res.down > 0 ? 1 : -1;
-          await repo.updateHandler(id,
-              ping: ok > 0 ? null : 0,
-              speed: bytesToMbps(res.down.toInt()),
-              speedTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-              ok: ok);
+          await repo.updateHandler(
+            id,
+            ping: ok > 0 ? null : 0,
+            speed: bytesToMbps(res.down.toInt()),
+            speedTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+            ok: ok,
+          );
           await xController.updateHandlerSpeed(res.tag, res.down.toInt());
         }
       } catch (e) {
@@ -455,8 +459,9 @@ class _NodeListItemState extends State<_NodeListItem> {
   @override
   Widget build(BuildContext context) {
     final handler = widget.handler;
-    final speedText =
-        handler.speed > 0 ? '${handler.speed.toStringAsFixed(1)} Mbps' : '--';
+    final speedText = handler.speed > 0
+        ? '${handler.speed.toStringAsFixed(1)} Mbps'
+        : '--';
     final latencyText = handler.ping > 0 ? '${handler.ping}ms' : '--';
 
     return Padding(
@@ -478,9 +483,9 @@ class _NodeListItemState extends State<_NodeListItem> {
                 Text(
                   handler.displayProtocol(),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
-                        fontSize: 10,
-                      ),
+                    color: Theme.of(context).colorScheme.outline,
+                    fontSize: 10,
+                  ),
                 ),
               ],
             ),
@@ -493,9 +498,7 @@ class _NodeListItemState extends State<_NodeListItem> {
               onTap: _isTesting ? null : _runTests,
               borderRadius: BorderRadius.circular(8),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 4,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: _isTesting
                     ? const Center(
                         child: Padding(
@@ -511,17 +514,11 @@ class _NodeListItemState extends State<_NodeListItem> {
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
-                                Icons.speed,
-                                size: 14,
-                                color: XBlue,
-                              ),
+                              const Icon(Icons.speed, size: 14, color: XBlue),
                               const SizedBox(width: 4),
                               Text(
                                 speedText,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
+                                style: Theme.of(context).textTheme.bodySmall
                                     ?.copyWith(
                                       color: XBlue,
                                       fontWeight: FontWeight.w600,
@@ -537,20 +534,18 @@ class _NodeListItemState extends State<_NodeListItem> {
                               Icon(
                                 Icons.network_check_rounded,
                                 size: 14,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 latencyText,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
+                                style: Theme.of(context).textTheme.bodySmall
                                     ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                                       fontSize: 11,
                                     ),
                               ),

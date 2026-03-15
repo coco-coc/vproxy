@@ -44,35 +44,43 @@ class _TransportInputState extends State<_TransportInput>
       case TransportConfig_Protocol.tcp:
         ret.tcp =
             (_protocolWidgetKey.currentState as TransportProtocolConfigGetter)
-                .transportProtocolConfig as TcpConfig;
+                    .transportProtocolConfig
+                as TcpConfig;
       case TransportConfig_Protocol.kcp:
         ret.kcp =
             (_protocolWidgetKey.currentState as TransportProtocolConfigGetter)
-                .transportProtocolConfig as KcpConfig;
+                    .transportProtocolConfig
+                as KcpConfig;
       case TransportConfig_Protocol.websocket:
         ret.websocket =
             (_protocolWidgetKey.currentState as TransportProtocolConfigGetter)
-                .transportProtocolConfig as WebsocketConfig;
+                    .transportProtocolConfig
+                as WebsocketConfig;
       case TransportConfig_Protocol.http:
         ret.http =
             (_protocolWidgetKey.currentState as TransportProtocolConfigGetter)
-                .transportProtocolConfig as HttpConfig;
+                    .transportProtocolConfig
+                as HttpConfig;
       case TransportConfig_Protocol.quic:
         ret.quic =
             (_protocolWidgetKey.currentState as TransportProtocolConfigGetter)
-                .transportProtocolConfig as quic.QuicConfig;
+                    .transportProtocolConfig
+                as quic.QuicConfig;
       case TransportConfig_Protocol.grpc:
         ret.grpc =
             (_protocolWidgetKey.currentState as TransportProtocolConfigGetter)
-                .transportProtocolConfig as GrpcConfig;
+                    .transportProtocolConfig
+                as GrpcConfig;
       case TransportConfig_Protocol.httpupgrade:
         ret.httpupgrade =
             (_protocolWidgetKey.currentState as TransportProtocolConfigGetter)
-                .transportProtocolConfig as HttpUpgradeConfig;
+                    .transportProtocolConfig
+                as HttpUpgradeConfig;
       case TransportConfig_Protocol.splithttp:
         ret.splithttp =
             (_protocolWidgetKey.currentState as TransportProtocolConfigGetter)
-                .transportProtocolConfig as SplitHttpConfig;
+                    .transportProtocolConfig
+                as SplitHttpConfig;
       default:
     }
     if (_security == TransportConfig_Security.tls) {
@@ -84,25 +92,31 @@ class _TransportInputState extends State<_TransportInput>
   }
 
   final _dropdownMenuProtocolEntries = TransportConfig_Protocol.values
-      .where((e) =>
-          e != TransportConfig_Protocol.http &&
-          e != TransportConfig_Protocol.quic)
-      .map<DropdownMenuEntry<TransportConfig_Protocol>>(
-          (TransportConfig_Protocol p) {
-    return DropdownMenuEntry<TransportConfig_Protocol>(
-      label: p.label,
-      value: p,
-    );
-  }).toList();
+      .where(
+        (e) =>
+            e != TransportConfig_Protocol.http &&
+            e != TransportConfig_Protocol.quic,
+      )
+      .map<DropdownMenuEntry<TransportConfig_Protocol>>((
+        TransportConfig_Protocol p,
+      ) {
+        return DropdownMenuEntry<TransportConfig_Protocol>(
+          label: p.label,
+          value: p,
+        );
+      })
+      .toList();
 
   final _dropdownMenuSecurityEntries = TransportConfig_Security.values
-      .map<DropdownMenuEntry<TransportConfig_Security>>(
-          (TransportConfig_Security s) {
-    return DropdownMenuEntry<TransportConfig_Security>(
-      label: s.label,
-      value: s,
-    );
-  }).toList();
+      .map<DropdownMenuEntry<TransportConfig_Security>>((
+        TransportConfig_Security s,
+      ) {
+        return DropdownMenuEntry<TransportConfig_Security>(
+          label: s.label,
+          value: s,
+        );
+      })
+      .toList();
 
   @override
   void initState() {
@@ -139,53 +153,67 @@ class _TransportInputState extends State<_TransportInput>
   @override
   Widget build(BuildContext context) {
     return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          DropdownMenu<TransportConfig_Protocol>(
-              requestFocusOnTap: false,
-              initialSelection: _protocol,
-              onSelected: (TransportConfig_Protocol? l) => _setProtocol(l),
-              label: Text(AppLocalizations.of(context)!.protocol),
-              dropdownMenuEntries: _dropdownMenuProtocolEntries),
-          const Gap(10),
-          if (_protocol == TransportConfig_Protocol.tcp)
-            _TransportProtocolTcp(
-                initialConfig: widget.config?.tcp, key: _protocolWidgetKey),
-          if (_protocol == TransportConfig_Protocol.kcp)
-            _TransportProtocolKcp(
-                initialConfig: widget.config?.kcp, key: _protocolWidgetKey),
-          if (_protocol == TransportConfig_Protocol.websocket)
-            _TransportProtocolWebsocket(
-                initialConfig: widget.config?.websocket,
-                key: _protocolWidgetKey),
-          if (_protocol == TransportConfig_Protocol.grpc)
-            _TransportProtocolGrpc(
-                initialConfig: widget.config?.grpc, key: _protocolWidgetKey),
-          if (_protocol == TransportConfig_Protocol.httpupgrade)
-            _TransportProtocolHttpUpgrade(
-                initialConfig: widget.config?.httpupgrade,
-                key: _protocolWidgetKey),
-          if (_protocol == TransportConfig_Protocol.splithttp)
-            _TransportProtocolSplitHttp(
-                config: widget.config?.splithttp,
-                key: _protocolWidgetKey,
-                server: widget.server),
-          const Gap(10),
-          DropdownMenu<TransportConfig_Security>(
-              width: 160,
-              requestFocusOnTap: false,
-              initialSelection: _security,
-              dropdownMenuEntries: _dropdownMenuSecurityEntries,
-              onSelected: (TransportConfig_Security? s) => _setSecurity(s),
-              label: const Text('Security')),
-          const Gap(10),
-          if (_security == TransportConfig_Security.tls)
-            _TransportSecurityTls(config: tlsConfig, server: widget.server),
-          if (_security == TransportConfig_Security.reality)
-            _TransportSecurityReality(
-                config: realityConfig, server: widget.server),
-        ]);
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownMenu<TransportConfig_Protocol>(
+          requestFocusOnTap: false,
+          initialSelection: _protocol,
+          onSelected: (TransportConfig_Protocol? l) => _setProtocol(l),
+          label: Text(AppLocalizations.of(context)!.protocol),
+          dropdownMenuEntries: _dropdownMenuProtocolEntries,
+        ),
+        const Gap(10),
+        if (_protocol == TransportConfig_Protocol.tcp)
+          _TransportProtocolTcp(
+            initialConfig: widget.config?.tcp,
+            key: _protocolWidgetKey,
+          ),
+        if (_protocol == TransportConfig_Protocol.kcp)
+          _TransportProtocolKcp(
+            initialConfig: widget.config?.kcp,
+            key: _protocolWidgetKey,
+          ),
+        if (_protocol == TransportConfig_Protocol.websocket)
+          _TransportProtocolWebsocket(
+            initialConfig: widget.config?.websocket,
+            key: _protocolWidgetKey,
+          ),
+        if (_protocol == TransportConfig_Protocol.grpc)
+          _TransportProtocolGrpc(
+            initialConfig: widget.config?.grpc,
+            key: _protocolWidgetKey,
+          ),
+        if (_protocol == TransportConfig_Protocol.httpupgrade)
+          _TransportProtocolHttpUpgrade(
+            initialConfig: widget.config?.httpupgrade,
+            key: _protocolWidgetKey,
+          ),
+        if (_protocol == TransportConfig_Protocol.splithttp)
+          _TransportProtocolSplitHttp(
+            config: widget.config?.splithttp,
+            key: _protocolWidgetKey,
+            server: widget.server,
+          ),
+        const Gap(10),
+        DropdownMenu<TransportConfig_Security>(
+          width: 160,
+          requestFocusOnTap: false,
+          initialSelection: _security,
+          dropdownMenuEntries: _dropdownMenuSecurityEntries,
+          onSelected: (TransportConfig_Security? s) => _setSecurity(s),
+          label: const Text('Security'),
+        ),
+        const Gap(10),
+        if (_security == TransportConfig_Security.tls)
+          _TransportSecurityTls(config: tlsConfig, server: widget.server),
+        if (_security == TransportConfig_Security.reality)
+          _TransportSecurityReality(
+            config: realityConfig,
+            server: widget.server,
+          ),
+      ],
+    );
   }
 }
 

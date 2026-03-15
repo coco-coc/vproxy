@@ -100,8 +100,9 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
     with OutboundHandlerConfigGetter {
   ProxyProtocolLabel _selectedProtocolLabel = ProxyProtocolLabel.vmess;
   late DropdownMenu<ProxyProtocolLabel> _menu;
-  VmessClientConfig _vmessConfig =
-      VmessClientConfig(security: SecurityType.SecurityType_AUTO);
+  VmessClientConfig _vmessConfig = VmessClientConfig(
+    security: SecurityType.SecurityType_AUTO,
+  );
   TrojanClientConfig _trojanConfig = TrojanClientConfig();
   VlessClientConfig _vlessConfig = VlessClientConfig(encryption: "none");
   ShadowsocksClientConfig _shadowsocksConfig = ShadowsocksClientConfig();
@@ -135,17 +136,16 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
     // }
     _enableMux = widget.config?.enableMux ?? false;
     _enableUdpOverTcp = widget.config?.uot ?? false;
-    _domainStrategy =
-        widget.config?.domainStrategy ?? DomainStrategy.PreferIPv4;
+    _domainStrategy = widget.config?.domainStrategy ?? DomainStrategy.Speed;
     if (widget.config?.muxConfig != null) {
       _muxConcurrencyController.text =
           (widget.config!.muxConfig.maxConcurrency == 0
-              ? '2'
-              : widget.config!.muxConfig.maxConcurrency.toString());
+          ? '2'
+          : widget.config!.muxConfig.maxConcurrency.toString());
       _muxConnectionController.text =
           (widget.config!.muxConfig.maxConnection == 0
-              ? '16'
-              : widget.config!.muxConfig.maxConnection.toString());
+          ? '16'
+          : widget.config!.muxConfig.maxConnection.toString());
     } else {
       _muxConcurrencyController.text = '2';
       _muxConnectionController.text = '16';
@@ -255,33 +255,35 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
       ).applyDefaults(Theme.of(context).inputDecorationTheme),
     );
     _menu = DropdownMenu<ProxyProtocolLabel>(
-        textStyle: const TextStyle(color: XBlue),
-        inputDecorationTheme: const InputDecorationTheme(
-          labelStyle: TextStyle(color: XBlue),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: XBlue, width: 1.5),
-          ),
+      textStyle: const TextStyle(color: XBlue),
+      inputDecorationTheme: const InputDecorationTheme(
+        labelStyle: TextStyle(color: XBlue),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: XBlue, width: 1.5),
         ),
-        requestFocusOnTap: false,
-        initialSelection: _selectedProtocolLabel,
-        label: Text(AppLocalizations.of(context)!.protocol),
-        onSelected: (ProxyProtocolLabel? l) {
-          if (l != null) {
-            _selectedProtocolLabel = l;
-            // if (l == ProxyProtocolLabel.hysteria2) {
-            //   _transportConfig.clear();
-            // }
-          }
-          setState(() {});
-        },
-        dropdownMenuEntries: ProxyProtocolLabel.values
-            .where((p) => p != ProxyProtocolLabel.dokodemo)
-            .map<DropdownMenuEntry<ProxyProtocolLabel>>((ProxyProtocolLabel p) {
-          return DropdownMenuEntry<ProxyProtocolLabel>(
-            label: p.label,
-            value: p,
-          );
-        }).toList());
+      ),
+      requestFocusOnTap: false,
+      initialSelection: _selectedProtocolLabel,
+      label: Text(AppLocalizations.of(context)!.protocol),
+      onSelected: (ProxyProtocolLabel? l) {
+        if (l != null) {
+          _selectedProtocolLabel = l;
+          // if (l == ProxyProtocolLabel.hysteria2) {
+          //   _transportConfig.clear();
+          // }
+        }
+        setState(() {});
+      },
+      dropdownMenuEntries: ProxyProtocolLabel.values
+          .where((p) => p != ProxyProtocolLabel.dokodemo)
+          .map<DropdownMenuEntry<ProxyProtocolLabel>>((ProxyProtocolLabel p) {
+            return DropdownMenuEntry<ProxyProtocolLabel>(
+              label: p.label,
+              value: p,
+            );
+          })
+          .toList(),
+    );
   }
 
   @override
@@ -312,9 +314,9 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
                 return null;
               },
               decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.address,
-                      hintText: AppLocalizations.of(context)!.ipOrDomain)
-                  .applyDefaults(Theme.of(context).inputDecorationTheme),
+                labelText: AppLocalizations.of(context)!.address,
+                hintText: AppLocalizations.of(context)!.ipOrDomain,
+              ).applyDefaults(Theme.of(context).inputDecorationTheme),
             ),
             boxH10,
             TextFormField(
@@ -333,38 +335,42 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
               },
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.port,
-                      hintText: '443')
-                  .applyDefaults(Theme.of(context).inputDecorationTheme),
+                labelText: AppLocalizations.of(context)!.port,
+                hintText: '443',
+              ).applyDefaults(Theme.of(context).inputDecorationTheme),
             ),
             const Gap(10),
             DropdownMenu(
-                label: const Text('Domain Strategy'),
-                initialSelection: _domainStrategy,
-                onSelected: (value) {
-                  setState(() {
-                    _domainStrategy = value!;
-                  });
-                },
-                dropdownMenuEntries: DomainStrategy.values
-                    .map(
-                        (e) => DropdownMenuEntry(label: e.toString(), value: e))
-                    .toList()),
+              label: const Text('Domain Strategy'),
+              initialSelection: _domainStrategy,
+              onSelected: (value) {
+                setState(() {
+                  _domainStrategy = value!;
+                });
+              },
+              dropdownMenuEntries: DomainStrategy.values
+                  .map((e) => DropdownMenuEntry(label: e.toString(), value: e))
+                  .toList(),
+            ),
             const Gap(4),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Text(AppLocalizations.of(context)!.domainStrategyDesc,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      )),
+              child: Text(
+                AppLocalizations.of(context)!.domainStrategyDesc,
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
             ),
             const Gap(10),
             if (_selectedProtocolLabel != ProxyProtocolLabel.hysteria2)
               Column(
                 children: [
                   SwitchListTile(
-                    title: Text('Mux',
-                        style: Theme.of(context).textTheme.titleMedium),
+                    title: Text(
+                      'Mux',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                     value: _enableMux,
                     onChanged: (v) {
                       setState(() {
@@ -381,20 +387,22 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
                             child: TextFormField(
                               controller: _muxConcurrencyController,
                               inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
+                                FilteringTextInputFormatter.digitsOnly,
                               ],
                               keyboardType: TextInputType.number,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return AppLocalizations.of(context)!
-                                      .fieldRequired;
+                                  return AppLocalizations.of(
+                                    context,
+                                  )!.fieldRequired;
                                 }
                                 return null;
                               },
                               decoration: InputDecoration(
                                 labelText: 'Max Concurrency',
-                                helperText: AppLocalizations.of(context)!
-                                    .maxConcurrency,
+                                helperText: AppLocalizations.of(
+                                  context,
+                                )!.maxConcurrency,
                               ),
                             ),
                           ),
@@ -403,20 +411,22 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
                             child: TextFormField(
                               controller: _muxConnectionController,
                               inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
+                                FilteringTextInputFormatter.digitsOnly,
                               ],
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return AppLocalizations.of(context)!
-                                      .fieldRequired;
+                                  return AppLocalizations.of(
+                                    context,
+                                  )!.fieldRequired;
                                 }
                                 return null;
                               },
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 labelText: 'Max Connection',
-                                helperText:
-                                    AppLocalizations.of(context)!.maxConnection,
+                                helperText: AppLocalizations.of(
+                                  context,
+                                )!.maxConnection,
                               ),
                             ),
                           ),
@@ -431,15 +441,16 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
                           ProxyProtocolLabel.shadowsocks2022 ||
                       _selectedProtocolLabel == ProxyProtocolLabel.vless)
                     SwitchListTile(
-                      title: Text('UDP over TCP',
-                          style: Theme.of(context).textTheme.titleMedium),
-                      subtitle: Text(AppLocalizations.of(context)!.uotDesc,
-                          style:
-                              Theme.of(context).textTheme.bodySmall!.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                  )),
+                      title: Text(
+                        'UDP over TCP',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      subtitle: Text(
+                        AppLocalizations.of(context)!.uotDesc,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
                       value: _enableUdpOverTcp,
                       onChanged: (v) {
                         setState(() {
@@ -475,24 +486,21 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
                 children: [
                   Row(
                     children: [
-                      const Expanded(
-                          child: Divider(
-                        height: 1,
-                      )),
+                      const Expanded(child: Divider(height: 1)),
                       const Gap(10),
-                      Text('Stream',
-                          style: Theme.of(context).textTheme.titleSmall),
+                      Text(
+                        'Stream',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
                       const Gap(10),
-                      const Expanded(
-                          child: Divider(
-                        height: 1,
-                      )),
+                      const Expanded(child: Divider(height: 1)),
                     ],
                   ),
                   const Gap(10),
                   _TransportInput(
-                      key: _transportInputGlobalKey,
-                      config: widget.config?.transport)
+                    key: _transportInputGlobalKey,
+                    config: widget.config?.transport,
+                  ),
                 ],
               ),
           ],

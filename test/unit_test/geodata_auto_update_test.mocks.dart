@@ -3,26 +3,27 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i9;
-import 'dart:typed_data' as _i11;
+import 'dart:async' as _i10;
+import 'dart:typed_data' as _i12;
 
-import 'package:grpc/grpc.dart' as _i5;
+import 'package:grpc/grpc.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i16;
-import 'package:shared_preferences/shared_preferences.dart' as _i8;
-import 'package:tm/protos/app/api/api.pbgrpc.dart' as _i4;
-import 'package:tm/protos/common/geo/geo.pb.dart' as _i14;
-import 'package:tm/protos/protos/dns.pb.dart' as _i20;
-import 'package:tm/protos/protos/geo.pb.dart' as _i15;
-import 'package:tm/protos/protos/inbound.pb.dart' as _i13;
-import 'package:tm/protos/protos/outbound.pb.dart' as _i12;
-import 'package:tm/protos/protos/router.pb.dart' as _i19;
-import 'package:tm/protos/protos/server/server.pb.dart' as _i6;
-import 'package:tm/protos/protos/sysproxy.pb.dart' as _i17;
+import 'package:mockito/src/dummies.dart' as _i17;
+import 'package:shared_preferences/shared_preferences.dart' as _i9;
+import 'package:tm/protos/app/api/api.pbgrpc.dart' as _i5;
+import 'package:tm/protos/common/geo/geo.pb.dart' as _i15;
+import 'package:tm/protos/protos/dns.pb.dart' as _i21;
+import 'package:tm/protos/protos/geo.pb.dart' as _i16;
+import 'package:tm/protos/protos/inbound.pb.dart' as _i14;
+import 'package:tm/protos/protos/outbound.pb.dart' as _i13;
+import 'package:tm/protos/protos/router.pb.dart' as _i20;
+import 'package:tm/protos/protos/server/server.pb.dart' as _i7;
+import 'package:tm/protos/protos/sysproxy.pb.dart' as _i18;
+import 'package:tm/protos/protos/tls/certificate.pb.dart' as _i4;
 import 'package:vx/app/outbound/outbound_repo.dart' as _i2;
-import 'package:vx/app/routing/repo.dart' as _i18;
-import 'package:vx/data/database.dart' as _i7;
-import 'package:vx/utils/download.dart' as _i10;
+import 'package:vx/app/routing/repo.dart' as _i19;
+import 'package:vx/data/database.dart' as _i8;
+import 'package:vx/utils/download.dart' as _i11;
 import 'package:vx/utils/xapi_client.dart' as _i3;
 
 // ignore_for_file: type=lint
@@ -38,626 +39,547 @@ import 'package:vx/utils/xapi_client.dart' as _i3;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakeOutboundRepo_0 extends _i1.SmartFake implements _i2.OutboundRepo {
-  _FakeOutboundRepo_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeOutboundRepo_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeXApiClient_1 extends _i1.SmartFake implements _i3.XApiClient {
-  _FakeXApiClient_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeXApiClient_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeDownloadResponse_2 extends _i1.SmartFake
-    implements _i4.DownloadResponse {
-  _FakeDownloadResponse_2(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+class _FakeCertificate_2 extends _i1.SmartFake implements _i4.Certificate {
+  _FakeCertificate_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeHandlerUsableResponse_3 extends _i1.SmartFake
-    implements _i4.HandlerUsableResponse {
-  _FakeHandlerUsableResponse_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+class _FakeDownloadResponse_3 extends _i1.SmartFake
+    implements _i5.DownloadResponse {
+  _FakeDownloadResponse_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeResponseStream_4<R> extends _i1.SmartFake
-    implements _i5.ResponseStream<R> {
-  _FakeResponseStream_4(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+class _FakeHandlerUsableResponse_4 extends _i1.SmartFake
+    implements _i5.HandlerUsableResponse {
+  _FakeHandlerUsableResponse_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeVproxyStatusResponse_5 extends _i1.SmartFake
-    implements _i4.VproxyStatusResponse {
-  _FakeVproxyStatusResponse_5(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+class _FakeResponseStream_5<R> extends _i1.SmartFake
+    implements _i6.ResponseStream<R> {
+  _FakeResponseStream_5(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeServerConfig_6 extends _i1.SmartFake implements _i6.ServerConfig {
-  _FakeServerConfig_6(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+class _FakeVproxyStatusResponse_6 extends _i1.SmartFake
+    implements _i5.VproxyStatusResponse {
+  _FakeVproxyStatusResponse_6(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeUpdateSubscriptionResponse_7 extends _i1.SmartFake
-    implements _i4.UpdateSubscriptionResponse {
-  _FakeUpdateSubscriptionResponse_7(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+class _FakeServerConfig_7 extends _i1.SmartFake implements _i7.ServerConfig {
+  _FakeServerConfig_7(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeDecodeResponse_8 extends _i1.SmartFake
-    implements _i4.DecodeResponse {
-  _FakeDecodeResponse_8(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+class _FakeUpdateSubscriptionResponse_8 extends _i1.SmartFake
+    implements _i5.UpdateSubscriptionResponse {
+  _FakeUpdateSubscriptionResponse_8(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeDeployResponse_9 extends _i1.SmartFake
-    implements _i4.DeployResponse {
-  _FakeDeployResponse_9(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+class _FakeDecodeResponse_9 extends _i1.SmartFake
+    implements _i5.DecodeResponse {
+  _FakeDecodeResponse_9(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeGenerateCertResponse_10 extends _i1.SmartFake
-    implements _i4.GenerateCertResponse {
-  _FakeGenerateCertResponse_10(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+class _FakeDeployResponse_10 extends _i1.SmartFake
+    implements _i5.DeployResponse {
+  _FakeDeployResponse_10(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeParseClashRuleFileResponse_11 extends _i1.SmartFake
-    implements _i4.ParseClashRuleFileResponse {
-  _FakeParseClashRuleFileResponse_11(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+class _FakeGenerateCertResponse_11 extends _i1.SmartFake
+    implements _i5.GenerateCertResponse {
+  _FakeGenerateCertResponse_11(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeToUrlResponse_12 extends _i1.SmartFake implements _i4.ToUrlResponse {
-  _FakeToUrlResponse_12(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+class _FakeParseClashRuleFileResponse_12 extends _i1.SmartFake
+    implements _i5.ParseClashRuleFileResponse {
+  _FakeParseClashRuleFileResponse_12(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeGenerateECHResponse_13 extends _i1.SmartFake
-    implements _i4.GenerateECHResponse {
-  _FakeGenerateECHResponse_13(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+class _FakeToUrlResponse_13 extends _i1.SmartFake implements _i5.ToUrlResponse {
+  _FakeToUrlResponse_13(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
-class _FakeDnsServer_14 extends _i1.SmartFake implements _i7.DnsServer {
-  _FakeDnsServer_14(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+class _FakeGenerateECHResponse_14 extends _i1.SmartFake
+    implements _i5.GenerateECHResponse {
+  _FakeGenerateECHResponse_14(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeDnsServer_15 extends _i1.SmartFake implements _i8.DnsServer {
+  _FakeDnsServer_15(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeDnsRecord_16 extends _i1.SmartFake implements _i8.DnsRecord {
+  _FakeDnsRecord_16(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [SharedPreferences].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockSharedPreferences extends _i1.Mock implements _i8.SharedPreferences {
-  MockSharedPreferences() {
-    _i1.throwOnMissingStub(this);
-  }
+class MockSharedPreferences extends _i1.Mock implements _i9.SharedPreferences {
+  @override
+  Set<String> getKeys() =>
+      (super.noSuchMethod(
+            Invocation.method(#getKeys, []),
+            returnValue: <String>{},
+            returnValueForMissingStub: <String>{},
+          )
+          as Set<String>);
 
   @override
-  Set<String> getKeys() => (super.noSuchMethod(
-        Invocation.method(
-          #getKeys,
-          [],
-        ),
-        returnValue: <String>{},
-      ) as Set<String>);
+  Object? get(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#get, [key]),
+            returnValueForMissingStub: null,
+          )
+          as Object?);
 
   @override
-  Object? get(String? key) => (super.noSuchMethod(Invocation.method(
-        #get,
-        [key],
-      )) as Object?);
+  bool? getBool(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#getBool, [key]),
+            returnValueForMissingStub: null,
+          )
+          as bool?);
 
   @override
-  bool? getBool(String? key) => (super.noSuchMethod(Invocation.method(
-        #getBool,
-        [key],
-      )) as bool?);
+  int? getInt(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#getInt, [key]),
+            returnValueForMissingStub: null,
+          )
+          as int?);
 
   @override
-  int? getInt(String? key) => (super.noSuchMethod(Invocation.method(
-        #getInt,
-        [key],
-      )) as int?);
+  double? getDouble(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#getDouble, [key]),
+            returnValueForMissingStub: null,
+          )
+          as double?);
 
   @override
-  double? getDouble(String? key) => (super.noSuchMethod(Invocation.method(
-        #getDouble,
-        [key],
-      )) as double?);
+  String? getString(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#getString, [key]),
+            returnValueForMissingStub: null,
+          )
+          as String?);
 
   @override
-  String? getString(String? key) => (super.noSuchMethod(Invocation.method(
-        #getString,
-        [key],
-      )) as String?);
-
-  @override
-  bool containsKey(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #containsKey,
-          [key],
-        ),
-        returnValue: false,
-      ) as bool);
+  bool containsKey(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#containsKey, [key]),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
 
   @override
   List<String>? getStringList(String? key) =>
-      (super.noSuchMethod(Invocation.method(
-        #getStringList,
-        [key],
-      )) as List<String>?);
-
-  @override
-  _i9.Future<bool> setBool(
-    String? key,
-    bool? value,
-  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setBool,
-          [
-            key,
-            value,
-          ],
-        ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+            Invocation.method(#getStringList, [key]),
+            returnValueForMissingStub: null,
+          )
+          as List<String>?);
 
   @override
-  _i9.Future<bool> setInt(
-    String? key,
-    int? value,
-  ) =>
+  _i10.Future<bool> setBool(String? key, bool? value) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setInt,
-          [
-            key,
-            value,
-          ],
-        ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+            Invocation.method(#setBool, [key, value]),
+            returnValue: _i10.Future<bool>.value(false),
+            returnValueForMissingStub: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
 
   @override
-  _i9.Future<bool> setDouble(
-    String? key,
-    double? value,
-  ) =>
+  _i10.Future<bool> setInt(String? key, int? value) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setDouble,
-          [
-            key,
-            value,
-          ],
-        ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+            Invocation.method(#setInt, [key, value]),
+            returnValue: _i10.Future<bool>.value(false),
+            returnValueForMissingStub: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
 
   @override
-  _i9.Future<bool> setString(
-    String? key,
-    String? value,
-  ) =>
+  _i10.Future<bool> setDouble(String? key, double? value) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setString,
-          [
-            key,
-            value,
-          ],
-        ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+            Invocation.method(#setDouble, [key, value]),
+            returnValue: _i10.Future<bool>.value(false),
+            returnValueForMissingStub: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
 
   @override
-  _i9.Future<bool> setStringList(
-    String? key,
-    List<String>? value,
-  ) =>
+  _i10.Future<bool> setString(String? key, String? value) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setStringList,
-          [
-            key,
-            value,
-          ],
-        ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+            Invocation.method(#setString, [key, value]),
+            returnValue: _i10.Future<bool>.value(false),
+            returnValueForMissingStub: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
 
   @override
-  _i9.Future<bool> remove(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #remove,
-          [key],
-        ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+  _i10.Future<bool> setStringList(String? key, List<String>? value) =>
+      (super.noSuchMethod(
+            Invocation.method(#setStringList, [key, value]),
+            returnValue: _i10.Future<bool>.value(false),
+            returnValueForMissingStub: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
 
   @override
-  _i9.Future<bool> commit() => (super.noSuchMethod(
-        Invocation.method(
-          #commit,
-          [],
-        ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+  _i10.Future<bool> remove(String? key) =>
+      (super.noSuchMethod(
+            Invocation.method(#remove, [key]),
+            returnValue: _i10.Future<bool>.value(false),
+            returnValueForMissingStub: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
 
   @override
-  _i9.Future<bool> clear() => (super.noSuchMethod(
-        Invocation.method(
-          #clear,
-          [],
-        ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
+  _i10.Future<bool> commit() =>
+      (super.noSuchMethod(
+            Invocation.method(#commit, []),
+            returnValue: _i10.Future<bool>.value(false),
+            returnValueForMissingStub: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
 
   @override
-  _i9.Future<void> reload() => (super.noSuchMethod(
-        Invocation.method(
-          #reload,
-          [],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+  _i10.Future<bool> clear() =>
+      (super.noSuchMethod(
+            Invocation.method(#clear, []),
+            returnValue: _i10.Future<bool>.value(false),
+            returnValueForMissingStub: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
+
+  @override
+  _i10.Future<void> reload() =>
+      (super.noSuchMethod(
+            Invocation.method(#reload, []),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 }
 
 /// A class which mocks [Downloader].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDownloader extends _i1.Mock implements _i10.Downloader {
-  MockDownloader() {
-    _i1.throwOnMissingStub(this);
-  }
-
+class MockDownloader extends _i1.Mock implements _i11.Downloader {
   @override
-  _i2.OutboundRepo get outboundRepo => (super.noSuchMethod(
-        Invocation.getter(#outboundRepo),
-        returnValue: _FakeOutboundRepo_0(
-          this,
-          Invocation.getter(#outboundRepo),
-        ),
-      ) as _i2.OutboundRepo);
-
-  @override
-  _i3.XApiClient get xApiClient => (super.noSuchMethod(
-        Invocation.getter(#xApiClient),
-        returnValue: _FakeXApiClient_1(
-          this,
-          Invocation.getter(#xApiClient),
-        ),
-      ) as _i3.XApiClient);
-
-  @override
-  _i9.Future<void> downloadMulti(
-    List<String>? urls,
-    String? dest,
-  ) =>
+  _i2.OutboundRepo get outboundRepo =>
       (super.noSuchMethod(
-        Invocation.method(
-          #downloadMulti,
-          [
-            urls,
-            dest,
-          ],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.getter(#outboundRepo),
+            returnValue: _FakeOutboundRepo_0(
+              this,
+              Invocation.getter(#outboundRepo),
+            ),
+            returnValueForMissingStub: _FakeOutboundRepo_0(
+              this,
+              Invocation.getter(#outboundRepo),
+            ),
+          )
+          as _i2.OutboundRepo);
 
   @override
-  _i9.Future<void> downloadProxyFirst(
-    String? url,
-    String? dest,
-  ) =>
+  _i3.XApiClient get xApiClient =>
       (super.noSuchMethod(
-        Invocation.method(
-          #downloadProxyFirst,
-          [
-            url,
-            dest,
-          ],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.getter(#xApiClient),
+            returnValue: _FakeXApiClient_1(
+              this,
+              Invocation.getter(#xApiClient),
+            ),
+            returnValueForMissingStub: _FakeXApiClient_1(
+              this,
+              Invocation.getter(#xApiClient),
+            ),
+          )
+          as _i3.XApiClient);
 
   @override
-  _i9.Future<void> download(
-    String? url,
-    String? dest,
-  ) =>
+  _i10.Future<void> downloadMulti(List<String>? urls, String? dest) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #download,
-          [
-            url,
-            dest,
-          ],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#downloadMulti, [urls, dest]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> downloadZip(
+  _i10.Future<void> downloadProxyFirst(String? url, String? dest) =>
+      (super.noSuchMethod(
+            Invocation.method(#downloadProxyFirst, [url, dest]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<void> download(String? url, String? dest) =>
+      (super.noSuchMethod(
+            Invocation.method(#download, [url, dest]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<void> downloadZip(
     String? url,
     String? dest, {
     bool? cleanDest = true,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #downloadZip,
-          [
-            url,
-            dest,
-          ],
-          {#cleanDest: cleanDest},
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(
+              #downloadZip,
+              [url, dest],
+              {#cleanDest: cleanDest},
+            ),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<_i11.Uint8List> downloadMemory(String? url) => (super.noSuchMethod(
-        Invocation.method(
-          #downloadMemory,
-          [url],
-        ),
-        returnValue: _i9.Future<_i11.Uint8List>.value(_i11.Uint8List(0)),
-      ) as _i9.Future<_i11.Uint8List>);
+  _i10.Future<_i12.Uint8List> downloadMemory(String? url) =>
+      (super.noSuchMethod(
+            Invocation.method(#downloadMemory, [url]),
+            returnValue: _i10.Future<_i12.Uint8List>.value(_i12.Uint8List(0)),
+            returnValueForMissingStub: _i10.Future<_i12.Uint8List>.value(
+              _i12.Uint8List(0),
+            ),
+          )
+          as _i10.Future<_i12.Uint8List>);
 }
 
 /// A class which mocks [XApiClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockXApiClient extends _i1.Mock implements _i3.XApiClient {
-  MockXApiClient() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
-  _i9.Future<void> init() => (super.noSuchMethod(
-        Invocation.method(
-          #init,
-          [],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<_i4.DownloadResponse> download(_i4.DownloadRequest? request) =>
+  _i10.Future<void> init() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #download,
-          [request],
-        ),
-        returnValue:
-            _i9.Future<_i4.DownloadResponse>.value(_FakeDownloadResponse_2(
-          this,
-          Invocation.method(
-            #download,
-            [request],
-          ),
-        )),
-      ) as _i9.Future<_i4.DownloadResponse>);
+            Invocation.method(#init, []),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<_i4.HandlerUsableResponse> handlerUsable(
-          _i4.HandlerUsableRequest? request) =>
+  _i10.Future<_i4.Certificate> getCertificate() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #handlerUsable,
-          [request],
-        ),
-        returnValue: _i9.Future<_i4.HandlerUsableResponse>.value(
-            _FakeHandlerUsableResponse_3(
-          this,
-          Invocation.method(
-            #handlerUsable,
-            [request],
-          ),
-        )),
-      ) as _i9.Future<_i4.HandlerUsableResponse>);
+            Invocation.method(#getCertificate, []),
+            returnValue: _i10.Future<_i4.Certificate>.value(
+              _FakeCertificate_2(this, Invocation.method(#getCertificate, [])),
+            ),
+            returnValueForMissingStub: _i10.Future<_i4.Certificate>.value(
+              _FakeCertificate_2(this, Invocation.method(#getCertificate, [])),
+            ),
+          )
+          as _i10.Future<_i4.Certificate>);
 
   @override
-  _i9.Future<int> rtt(_i4.RttTestRequest? request) => (super.noSuchMethod(
-        Invocation.method(
-          #rtt,
-          [request],
-        ),
-        returnValue: _i9.Future<int>.value(0),
-      ) as _i9.Future<int>);
-
-  @override
-  _i9.Future<_i5.ResponseStream<_i4.SpeedTestResponse>> speedTest(
-          _i4.SpeedTestRequest? request) =>
+  _i10.Future<_i5.DownloadResponse> download(_i5.DownloadRequest? request) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #speedTest,
-          [request],
-        ),
-        returnValue:
-            _i9.Future<_i5.ResponseStream<_i4.SpeedTestResponse>>.value(
-                _FakeResponseStream_4<_i4.SpeedTestResponse>(
-          this,
-          Invocation.method(
-            #speedTest,
-            [request],
-          ),
-        )),
-      ) as _i9.Future<_i5.ResponseStream<_i4.SpeedTestResponse>>);
+            Invocation.method(#download, [request]),
+            returnValue: _i10.Future<_i5.DownloadResponse>.value(
+              _FakeDownloadResponse_3(
+                this,
+                Invocation.method(#download, [request]),
+              ),
+            ),
+            returnValueForMissingStub: _i10.Future<_i5.DownloadResponse>.value(
+              _FakeDownloadResponse_3(
+                this,
+                Invocation.method(#download, [request]),
+              ),
+            ),
+          )
+          as _i10.Future<_i5.DownloadResponse>);
 
   @override
-  _i9.Future<_i5.ResponseStream<_i4.MonitorServerResponse>> monitorServer(
-          _i7.SshServer? server) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #monitorServer,
-          [server],
-        ),
-        returnValue:
-            _i9.Future<_i5.ResponseStream<_i4.MonitorServerResponse>>.value(
-                _FakeResponseStream_4<_i4.MonitorServerResponse>(
-          this,
-          Invocation.method(
-            #monitorServer,
-            [server],
-          ),
-        )),
-      ) as _i9.Future<_i5.ResponseStream<_i4.MonitorServerResponse>>);
-
-  @override
-  _i9.Future<_i4.VproxyStatusResponse> vproxyStatus(_i7.SshServer? server) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #vproxyStatus,
-          [server],
-        ),
-        returnValue: _i9.Future<_i4.VproxyStatusResponse>.value(
-            _FakeVproxyStatusResponse_5(
-          this,
-          Invocation.method(
-            #vproxyStatus,
-            [server],
-          ),
-        )),
-      ) as _i9.Future<_i4.VproxyStatusResponse>);
-
-  @override
-  _i9.Future<_i6.ServerConfig> serverConfig(_i7.SshServer? server) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #serverConfig,
-          [server],
-        ),
-        returnValue: _i9.Future<_i6.ServerConfig>.value(_FakeServerConfig_6(
-          this,
-          Invocation.method(
-            #serverConfig,
-            [server],
-          ),
-        )),
-      ) as _i9.Future<_i6.ServerConfig>);
-
-  @override
-  _i9.Future<void> updateServerConfig(
-    _i7.SshServer? server,
-    _i6.ServerConfig? config,
+  _i10.Future<_i5.HandlerUsableResponse> handlerUsable(
+    _i5.HandlerUsableRequest? request,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #updateServerConfig,
-          [
-            server,
-            config,
-          ],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#handlerUsable, [request]),
+            returnValue: _i10.Future<_i5.HandlerUsableResponse>.value(
+              _FakeHandlerUsableResponse_4(
+                this,
+                Invocation.method(#handlerUsable, [request]),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i10.Future<_i5.HandlerUsableResponse>.value(
+                  _FakeHandlerUsableResponse_4(
+                    this,
+                    Invocation.method(#handlerUsable, [request]),
+                  ),
+                ),
+          )
+          as _i10.Future<_i5.HandlerUsableResponse>);
 
   @override
-  _i9.Future<List<_i12.OutboundHandlerConfig>> convertInboundToOutbound(
-    _i7.SshServer? server, {
-    _i13.ProxyInboundConfig? inbound,
-    _i13.MultiProxyInboundConfig? multiInbound,
+  _i10.Future<int> rtt(_i5.RttTestRequest? request) =>
+      (super.noSuchMethod(
+            Invocation.method(#rtt, [request]),
+            returnValue: _i10.Future<int>.value(0),
+            returnValueForMissingStub: _i10.Future<int>.value(0),
+          )
+          as _i10.Future<int>);
+
+  @override
+  _i10.Future<_i6.ResponseStream<_i5.SpeedTestResponse>> speedTest(
+    _i5.SpeedTestRequest? request,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#speedTest, [request]),
+            returnValue:
+                _i10.Future<_i6.ResponseStream<_i5.SpeedTestResponse>>.value(
+                  _FakeResponseStream_5<_i5.SpeedTestResponse>(
+                    this,
+                    Invocation.method(#speedTest, [request]),
+                  ),
+                ),
+            returnValueForMissingStub:
+                _i10.Future<_i6.ResponseStream<_i5.SpeedTestResponse>>.value(
+                  _FakeResponseStream_5<_i5.SpeedTestResponse>(
+                    this,
+                    Invocation.method(#speedTest, [request]),
+                  ),
+                ),
+          )
+          as _i10.Future<_i6.ResponseStream<_i5.SpeedTestResponse>>);
+
+  @override
+  _i10.Future<_i6.ResponseStream<_i5.MonitorServerResponse>> monitorServer(
+    _i8.SshServer? server,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#monitorServer, [server]),
+            returnValue:
+                _i10.Future<
+                  _i6.ResponseStream<_i5.MonitorServerResponse>
+                >.value(
+                  _FakeResponseStream_5<_i5.MonitorServerResponse>(
+                    this,
+                    Invocation.method(#monitorServer, [server]),
+                  ),
+                ),
+            returnValueForMissingStub:
+                _i10.Future<
+                  _i6.ResponseStream<_i5.MonitorServerResponse>
+                >.value(
+                  _FakeResponseStream_5<_i5.MonitorServerResponse>(
+                    this,
+                    Invocation.method(#monitorServer, [server]),
+                  ),
+                ),
+          )
+          as _i10.Future<_i6.ResponseStream<_i5.MonitorServerResponse>>);
+
+  @override
+  _i10.Future<_i5.VproxyStatusResponse> vproxyStatus(_i8.SshServer? server) =>
+      (super.noSuchMethod(
+            Invocation.method(#vproxyStatus, [server]),
+            returnValue: _i10.Future<_i5.VproxyStatusResponse>.value(
+              _FakeVproxyStatusResponse_6(
+                this,
+                Invocation.method(#vproxyStatus, [server]),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i10.Future<_i5.VproxyStatusResponse>.value(
+                  _FakeVproxyStatusResponse_6(
+                    this,
+                    Invocation.method(#vproxyStatus, [server]),
+                  ),
+                ),
+          )
+          as _i10.Future<_i5.VproxyStatusResponse>);
+
+  @override
+  _i10.Future<_i7.ServerConfig> serverConfig(_i8.SshServer? server) =>
+      (super.noSuchMethod(
+            Invocation.method(#serverConfig, [server]),
+            returnValue: _i10.Future<_i7.ServerConfig>.value(
+              _FakeServerConfig_7(
+                this,
+                Invocation.method(#serverConfig, [server]),
+              ),
+            ),
+            returnValueForMissingStub: _i10.Future<_i7.ServerConfig>.value(
+              _FakeServerConfig_7(
+                this,
+                Invocation.method(#serverConfig, [server]),
+              ),
+            ),
+          )
+          as _i10.Future<_i7.ServerConfig>);
+
+  @override
+  _i10.Future<void> updateServerConfig(
+    _i8.SshServer? server,
+    _i7.ServerConfig? config,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateServerConfig, [server, config]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<List<_i13.OutboundHandlerConfig>> convertInboundToOutbound(
+    _i8.SshServer? server, {
+    _i14.ProxyInboundConfig? inbound,
+    _i14.MultiProxyInboundConfig? multiInbound,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #convertInboundToOutbound,
-          [server],
-          {
-            #inbound: inbound,
-            #multiInbound: multiInbound,
-          },
-        ),
-        returnValue: _i9.Future<List<_i12.OutboundHandlerConfig>>.value(
-            <_i12.OutboundHandlerConfig>[]),
-      ) as _i9.Future<List<_i12.OutboundHandlerConfig>>);
+            Invocation.method(
+              #convertInboundToOutbound,
+              [server],
+              {#inbound: inbound, #multiInbound: multiInbound},
+            ),
+            returnValue: _i10.Future<List<_i13.OutboundHandlerConfig>>.value(
+              <_i13.OutboundHandlerConfig>[],
+            ),
+            returnValueForMissingStub:
+                _i10.Future<List<_i13.OutboundHandlerConfig>>.value(
+                  <_i13.OutboundHandlerConfig>[],
+                ),
+          )
+          as _i10.Future<List<_i13.OutboundHandlerConfig>>);
 
   @override
-  _i9.Future<void> vx(
-    _i7.SshServer? server, {
+  _i10.Future<void> vx(
+    _i8.SshServer? server, {
     bool? start,
     bool? stop,
     bool? restart,
@@ -665,1060 +587,1073 @@ class MockXApiClient extends _i1.Mock implements _i3.XApiClient {
     bool? uninstall,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #vx,
-          [server],
-          {
-            #start: start,
-            #stop: stop,
-            #restart: restart,
-            #update: update,
-            #uninstall: uninstall,
-          },
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(
+              #vx,
+              [server],
+              {
+                #start: start,
+                #stop: stop,
+                #restart: restart,
+                #update: update,
+                #uninstall: uninstall,
+              },
+            ),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<_i4.UpdateSubscriptionResponse> updateSubscriptions(
-          _i4.UpdateSubscriptionRequest? request) =>
+  _i10.Future<_i5.UpdateSubscriptionResponse> updateSubscriptions(
+    _i5.UpdateSubscriptionRequest? request,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #updateSubscriptions,
-          [request],
-        ),
-        returnValue: _i9.Future<_i4.UpdateSubscriptionResponse>.value(
-            _FakeUpdateSubscriptionResponse_7(
-          this,
-          Invocation.method(
-            #updateSubscriptions,
-            [request],
-          ),
-        )),
-      ) as _i9.Future<_i4.UpdateSubscriptionResponse>);
+            Invocation.method(#updateSubscriptions, [request]),
+            returnValue: _i10.Future<_i5.UpdateSubscriptionResponse>.value(
+              _FakeUpdateSubscriptionResponse_8(
+                this,
+                Invocation.method(#updateSubscriptions, [request]),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i10.Future<_i5.UpdateSubscriptionResponse>.value(
+                  _FakeUpdateSubscriptionResponse_8(
+                    this,
+                    Invocation.method(#updateSubscriptions, [request]),
+                  ),
+                ),
+          )
+          as _i10.Future<_i5.UpdateSubscriptionResponse>);
 
   @override
-  _i9.Future<void> processGeoFiles() => (super.noSuchMethod(
-        Invocation.method(
-          #processGeoFiles,
-          [],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+  _i10.Future<void> processGeoFiles() =>
+      (super.noSuchMethod(
+            Invocation.method(#processGeoFiles, []),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<_i4.DecodeResponse> decode(String? data) => (super.noSuchMethod(
-        Invocation.method(
-          #decode,
-          [data],
-        ),
-        returnValue: _i9.Future<_i4.DecodeResponse>.value(_FakeDecodeResponse_8(
-          this,
-          Invocation.method(
-            #decode,
-            [data],
-          ),
-        )),
-      ) as _i9.Future<_i4.DecodeResponse>);
+  _i10.Future<_i5.DecodeResponse> decode(String? data) =>
+      (super.noSuchMethod(
+            Invocation.method(#decode, [data]),
+            returnValue: _i10.Future<_i5.DecodeResponse>.value(
+              _FakeDecodeResponse_9(this, Invocation.method(#decode, [data])),
+            ),
+            returnValueForMissingStub: _i10.Future<_i5.DecodeResponse>.value(
+              _FakeDecodeResponse_9(this, Invocation.method(#decode, [data])),
+            ),
+          )
+          as _i10.Future<_i5.DecodeResponse>);
 
   @override
-  _i9.Future<_i4.DeployResponse> deploy({
-    required _i7.SshServer? server,
-    _i11.Uint8List? xrayConfig,
-    _i11.Uint8List? hysteriaConfig,
-    _i6.ServerConfig? serverConfig,
-    Map<String, _i11.Uint8List>? files,
+  _i10.Future<_i5.DeployResponse> deploy({
+    required _i8.SshServer? server,
+    _i12.Uint8List? xrayConfig,
+    _i12.Uint8List? hysteriaConfig,
+    _i7.ServerConfig? serverConfig,
+    Map<String, _i12.Uint8List>? files,
     bool? disableOSFirewall,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #deploy,
-          [],
-          {
-            #server: server,
-            #xrayConfig: xrayConfig,
-            #hysteriaConfig: hysteriaConfig,
-            #serverConfig: serverConfig,
-            #files: files,
-            #disableOSFirewall: disableOSFirewall,
-          },
-        ),
-        returnValue: _i9.Future<_i4.DeployResponse>.value(_FakeDeployResponse_9(
-          this,
-          Invocation.method(
-            #deploy,
-            [],
-            {
+            Invocation.method(#deploy, [], {
               #server: server,
               #xrayConfig: xrayConfig,
               #hysteriaConfig: hysteriaConfig,
               #serverConfig: serverConfig,
               #files: files,
               #disableOSFirewall: disableOSFirewall,
-            },
-          ),
-        )),
-      ) as _i9.Future<_i4.DeployResponse>);
-
-  @override
-  _i9.Future<_i4.GenerateCertResponse> generateCert(String? domain) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #generateCert,
-          [domain],
-        ),
-        returnValue: _i9.Future<_i4.GenerateCertResponse>.value(
-            _FakeGenerateCertResponse_10(
-          this,
-          Invocation.method(
-            #generateCert,
-            [domain],
-          ),
-        )),
-      ) as _i9.Future<_i4.GenerateCertResponse>);
-
-  @override
-  _i9.Future<String?> extractCertDomain(String? cert) => (super.noSuchMethod(
-        Invocation.method(
-          #extractCertDomain,
-          [cert],
-        ),
-        returnValue: _i9.Future<String?>.value(),
-      ) as _i9.Future<String?>);
-
-  @override
-  _i9.Future<void> shutdownServer(_i7.SshServer? server) => (super.noSuchMethod(
-        Invocation.method(
-          #shutdownServer,
-          [server],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<void> restartServer(_i7.SshServer? server) => (super.noSuchMethod(
-        Invocation.method(
-          #restartServer,
-          [server],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<void> uploadLog(_i4.UploadLogRequest? req) => (super.noSuchMethod(
-        Invocation.method(
-          #uploadLog,
-          [req],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<bool> defaultNICHasGlobalV6() => (super.noSuchMethod(
-        Invocation.method(
-          #defaultNICHasGlobalV6,
-          [],
-        ),
-        returnValue: _i9.Future<bool>.value(false),
-      ) as _i9.Future<bool>);
-
-  @override
-  _i9.Future<_i4.ParseClashRuleFileResponse> parseClashRuleFile(
-          List<int>? content) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #parseClashRuleFile,
-          [content],
-        ),
-        returnValue: _i9.Future<_i4.ParseClashRuleFileResponse>.value(
-            _FakeParseClashRuleFileResponse_11(
-          this,
-          Invocation.method(
-            #parseClashRuleFile,
-            [content],
-          ),
-        )),
-      ) as _i9.Future<_i4.ParseClashRuleFileResponse>);
-
-  @override
-  _i9.Future<List<_i14.CIDR>> parseGeoIPConfig(_i15.GeoIPConfig? config) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #parseGeoIPConfig,
-          [config],
-        ),
-        returnValue: _i9.Future<List<_i14.CIDR>>.value(<_i14.CIDR>[]),
-      ) as _i9.Future<List<_i14.CIDR>>);
-
-  @override
-  _i9.Future<List<_i14.Domain>> parseGeositeConfig(
-          _i15.GeositeConfig? config) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #parseGeositeConfig,
-          [config],
-        ),
-        returnValue: _i9.Future<List<_i14.Domain>>.value(<_i14.Domain>[]),
-      ) as _i9.Future<List<_i14.Domain>>);
-
-  @override
-  _i9.Future<(String, String)> generateX25519KeyPair() => (super.noSuchMethod(
-        Invocation.method(
-          #generateX25519KeyPair,
-          [],
-        ),
-        returnValue: _i9.Future<(String, String)>.value((
-          _i16.dummyValue<String>(
-            this,
-            Invocation.method(
-              #generateX25519KeyPair,
-              [],
+            }),
+            returnValue: _i10.Future<_i5.DeployResponse>.value(
+              _FakeDeployResponse_10(
+                this,
+                Invocation.method(#deploy, [], {
+                  #server: server,
+                  #xrayConfig: xrayConfig,
+                  #hysteriaConfig: hysteriaConfig,
+                  #serverConfig: serverConfig,
+                  #files: files,
+                  #disableOSFirewall: disableOSFirewall,
+                }),
+              ),
             ),
-          ),
-          _i16.dummyValue<String>(
-            this,
-            Invocation.method(
-              #generateX25519KeyPair,
-              [],
+            returnValueForMissingStub: _i10.Future<_i5.DeployResponse>.value(
+              _FakeDeployResponse_10(
+                this,
+                Invocation.method(#deploy, [], {
+                  #server: server,
+                  #xrayConfig: xrayConfig,
+                  #hysteriaConfig: hysteriaConfig,
+                  #serverConfig: serverConfig,
+                  #files: files,
+                  #disableOSFirewall: disableOSFirewall,
+                }),
+              ),
             ),
           )
-        )),
-      ) as _i9.Future<(String, String)>);
+          as _i10.Future<_i5.DeployResponse>);
 
   @override
-  _i9.Future<void> setSystemProxy(_i17.SysProxyConfig? config) =>
+  _i10.Future<_i5.GenerateCertResponse> generateCert(String? domain) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setSystemProxy,
-          [config],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#generateCert, [domain]),
+            returnValue: _i10.Future<_i5.GenerateCertResponse>.value(
+              _FakeGenerateCertResponse_11(
+                this,
+                Invocation.method(#generateCert, [domain]),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i10.Future<_i5.GenerateCertResponse>.value(
+                  _FakeGenerateCertResponse_11(
+                    this,
+                    Invocation.method(#generateCert, [domain]),
+                  ),
+                ),
+          )
+          as _i10.Future<_i5.GenerateCertResponse>);
 
   @override
-  _i9.Future<void> stopSystemProxy() => (super.noSuchMethod(
-        Invocation.method(
-          #stopSystemProxy,
-          [],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<void> closeDb() => (super.noSuchMethod(
-        Invocation.method(
-          #closeDb,
-          [],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<void> openDb() => (super.noSuchMethod(
-        Invocation.method(
-          #openDb,
-          [],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<_i4.ToUrlResponse> toUrl(
-          List<_i12.OutboundHandlerConfig>? configs) =>
+  _i10.Future<String?> extractCertDomain(String? cert) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #toUrl,
-          [configs],
-        ),
-        returnValue: _i9.Future<_i4.ToUrlResponse>.value(_FakeToUrlResponse_12(
-          this,
-          Invocation.method(
-            #toUrl,
-            [configs],
-          ),
-        )),
-      ) as _i9.Future<_i4.ToUrlResponse>);
+            Invocation.method(#extractCertDomain, [cert]),
+            returnValue: _i10.Future<String?>.value(),
+            returnValueForMissingStub: _i10.Future<String?>.value(),
+          )
+          as _i10.Future<String?>);
 
   @override
-  _i9.Future<_i4.GenerateECHResponse> generateECHResponse(String? domain) =>
+  _i10.Future<void> shutdownServer(_i8.SshServer? server) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #generateECHResponse,
-          [domain],
-        ),
-        returnValue: _i9.Future<_i4.GenerateECHResponse>.value(
-            _FakeGenerateECHResponse_13(
-          this,
-          Invocation.method(
-            #generateECHResponse,
-            [domain],
-          ),
-        )),
-      ) as _i9.Future<_i4.GenerateECHResponse>);
+            Invocation.method(#shutdownServer, [server]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<void> restartServer(_i8.SshServer? server) =>
+      (super.noSuchMethod(
+            Invocation.method(#restartServer, [server]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<void> uploadLog(_i5.UploadLogRequest? req) =>
+      (super.noSuchMethod(
+            Invocation.method(#uploadLog, [req]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<bool> defaultNICHasGlobalV6() =>
+      (super.noSuchMethod(
+            Invocation.method(#defaultNICHasGlobalV6, []),
+            returnValue: _i10.Future<bool>.value(false),
+            returnValueForMissingStub: _i10.Future<bool>.value(false),
+          )
+          as _i10.Future<bool>);
+
+  @override
+  _i10.Future<_i5.ParseClashRuleFileResponse> parseClashRuleFile(
+    List<int>? content,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#parseClashRuleFile, [content]),
+            returnValue: _i10.Future<_i5.ParseClashRuleFileResponse>.value(
+              _FakeParseClashRuleFileResponse_12(
+                this,
+                Invocation.method(#parseClashRuleFile, [content]),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i10.Future<_i5.ParseClashRuleFileResponse>.value(
+                  _FakeParseClashRuleFileResponse_12(
+                    this,
+                    Invocation.method(#parseClashRuleFile, [content]),
+                  ),
+                ),
+          )
+          as _i10.Future<_i5.ParseClashRuleFileResponse>);
+
+  @override
+  _i10.Future<List<_i15.CIDR>> parseGeoIPConfig(_i16.GeoIPConfig? config) =>
+      (super.noSuchMethod(
+            Invocation.method(#parseGeoIPConfig, [config]),
+            returnValue: _i10.Future<List<_i15.CIDR>>.value(<_i15.CIDR>[]),
+            returnValueForMissingStub: _i10.Future<List<_i15.CIDR>>.value(
+              <_i15.CIDR>[],
+            ),
+          )
+          as _i10.Future<List<_i15.CIDR>>);
+
+  @override
+  _i10.Future<List<_i15.Domain>> parseGeositeConfig(
+    _i16.GeositeConfig? config,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#parseGeositeConfig, [config]),
+            returnValue: _i10.Future<List<_i15.Domain>>.value(<_i15.Domain>[]),
+            returnValueForMissingStub: _i10.Future<List<_i15.Domain>>.value(
+              <_i15.Domain>[],
+            ),
+          )
+          as _i10.Future<List<_i15.Domain>>);
+
+  @override
+  _i10.Future<(String, String)> generateX25519KeyPair() =>
+      (super.noSuchMethod(
+            Invocation.method(#generateX25519KeyPair, []),
+            returnValue: _i10.Future<(String, String)>.value((
+              _i17.dummyValue<String>(
+                this,
+                Invocation.method(#generateX25519KeyPair, []),
+              ),
+              _i17.dummyValue<String>(
+                this,
+                Invocation.method(#generateX25519KeyPair, []),
+              ),
+            )),
+            returnValueForMissingStub: _i10.Future<(String, String)>.value((
+              _i17.dummyValue<String>(
+                this,
+                Invocation.method(#generateX25519KeyPair, []),
+              ),
+              _i17.dummyValue<String>(
+                this,
+                Invocation.method(#generateX25519KeyPair, []),
+              ),
+            )),
+          )
+          as _i10.Future<(String, String)>);
+
+  @override
+  _i10.Future<void> setSystemProxy(_i18.SysProxyConfig? config) =>
+      (super.noSuchMethod(
+            Invocation.method(#setSystemProxy, [config]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<void> stopSystemProxy() =>
+      (super.noSuchMethod(
+            Invocation.method(#stopSystemProxy, []),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<void> closeDb() =>
+      (super.noSuchMethod(
+            Invocation.method(#closeDb, []),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<void> openDb() =>
+      (super.noSuchMethod(
+            Invocation.method(#openDb, []),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<_i5.ToUrlResponse> toUrl(
+    List<_i13.OutboundHandlerConfig>? configs,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#toUrl, [configs]),
+            returnValue: _i10.Future<_i5.ToUrlResponse>.value(
+              _FakeToUrlResponse_13(this, Invocation.method(#toUrl, [configs])),
+            ),
+            returnValueForMissingStub: _i10.Future<_i5.ToUrlResponse>.value(
+              _FakeToUrlResponse_13(this, Invocation.method(#toUrl, [configs])),
+            ),
+          )
+          as _i10.Future<_i5.ToUrlResponse>);
+
+  @override
+  _i10.Future<_i5.GenerateECHResponse> generateECHResponse(String? domain) =>
+      (super.noSuchMethod(
+            Invocation.method(#generateECHResponse, [domain]),
+            returnValue: _i10.Future<_i5.GenerateECHResponse>.value(
+              _FakeGenerateECHResponse_14(
+                this,
+                Invocation.method(#generateECHResponse, [domain]),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i10.Future<_i5.GenerateECHResponse>.value(
+                  _FakeGenerateECHResponse_14(
+                    this,
+                    Invocation.method(#generateECHResponse, [domain]),
+                  ),
+                ),
+          )
+          as _i10.Future<_i5.GenerateECHResponse>);
 }
 
 /// A class which mocks [DbHelper].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDbHelper extends _i1.Mock implements _i18.DbHelper {
-  MockDbHelper() {
-    _i1.throwOnMissingStub(this);
-  }
-
+class MockDbHelper extends _i1.Mock implements _i19.DbHelper {
   @override
-  _i9.Future<List<_i7.AtomicIpSet>> getAtomicIpSets() => (super.noSuchMethod(
-        Invocation.method(
-          #getAtomicIpSets,
-          [],
-        ),
-        returnValue:
-            _i9.Future<List<_i7.AtomicIpSet>>.value(<_i7.AtomicIpSet>[]),
-      ) as _i9.Future<List<_i7.AtomicIpSet>>);
-
-  @override
-  _i9.Future<List<_i7.AtomicDomainSet>> getAtomicDomainSets() =>
+  _i10.Future<List<_i8.AtomicIpSet>> getAtomicIpSets() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getAtomicDomainSets,
-          [],
-        ),
-        returnValue: _i9.Future<List<_i7.AtomicDomainSet>>.value(
-            <_i7.AtomicDomainSet>[]),
-      ) as _i9.Future<List<_i7.AtomicDomainSet>>);
+            Invocation.method(#getAtomicIpSets, []),
+            returnValue: _i10.Future<List<_i8.AtomicIpSet>>.value(
+              <_i8.AtomicIpSet>[],
+            ),
+            returnValueForMissingStub: _i10.Future<List<_i8.AtomicIpSet>>.value(
+              <_i8.AtomicIpSet>[],
+            ),
+          )
+          as _i10.Future<List<_i8.AtomicIpSet>>);
 
   @override
-  _i9.Future<List<_i7.GreatDomainSet>> getGreatDomainSets() =>
+  _i10.Future<List<_i8.AtomicDomainSet>> getAtomicDomainSets() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getGreatDomainSets,
-          [],
-        ),
-        returnValue:
-            _i9.Future<List<_i7.GreatDomainSet>>.value(<_i7.GreatDomainSet>[]),
-      ) as _i9.Future<List<_i7.GreatDomainSet>>);
+            Invocation.method(#getAtomicDomainSets, []),
+            returnValue: _i10.Future<List<_i8.AtomicDomainSet>>.value(
+              <_i8.AtomicDomainSet>[],
+            ),
+            returnValueForMissingStub:
+                _i10.Future<List<_i8.AtomicDomainSet>>.value(
+                  <_i8.AtomicDomainSet>[],
+                ),
+          )
+          as _i10.Future<List<_i8.AtomicDomainSet>>);
 
   @override
-  _i9.Future<List<_i7.AppSet>> getAppSets() => (super.noSuchMethod(
-        Invocation.method(
-          #getAppSets,
-          [],
-        ),
-        returnValue: _i9.Future<List<_i7.AppSet>>.value(<_i7.AppSet>[]),
-      ) as _i9.Future<List<_i7.AppSet>>);
-
-  @override
-  _i9.Stream<List<_i7.DnsServer>> getDnsServersStream() => (super.noSuchMethod(
-        Invocation.method(
-          #getDnsServersStream,
-          [],
-        ),
-        returnValue: _i9.Stream<List<_i7.DnsServer>>.empty(),
-      ) as _i9.Stream<List<_i7.DnsServer>>);
-
-  @override
-  _i9.Stream<List<_i19.SelectorConfig>> getSelectorsStream() =>
+  _i10.Future<List<_i8.GreatDomainSet>> getGreatDomainSets() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getSelectorsStream,
-          [],
-        ),
-        returnValue: _i9.Stream<List<_i19.SelectorConfig>>.empty(),
-      ) as _i9.Stream<List<_i19.SelectorConfig>>);
+            Invocation.method(#getGreatDomainSets, []),
+            returnValue: _i10.Future<List<_i8.GreatDomainSet>>.value(
+              <_i8.GreatDomainSet>[],
+            ),
+            returnValueForMissingStub:
+                _i10.Future<List<_i8.GreatDomainSet>>.value(
+                  <_i8.GreatDomainSet>[],
+                ),
+          )
+          as _i10.Future<List<_i8.GreatDomainSet>>);
 
   @override
-  _i9.Future<void> removeCustomRouteMode(int? id) => (super.noSuchMethod(
-        Invocation.method(
-          #removeCustomRouteMode,
-          [id],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Stream<List<_i7.CustomRouteMode>> getCustomRouteModesStream() =>
+  _i10.Future<List<_i8.AppSet>> getAppSets() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getCustomRouteModesStream,
-          [],
-        ),
-        returnValue: _i9.Stream<List<_i7.CustomRouteMode>>.empty(),
-      ) as _i9.Stream<List<_i7.CustomRouteMode>>);
+            Invocation.method(#getAppSets, []),
+            returnValue: _i10.Future<List<_i8.AppSet>>.value(<_i8.AppSet>[]),
+            returnValueForMissingStub: _i10.Future<List<_i8.AppSet>>.value(
+              <_i8.AppSet>[],
+            ),
+          )
+          as _i10.Future<List<_i8.AppSet>>);
 
   @override
-  _i9.Stream<List<_i7.GreatDomainSet>> getGreatDomainSetsStream() =>
+  _i10.Stream<List<_i8.DnsServer>> getDnsServersStream() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getGreatDomainSetsStream,
-          [],
-        ),
-        returnValue: _i9.Stream<List<_i7.GreatDomainSet>>.empty(),
-      ) as _i9.Stream<List<_i7.GreatDomainSet>>);
+            Invocation.method(#getDnsServersStream, []),
+            returnValue: _i10.Stream<List<_i8.DnsServer>>.empty(),
+            returnValueForMissingStub: _i10.Stream<List<_i8.DnsServer>>.empty(),
+          )
+          as _i10.Stream<List<_i8.DnsServer>>);
 
   @override
-  _i9.Stream<List<_i7.AtomicDomainSet>> getAtomicDomainSetsStream() =>
+  _i10.Stream<List<_i20.SelectorConfig>> getSelectorsStream() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getAtomicDomainSetsStream,
-          [],
-        ),
-        returnValue: _i9.Stream<List<_i7.AtomicDomainSet>>.empty(),
-      ) as _i9.Stream<List<_i7.AtomicDomainSet>>);
+            Invocation.method(#getSelectorsStream, []),
+            returnValue: _i10.Stream<List<_i20.SelectorConfig>>.empty(),
+            returnValueForMissingStub:
+                _i10.Stream<List<_i20.SelectorConfig>>.empty(),
+          )
+          as _i10.Stream<List<_i20.SelectorConfig>>);
 
   @override
-  _i9.Stream<List<_i7.AppSet>> getAppSetsStream() => (super.noSuchMethod(
-        Invocation.method(
-          #getAppSetsStream,
-          [],
-        ),
-        returnValue: _i9.Stream<List<_i7.AppSet>>.empty(),
-      ) as _i9.Stream<List<_i7.AppSet>>);
-
-  @override
-  _i9.Future<void> removeSelector(String? selectorName) => (super.noSuchMethod(
-        Invocation.method(
-          #removeSelector,
-          [selectorName],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<void> updateSelector(_i19.SelectorConfig? selector) =>
+  _i10.Future<void> removeCustomRouteMode(int? id) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #updateSelector,
-          [selector],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#removeCustomRouteMode, [id]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> addGreatIpSet(_i15.GreatIPSetConfig? greatIpSet) =>
+  _i10.Stream<List<_i8.CustomRouteMode>> getCustomRouteModesStream() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #addGreatIpSet,
-          [greatIpSet],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#getCustomRouteModesStream, []),
+            returnValue: _i10.Stream<List<_i8.CustomRouteMode>>.empty(),
+            returnValueForMissingStub:
+                _i10.Stream<List<_i8.CustomRouteMode>>.empty(),
+          )
+          as _i10.Stream<List<_i8.CustomRouteMode>>);
 
   @override
-  _i9.Future<void> updateGreatIpSet(
+  _i10.Stream<List<_i8.GreatDomainSet>> getGreatDomainSetsStream() =>
+      (super.noSuchMethod(
+            Invocation.method(#getGreatDomainSetsStream, []),
+            returnValue: _i10.Stream<List<_i8.GreatDomainSet>>.empty(),
+            returnValueForMissingStub:
+                _i10.Stream<List<_i8.GreatDomainSet>>.empty(),
+          )
+          as _i10.Stream<List<_i8.GreatDomainSet>>);
+
+  @override
+  _i10.Stream<List<_i8.AtomicDomainSet>> getAtomicDomainSetsStream() =>
+      (super.noSuchMethod(
+            Invocation.method(#getAtomicDomainSetsStream, []),
+            returnValue: _i10.Stream<List<_i8.AtomicDomainSet>>.empty(),
+            returnValueForMissingStub:
+                _i10.Stream<List<_i8.AtomicDomainSet>>.empty(),
+          )
+          as _i10.Stream<List<_i8.AtomicDomainSet>>);
+
+  @override
+  _i10.Stream<List<_i8.AppSet>> getAppSetsStream() =>
+      (super.noSuchMethod(
+            Invocation.method(#getAppSetsStream, []),
+            returnValue: _i10.Stream<List<_i8.AppSet>>.empty(),
+            returnValueForMissingStub: _i10.Stream<List<_i8.AppSet>>.empty(),
+          )
+          as _i10.Stream<List<_i8.AppSet>>);
+
+  @override
+  _i10.Future<void> removeSelector(String? selectorName) =>
+      (super.noSuchMethod(
+            Invocation.method(#removeSelector, [selectorName]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<void> updateSelector(_i20.SelectorConfig? selector) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateSelector, [selector]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<void> addGreatIpSet(_i16.GreatIPSetConfig? greatIpSet) =>
+      (super.noSuchMethod(
+            Invocation.method(#addGreatIpSet, [greatIpSet]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<void> updateGreatIpSet(
     String? name, {
-    _i15.GreatIPSetConfig? greatIpSet,
+    _i16.GreatIPSetConfig? greatIpSet,
     String? newName,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #updateGreatIpSet,
-          [name],
-          {
-            #greatIpSet: greatIpSet,
-            #newName: newName,
-          },
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(
+              #updateGreatIpSet,
+              [name],
+              {#greatIpSet: greatIpSet, #newName: newName},
+            ),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> removeGreatIpSet(String? ipSetName) => (super.noSuchMethod(
-        Invocation.method(
-          #removeGreatIpSet,
-          [ipSetName],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<void> addAtomicIpSet(_i7.AtomicIpSet? config) =>
+  _i10.Future<void> removeGreatIpSet(String? ipSetName) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #addAtomicIpSet,
-          [config],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#removeGreatIpSet, [ipSetName]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> updateAtomicIpSet(
+  _i10.Future<void> addAtomicIpSet(_i8.AtomicIpSet? config) =>
+      (super.noSuchMethod(
+            Invocation.method(#addAtomicIpSet, [config]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<void> updateAtomicIpSet(
     String? name, {
-    _i15.GeoIPConfig? geoIpConfig,
+    _i16.GeoIPConfig? geoIpConfig,
     List<String>? clashRuleUrls,
     String? newName,
     String? geoUrl,
+    bool? inverse,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #updateAtomicIpSet,
-          [name],
-          {
-            #geoIpConfig: geoIpConfig,
-            #clashRuleUrls: clashRuleUrls,
-            #newName: newName,
-            #geoUrl: geoUrl,
-          },
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(
+              #updateAtomicIpSet,
+              [name],
+              {
+                #geoIpConfig: geoIpConfig,
+                #clashRuleUrls: clashRuleUrls,
+                #newName: newName,
+                #geoUrl: geoUrl,
+                #inverse: inverse,
+              },
+            ),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> removeAtomicIpSet(String? ipSetName) => (super.noSuchMethod(
-        Invocation.method(
-          #removeAtomicIpSet,
-          [ipSetName],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+  _i10.Future<void> removeAtomicIpSet(String? ipSetName) =>
+      (super.noSuchMethod(
+            Invocation.method(#removeAtomicIpSet, [ipSetName]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> addAppSet(_i7.AppSet? appSet) => (super.noSuchMethod(
-        Invocation.method(
-          #addAppSet,
-          [appSet],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+  _i10.Future<void> addAppSet(_i8.AppSet? appSet) =>
+      (super.noSuchMethod(
+            Invocation.method(#addAppSet, [appSet]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> updateAppSet(
+  _i10.Future<void> updateAppSet(String? name, {List<String>? clashRuleUrls}) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #updateAppSet,
+              [name],
+              {#clashRuleUrls: clashRuleUrls},
+            ),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<void> removeAppSet(String? appSetName) =>
+      (super.noSuchMethod(
+            Invocation.method(#removeAppSet, [appSetName]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<void> removeAtomicDomainSet(String? domainSetName) =>
+      (super.noSuchMethod(
+            Invocation.method(#removeAtomicDomainSet, [domainSetName]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<void> removeGreatDomainSet(String? domainSetName) =>
+      (super.noSuchMethod(
+            Invocation.method(#removeGreatDomainSet, [domainSetName]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<_i8.AtomicDomainSet?> getAtomicDomainSet(String? name) =>
+      (super.noSuchMethod(
+            Invocation.method(#getAtomicDomainSet, [name]),
+            returnValue: _i10.Future<_i8.AtomicDomainSet?>.value(),
+            returnValueForMissingStub:
+                _i10.Future<_i8.AtomicDomainSet?>.value(),
+          )
+          as _i10.Future<_i8.AtomicDomainSet?>);
+
+  @override
+  _i10.Future<void> addAtomicDomainSet(_i8.AtomicDomainSet? config) =>
+      (super.noSuchMethod(
+            Invocation.method(#addAtomicDomainSet, [config]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<void> updateAtomicDomainSet(
     String? name, {
-    List<String>? clashRuleUrls,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateAppSet,
-          [name],
-          {#clashRuleUrls: clashRuleUrls},
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<void> removeAppSet(String? appSetName) => (super.noSuchMethod(
-        Invocation.method(
-          #removeAppSet,
-          [appSetName],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<void> removeAtomicDomainSet(String? domainSetName) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #removeAtomicDomainSet,
-          [domainSetName],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<void> removeGreatDomainSet(String? domainSetName) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #removeGreatDomainSet,
-          [domainSetName],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<void> addAtomicDomainSet(_i7.AtomicDomainSet? config) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #addAtomicDomainSet,
-          [config],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<void> updateAtomicDomainSet(
-    String? name, {
-    _i15.GeositeConfig? geositeConfig,
+    _i16.GeositeConfig? geositeConfig,
     List<String>? clashRuleUrls,
     bool? useBloomFilter,
     String? geoUrl,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #updateAtomicDomainSet,
-          [name],
-          {
-            #geositeConfig: geositeConfig,
-            #clashRuleUrls: clashRuleUrls,
-            #useBloomFilter: useBloomFilter,
-            #geoUrl: geoUrl,
-          },
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(
+              #updateAtomicDomainSet,
+              [name],
+              {
+                #geositeConfig: geositeConfig,
+                #clashRuleUrls: clashRuleUrls,
+                #useBloomFilter: useBloomFilter,
+                #geoUrl: geoUrl,
+              },
+            ),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> addGreatDomainSet(_i15.GreatDomainSetConfig? config) =>
+  _i10.Future<void> addGreatDomainSet(_i16.GreatDomainSetConfig? config) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #addGreatDomainSet,
-          [config],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#addGreatDomainSet, [config]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> updateGreateDomainSet(
+  _i10.Future<void> updateGreateDomainSet(
     String? name, {
-    _i15.GreatDomainSetConfig? greatDomainSet,
+    _i16.GreatDomainSetConfig? greatDomainSet,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #updateGreateDomainSet,
-          [name],
-          {#greatDomainSet: greatDomainSet},
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(
+              #updateGreateDomainSet,
+              [name],
+              {#greatDomainSet: greatDomainSet},
+            ),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<List<_i7.CustomRouteMode>> getAllCustomRouteModes() =>
+  _i10.Future<List<_i8.CustomRouteMode>> getAllCustomRouteModes() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getAllCustomRouteModes,
-          [],
-        ),
-        returnValue: _i9.Future<List<_i7.CustomRouteMode>>.value(
-            <_i7.CustomRouteMode>[]),
-      ) as _i9.Future<List<_i7.CustomRouteMode>>);
+            Invocation.method(#getAllCustomRouteModes, []),
+            returnValue: _i10.Future<List<_i8.CustomRouteMode>>.value(
+              <_i8.CustomRouteMode>[],
+            ),
+            returnValueForMissingStub:
+                _i10.Future<List<_i8.CustomRouteMode>>.value(
+                  <_i8.CustomRouteMode>[],
+                ),
+          )
+          as _i10.Future<List<_i8.CustomRouteMode>>);
 
   @override
-  _i9.Future<_i7.CustomRouteMode?> addCustomRouteMode(
-          _i7.CustomRouteMode? mode) =>
+  _i10.Future<_i8.CustomRouteMode?> addCustomRouteMode(
+    _i8.CustomRouteMode? mode,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #addCustomRouteMode,
-          [mode],
-        ),
-        returnValue: _i9.Future<_i7.CustomRouteMode?>.value(),
-      ) as _i9.Future<_i7.CustomRouteMode?>);
+            Invocation.method(#addCustomRouteMode, [mode]),
+            returnValue: _i10.Future<_i8.CustomRouteMode?>.value(),
+            returnValueForMissingStub:
+                _i10.Future<_i8.CustomRouteMode?>.value(),
+          )
+          as _i10.Future<_i8.CustomRouteMode?>);
 
   @override
-  _i9.Future<void> updateCustomRouteMode(
+  _i10.Future<void> updateCustomRouteMode(
     int? id, {
-    _i19.RouterConfig? routerConfig,
-    _i20.DnsRules? dnsRules,
+    _i20.RouterConfig? routerConfig,
+    _i21.DnsRules? dnsRules,
     String? name,
+    List<String>? internalDnsServers,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #updateCustomRouteMode,
-          [id],
-          {
-            #routerConfig: routerConfig,
-            #dnsRules: dnsRules,
-            #name: name,
-          },
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(
+              #updateCustomRouteMode,
+              [id],
+              {
+                #routerConfig: routerConfig,
+                #dnsRules: dnsRules,
+                #name: name,
+                #internalDnsServers: internalDnsServers,
+              },
+            ),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<List<_i7.DnsServer>> getDnsServers() => (super.noSuchMethod(
-        Invocation.method(
-          #getDnsServers,
-          [],
-        ),
-        returnValue: _i9.Future<List<_i7.DnsServer>>.value(<_i7.DnsServer>[]),
-      ) as _i9.Future<List<_i7.DnsServer>>);
+  _i10.Future<List<_i8.DnsServer>> getDnsServers() =>
+      (super.noSuchMethod(
+            Invocation.method(#getDnsServers, []),
+            returnValue: _i10.Future<List<_i8.DnsServer>>.value(
+              <_i8.DnsServer>[],
+            ),
+            returnValueForMissingStub: _i10.Future<List<_i8.DnsServer>>.value(
+              <_i8.DnsServer>[],
+            ),
+          )
+          as _i10.Future<List<_i8.DnsServer>>);
 
   @override
-  _i9.Future<void> updateDnsServer(
-    _i7.DnsServer? ds, {
+  _i10.Future<void> updateDnsServer(
+    _i8.DnsServer? ds, {
     String? dnsServerName,
-    _i20.DnsServerConfig? dnsServer,
+    _i21.DnsServerConfig? dnsServer,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #updateDnsServer,
-          [ds],
-          {
-            #dnsServerName: dnsServerName,
-            #dnsServer: dnsServer,
-          },
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(
+              #updateDnsServer,
+              [ds],
+              {#dnsServerName: dnsServerName, #dnsServer: dnsServer},
+            ),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<_i7.DnsServer> addDnsServer(
+  _i10.Future<_i8.DnsServer> addDnsServer(
     String? dnsServerName,
-    _i20.DnsServerConfig? dnsServer,
+    _i21.DnsServerConfig? dnsServer,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #addDnsServer,
-          [
-            dnsServerName,
-            dnsServer,
-          ],
-        ),
-        returnValue: _i9.Future<_i7.DnsServer>.value(_FakeDnsServer_14(
-          this,
-          Invocation.method(
-            #addDnsServer,
-            [
-              dnsServerName,
-              dnsServer,
-            ],
-          ),
-        )),
-      ) as _i9.Future<_i7.DnsServer>);
+            Invocation.method(#addDnsServer, [dnsServerName, dnsServer]),
+            returnValue: _i10.Future<_i8.DnsServer>.value(
+              _FakeDnsServer_15(
+                this,
+                Invocation.method(#addDnsServer, [dnsServerName, dnsServer]),
+              ),
+            ),
+            returnValueForMissingStub: _i10.Future<_i8.DnsServer>.value(
+              _FakeDnsServer_15(
+                this,
+                Invocation.method(#addDnsServer, [dnsServerName, dnsServer]),
+              ),
+            ),
+          )
+          as _i10.Future<_i8.DnsServer>);
 
   @override
-  _i9.Future<void> removeDnsServer(_i7.DnsServer? ds) => (super.noSuchMethod(
-        Invocation.method(
-          #removeDnsServer,
-          [ds],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+  _i10.Future<void> removeDnsServer(_i8.DnsServer? ds) =>
+      (super.noSuchMethod(
+            Invocation.method(#removeDnsServer, [ds]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> addGeoDomain(
-    String? setName,
-    _i14.Domain? d,
+  _i10.Future<_i8.DnsRecord> addDnsRecord(_i21.Record? record) =>
+      (super.noSuchMethod(
+            Invocation.method(#addDnsRecord, [record]),
+            returnValue: _i10.Future<_i8.DnsRecord>.value(
+              _FakeDnsRecord_16(
+                this,
+                Invocation.method(#addDnsRecord, [record]),
+              ),
+            ),
+            returnValueForMissingStub: _i10.Future<_i8.DnsRecord>.value(
+              _FakeDnsRecord_16(
+                this,
+                Invocation.method(#addDnsRecord, [record]),
+              ),
+            ),
+          )
+          as _i10.Future<_i8.DnsRecord>);
+
+  @override
+  _i10.Future<void> updateDnsRecord(
+    _i8.DnsRecord? record,
+    _i21.Record? newRecord,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #addGeoDomain,
-          [
-            setName,
-            d,
-          ],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#updateDnsRecord, [record, newRecord]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Stream<List<_i7.GeoDomain>> getGeoDomainsStream(String? domainSetName) =>
+  _i10.Future<void> removeDnsRecord(_i8.DnsRecord? record) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getGeoDomainsStream,
-          [domainSetName],
-        ),
-        returnValue: _i9.Stream<List<_i7.GeoDomain>>.empty(),
-      ) as _i9.Stream<List<_i7.GeoDomain>>);
+            Invocation.method(#removeDnsRecord, [record]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> bulkAddGeoDomain(
+  _i10.Stream<List<_i8.DnsRecord>> getDnsRecordsStream() =>
+      (super.noSuchMethod(
+            Invocation.method(#getDnsRecordsStream, []),
+            returnValue: _i10.Stream<List<_i8.DnsRecord>>.empty(),
+            returnValueForMissingStub: _i10.Stream<List<_i8.DnsRecord>>.empty(),
+          )
+          as _i10.Stream<List<_i8.DnsRecord>>);
+
+  @override
+  _i10.Future<void> addGeoDomain(String? setName, _i15.Domain? d) =>
+      (super.noSuchMethod(
+            Invocation.method(#addGeoDomain, [setName, d]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Stream<List<_i8.GeoDomain>> getGeoDomainsStream(String? domainSetName) =>
+      (super.noSuchMethod(
+            Invocation.method(#getGeoDomainsStream, [domainSetName]),
+            returnValue: _i10.Stream<List<_i8.GeoDomain>>.empty(),
+            returnValueForMissingStub: _i10.Stream<List<_i8.GeoDomain>>.empty(),
+          )
+          as _i10.Stream<List<_i8.GeoDomain>>);
+
+  @override
+  _i10.Future<void> bulkAddGeoDomain(
     String? domainSetName,
-    List<_i14.Domain>? domains,
+    List<_i15.Domain>? domains,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #bulkAddGeoDomain,
-          [
-            domainSetName,
-            domains,
-          ],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#bulkAddGeoDomain, [domainSetName, domains]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> removeGeoDomain(_i7.GeoDomain? geoDomain) =>
+  _i10.Future<void> removeGeoDomain(_i8.GeoDomain? geoDomain) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #removeGeoDomain,
-          [geoDomain],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#removeGeoDomain, [geoDomain]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> addCidr(
-    String? ipSetName,
-    _i14.CIDR? cidr,
-  ) =>
+  _i10.Future<void> addCidr(String? ipSetName, _i15.CIDR? cidr) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #addCidr,
-          [
-            ipSetName,
-            cidr,
-          ],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#addCidr, [ipSetName, cidr]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> bulkAddCidr(
-    String? ipSetName,
-    List<_i14.CIDR>? cidrs,
-  ) =>
+  _i10.Future<void> bulkAddCidr(String? ipSetName, List<_i15.CIDR>? cidrs) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #bulkAddCidr,
-          [
-            ipSetName,
-            cidrs,
-          ],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#bulkAddCidr, [ipSetName, cidrs]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> removeCidr(_i7.Cidr? cidr) => (super.noSuchMethod(
-        Invocation.method(
-          #removeCidr,
-          [cidr],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Stream<List<_i7.Cidr>> getCidrsStream(String? ipSetName) =>
+  _i10.Future<void> removeCidr(_i8.Cidr? cidr) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getCidrsStream,
-          [ipSetName],
-        ),
-        returnValue: _i9.Stream<List<_i7.Cidr>>.empty(),
-      ) as _i9.Stream<List<_i7.Cidr>>);
+            Invocation.method(#removeCidr, [cidr]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> addApp(
+  _i10.Stream<List<_i8.Cidr>> getCidrsStream(String? ipSetName) =>
+      (super.noSuchMethod(
+            Invocation.method(#getCidrsStream, [ipSetName]),
+            returnValue: _i10.Stream<List<_i8.Cidr>>.empty(),
+            returnValueForMissingStub: _i10.Stream<List<_i8.Cidr>>.empty(),
+          )
+          as _i10.Stream<List<_i8.Cidr>>);
+
+  @override
+  _i10.Future<void> addApp(
     String? appSetName,
-    _i19.AppId? app, {
-    _i11.Uint8List? icon,
+    _i20.AppId? app, {
+    _i12.Uint8List? icon,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #addApp,
-          [
-            appSetName,
-            app,
-          ],
-          {#icon: icon},
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#addApp, [appSetName, app], {#icon: icon}),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> addApps(List<_i7.App>? apps) => (super.noSuchMethod(
-        Invocation.method(
-          #addApps,
-          [apps],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Stream<List<_i7.App>> getAppsStream(String? appSetName) =>
+  _i10.Future<void> addApps(List<_i8.App>? apps) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getAppsStream,
-          [appSetName],
-        ),
-        returnValue: _i9.Stream<List<_i7.App>>.empty(),
-      ) as _i9.Stream<List<_i7.App>>);
+            Invocation.method(#addApps, [apps]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<List<_i7.App>> getApps(String? appSetName) => (super.noSuchMethod(
-        Invocation.method(
-          #getApps,
-          [appSetName],
-        ),
-        returnValue: _i9.Future<List<_i7.App>>.value(<_i7.App>[]),
-      ) as _i9.Future<List<_i7.App>>);
-
-  @override
-  _i9.Future<void> removeApp(List<int>? ids) => (super.noSuchMethod(
-        Invocation.method(
-          #removeApp,
-          [ids],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<List<_i19.SelectorConfig>> getAllSelectors() =>
+  _i10.Stream<List<_i8.App>> getAppsStream(String? appSetName) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getAllSelectors,
-          [],
-        ),
-        returnValue: _i9.Future<List<_i19.SelectorConfig>>.value(
-            <_i19.SelectorConfig>[]),
-      ) as _i9.Future<List<_i19.SelectorConfig>>);
+            Invocation.method(#getAppsStream, [appSetName]),
+            returnValue: _i10.Stream<List<_i8.App>>.empty(),
+            returnValueForMissingStub: _i10.Stream<List<_i8.App>>.empty(),
+          )
+          as _i10.Stream<List<_i8.App>>);
 
   @override
-  _i9.Future<void> addSubscriptionToSelector(
+  _i10.Future<List<_i8.App>> getApps(String? appSetName) =>
+      (super.noSuchMethod(
+            Invocation.method(#getApps, [appSetName]),
+            returnValue: _i10.Future<List<_i8.App>>.value(<_i8.App>[]),
+            returnValueForMissingStub: _i10.Future<List<_i8.App>>.value(
+              <_i8.App>[],
+            ),
+          )
+          as _i10.Future<List<_i8.App>>);
+
+  @override
+  _i10.Future<void> removeApp(List<int>? ids) =>
+      (super.noSuchMethod(
+            Invocation.method(#removeApp, [ids]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<List<_i20.SelectorConfig>> getAllSelectors() =>
+      (super.noSuchMethod(
+            Invocation.method(#getAllSelectors, []),
+            returnValue: _i10.Future<List<_i20.SelectorConfig>>.value(
+              <_i20.SelectorConfig>[],
+            ),
+            returnValueForMissingStub:
+                _i10.Future<List<_i20.SelectorConfig>>.value(
+                  <_i20.SelectorConfig>[],
+                ),
+          )
+          as _i10.Future<List<_i20.SelectorConfig>>);
+
+  @override
+  _i10.Future<void> addSubscriptionToSelector(
     String? selectorName,
     int? subscriptionId,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #addSubscriptionToSelector,
-          [
-            selectorName,
-            subscriptionId,
-          ],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#addSubscriptionToSelector, [
+              selectorName,
+              subscriptionId,
+            ]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> removeSubscriptionFromSelector(
+  _i10.Future<void> removeSubscriptionFromSelector(
     String? selectorName,
     int? subscriptionId,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #removeSubscriptionFromSelector,
-          [
-            selectorName,
-            subscriptionId,
-          ],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#removeSubscriptionFromSelector, [
+              selectorName,
+              subscriptionId,
+            ]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> addHandlerGroupToSelector(
+  _i10.Future<void> addHandlerGroupToSelector(
     String? selectorName,
     String? groupName,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #addHandlerGroupToSelector,
-          [
-            selectorName,
-            groupName,
-          ],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#addHandlerGroupToSelector, [
+              selectorName,
+              groupName,
+            ]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> removeHandlerGroupFromSelector(
+  _i10.Future<void> removeHandlerGroupFromSelector(
     String? selectorName,
     String? groupName,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #removeHandlerGroupFromSelector,
-          [
-            selectorName,
-            groupName,
-          ],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#removeHandlerGroupFromSelector, [
+              selectorName,
+              groupName,
+            ]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> addHandlerToSelector(
+  _i10.Future<void> addHandlerToSelector(
     String? selectorName,
     int? handlerId,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #addHandlerToSelector,
-          [
-            selectorName,
-            handlerId,
-          ],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#addHandlerToSelector, [selectorName, handlerId]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> removeHandlerFromSelector(
+  _i10.Future<void> removeHandlerFromSelector(
     String? selectorName,
     int? handlerId,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #removeHandlerFromSelector,
-          [
-            selectorName,
-            handlerId,
-          ],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#removeHandlerFromSelector, [
+              selectorName,
+              handlerId,
+            ]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> addSelector(_i19.SelectorConfig? selector) =>
+  _i10.Future<void> addSelector(_i20.SelectorConfig? selector) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #addSelector,
-          [selector],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
+            Invocation.method(#addSelector, [selector]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
 
   @override
-  _i9.Stream<List<_i7.GreatIpSet>> getGreatIpSetsStream() =>
+  _i10.Stream<List<_i8.GreatIpSet>> getGreatIpSetsStream() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getGreatIpSetsStream,
-          [],
-        ),
-        returnValue: _i9.Stream<List<_i7.GreatIpSet>>.empty(),
-      ) as _i9.Stream<List<_i7.GreatIpSet>>);
+            Invocation.method(#getGreatIpSetsStream, []),
+            returnValue: _i10.Stream<List<_i8.GreatIpSet>>.empty(),
+            returnValueForMissingStub:
+                _i10.Stream<List<_i8.GreatIpSet>>.empty(),
+          )
+          as _i10.Stream<List<_i8.GreatIpSet>>);
 
   @override
-  _i9.Stream<List<_i7.AtomicIpSet>> getAtomicIpSetsStream() =>
+  _i10.Stream<List<_i8.AtomicIpSet>> getAtomicIpSetsStream() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getAtomicIpSetsStream,
-          [],
-        ),
-        returnValue: _i9.Stream<List<_i7.AtomicIpSet>>.empty(),
-      ) as _i9.Stream<List<_i7.AtomicIpSet>>);
+            Invocation.method(#getAtomicIpSetsStream, []),
+            returnValue: _i10.Stream<List<_i8.AtomicIpSet>>.empty(),
+            returnValueForMissingStub:
+                _i10.Stream<List<_i8.AtomicIpSet>>.empty(),
+          )
+          as _i10.Stream<List<_i8.AtomicIpSet>>);
 }

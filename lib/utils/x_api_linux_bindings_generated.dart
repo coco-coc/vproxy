@@ -30,62 +30,53 @@ import 'dart:ffi' as ffi;
 class XApiLinuxBindings {
   /// Holds the symbol lookup function.
   final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-      _lookup;
+  _lookup;
 
   /// The symbols are looked up in [dynamicLibrary].
   XApiLinuxBindings(ffi.DynamicLibrary dynamicLibrary)
-      : _lookup = dynamicLibrary.lookup;
+    : _lookup = dynamicLibrary.lookup;
 
   /// The symbols are looked up with [lookup].
   XApiLinuxBindings.fromLookup(
-      ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-          lookup)
-      : _lookup = lookup;
+    ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup,
+  ) : _lookup = lookup;
 
-  int _GoStringLen(
-    _GoString_ s,
-  ) {
-    return __GoStringLen(
-      s,
-    );
+  int _GoStringLen(_GoString_ s) {
+    return __GoStringLen(s);
   }
 
   late final __GoStringLenPtr =
       _lookup<ffi.NativeFunction<ffi.Size Function(_GoString_)>>(
-          '_GoStringLen');
-  late final __GoStringLen =
-      __GoStringLenPtr.asFunction<int Function(_GoString_)>();
+        '_GoStringLen',
+      );
+  late final __GoStringLen = __GoStringLenPtr
+      .asFunction<int Function(_GoString_)>();
 
-  ffi.Pointer<ffi.Char> _GoStringPtr(
-    _GoString_ s,
-  ) {
-    return __GoStringPtr(
-      s,
-    );
+  ffi.Pointer<ffi.Char> _GoStringPtr(_GoString_ s) {
+    return __GoStringPtr(s);
   }
 
   late final __GoStringPtrPtr =
       _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function(_GoString_)>>(
-          '_GoStringPtr');
-  late final __GoStringPtr =
-      __GoStringPtrPtr.asFunction<ffi.Pointer<ffi.Char> Function(_GoString_)>();
+        '_GoStringPtr',
+      );
+  late final __GoStringPtr = __GoStringPtrPtr
+      .asFunction<ffi.Pointer<ffi.Char> Function(_GoString_)>();
 
-  ffi.Pointer<ffi.Char> Start(
-    ffi.Pointer<ffi.Void> p,
-    int len,
-  ) {
-    return _Start(
-      p,
-      len,
-    );
+  ffi.Pointer<ffi.Char> Start(ffi.Pointer<ffi.Void> p, int len) {
+    return _Start(p, len);
   }
 
-  late final _StartPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<ffi.Char> Function(
-              ffi.Pointer<ffi.Void>, ffi.Int)>>('Start');
-  late final _Start = _StartPtr.asFunction<
-      ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Void>, int)>();
+  late final _StartPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Void>, ffi.Int)
+        >
+      >('Start');
+  late final _Start =
+      _StartPtr.asFunction<
+        ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Void>, int)
+      >();
 
   ffi.Pointer<ffi.Char> Stop() {
     return _Stop();
@@ -95,50 +86,42 @@ class XApiLinuxBindings {
       _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>('Stop');
   late final _Stop = _StopPtr.asFunction<ffi.Pointer<ffi.Char> Function()>();
 
-  void FreeString(
-    ffi.Pointer<ffi.Char> s,
-  ) {
-    return _FreeString(
-      s,
-    );
+  void FreeString(ffi.Pointer<ffi.Char> s) {
+    return _FreeString(s);
   }
 
   late final _FreeStringPtr =
       _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Char>)>>(
-          'FreeString');
+        'FreeString',
+      );
   late final _FreeString =
       _FreeStringPtr.asFunction<void Function(ffi.Pointer<ffi.Char>)>();
 
-  void FreeBytes(
-    ffi.Pointer<ffi.Void> p,
-  ) {
-    return _FreeBytes(
-      p,
-    );
+  void FreeBytes(ffi.Pointer<ffi.Void> p) {
+    return _FreeBytes(p);
   }
 
   late final _FreeBytesPtr =
       _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
-          'FreeBytes');
+        'FreeBytes',
+      );
   late final _FreeBytes =
       _FreeBytesPtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
 
-  ffi.Pointer<ffi.Char> StartApiServer(
-    ffi.Pointer<ffi.Void> p,
-    int len,
-  ) {
-    return _StartApiServer(
-      p,
-      len,
-    );
+  ffi.Pointer<ffi.Char> StartApiServer(ffi.Pointer<ffi.Void> p, int len) {
+    return _StartApiServer(p, len);
   }
 
-  late final _StartApiServerPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<ffi.Char> Function(
-              ffi.Pointer<ffi.Void>, ffi.Int)>>('StartApiServer');
-  late final _StartApiServer = _StartApiServerPtr.asFunction<
-      ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Void>, int)>();
+  late final _StartApiServerPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Void>, ffi.Int)
+        >
+      >('StartApiServer');
+  late final _StartApiServer =
+      _StartApiServerPtr.asFunction<
+        ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Void>, int)
+      >();
 
   GenerateTls_return GenerateTls() {
     return _GenerateTls();

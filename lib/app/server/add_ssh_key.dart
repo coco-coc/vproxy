@@ -35,12 +35,13 @@ class AddSshKeyForm {
   final String? sshKeyPath;
   final String? sshKeyPassphrase;
 
-  AddSshKeyForm(
-      {required this.name,
-      this.remark,
-      this.sshKey,
-      this.sshKeyPath,
-      this.sshKeyPassphrase});
+  AddSshKeyForm({
+    required this.name,
+    this.remark,
+    this.sshKey,
+    this.sshKeyPath,
+    this.sshKeyPassphrase,
+  });
 }
 
 class _AddSshKeyDialogState extends State<AddSshKeyDialog> {
@@ -78,8 +79,10 @@ class _AddSshKeyDialogState extends State<AddSshKeyDialog> {
   Widget build(BuildContext context) {
     final form = Theme(
       data: Theme.of(context).copyWith(
-          inputDecorationTheme:
-              const InputDecorationTheme(border: OutlineInputBorder())),
+        inputDecorationTheme: const InputDecorationTheme(
+          border: OutlineInputBorder(),
+        ),
+      ),
       child: Form(
         key: _formKey,
         child: Column(
@@ -114,8 +117,9 @@ class _AddSshKeyDialogState extends State<AddSshKeyDialog> {
               validator: (value) {
                 if (_sshKeyController.text.isEmpty &&
                     _sshKeyPathController.text.isEmpty) {
-                  return AppLocalizations.of(context)!
-                      .sshKeyContentOrPathRequired;
+                  return AppLocalizations.of(
+                    context,
+                  )!.sshKeyContentOrPathRequired;
                 }
                 return null;
               },
@@ -123,18 +127,21 @@ class _AddSshKeyDialogState extends State<AddSshKeyDialog> {
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: OutlinedButton.icon(
-                  onPressed: () async {
-                    final result = await FilePicker.platform.pickFiles(
-                        type: FileType.any,
-                        // allowedExtensions: ['pem', 'key', 'txt'],
-                        withData: true);
-                    if (result != null && result.files.single.bytes != null) {
-                      _sshKeyController.text =
-                          utf8.decode(result.files.single.bytes!);
-                    }
-                  },
-                  icon: const Icon(Icons.folder),
-                  label: Text(AppLocalizations.of(context)!.selectFromFile)),
+                onPressed: () async {
+                  final result = await FilePicker.platform.pickFiles(
+                    type: FileType.any,
+                    // allowedExtensions: ['pem', 'key', 'txt'],
+                    withData: true,
+                  );
+                  if (result != null && result.files.single.bytes != null) {
+                    _sshKeyController.text = utf8.decode(
+                      result.files.single.bytes!,
+                    );
+                  }
+                },
+                icon: const Icon(Icons.folder),
+                label: Text(AppLocalizations.of(context)!.selectFromFile),
+              ),
             ),
             const Gap(10),
             // TextFormField(
@@ -158,7 +165,7 @@ class _AddSshKeyDialogState extends State<AddSshKeyDialog> {
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.keyPassphrase,
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -168,8 +175,9 @@ class _AddSshKeyDialogState extends State<AddSshKeyDialog> {
         appBar: AppBar(
           actions: [
             TextButton(
-                onPressed: () => _save(context),
-                child: Text(AppLocalizations.of(context)!.save))
+              onPressed: () => _save(context),
+              child: Text(AppLocalizations.of(context)!.save),
+            ),
           ],
         ),
         body: Padding(

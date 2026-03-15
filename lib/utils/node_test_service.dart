@@ -73,7 +73,8 @@ class NodeTestService {
 
     pref.setLastNodeTestTime(DateTime.now());
     try {
-      final now = DateTime.now().millisecondsSinceEpoch ~/
+      final now =
+          DateTime.now().millisecondsSinceEpoch ~/
           1000; // Unix timestamp in seconds
       final intervalSeconds = pref.nodeTestInterval * 60;
 
@@ -115,8 +116,7 @@ class NodeTestService {
       // Test latency first (faster)
       final handlersNeedingPing = handlersToTest.where((h) {
         final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-        return h.pingTestTime == 0 ||
-            (now - h.pingTestTime) > intervalSeconds;
+        return h.pingTestTime == 0 || (now - h.pingTestTime) > intervalSeconds;
       }).toList();
 
       if (handlersNeedingPing.isNotEmpty) {

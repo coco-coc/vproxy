@@ -16,28 +16,29 @@
 part of 'database.dart';
 
 class OutboundHandler {
-  OutboundHandler(
-      {required this.config,
-      this.id = 0,
-      this.countryCode = '',
-      this.selected = false,
-      this.speed = 0,
-      this.ping = 0,
-      // this.speed1MB = 0,
-      this.monitorSpeed = 0,
-      this.ok = 0,
-      this.tcpOK = 0,
-      this.speedTesting = false,
-      this.usableTesting = false,
-      this.serverIp = '',
-      this.cdn,
-      this.speedTestTime = 0,
-      this.pingTestTime = 0,
-      this.support6 = 0,
-      this.support6TestTime = 0,
-      this.subId,
-      this.updatedAt,
-      this.selectedInMultipleSelect = false});
+  OutboundHandler({
+    required this.config,
+    this.id = 0,
+    this.countryCode = '',
+    this.selected = false,
+    this.speed = 0,
+    this.ping = 0,
+    // this.speed1MB = 0,
+    this.monitorSpeed = 0,
+    this.ok = 0,
+    this.tcpOK = 0,
+    this.speedTesting = false,
+    this.usableTesting = false,
+    this.serverIp = '',
+    this.cdn,
+    this.speedTestTime = 0,
+    this.pingTestTime = 0,
+    this.support6 = 0,
+    this.support6TestTime = 0,
+    this.subId,
+    this.updatedAt,
+    this.selectedInMultipleSelect = false,
+  });
 
   int id;
   // if selected mannually. defaults to false
@@ -170,23 +171,22 @@ class OutboundHandler {
 
   OutboundHandlersCompanion toCompanion() {
     return OutboundHandlersCompanion(
-        id: Value(id),
-        selected: Value(selected),
-        countryCode: Value(countryCode),
-        speed: Value(speed),
-        ping: Value(ping),
-        sni: Value(sni),
-        config: Value(config),
-        ok: Value(ok),
-        subId: Value(subId),
-        updatedAt: Value(updatedAt),
-        serverIp: Value(serverIp));
+      id: Value(id),
+      selected: Value(selected),
+      countryCode: Value(countryCode),
+      speed: Value(speed),
+      ping: Value(ping),
+      sni: Value(sni),
+      config: Value(config),
+      ok: Value(ok),
+      subId: Value(subId),
+      updatedAt: Value(updatedAt),
+      serverIp: Value(serverIp),
+    );
   }
 
   factory OutboundHandler.fromConfig(HandlerConfig config) {
-    return OutboundHandler(
-      config: config,
-    );
+    return OutboundHandler(config: config);
   }
 
   HandlerConfig toConfig() {
@@ -245,7 +245,8 @@ class OutboundHandler {
             height: 24,
             width: 24,
             AssetBytesLoader(
-                'assets/icons/flags/${countryCode.toLowerCase()}.svg.vec'),
+              'assets/icons/flags/${countryCode.toLowerCase()}.svg.vec',
+            ),
           )
         : const Icon(Icons.language);
   }
@@ -321,8 +322,11 @@ extension OutboundHandlerConfigExtension on OutboundHandlerConfig {
 }
 
 class OutboundHandlerGroup extends NodeGroup {
-  OutboundHandlerGroup(
-      {required this.name, required this.placeOnTop, this.updatedAt});
+  OutboundHandlerGroup({
+    required this.name,
+    required this.placeOnTop,
+    this.updatedAt,
+  });
 
   @override
   final String name;
@@ -332,7 +336,9 @@ class OutboundHandlerGroup extends NodeGroup {
 
   OutboundHandlerGroupsCompanion toCompanion() {
     return OutboundHandlerGroupsCompanion(
-        name: Value(name), updatedAt: Value(updatedAt));
+      name: Value(name),
+      updatedAt: Value(updatedAt),
+    );
   }
 
   factory OutboundHandlerGroup.fromJson(Map<String, dynamic> json) =>
@@ -356,8 +362,13 @@ class GreatIpSet extends DataClass implements Insertable<GreatIpSet> {
   final String name;
   final GreatIPSetConfig greatIpSetConfig;
   final DateTime? updatedAt;
-  const GreatIpSet(
-      {required this.name, required this.greatIpSetConfig, this.updatedAt});
+  final String? oppositeName;
+  const GreatIpSet({
+    required this.name,
+    required this.greatIpSetConfig,
+    this.updatedAt,
+    this.oppositeName,
+  });
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -366,9 +377,13 @@ class GreatIpSet extends DataClass implements Insertable<GreatIpSet> {
       map['updated_at'] = Variable<DateTime>(updatedAt);
     }
     map['name'] = Variable<String>(name);
+    if (!nullToAbsent || oppositeName != null) {
+      map['opposite_name'] = Variable<String>(oppositeName);
+    }
     {
       map['great_ip_set_config'] = Variable<Uint8List>(
-          $GreatIpSetsTable.$convertergreatIpSetConfig.toSql(greatIpSetConfig));
+        $GreatIpSetsTable.$convertergreatIpSetConfig.toSql(greatIpSetConfig),
+      );
     }
     return map;
   }
@@ -378,17 +393,24 @@ class GreatIpSet extends DataClass implements Insertable<GreatIpSet> {
       name: Value(name),
       greatIpSetConfig: Value(greatIpSetConfig),
       updatedAt: Value(updatedAt),
+      oppositeName: oppositeName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(oppositeName),
     );
   }
 
-  factory GreatIpSet.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory GreatIpSet.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return GreatIpSet(
       name: serializer.fromJson<String>(json['name']),
       greatIpSetConfig: GreatIPSetConfig.fromJson(json['greatIpSetConfig']),
-      updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
+      oppositeName: serializer.fromJson<String?>(json['oppositeName']),
     );
   }
   @override
@@ -398,6 +420,7 @@ class GreatIpSet extends DataClass implements Insertable<GreatIpSet> {
       'name': serializer.toJson<String>(name),
       'greatIpSetConfig': greatIpSetConfig.writeToJson(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'oppositeName': serializer.toJson<String?>(oppositeName),
     };
   }
 }
@@ -409,13 +432,14 @@ class AtomicIpSet extends DataClass implements Insertable<AtomicIpSet> {
   final List<String>? clashRuleUrls;
   final DateTime? updatedAt;
   final String? geoUrl;
-  const AtomicIpSet(
-      {required this.name,
-      required this.inverse,
-      this.geoIpConfig,
-      this.clashRuleUrls,
-      this.updatedAt,
-      this.geoUrl});
+  const AtomicIpSet({
+    required this.name,
+    required this.inverse,
+    this.geoIpConfig,
+    this.clashRuleUrls,
+    this.updatedAt,
+    this.geoUrl,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -426,11 +450,13 @@ class AtomicIpSet extends DataClass implements Insertable<AtomicIpSet> {
     map['inverse'] = Variable<bool>(inverse);
     if (!nullToAbsent || geoIpConfig != null) {
       map['geo_ip_config'] = Variable<Uint8List>(
-          $AtomicIpSetsTable.$convertergeoIpConfign.toSql(geoIpConfig));
+        $AtomicIpSetsTable.$convertergeoIpConfign.toSql(geoIpConfig),
+      );
     }
     if (!nullToAbsent || clashRuleUrls != null) {
       map['clash_rule_urls'] = Variable<String>(
-          $AtomicIpSetsTable.$converterclashRuleUrlsn.toSql(clashRuleUrls));
+        $AtomicIpSetsTable.$converterclashRuleUrlsn.toSql(clashRuleUrls),
+      );
     }
     if (!nullToAbsent || geoUrl != null) {
       map['geo_url'] = Variable<String>(geoUrl);
@@ -449,13 +475,16 @@ class AtomicIpSet extends DataClass implements Insertable<AtomicIpSet> {
           ? const Value.absent()
           : Value(clashRuleUrls),
       updatedAt: Value(updatedAt),
-      geoUrl:
-          geoUrl == null && nullToAbsent ? const Value.absent() : Value(geoUrl),
+      geoUrl: geoUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(geoUrl),
     );
   }
 
-  factory AtomicIpSet.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory AtomicIpSet.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     print(json);
     return AtomicIpSet(
@@ -467,8 +496,9 @@ class AtomicIpSet extends DataClass implements Insertable<AtomicIpSet> {
       clashRuleUrls: json['clashRuleUrls'] != null
           ? (json['clashRuleUrls'] as List<dynamic>).cast<String>()
           : null,
-      updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
       geoUrl: json['geoUrl'] != null ? json['geoUrl'] as String : null,
     );
   }
@@ -505,7 +535,8 @@ class AppSet extends DataClass implements Insertable<AppSet> {
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || clashRuleUrls != null) {
       map['clash_rule_urls'] = Variable<String>(
-          $AppSetsTable.$converterclashRuleUrlsn.toSql(clashRuleUrls));
+        $AppSetsTable.$converterclashRuleUrlsn.toSql(clashRuleUrls),
+      );
     }
     return map;
   }
@@ -520,13 +551,16 @@ class AppSet extends DataClass implements Insertable<AppSet> {
     );
   }
 
-  factory AppSet.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory AppSet.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return AppSet(
       name: serializer.fromJson<String>(json['name']),
-      updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
       clashRuleUrls: json['clashRuleUrls'] != null
           ? (json['clashRuleUrls'] as List<dynamic>).cast<String>()
           : null,
@@ -548,11 +582,12 @@ class DnsServer extends DataClass implements Insertable<DnsServer> {
   final String name;
   final dns.DnsServerConfig dnsServer;
   final DateTime? updatedAt;
-  const DnsServer(
-      {required this.id,
-      required this.name,
-      required this.dnsServer,
-      this.updatedAt});
+  const DnsServer({
+    required this.id,
+    required this.name,
+    required this.dnsServer,
+    this.updatedAt,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -563,7 +598,8 @@ class DnsServer extends DataClass implements Insertable<DnsServer> {
     map['name'] = Variable<String>(name);
     {
       map['dns_server'] = Variable<Uint8List>(
-          $DnsServersTable.$converterdnsServer.toSql(dnsServer));
+        $DnsServersTable.$converterdnsServer.toSql(dnsServer),
+      );
     }
     return map;
   }
@@ -577,13 +613,16 @@ class DnsServer extends DataClass implements Insertable<DnsServer> {
     );
   }
 
-  factory DnsServer.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory DnsServer.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return DnsServer(
       id: serializer.fromJson<int>(json['id']),
-      updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
       name: serializer.fromJson<String>(json['name']),
       dnsServer: dns.DnsServerConfig.fromJson(json['dnsServer']),
     );
@@ -604,8 +643,11 @@ class HandlerSelector extends DataClass implements Insertable<HandlerSelector> {
   final String name;
   final SelectorConfig config;
   final DateTime? updatedAt;
-  const HandlerSelector(
-      {required this.name, required this.config, this.updatedAt});
+  const HandlerSelector({
+    required this.name,
+    required this.config,
+    this.updatedAt,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -615,7 +657,8 @@ class HandlerSelector extends DataClass implements Insertable<HandlerSelector> {
     map['name'] = Variable<String>(name);
     {
       map['config'] = Variable<Uint8List>(
-          $HandlerSelectorsTable.$converterconfig.toSql(config));
+        $HandlerSelectorsTable.$converterconfig.toSql(config),
+      );
     }
     return map;
   }
@@ -628,14 +671,17 @@ class HandlerSelector extends DataClass implements Insertable<HandlerSelector> {
     );
   }
 
-  factory HandlerSelector.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory HandlerSelector.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return HandlerSelector(
       name: serializer.fromJson<String>(json['name']),
       config: SelectorConfig.fromJson(json['config']),
-      updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
     );
   }
   @override
@@ -653,15 +699,19 @@ class GeoDomain extends DataClass implements Insertable<GeoDomain> {
   final int id;
   final Domain geoDomain;
   final String domainSetName;
-  const GeoDomain(
-      {required this.id, required this.geoDomain, required this.domainSetName});
+  const GeoDomain({
+    required this.id,
+    required this.geoDomain,
+    required this.domainSetName,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     {
       map['geo_domain'] = Variable<Uint8List>(
-          $GeoDomainsTable.$convertergeoDomain.toSql(geoDomain));
+        $GeoDomainsTable.$convertergeoDomain.toSql(geoDomain),
+      );
     }
     map['domain_set_name'] = Variable<String>(domainSetName);
     return map;
@@ -675,8 +725,10 @@ class GeoDomain extends DataClass implements Insertable<GeoDomain> {
     );
   }
 
-  factory GeoDomain.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory GeoDomain.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return GeoDomain(
       id: serializer.fromJson<int>(json['id']),
@@ -700,19 +752,21 @@ class App extends DataClass implements Insertable<App> {
   final String appSetName;
   final AppId appId;
   final Uint8List? icon;
-  const App(
-      {required this.id,
-      required this.appSetName,
-      required this.appId,
-      this.icon});
+  const App({
+    required this.id,
+    required this.appSetName,
+    required this.appId,
+    this.icon,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['app_set_name'] = Variable<String>(appSetName);
     {
-      map['app_id'] =
-          Variable<Uint8List>($AppsTable.$converterappId.toSql(appId));
+      map['app_id'] = Variable<Uint8List>(
+        $AppsTable.$converterappId.toSql(appId),
+      );
     }
     if (!nullToAbsent || icon != null) {
       map['icon'] = Variable<Uint8List>(icon);
@@ -729,8 +783,10 @@ class App extends DataClass implements Insertable<App> {
     );
   }
 
-  factory App.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory App.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return App(
       id: serializer.fromJson<int>(json['id']),
@@ -775,8 +831,10 @@ class Cidr extends DataClass implements Insertable<Cidr> {
     );
   }
 
-  factory Cidr.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory Cidr.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Cidr(
       id: serializer.fromJson<int>(json['id']),
@@ -795,10 +853,10 @@ class Cidr extends DataClass implements Insertable<Cidr> {
   }
 
   Cidr copyWith({int? id, String? ipSetName, CIDR? cidr}) => Cidr(
-        id: id ?? this.id,
-        ipSetName: ipSetName ?? this.ipSetName,
-        cidr: cidr ?? this.cidr,
-      );
+    id: id ?? this.id,
+    ipSetName: ipSetName ?? this.ipSetName,
+    cidr: cidr ?? this.cidr,
+  );
   Cidr copyWithCompanion(CidrsCompanion data) {
     return Cidr(
       id: data.id.present ? data.id.value : id,
@@ -835,13 +893,14 @@ class AtomicDomainSet extends DataClass implements Insertable<AtomicDomainSet> {
   final List<String>? clashRuleUrls;
   final DateTime? updatedAt;
   final String? geoUrl;
-  const AtomicDomainSet(
-      {required this.name,
-      this.geositeConfig,
-      required this.useBloomFilter,
-      this.updatedAt,
-      this.geoUrl,
-      this.clashRuleUrls});
+  const AtomicDomainSet({
+    required this.name,
+    this.geositeConfig,
+    required this.useBloomFilter,
+    this.updatedAt,
+    this.geoUrl,
+    this.clashRuleUrls,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -851,12 +910,14 @@ class AtomicDomainSet extends DataClass implements Insertable<AtomicDomainSet> {
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || geositeConfig != null) {
       map['geosite_config'] = Variable<Uint8List>(
-          $AtomicDomainSetsTable.$convertergeositeConfign.toSql(geositeConfig));
+        $AtomicDomainSetsTable.$convertergeositeConfign.toSql(geositeConfig),
+      );
     }
     map['use_bloom_filter'] = Variable<bool>(useBloomFilter);
     if (!nullToAbsent || clashRuleUrls != null) {
       map['clash_rule_urls'] = Variable<String>(
-          $AtomicDomainSetsTable.$converterclashRuleUrlsn.toSql(clashRuleUrls));
+        $AtomicDomainSetsTable.$converterclashRuleUrlsn.toSql(clashRuleUrls),
+      );
     }
     if (!nullToAbsent || geoUrl != null) {
       map['geo_url'] = Variable<String>(geoUrl);
@@ -872,20 +933,24 @@ class AtomicDomainSet extends DataClass implements Insertable<AtomicDomainSet> {
           : Value(geositeConfig),
       updatedAt: Value(updatedAt),
       useBloomFilter: Value(useBloomFilter),
-      geoUrl:
-          geoUrl == null && nullToAbsent ? const Value.absent() : Value(geoUrl),
+      geoUrl: geoUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(geoUrl),
       clashRuleUrls: clashRuleUrls == null && nullToAbsent
           ? const Value.absent()
           : Value(clashRuleUrls),
     );
   }
 
-  factory AtomicDomainSet.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory AtomicDomainSet.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return AtomicDomainSet(
-      updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
       name: serializer.fromJson<String>(json['name']),
       geositeConfig: json['geositeConfig'] != null
           ? GeositeConfig.fromJson(json['geositeConfig'])
@@ -916,11 +981,12 @@ class GreatDomainSet extends DataClass implements Insertable<GreatDomainSet> {
   final String? oppositeName;
   final GreatDomainSetConfig set;
   final DateTime? updatedAt;
-  const GreatDomainSet(
-      {required this.name,
-      this.oppositeName,
-      required this.set,
-      this.updatedAt});
+  const GreatDomainSet({
+    required this.name,
+    this.oppositeName,
+    required this.set,
+    this.updatedAt,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -932,8 +998,9 @@ class GreatDomainSet extends DataClass implements Insertable<GreatDomainSet> {
       map['opposite_name'] = Variable<String>(oppositeName);
     }
     {
-      map['set'] =
-          Variable<Uint8List>($GreatDomainSetsTable.$converterset.toSql(set));
+      map['set'] = Variable<Uint8List>(
+        $GreatDomainSetsTable.$converterset.toSql(set),
+      );
     }
     return map;
   }
@@ -949,15 +1016,18 @@ class GreatDomainSet extends DataClass implements Insertable<GreatDomainSet> {
     );
   }
 
-  factory GreatDomainSet.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory GreatDomainSet.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return GreatDomainSet(
       name: serializer.fromJson<String>(json['name']),
       oppositeName: serializer.fromJson<String?>(json['oppositeName']),
       set: GreatDomainSetConfig.fromJson(json['set']),
-      updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
     );
   }
   @override

@@ -17,8 +17,7 @@ part of 'outbound_handler_form.dart';
 
 /// Collect a header config
 class _TransportHeaderSelector extends StatefulWidget {
-  const _TransportHeaderSelector(
-      {required this.setter});
+  const _TransportHeaderSelector({required this.setter});
 
   final void Function(Any) setter;
 
@@ -49,13 +48,15 @@ class _TransportHeaderSelectorState extends State<_TransportHeaderSelector> {
         });
       },
       dropdownMenuEntries: TransportHeaderLabel.values
-          .map<DropdownMenuEntry<TransportHeaderLabel>>(
-              (TransportHeaderLabel p) {
-        return DropdownMenuEntry<TransportHeaderLabel>(
-          label: p.label,
-          value: p,
-        );
-      }).toList(),
+          .map<DropdownMenuEntry<TransportHeaderLabel>>((
+            TransportHeaderLabel p,
+          ) {
+            return DropdownMenuEntry<TransportHeaderLabel>(
+              label: p.label,
+              value: p,
+            );
+          })
+          .toList(),
     );
   }
 

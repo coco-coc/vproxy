@@ -23,6 +23,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pasteboard/pasteboard.dart';
 import 'package:path/path.dart' hide context;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vx/app/home/home.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/app/control.dart';
 
@@ -59,78 +60,76 @@ class _ShellPageState extends State<ShellPage> {
             File(join(resourceDirectory.parent.path, 'vproxy')).existsSync()) {
           //[C:\\Users\\YOUR USER NAME\\AppData\\Roaming\\com.5vnetwork\\vproxy]
           showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                    content: SizedBox(
-                      width: 500,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.windowsUpdateNotice1,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          const Gap(10),
-                          Text(join(resourceDirectory.parent.path, 'vproxy')),
-                          const Gap(10),
-                          const Icon(Icons.arrow_downward),
-                          const Gap(10),
-                          Text(resourceDirectory.path),
-                          const Gap(10),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              AppLocalizations.of(context)!
-                                  .windowsUpdateNotice2,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Pasteboard.writeText(resourceDirectory.parent.path);
-                        },
-                        child: Text(AppLocalizations.of(context)!.copyPath),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(AppLocalizations.of(context)!.close),
-                      ),
-                    ],
-                  ));
-        }
-        showDialog(
             context: context,
             builder: (context) => AlertDialog(
-                  title: Center(
+              content: SizedBox(
+                width: 500,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.windowsUpdateNotice1,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Gap(10),
+                    Text(join(resourceDirectory.parent.path, 'vproxy')),
+                    const Gap(10),
+                    const Icon(Icons.arrow_downward),
+                    const Gap(10),
+                    Text(resourceDirectory.path),
+                    const Gap(10),
+                    Align(
+                      alignment: Alignment.centerLeft,
                       child: Text(
-                    AppLocalizations.of(context)!.welcome,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  )),
-                  content: const Welcome(),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(AppLocalizations.of(context)!.close),
+                        AppLocalizations.of(context)!.windowsUpdateNotice2,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ],
-                ));
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Pasteboard.writeText(resourceDirectory.parent.path);
+                  },
+                  child: Text(AppLocalizations.of(context)!.copyPath),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(AppLocalizations.of(context)!.close),
+                ),
+              ],
+            ),
+          );
+        }
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Center(
+              child: Text(
+                AppLocalizations.of(context)!.welcome,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+            content: const Welcome(),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(AppLocalizations.of(context)!.close),
+              ),
+            ],
+          ),
+        );
         context.read<SharedPreferences>().setWelcomeShown(true);
       });
     }
@@ -143,28 +142,11 @@ class _ShellPageState extends State<ShellPage> {
       return cache!;
     }
     naviDestination = newNaviDestination;
-    cache = LayoutBuilder(builder: (ctx, c) {
-      final isPro = ctx.watch<AuthBloc>().state.pro;
-      if (c.isSuperLarge) {
-        Widget body = Row(
-          children: [
-            Container(
-              color: Theme.of(context).colorScheme.surface,
-              child: MyNavigationDrawer(
-                naviDestination: naviDestination,
-                showButton: true,
-              ),
-            ),
-            Expanded(
-                child: Padding(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: widget.child,
-            )),
-            const ControlDrawer(),
-          ],
-        );
-        if (Platform.isWindows || Platform.isLinux) {
-          body = Row(
+    cache = LayoutBuilder(
+      builder: (ctx, c) {
+        final isPro = ctx.watch<AuthBloc>().state.pro;
+        if (c.isSuperLarge) {
+          Widget body = Row(
             children: [
               Container(
                 color: Theme.of(context).colorScheme.surface,
@@ -173,188 +155,212 @@ class _ShellPageState extends State<ShellPage> {
                   showButton: true,
                 ),
               ),
-              verticalDivider,
               Expanded(
-                  child: Column(
-                children: [
-                  SizedBox(
-                    height: 48,
-                    child: MoveWindow(
-                      child: const Align(
-                        alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: EdgeInsets.only(right: 10),
-                          child: WindowButtons(),
-                        ),
-                      ),
-                    ),
-                  ),
-                  divider,
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(
-                            child: Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: widget.child,
-                        )),
-                        verticalDivider,
-                        const ControlDrawer(),
-                      ],
-                    ),
-                  ),
-                ],
-              )),
-            ],
-          );
-        }
-        return Scaffold(
-          body: body,
-        );
-      } else if (c.isMedium || c.isExpanded || c.isLarge) {
-        if (Platform.isAndroid) {
-          return Scaffold(
-            endDrawer: const ControlDrawer(),
-            appBar: AppBar(
-              leading: Padding(
-                padding: const EdgeInsets.only(left: 24.0),
-                child: GlobalQuicActionMenuAnchor(
-                  child: Center(
-                    child: Image.asset(
-                      'assets/icons/V.png',
-                      width: 24,
-                      height: 24,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: widget.child,
                 ),
               ),
-              actions: [
-                Builder(builder: (context) {
-                  return IconButton(
-                      onPressed: () {
-                        Scaffold.of(context).openEndDrawer();
-                      },
-                      icon: const Icon(Icons.tune_rounded));
-                }),
-              ],
-            ),
-            body: Row(
-              children: [
-                MyNavigationRail(
-                  naviDestination: naviDestination,
-                ),
-                Expanded(
-                  child: widget.child,
-                )
-              ],
-            ),
+              const ControlDrawer(),
+            ],
           );
-        }
-        return Scaffold(
-          endDrawer: const ControlDrawer(),
-          body: SafeArea(
-            child: Column(
+          if (Platform.isWindows || Platform.isLinux) {
+            body = Row(
               children: [
-                TopBar(isHomeRoute: widget.state.fullPath == '/home'),
+                Container(
+                  color: Theme.of(context).colorScheme.surface,
+                  child: MyNavigationDrawer(
+                    naviDestination: naviDestination,
+                    showButton: true,
+                  ),
+                ),
+                verticalDivider,
                 Expanded(
-                  child: Row(
+                  child: Column(
                     children: [
-                      MyNavigationRail(
-                        naviDestination: naviDestination,
+                      SizedBox(
+                        height: 48,
+                        child: MoveWindow(
+                          child: const Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding: EdgeInsets.only(right: 10),
+                              child: WindowButtons(),
+                            ),
+                          ),
+                        ),
                       ),
-                      // VerticalDivider(),
+                      divider,
                       Expanded(
-                        child: widget.child,
-                      )
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: widget.child,
+                              ),
+                            ),
+                            verticalDivider,
+                            const ControlDrawer(),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ],
-            ),
-          ),
-        );
-      } else {
-        // compact
-        // Widget? title;
-        // bool showingAd = false;
-        // if (!isPro && (Platform.isAndroid || Platform.isIOS)) {
-        //   showingAd = true;
-        //   title = MyBannderAdWidget(adSize: AdSize.banner);
-        // }
-        Widget? leading;
-        if (Platform.isWindows || (isPro && !Platform.isMacOS)) {
-          leading = GlobalQuicActionMenuAnchor(
-            child: Center(
-              child: SizedBox(
-                width: 20,
-                height: 20,
-                child: Image.asset(
-                  'assets/icons/V.png',
-                  width: 20,
-                  height: 20,
-                  color: Theme.of(context).colorScheme.primary,
+            );
+          }
+          return Scaffold(body: body);
+        } else if (c.isMedium || c.isExpanded || c.isLarge) {
+          if (Platform.isAndroid) {
+            return Scaffold(
+              endDrawer: const ControlDrawer(),
+              appBar: AppBar(
+                leading: Padding(
+                  padding: const EdgeInsets.only(left: 24.0),
+                  child: GlobalQuicActionMenuAnchor(
+                    child: Center(
+                      child: Image.asset(
+                        'assets/icons/V.png',
+                        width: 24,
+                        height: 24,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          );
-        }
+                actions: [
+                  if (widget.state.fullPath == '/home') const HomeEditButton(),
 
-        return Scaffold(
-          // drawer: MyNavigationDrawer(naviDestination: naviDestination),
-          endDrawer: const ControlDrawer(),
-          appBar: Platform.isWindows
-              ? null
-              : AppBar(
-                  forceMaterialTransparency: true,
-                  leading: leading,
-                  actions: [
-                    IconButton(
-                        onPressed: () {
-                          context.push('/setting');
-                        },
-                        icon: const Icon(Icons.settings_rounded)),
-                    if (Platform.isMacOS) const SyncButton(),
-                    Builder(builder: (context) {
+                  Builder(
+                    builder: (context) {
                       return IconButton(
                         onPressed: () {
                           Scaffold.of(context).openEndDrawer();
                         },
                         icon: const Icon(Icons.tune_rounded),
                       );
-                    }),
-                  ],
+                    },
+                  ),
+                ],
+              ),
+              body: Row(
+                children: [
+                  MyNavigationRail(naviDestination: naviDestination),
+                  Expanded(child: widget.child),
+                ],
+              ),
+            );
+          }
+          return Scaffold(
+            endDrawer: const ControlDrawer(),
+            body: SafeArea(
+              child: Column(
+                children: [
+                  TopBar(isHomeRoute: widget.state.fullPath == '/home'),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        MyNavigationRail(naviDestination: naviDestination),
+                        // VerticalDivider(),
+                        Expanded(child: widget.child),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        } else {
+          // compact
+          // Widget? title;
+          // bool showingAd = false;
+          // if (!isPro && (Platform.isAndroid || Platform.isIOS)) {
+          //   showingAd = true;
+          //   title = MyBannderAdWidget(adSize: AdSize.banner);
+          // }
+          Widget? leading;
+          if (Platform.isWindows || (isPro && !Platform.isMacOS)) {
+            leading = GlobalQuicActionMenuAnchor(
+              child: Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: Image.asset(
+                    'assets/icons/V.png',
+                    width: 20,
+                    height: 20,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
+              ),
+            );
+          }
 
-          bottomNavigationBar: NavigationBar(
-            selectedIndex: naviDestination?.index ?? 0,
-            onDestinationSelected: (index) {
-              context.go(destination[index].path);
-            },
-            destinations: destination
-                .sublist(0, destination.length - 1)
-                .map((e) => NavigationDestination(
+          return Scaffold(
+            // drawer: MyNavigationDrawer(naviDestination: naviDestination),
+            endDrawer: const ControlDrawer(),
+            appBar: Platform.isWindows
+                ? null
+                : AppBar(
+                    forceMaterialTransparency: true,
+                    leading: leading,
+                    actions: [
+                      if (widget.state.fullPath == '/home')
+                        const HomeEditButton(),
+                      IconButton(
+                        onPressed: () {
+                          context.push('/setting');
+                        },
+                        icon: const Icon(Icons.settings_rounded),
+                      ),
+                      if (Platform.isMacOS) const SyncButton(),
+                      Builder(
+                        builder: (context) {
+                          return IconButton(
+                            onPressed: () {
+                              Scaffold.of(context).openEndDrawer();
+                            },
+                            icon: const Icon(Icons.tune_rounded),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+
+            bottomNavigationBar: NavigationBar(
+              selectedIndex: naviDestination?.index ?? 0,
+              onDestinationSelected: (index) {
+                context.go(destination[index].path);
+              },
+              destinations: destination
+                  .sublist(0, destination.length - 1)
+                  .map(
+                    (e) => NavigationDestination(
                       icon: e.outlinedIcon,
                       selectedIcon: e.filledIcon,
                       label: e.label(context),
-                    ))
-                .toList(),
-          ),
-          floatingActionButton: const StartCloseButton(
-            size: StartCloseButtonSize.middle,
-            floating: true,
-          ),
-          body: Platform.isWindows
-              ? Column(
-                  children: [
-                    TopBar(isHomeRoute: widget.state.fullPath == '/home'),
-                    Expanded(child: widget.child),
-                  ],
-                )
-              : widget.child,
-        );
-      }
-    });
+                    ),
+                  )
+                  .toList(),
+            ),
+            floatingActionButton: const StartCloseButton(
+              size: StartCloseButtonSize.middle,
+              floating: true,
+            ),
+            body: Platform.isWindows
+                ? Column(
+                    children: [
+                      TopBar(isHomeRoute: widget.state.fullPath == '/home'),
+                      Expanded(child: widget.child),
+                    ],
+                  )
+                : widget.child,
+          );
+        }
+      },
+    );
     return cache!;
   }
 }

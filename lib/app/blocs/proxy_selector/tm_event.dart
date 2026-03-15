@@ -35,7 +35,6 @@ class AuthUserChangedEvent extends ProxySelectorEvent {
   List<Object> get props => [unlockPro];
 }
 
-
 class RoutingModeSelectionChangeEvent extends ProxySelectorEvent {
   const RoutingModeSelectionChangeEvent(this.routeMode);
   final CustomRouteMode routeMode;
@@ -90,4 +89,3 @@ class AutoNodeSelectorConfigChangeEvent extends ProxySelectorEvent {
   final bool balancingStragegy;
   final bool filterLandHandlers;
 }
-

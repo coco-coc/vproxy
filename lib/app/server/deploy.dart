@@ -30,9 +30,7 @@ class DeployResult {
 abstract class QuickDeployOption {
   abstract final int id;
   final XApiClient xApiClient;
-  QuickDeployOption({
-    required this.xApiClient,
-  });
+  QuickDeployOption({required this.xApiClient});
 
   String getTitle(BuildContext context);
   String getSummary(BuildContext context);
@@ -48,10 +46,7 @@ abstract class QuickDeployOption {
 
 class BasicQuickDeploy extends QuickDeployOption {
   final FlutterSecureStorage storage;
-  BasicQuickDeploy({
-    required this.storage,
-    required super.xApiClient,
-  });
+  BasicQuickDeploy({required this.storage, required super.xApiClient});
 
   @override
   final int id = 1;
@@ -71,8 +66,11 @@ class BasicQuickDeploy extends QuickDeployOption {
   }
 
   @override
-  Widget getFormWidget(BuildContext context,
-      {String? destination, GlobalKey<FormState>? formKey}) {
+  Widget getFormWidget(
+    BuildContext context, {
+    String? destination,
+    GlobalKey<FormState>? formKey,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -114,8 +112,9 @@ class BasicQuickDeploy extends QuickDeployOption {
     final vmessPorts = ports.sublist(0, 5).join(',');
     final ssPorts = ports.sublist(5, 10).join(',');
     var xrayConfig = await rootBundle.loadString('assets/configs/1_xray.json');
-    var hysteriaConfig =
-        await rootBundle.loadString('assets/configs/1_hysteria.yaml');
+    var hysteriaConfig = await rootBundle.loadString(
+      'assets/configs/1_hysteria.yaml',
+    );
     final uuid = const Uuid().v4();
 
     final secureStorage = await server.secureStorage(storage);
@@ -131,8 +130,10 @@ class BasicQuickDeploy extends QuickDeployOption {
         ? '/root/vx/certs/key.pem'
         : '/home/${secureStorage.user}/vx/certs/key.pem';
     xrayConfig = xrayConfig.replaceAll('__CERTIFICATE_PATH__', certPath);
-    hysteriaConfig =
-        hysteriaConfig.replaceAll('__CERTIFICATE_PATH__', certPath);
+    hysteriaConfig = hysteriaConfig.replaceAll(
+      '__CERTIFICATE_PATH__',
+      certPath,
+    );
     xrayConfig = xrayConfig.replaceAll('__KEY_PATH__', keyPath);
     hysteriaConfig = hysteriaConfig.replaceAll('__KEY_PATH__', keyPath);
 
@@ -140,74 +141,89 @@ class BasicQuickDeploy extends QuickDeployOption {
     final certResponse = await xApiClient.generateCert(domain);
 
     final result = await xApiClient.deploy(
-        server: server,
-        xrayConfig: utf8.encode(xrayConfig),
-        hysteriaConfig: utf8.encode(hysteriaConfig),
-        disableOSFirewall: disableOSFirewall,
-        files: {
-          certPath: Uint8List.fromList(certResponse.cert),
-          keyPath: Uint8List.fromList(certResponse.key),
-        });
+      server: server,
+      xrayConfig: utf8.encode(xrayConfig),
+      hysteriaConfig: utf8.encode(hysteriaConfig),
+      disableOSFirewall: disableOSFirewall,
+      files: {
+        certPath: Uint8List.fromList(certResponse.cert),
+        keyPath: Uint8List.fromList(certResponse.key),
+      },
+    );
 
-    return DeployResult(handlerConfigs: [
-      HandlerConfig(
+    return DeployResult(
+      handlerConfigs: [
+        HandlerConfig(
           outbound: OutboundHandlerConfig(
-              tag: '${server.name} vmess',
-              ports: tryParsePorts(vmessPorts),
-              address: server.address,
-              protocol: Any.pack(VmessClientConfig(id: uuid)))),
-      HandlerConfig(
+            tag: '${server.name} vmess',
+            ports: tryParsePorts(vmessPorts),
+            address: server.address,
+            protocol: Any.pack(VmessClientConfig(id: uuid)),
+          ),
+        ),
+        HandlerConfig(
           outbound: OutboundHandlerConfig(
-              tag: '${server.name} ss',
-              ports: tryParsePorts(ssPorts),
-              address: server.address,
-              protocol: Any.pack(ShadowsocksClientConfig(
+            tag: '${server.name} ss',
+            ports: tryParsePorts(ssPorts),
+            address: server.address,
+            protocol: Any.pack(
+              ShadowsocksClientConfig(
                 cipherType: ShadowsocksCipherType.CHACHA20_POLY1305,
                 password: uuid,
-              )))),
-      HandlerConfig(
+              ),
+            ),
+          ),
+        ),
+        HandlerConfig(
           outbound: OutboundHandlerConfig(
-              tag: '${server.name} hysteria',
-              ports: [PortRange(from: 443, to: 443)],
-              address: server.address,
-              protocol: Any.pack(Hysteria2ClientConfig(
+            tag: '${server.name} hysteria',
+            ports: [PortRange(from: 443, to: 443)],
+            address: server.address,
+            protocol: Any.pack(
+              Hysteria2ClientConfig(
                 auth: uuid,
-                bandwidth: BandwidthConfig(
-                  maxRx: 10,
-                  maxTx: 10,
-                ),
+                bandwidth: BandwidthConfig(maxRx: 10, maxTx: 10),
                 tlsConfig: TlsConfig(
-                    allowInsecure: true,
-                    serverName: domain,
-                    pinnedPeerCertificateChainSha256: [certResponse.certHash]),
-              )))),
-      HandlerConfig(
+                  allowInsecure: true,
+                  serverName: domain,
+                  pinnedPeerCertificateChainSha256: [certResponse.certHash],
+                ),
+              ),
+            ),
+          ),
+        ),
+        HandlerConfig(
           outbound: OutboundHandlerConfig(
-              tag: '${server.name} vless',
-              ports: [PortRange(from: 443, to: 443)],
-              address: server.address,
-              transport: TransportConfig(
-                  tls: TlsConfig(
-                      serverName: domain,
-                      allowInsecure: true,
-                      pinnedPeerCertificateChainSha256: [
-                    certResponse.certHash
-                  ])),
-              protocol: Any.pack(VlessClientConfig(
-                  id: uuid, flow: 'xtls-rprx-vision', encryption: 'none'))))
-    ], bbrError: result.bbrError, firewallError: result.firewallError);
+            tag: '${server.name} vless',
+            ports: [PortRange(from: 443, to: 443)],
+            address: server.address,
+            transport: TransportConfig(
+              tls: TlsConfig(
+                serverName: domain,
+                allowInsecure: true,
+                pinnedPeerCertificateChainSha256: [certResponse.certHash],
+              ),
+            ),
+            protocol: Any.pack(
+              VlessClientConfig(
+                id: uuid,
+                flow: 'xtls-rprx-vision',
+                encryption: 'none',
+              ),
+            ),
+          ),
+        ),
+      ],
+      bbrError: result.bbrError,
+      firewallError: result.firewallError,
+    );
   }
 }
 
-enum Option2TransportProtocol {
-  grpc,
-  xhttp,
-}
+enum Option2TransportProtocol { grpc, xhttp }
 
 class MasqueradeQuickDeploy extends QuickDeployOption {
-  MasqueradeQuickDeploy({
-    required super.xApiClient,
-  });
+  MasqueradeQuickDeploy({required super.xApiClient});
   @override
   final int id = 2;
   @override
@@ -258,8 +274,10 @@ class MasqueradeQuickDeploy extends QuickDeployOption {
     final (publicKey, privateKey) = await xApiClient.generateX25519KeyPair();
     xrayConfig = xrayConfig.replaceAll('__PRIVATE_KEY__', privateKey);
     xrayConfig = xrayConfig.replaceAll('__XHTTP_PATH__', xhttpPath);
-    xrayConfig =
-        xrayConfig.replaceAll('__XHTTP_PORT_CDN__', xhttpPort.toString());
+    xrayConfig = xrayConfig.replaceAll(
+      '__XHTTP_PORT_CDN__',
+      xhttpPort.toString(),
+    );
     xrayConfig = xrayConfig.replaceAll('__XHTTP_PATH_CDN__', xhttpPathCdn);
     // final useGrpc = option.transportProtocol == Option2TransportProtocol.grpc;
     // if (useGrpc) {
@@ -308,158 +326,172 @@ class MasqueradeQuickDeploy extends QuickDeployOption {
       serverName: destination!,
     );
     final vlessConfig = Any.pack(
-      VlessClientConfig(
-        id: uuid,
-        encryption: 'none',
-      ),
+      VlessClientConfig(id: uuid, encryption: 'none'),
     );
-    final vmessConfig = Any.pack(
-      VmessClientConfig(
-        id: uuid,
-      ),
-    );
-    final tlsConfig = TlsConfig(
-      serverName: cdnDomain,
-    );
-    return DeployResult(handlerConfigs: [
-      ...[
-        HandlerConfig(
+    final vmessConfig = Any.pack(VmessClientConfig(id: uuid));
+    final tlsConfig = TlsConfig(serverName: cdnDomain);
+    return DeployResult(
+      handlerConfigs: [
+        ...[
+          HandlerConfig(
             outbound: OutboundHandlerConfig(
-                tag: '${server.name} reality',
-                port: int.parse(port),
-                address: server.address,
-                protocol: Any.pack(
-                  VlessClientConfig(
-                    id: uuid,
-                    encryption: 'none',
-                    flow: 'xtls-rprx-vision',
+              tag: '${server.name} reality',
+              port: int.parse(port),
+              address: server.address,
+              protocol: Any.pack(
+                VlessClientConfig(
+                  id: uuid,
+                  encryption: 'none',
+                  flow: 'xtls-rprx-vision',
+                ),
+              ),
+              transport: TransportConfig(reality: realityConfig),
+            ),
+          ),
+          HandlerConfig(
+            outbound: OutboundHandlerConfig(
+              tag: '${server.name} reality packet-up',
+              port: int.parse(port),
+              address: server.address,
+              protocol: vlessConfig,
+              transport: TransportConfig(
+                splithttp: SplitHttpConfig(mode: 'packet-up', path: xhttpPath),
+                reality: realityConfig,
+              ),
+            ),
+          ),
+          HandlerConfig(
+            outbound: OutboundHandlerConfig(
+              tag: '${server.name} reality stream-one',
+              port: int.parse(port),
+              address: server.address,
+              protocol: vlessConfig,
+              transport: TransportConfig(
+                splithttp: SplitHttpConfig(mode: 'stream-one', path: xhttpPath),
+                reality: realityConfig,
+              ),
+            ),
+          ),
+          HandlerConfig(
+            outbound: OutboundHandlerConfig(
+              tag: '${server.name} reality stream-up',
+              port: int.parse(port),
+              address: server.address,
+              protocol: vlessConfig,
+              transport: TransportConfig(
+                splithttp: SplitHttpConfig(
+                  mode: 'stream-up',
+                  path: xhttpPath,
+                  downloadSettings: DownConfig(
+                    address: server.address,
+                    port: int.parse(port),
+                    xhttpConfig: SplitHttpConfig(path: xhttpPath),
+                    reality: realityConfig,
                   ),
                 ),
-                transport: TransportConfig(reality: realityConfig))),
-        HandlerConfig(
+                reality: realityConfig,
+              ),
+            ),
+          ),
+        ],
+        if (enableCDN) ...[
+          HandlerConfig(
             outbound: OutboundHandlerConfig(
-                tag: '${server.name} reality packet-up',
-                port: int.parse(port),
-                address: server.address,
-                protocol: vlessConfig,
-                transport: TransportConfig(
-                    splithttp: SplitHttpConfig(
-                      mode: 'packet-up',
-                      path: xhttpPath,
-                    ),
-                    reality: realityConfig))),
-        HandlerConfig(
+              tag: '${server.name} cdn packet-up',
+              port: 443,
+              address: cdnDomain,
+              protocol: vmessConfig,
+              transport: TransportConfig(
+                splithttp: SplitHttpConfig(
+                  mode: 'packet-up',
+                  host: cdnDomain,
+                  path: xhttpPathCdn,
+                ),
+                tls: tlsConfig,
+              ),
+            ),
+          ),
+          HandlerConfig(
             outbound: OutboundHandlerConfig(
-                tag: '${server.name} reality stream-one',
-                port: int.parse(port),
-                address: server.address,
-                protocol: vlessConfig,
-                transport: TransportConfig(
-                    splithttp: SplitHttpConfig(
-                      mode: 'stream-one',
-                      path: xhttpPath,
-                    ),
-                    reality: realityConfig))),
-        HandlerConfig(
+              tag: '${server.name} cdn stream-one',
+              port: 443,
+              address: cdnDomain,
+              protocol: vmessConfig,
+              transport: TransportConfig(
+                splithttp: SplitHttpConfig(
+                  mode: 'stream-one',
+                  host: cdnDomain,
+                  path: xhttpPathCdn,
+                ),
+                tls: tlsConfig,
+              ),
+            ),
+          ),
+          HandlerConfig(
             outbound: OutboundHandlerConfig(
-                tag: '${server.name} reality stream-up',
-                port: int.parse(port),
-                address: server.address,
-                protocol: vlessConfig,
-                transport: TransportConfig(
-                    splithttp: SplitHttpConfig(
-                      mode: 'stream-up',
-                      path: xhttpPath,
-                      downloadSettings: DownConfig(
-                          address: server.address,
-                          port: int.parse(port),
-                          xhttpConfig: SplitHttpConfig(
-                            path: xhttpPath,
-                          ),
-                          reality: realityConfig),
+              tag: '${server.name} cdn stream-up',
+              port: 443,
+              address: cdnDomain,
+              protocol: vmessConfig,
+              transport: TransportConfig(
+                splithttp: SplitHttpConfig(
+                  mode: 'stream-up',
+                  host: cdnDomain,
+                  path: xhttpPathCdn,
+                  downloadSettings: DownConfig(
+                    address: cdnDomain,
+                    port: 443,
+                    xhttpConfig: SplitHttpConfig(
+                      host: cdnDomain,
+                      path: xhttpPathCdn,
                     ),
-                    reality: realityConfig))),
+                    tls: tlsConfig,
+                  ),
+                ),
+                tls: tlsConfig,
+              ),
+            ),
+          ),
+          HandlerConfig(
+            outbound: OutboundHandlerConfig(
+              tag: '${server.name} cdn上行reality下行',
+              port: 443,
+              address: cdnDomain,
+              protocol: vmessConfig,
+              transport: TransportConfig(
+                splithttp: SplitHttpConfig(
+                  mode: 'stream-up',
+                  host: cdnDomain,
+                  path: xhttpPathCdn,
+                  downloadSettings: DownConfig(
+                    address: server.address,
+                    port: int.parse(port),
+                    xhttpConfig: SplitHttpConfig(path: xhttpPathCdn),
+                    reality: RealityConfig(
+                      fingerprint: "chrome",
+                      pbk: publicKey,
+                      serverName: realitySecondDomain,
+                    ),
+                  ),
+                ),
+                tls: tlsConfig,
+              ),
+            ),
+          ),
+        ],
       ],
-      if (enableCDN) ...[
-        HandlerConfig(
-            outbound: OutboundHandlerConfig(
-                tag: '${server.name} cdn packet-up',
-                port: 443,
-                address: cdnDomain,
-                protocol: vmessConfig,
-                transport: TransportConfig(
-                    splithttp: SplitHttpConfig(
-                      mode: 'packet-up',
-                      host: cdnDomain,
-                      path: xhttpPathCdn,
-                    ),
-                    tls: tlsConfig))),
-        HandlerConfig(
-            outbound: OutboundHandlerConfig(
-                tag: '${server.name} cdn stream-one',
-                port: 443,
-                address: cdnDomain,
-                protocol: vmessConfig,
-                transport: TransportConfig(
-                    splithttp: SplitHttpConfig(
-                      mode: 'stream-one',
-                      host: cdnDomain,
-                      path: xhttpPathCdn,
-                    ),
-                    tls: tlsConfig))),
-        HandlerConfig(
-            outbound: OutboundHandlerConfig(
-                tag: '${server.name} cdn stream-up',
-                port: 443,
-                address: cdnDomain,
-                protocol: vmessConfig,
-                transport: TransportConfig(
-                    splithttp: SplitHttpConfig(
-                      mode: 'stream-up',
-                      host: cdnDomain,
-                      path: xhttpPathCdn,
-                      downloadSettings: DownConfig(
-                          address: cdnDomain,
-                          port: 443,
-                          xhttpConfig: SplitHttpConfig(
-                            host: cdnDomain,
-                            path: xhttpPathCdn,
-                          ),
-                          tls: tlsConfig),
-                    ),
-                    tls: tlsConfig))),
-        HandlerConfig(
-            outbound: OutboundHandlerConfig(
-                tag: '${server.name} cdn上行reality下行',
-                port: 443,
-                address: cdnDomain,
-                protocol: vmessConfig,
-                transport: TransportConfig(
-                    splithttp: SplitHttpConfig(
-                      mode: 'stream-up',
-                      host: cdnDomain,
-                      path: xhttpPathCdn,
-                      downloadSettings: DownConfig(
-                          address: server.address,
-                          port: int.parse(port),
-                          xhttpConfig: SplitHttpConfig(
-                            path: xhttpPathCdn,
-                          ),
-                          reality: RealityConfig(
-                            fingerprint: "chrome",
-                            pbk: publicKey,
-                            serverName: realitySecondDomain,
-                          )),
-                    ),
-                    tls: tlsConfig))),
-      ],
-    ], bbrError: result.bbrError, firewallError: result.firewallError);
+      bbrError: result.bbrError,
+      firewallError: result.firewallError,
+    );
   }
 }
 
 class MasquerateQuickDeploySet extends StatefulWidget {
-  const MasquerateQuickDeploySet(
-      {super.key, required this.deploy, required this.destination});
+  const MasquerateQuickDeploySet({
+    super.key,
+    required this.deploy,
+    required this.destination,
+  });
   final MasqueradeQuickDeploy deploy;
   final String destination;
   @override
@@ -564,9 +596,7 @@ class _MasquerateQuickDeploySetState extends State<MasquerateQuickDeploySet> {
 }
 
 class AllInOneQuickDeploy extends QuickDeployOption {
-  AllInOneQuickDeploy({
-    required super.xApiClient,
-  });
+  AllInOneQuickDeploy({required super.xApiClient});
 
   @override
   final int id = 3;
@@ -610,8 +640,9 @@ class AllInOneQuickDeploy extends QuickDeployOption {
       cdnCertResponse = await xApiClient.generateCert(cdnDomain);
     }
 
-    final serverConfig = ServerConfig(multiInbounds: [
-      MultiProxyInboundConfig(
+    final serverConfig = ServerConfig(
+      multiInbounds: [
+        MultiProxyInboundConfig(
           users: [UserConfig(id: 'vx', secret: secret)],
           address: '0.0.0.0',
           tag: 'multi',
@@ -620,20 +651,24 @@ class AllInOneQuickDeploy extends QuickDeployOption {
             Any.pack(VmessServerConfig()),
             Any.pack(TrojanServerConfig()),
             Any.pack(AnytlsServerConfig()),
-            Any.pack(Hysteria2ServerConfig(
-                tlsConfig: TlsConfig(certificates: [
-              Certificate(
-                certificate: certResponse.cert,
-                key: certResponse.key,
+            Any.pack(
+              Hysteria2ServerConfig(
+                tlsConfig: TlsConfig(
+                  certificates: [
+                    Certificate(
+                      certificate: certResponse.cert,
+                      key: certResponse.key,
+                    ),
+                  ],
+                ),
               ),
-            ]))),
+            ),
           ],
           transportProtocols: [
             MultiProxyInboundConfig_Protocol(
-                path: websocketPath,
-                websocket: WebsocketConfig(
-                  path: websocketPath,
-                )),
+              path: websocketPath,
+              websocket: WebsocketConfig(path: websocketPath),
+            ),
             // MultiProxyInboundConfig_Protocol(
             //     path: xhttpPath,
             //     splithttp: SplitHttpConfig(
@@ -648,12 +683,15 @@ class AllInOneQuickDeploy extends QuickDeployOption {
             //       ),
             //     )),
             MultiProxyInboundConfig_Protocol(
-                h2: true, grpc: GrpcConfig(serviceName: 'vx'))
+              h2: true,
+              grpc: GrpcConfig(serviceName: 'vx'),
+            ),
           ],
           securityConfigs: [
             MultiProxyInboundConfig_Security(
-                domains: [domain, if (cdnDomain.isNotEmpty) cdnDomain],
-                tls: TlsConfig(certificates: [
+              domains: [domain, if (cdnDomain.isNotEmpty) cdnDomain],
+              tls: TlsConfig(
+                certificates: [
                   Certificate(
                     certificate: certResponse.cert,
                     key: certResponse.key,
@@ -662,19 +700,24 @@ class AllInOneQuickDeploy extends QuickDeployOption {
                     Certificate(
                       certificate: cdnCertResponse.cert,
                       key: cdnCertResponse.key,
-                    )
-                ])),
+                    ),
+                ],
+              ),
+            ),
             if (realityDomain.isNotEmpty)
               MultiProxyInboundConfig_Security(
-                  domains: [realityDomain],
-                  reality: RealityConfig(
-                      dest: '$realityDomain:443',
-                      serverNames: [realityDomain],
-                      privateKey:
-                          base64Url.decode(base64Url.normalize(privateKey)),
-                      shortIds: [Uint8List(8)]))
-          ]),
-    ]);
+                domains: [realityDomain],
+                reality: RealityConfig(
+                  dest: '$realityDomain:443',
+                  serverNames: [realityDomain],
+                  privateKey: base64Url.decode(base64Url.normalize(privateKey)),
+                  shortIds: [Uint8List(8)],
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
 
     final result = await xApiClient.deploy(
       server: server,
@@ -682,38 +725,42 @@ class AllInOneQuickDeploy extends QuickDeployOption {
       disableOSFirewall: disableOSFirewall,
     );
 
-    final handlerConfigs = (await xApiClient.convertInboundToOutbound(server,
-            multiInbound: serverConfig.multiInbounds.first))
-        .map((e) => HandlerConfig(outbound: e))
-        .toList();
+    final handlerConfigs = (await xApiClient.convertInboundToOutbound(
+      server,
+      multiInbound: serverConfig.multiInbounds.first,
+    )).map((e) => HandlerConfig(outbound: e)).toList();
 
     if (cdnCertResponse != null) {
-      handlerConfigs.add(HandlerConfig(
-        outbound: OutboundHandlerConfig(
-          tag: '${server.name} cdn',
-          port: 443,
-          address: cdnDomain,
-          protocol: Any.pack(VmessClientConfig(id: secret)),
-          transport: TransportConfig(
-            websocket: WebsocketConfig(path: websocketPath),
-            tls: TlsConfig(
-              serverName: cdnDomain,
+      handlerConfigs.add(
+        HandlerConfig(
+          outbound: OutboundHandlerConfig(
+            tag: '${server.name} cdn',
+            port: 443,
+            address: cdnDomain,
+            protocol: Any.pack(VmessClientConfig(id: secret)),
+            transport: TransportConfig(
+              websocket: WebsocketConfig(path: websocketPath),
+              tls: TlsConfig(serverName: cdnDomain),
             ),
           ),
         ),
-      ));
+      );
     }
 
     return DeployResult(
-        handlerConfigs: handlerConfigs,
-        bbrError: result.bbrError,
-        firewallError: result.firewallError);
+      handlerConfigs: handlerConfigs,
+      bbrError: result.bbrError,
+      firewallError: result.firewallError,
+    );
   }
 }
 
 class AllInOneForm extends StatefulWidget {
-  const AllInOneForm(
-      {super.key, required this.deploy, required this.destination});
+  const AllInOneForm({
+    super.key,
+    required this.deploy,
+    required this.destination,
+  });
   final AllInOneQuickDeploy deploy;
   final String destination;
   @override
@@ -753,16 +800,18 @@ class _AllInOneFormState extends State<AllInOneForm> {
             widget.deploy.port = port;
             return null;
           },
-          decoration:
-              InputDecoration(labelText: AppLocalizations.of(context)!.port),
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.port,
+          ),
         ),
         const Gap(10),
         TextFormField(
           controller: _cdnDomainController,
           decoration: InputDecoration(
-              labelText: 'CDN 域名',
-              helperMaxLines: 5,
-              helperText: AppLocalizations.of(context)!.allInOneCdnDesc),
+            labelText: 'CDN 域名',
+            helperMaxLines: 5,
+            helperText: AppLocalizations.of(context)!.allInOneCdnDesc,
+          ),
           validator: (value) {
             if (value != null && value.isNotEmpty) {
               if (!isDomain(value)) {
@@ -777,8 +826,9 @@ class _AllInOneFormState extends State<AllInOneForm> {
         TextFormField(
           controller: _realityDomainController,
           decoration: InputDecoration(
-              labelText: 'Reality 域名',
-              helperText: AppLocalizations.of(context)!.allInOneRealityDesc),
+            labelText: 'Reality 域名',
+            helperText: AppLocalizations.of(context)!.allInOneRealityDesc,
+          ),
           validator: (value) {
             if (value != null && value.isNotEmpty) {
               if (!isDomain(value)) {

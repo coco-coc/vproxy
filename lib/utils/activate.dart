@@ -46,8 +46,9 @@ Future<bool> validateLicence(Licence licence, String uniqueId) async {
     // The base64 decoded key contains ASN.1 DER encoding, extract the actual 32-byte key
     // For Ed25519 public key in X.509 SubjectPublicKeyInfo format:
     // The last 32 bytes are the actual Ed25519 public key
-    final ed25519PublicKeyBytes =
-        publicKeyBytes.sublist(publicKeyBytes.length - 32);
+    final ed25519PublicKeyBytes = publicKeyBytes.sublist(
+      publicKeyBytes.length - 32,
+    );
 
     // Create the payload that was signed
     final payload = <String, dynamic>{
@@ -119,11 +120,12 @@ class Licence {
   final DateTime? expiresAt;
   final String signature;
 
-  Licence(
-      {required this.deviceInfoHash,
-      required this.userId,
-      required this.signature,
-      this.expiresAt});
+  Licence({
+    required this.deviceInfoHash,
+    required this.userId,
+    required this.signature,
+    this.expiresAt,
+  });
 
   factory Licence.fromJson(Map<String, dynamic> json) {
     return Licence(
@@ -132,7 +134,8 @@ class Licence {
       signature: json['signature'],
       expiresAt: json['expiresAt'] != null
           ? DateTime.fromMillisecondsSinceEpoch(
-              (json['expiresAt'] as int) * 1000)
+              (json['expiresAt'] as int) * 1000,
+            )
           : null,
     );
   }
@@ -143,12 +146,16 @@ Future<ConstantDeviceInfo> getConstDeviceInfo(String uniqueId) async {
   switch (deviceInfo) {
     case AndroidDeviceInfo():
       return ConstantAndroidDeviceInfo.fromAndroidDeviceInfo(
-          deviceInfo, uniqueId);
+        deviceInfo,
+        uniqueId,
+      );
     case IosDeviceInfo():
       return ConstantIosDeviceInfo.fromIosDeviceInfo(deviceInfo, uniqueId);
     case WindowsDeviceInfo():
       return ConstantWindowsDeviceInfo.fromWindowsDeviceInfo(
-          deviceInfo, uniqueId);
+        deviceInfo,
+        uniqueId,
+      );
     case MacOsDeviceInfo():
       return ConstantMacOsDeviceInfo.fromMacOsDeviceInfo(deviceInfo, uniqueId);
     case LinuxDeviceInfo():
@@ -254,10 +261,12 @@ class ConstantAndroidDeviceInfo implements ConstantDeviceInfo {
       isPhysicalDevice: deviceInfo.isPhysicalDevice,
       isLowRamDevice: deviceInfo.isLowRamDevice,
       physicalRamSize: deviceInfo.physicalRamSize,
-      supported32BitAbis:
-          List<String>.unmodifiable(deviceInfo.supported32BitAbis),
-      supported64BitAbis:
-          List<String>.unmodifiable(deviceInfo.supported64BitAbis),
+      supported32BitAbis: List<String>.unmodifiable(
+        deviceInfo.supported32BitAbis,
+      ),
+      supported64BitAbis: List<String>.unmodifiable(
+        deviceInfo.supported64BitAbis,
+      ),
       supportedAbis: List<String>.unmodifiable(deviceInfo.supportedAbis),
     );
   }

@@ -18,12 +18,13 @@ import 'package:gap/gap.dart';
 import 'package:vx/l10n/app_localizations.dart';
 
 class HomeCard extends StatelessWidget {
-  const HomeCard(
-      {super.key,
-      required this.title,
-      required this.icon,
-      this.button,
-      required this.child});
+  const HomeCard({
+    super.key,
+    required this.title,
+    required this.icon,
+    this.button,
+    required this.child,
+  });
   final String title;
   final Widget? button;
   final IconData icon;
@@ -51,21 +52,17 @@ class HomeCard extends StatelessWidget {
           child: Text(
             title,
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.2,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.2,
+            ),
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        if (button != null) ...[
-          const SizedBox(width: 8),
-          button!,
-        ],
+        if (button != null) ...[const SizedBox(width: 8), button!],
       ],
     );
-
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -100,10 +97,7 @@ class HomeCard extends StatelessWidget {
 }
 
 class _HomeCardTitleMenuAnchor extends StatefulWidget {
-  const _HomeCardTitleMenuAnchor({
-    required this.onHide,
-    required this.child,
-  });
+  const _HomeCardTitleMenuAnchor({required this.onHide, required this.child});
 
   final VoidCallback onHide;
   final Widget child;

@@ -39,32 +39,52 @@ class LoggerWrapper implements common.Logger {
   }
 
   @override
-  void t(dynamic message,
-      {DateTime? time, Object? error, StackTrace? stackTrace}) {
+  void t(
+    dynamic message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
     _logger?.t(message, time: time, error: error, stackTrace: stackTrace);
   }
 
   @override
-  void d(dynamic message,
-      {DateTime? time, Object? error, StackTrace? stackTrace}) {
+  void d(
+    dynamic message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
     _logger?.d(message, time: time, error: error, stackTrace: stackTrace);
   }
 
   @override
-  void i(dynamic message,
-      {DateTime? time, Object? error, StackTrace? stackTrace}) {
+  void i(
+    dynamic message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
     _logger?.i(message, time: time, error: error, stackTrace: stackTrace);
   }
 
   @override
-  void w(dynamic message,
-      {DateTime? time, Object? error, StackTrace? stackTrace}) {
+  void w(
+    dynamic message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
     _logger?.w(message, time: time, error: error, stackTrace: stackTrace);
   }
 
   @override
-  void e(dynamic message,
-      {DateTime? time, Object? error, StackTrace? stackTrace}) {
+  void e(
+    dynamic message, {
+    DateTime? time,
+    Object? error,
+    StackTrace? stackTrace,
+  }) {
     _logger?.e(message, time: time, error: error, stackTrace: stackTrace);
   }
 }
@@ -122,9 +142,10 @@ Future<void> startShareLog() async {
   //   // Pass all uncaught "fatal" errors from the framework to Crashlytics
   FlutterError.onError = (FlutterErrorDetails e) {
     logger.e(
-        "FlutterError: ${e.exception}. line: ${e.library}. summary: ${e.summary}.",
-        error: e,
-        stackTrace: e.stack);
+      "FlutterError: ${e.exception}. line: ${e.library}. summary: ${e.summary}.",
+      error: e,
+      stackTrace: e.stack,
+    );
   };
   // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
   // PlatformDispatcher.instance.onError = (error, stack) {
@@ -140,11 +161,16 @@ Future<void> startShareLog() async {
   //       stackTrace: stack, error: error);
   //   return true;
   // };
-  Isolate.current.addErrorListener(RawReceivePort((pair) async {
-    final List<dynamic> errorAndStacktrace = pair;
-    reportLogger.e("Isolate.errorListener",
-        stackTrace: errorAndStacktrace.last, error: errorAndStacktrace.first);
-  }).sendPort);
+  Isolate.current.addErrorListener(
+    RawReceivePort((pair) async {
+      final List<dynamic> errorAndStacktrace = pair;
+      reportLogger.e(
+        "Isolate.errorListener",
+        stackTrace: errorAndStacktrace.last,
+        error: errorAndStacktrace.first,
+      );
+    }).sendPort,
+  );
 }
 
 Future<void> reportError(String message, dynamic error) async {
@@ -183,16 +209,13 @@ Future<void> setDebugLoggerDevlopment() async {
   final logDirPath = getFlutterLogDir().path;
   final l = Logger(
     filter: ProductionFilter(),
-    printer: SimplePrinter(
-        printTime:
-            true) /* PrettyPrinter(
+    printer: SimplePrinter(printTime: true) /* PrettyPrinter(
         methodCount: 2, // Number of method calls to be displayed
         errorMethodCount: 8, // Number of method calls if stacktrace is provided
         lineLength: 120, // Width of the output
         // Should each log print contain a timestamp
         dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
-       /*  colors: true */) */
-    ,
+       /*  colors: true */) */,
     output: MultiOutput([
       // if (!kDebugMode)
       AdvancedFileOutput(
@@ -206,7 +229,8 @@ Future<void> setDebugLoggerDevlopment() async {
   );
   logger.logger = l;
   logger.d(
-      'Logger initialized in debug mode - output to console and file: $logDirPath');
+    'Logger initialized in debug mode - output to console and file: $logDirPath',
+  );
 }
 
 Future<void> setReportLogger() async {
@@ -249,7 +273,8 @@ Future<void> setDebugLoggerProduction() async {
   );
   logger.logger = l;
   logger.d(
-      'Logger initialized in debug mode - output to console and file: $logDirPath');
+    'Logger initialized in debug mode - output to console and file: $logDirPath',
+  );
 }
 
 Future<void> unsetDebugLoggerProduction() async {

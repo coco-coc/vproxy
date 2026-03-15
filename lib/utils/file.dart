@@ -58,16 +58,18 @@ Future<File> decryptFile(File inputFile, String password) async {
 Uint8List encryptBytes(Uint8List data, String password) {
   // Generate a random salt and IV
   final random = Random.secure();
-  final salt =
-      Uint8List.fromList(List<int>.generate(16, (i) => random.nextInt(256)));
+  final salt = Uint8List.fromList(
+    List<int>.generate(16, (i) => random.nextInt(256)),
+  );
   final iv = encrypt.IV.fromSecureRandom(16);
 
   // Derive encryption key from password
   final key = _deriveKeyFromPassword(password, salt);
 
   // Encrypt the data
-  final encrypter =
-      encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
+  final encrypter = encrypt.Encrypter(
+    encrypt.AES(key, mode: encrypt.AESMode.cbc),
+  );
   final encrypted = encrypter.encryptBytes(data, iv: iv);
 
   // Combine: [salt (16 bytes)] + [IV (16 bytes)] + [encrypted data]
@@ -95,10 +97,13 @@ Uint8List decryptBytes(Uint8List encryptedData, String password) {
   final key = _deriveKeyFromPassword(password, salt);
 
   // Decrypt the data
-  final encrypter =
-      encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc));
+  final encrypter = encrypt.Encrypter(
+    encrypt.AES(key, mode: encrypt.AESMode.cbc),
+  );
   final decrypted = encrypter.decryptBytes(
-      encrypt.Encrypted(Uint8List.fromList(ciphertext)), iv: iv);
+    encrypt.Encrypted(Uint8List.fromList(ciphertext)),
+    iv: iv,
+  );
 
   return Uint8List.fromList(decrypted);
 }

@@ -87,8 +87,10 @@ class _InboundFormState extends State<InboundForm> with FormDataGetter {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(width: 800),
-          Text(AppLocalizations.of(context)!.normalInboundDesc,
-              style: Theme.of(context).textTheme.titleSmall!.copyWith()),
+          Text(
+            AppLocalizations.of(context)!.normalInboundDesc,
+            style: Theme.of(context).textTheme.titleSmall!.copyWith(),
+          ),
           const Gap(10),
           TextFormField(
             controller: _nameController,
@@ -99,9 +101,11 @@ class _InboundFormState extends State<InboundForm> with FormDataGetter {
               return null;
             },
             decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.name,
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(5))),
+              labelText: AppLocalizations.of(context)!.name,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
           ),
           const Gap(10),
           TextFormField(
@@ -110,10 +114,12 @@ class _InboundFormState extends State<InboundForm> with FormDataGetter {
               return null;
             },
             decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.address,
-                hintText: '0.0.0.0',
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(5))),
+              labelText: AppLocalizations.of(context)!.address,
+              hintText: '0.0.0.0',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
           ),
           const Gap(10),
           TextFormField(
@@ -128,10 +134,12 @@ class _InboundFormState extends State<InboundForm> with FormDataGetter {
               return null;
             },
             decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.port,
-                hintText: '443,4431,4432',
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(5))),
+              labelText: AppLocalizations.of(context)!.port,
+              hintText: '443,4431,4432',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
           ),
           const Gap(10),
           _UserConfig(config: _userConfig),
@@ -143,7 +151,10 @@ class _InboundFormState extends State<InboundForm> with FormDataGetter {
           const TextDivider(text: 'Stream'),
           const Gap(10),
           _TransportInput(
-              key: _transportKey, config: _config.transport, server: true)
+            key: _transportKey,
+            config: _config.transport,
+            server: true,
+          ),
         ],
       ),
     );
@@ -228,8 +239,10 @@ class _MultiInboundFormState extends State<MultiInboundForm>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context)!.multiDesc,
-              style: Theme.of(context).textTheme.titleSmall!.copyWith()),
+          Text(
+            AppLocalizations.of(context)!.multiDesc,
+            style: Theme.of(context).textTheme.titleSmall!.copyWith(),
+          ),
           const Gap(10),
           TextFormField(
             controller: _nameController,
@@ -240,18 +253,22 @@ class _MultiInboundFormState extends State<MultiInboundForm>
               return null;
             },
             decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.name,
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(5))),
+              labelText: AppLocalizations.of(context)!.name,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
           ),
           const Gap(10),
           TextFormField(
             controller: _addressController,
             decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.address,
-                hintText: '0.0.0.0',
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(5))),
+              labelText: AppLocalizations.of(context)!.address,
+              hintText: '0.0.0.0',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
           ),
           const Gap(10),
           TextFormField(
@@ -266,10 +283,12 @@ class _MultiInboundFormState extends State<MultiInboundForm>
               return null;
             },
             decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.port,
-                hintText: '443,4431,4432',
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(5))),
+              labelText: AppLocalizations.of(context)!.port,
+              hintText: '443,4431,4432',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
           ),
           const Gap(10),
           _UserConfig(config: _userConfig),
@@ -294,74 +313,87 @@ class _MultiInboundFormState extends State<MultiInboundForm>
                     expandedHeaderPadding: const EdgeInsets.all(0),
                     children: [
                       ExpansionPanel(
-                          canTapOnHeader: true,
-                          backgroundColor:
-                              Theme.of(context).colorScheme.surfaceContainerLow,
-                          headerBuilder: (context, isExpanded) {
-                            return Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                child: Text('Proxy Protocol',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!),
+                        canTapOnHeader: true,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerLow,
+                        headerBuilder: (context, isExpanded) {
+                          return Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
                               ),
-                            );
-                          },
-                          isExpanded: _isExpanded[0],
-                          body: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: _ProxyProtocols(
-                                key: _protocolsKey, protocols: _protocols),
-                          )),
+                              child: Text(
+                                'Proxy Protocol',
+                                style: Theme.of(context).textTheme.titleMedium!,
+                              ),
+                            ),
+                          );
+                        },
+                        isExpanded: _isExpanded[0],
+                        body: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: _ProxyProtocols(
+                            key: _protocolsKey,
+                            protocols: _protocols,
+                          ),
+                        ),
+                      ),
                       ExpansionPanel(
-                          canTapOnHeader: true,
-                          backgroundColor:
-                              Theme.of(context).colorScheme.surfaceContainerLow,
-                          headerBuilder: (context, isExpanded) {
-                            return Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                child: Text('Transport Protocol',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!),
+                        canTapOnHeader: true,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerLow,
+                        headerBuilder: (context, isExpanded) {
+                          return Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
                               ),
-                            );
-                          },
-                          isExpanded: _isExpanded[1],
-                          body: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: _MultiTransportProtocols(
-                                transportProtocols: _transportProtocols),
-                          )),
+                              child: Text(
+                                'Transport Protocol',
+                                style: Theme.of(context).textTheme.titleMedium!,
+                              ),
+                            ),
+                          );
+                        },
+                        isExpanded: _isExpanded[1],
+                        body: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: _MultiTransportProtocols(
+                            transportProtocols: _transportProtocols,
+                          ),
+                        ),
+                      ),
                       ExpansionPanel(
-                          canTapOnHeader: true,
-                          backgroundColor:
-                              Theme.of(context).colorScheme.surfaceContainerLow,
-                          headerBuilder: (context, isExpanded) {
-                            return Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
-                                child: Text('Security',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!),
+                        canTapOnHeader: true,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerLow,
+                        headerBuilder: (context, isExpanded) {
+                          return Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
                               ),
-                            );
-                          },
-                          isExpanded: _isExpanded[2],
-                          body: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: _MultiSecurityProtocols(
-                                securityProtocols: _securityProtocols),
-                          ))
+                              child: Text(
+                                'Security',
+                                style: Theme.of(context).textTheme.titleMedium!,
+                              ),
+                            ),
+                          );
+                        },
+                        isExpanded: _isExpanded[2],
+                        body: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: _MultiSecurityProtocols(
+                            securityProtocols: _securityProtocols,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -441,8 +473,10 @@ class __ProxyProtocolsState extends State<_ProxyProtocols> with FormDataGetter {
       }).toList();
     }
     if (_protocols.isEmpty) {
-      _protocols.add(
-          (ProxyProtocolLabel.hysteria2, getDefaultHysteriaServerConfig()));
+      _protocols.add((
+        ProxyProtocolLabel.hysteria2,
+        getDefaultHysteriaServerConfig(),
+      ));
     }
     _selected = _protocols.first;
   }
@@ -453,10 +487,11 @@ class __ProxyProtocolsState extends State<_ProxyProtocols> with FormDataGetter {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Wrap(
-            spacing: 5,
-            runSpacing: 5,
-            children: _protocols.map<Widget>((e) {
-              return DeleteMenuAnchor(
+          spacing: 5,
+          runSpacing: 5,
+          children:
+              _protocols.map<Widget>((e) {
+                return DeleteMenuAnchor(
                   onDelete: _protocols.length > 1
                       ? (context) {
                           setState(() {
@@ -468,40 +503,46 @@ class __ProxyProtocolsState extends State<_ProxyProtocols> with FormDataGetter {
                         }
                       : null,
                   child: ChoiceChip(
-                      label: Text(e.$1.label),
-                      selected: _selected.$1 == e.$1,
-                      onSelected: (value) {
-                        if (!Form.of(context).validate()) {
-                          return;
-                        }
-                        if (value) {
-                          setState(() {
-                            _selected = e;
-                          });
-                        }
-                      }));
-            }).toList()
-              ..addAll([
+                    label: Text(e.$1.label),
+                    selected: _selected.$1 == e.$1,
+                    onSelected: (value) {
+                      if (!Form.of(context).validate()) {
+                        return;
+                      }
+                      if (value) {
+                        setState(() {
+                          _selected = e;
+                        });
+                      }
+                    },
+                  ),
+                );
+              }).toList()..addAll([
                 if (_protocols.length < ProxyProtocolLabel.values.length)
                   MenuAnchor(
                     menuChildren: ProxyProtocolLabel.values
                         .where((e) => !_protocols.any((f) => f.$1 == e))
                         .map((e) {
-                      return MenuItemButton(
-                          child: Text(e.label),
-                          onPressed: () {
-                            setState(() {
-                              _protocols.add((e, e.serverConfig()));
-                            });
-                          });
-                    }).toList(),
+                          return MenuItemButton(
+                            child: Text(e.label),
+                            onPressed: () {
+                              setState(() {
+                                _protocols.add((e, e.serverConfig()));
+                              });
+                            },
+                          );
+                        })
+                        .toList(),
                     builder: (context, controller, child) {
-                      return getSmallAddButton(onPressed: () {
-                        controller.open();
-                      });
+                      return getSmallAddButton(
+                        onPressed: () {
+                          controller.open();
+                        },
+                      );
                     },
-                  )
-              ])),
+                  ),
+              ]),
+        ),
         const Gap(10),
         _selectedProtocol(),
       ],
@@ -516,10 +557,12 @@ class __ProxyProtocolsState extends State<_ProxyProtocols> with FormDataGetter {
         return TrojanServer(config: _selected.$2 as TrojanServerConfig);
       case ProxyProtocolLabel.shadowsocks:
         return ShadowsocksServer(
-            config: _selected.$2 as ShadowsocksServerConfig);
+          config: _selected.$2 as ShadowsocksServerConfig,
+        );
       case ProxyProtocolLabel.shadowsocks2022:
         return Shadowsocks2022Server(
-            config: _selected.$2 as Shadowsocks2022ServerConfig);
+          config: _selected.$2 as Shadowsocks2022ServerConfig,
+        );
       case ProxyProtocolLabel.socks:
         return SocksServer(config: _selected.$2 as SocksServerConfig);
       case ProxyProtocolLabel.hysteria2:
@@ -565,14 +608,13 @@ class _MultiTransportProtocolsState extends State<_MultiTransportProtocols> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(
-          width: double.infinity,
-        ),
+        const SizedBox(width: double.infinity),
         Wrap(
-            spacing: 5,
-            runSpacing: 5,
-            children: _transportProtocols.asMap().entries.map<Widget>((e) {
-              return DeleteMenuAnchor(
+          spacing: 5,
+          runSpacing: 5,
+          children:
+              _transportProtocols.asMap().entries.map<Widget>((e) {
+                return DeleteMenuAnchor(
                   onDelete: (context) {
                     setState(() {
                       _transportProtocols.removeAt(e.key);
@@ -582,69 +624,79 @@ class _MultiTransportProtocolsState extends State<_MultiTransportProtocols> {
                     });
                   },
                   child: ChoiceChip(
-                      label: Text(e.value.label),
-                      selected: _selected == e.key,
-                      onSelected: (value) {
-                        if (value) {
-                          setState(() {
-                            final config = (_formKey.currentState
-                                    as TransportProtocolConfigGetter)
-                                .transportProtocolConfig;
-                            switch (config) {
-                              case WebsocketConfig():
-                                _transportProtocols[_selected!].websocket =
-                                    config;
-                                break;
-                              case GrpcConfig():
-                                _transportProtocols[_selected!].grpc = config;
-                                break;
-                              case HttpConfig():
-                                _transportProtocols[_selected!].http = config;
-                                break;
-                              case SplitHttpConfig():
-                                _transportProtocols[_selected!].splithttp =
-                                    config;
-                                break;
-                            }
-                            _formKey = GlobalKey();
-                            _selected = e.key;
-                          });
-                        }
-                      }));
-            }).toList()
-              ..addAll([
+                    label: Text(e.value.label),
+                    selected: _selected == e.key,
+                    onSelected: (value) {
+                      if (value) {
+                        setState(() {
+                          final config =
+                              (_formKey.currentState
+                                      as TransportProtocolConfigGetter)
+                                  .transportProtocolConfig;
+                          switch (config) {
+                            case WebsocketConfig():
+                              _transportProtocols[_selected!].websocket =
+                                  config;
+                              break;
+                            case GrpcConfig():
+                              _transportProtocols[_selected!].grpc = config;
+                              break;
+                            case HttpConfig():
+                              _transportProtocols[_selected!].http = config;
+                              break;
+                            case SplitHttpConfig():
+                              _transportProtocols[_selected!].splithttp =
+                                  config;
+                              break;
+                          }
+                          _formKey = GlobalKey();
+                          _selected = e.key;
+                        });
+                      }
+                    },
+                  ),
+                );
+              }).toList()..addAll([
                 MenuAnchor(
                   menuChildren: MultiTransportProtocol.values.map((e) {
                     return MenuItemButton(
-                        child: Text(e.name),
-                        onPressed: () {
-                          setState(() {
-                            _transportProtocols.add(e.toProto());
-                            _selected ??= 0;
-                          });
+                      child: Text(e.name),
+                      onPressed: () {
+                        setState(() {
+                          _transportProtocols.add(e.toProto());
+                          _selected ??= 0;
                         });
+                      },
+                    );
                   }).toList(),
                   builder: (context, controller, child) {
-                    return getSmallAddButton(onPressed: () {
-                      controller.open();
-                    });
+                    return getSmallAddButton(
+                      onPressed: () {
+                        controller.open();
+                      },
+                    );
                   },
-                )
-              ])),
+                ),
+              ]),
+        ),
         const Gap(10),
         if (_selected != null)
           _MultiTransportProtocol(
-              key: ValueKey(_selected),
-              globalKey: _formKey,
-              protocol: _transportProtocols[_selected!])
+            key: ValueKey(_selected),
+            globalKey: _formKey,
+            protocol: _transportProtocols[_selected!],
+          ),
       ],
     );
   }
 }
 
 class _MultiTransportProtocol extends StatelessWidget {
-  const _MultiTransportProtocol(
-      {super.key, required this.protocol, required this.globalKey});
+  const _MultiTransportProtocol({
+    super.key,
+    required this.protocol,
+    required this.globalKey,
+  });
   final MultiProxyInboundConfig_Protocol protocol;
   final GlobalKey globalKey;
   @override
@@ -655,15 +707,21 @@ class _MultiTransportProtocol extends StatelessWidget {
         const Gap(10),
         if (protocol.hasWebsocket())
           _TransportProtocolWebsocket(
-              key: globalKey, initialConfig: protocol.websocket),
+            key: globalKey,
+            initialConfig: protocol.websocket,
+          ),
         if (protocol.hasGrpc())
           _TransportProtocolGrpc(key: globalKey, initialConfig: protocol.grpc),
         if (protocol.hasHttpupgrade())
           _TransportProtocolHttpUpgrade(
-              key: globalKey, initialConfig: protocol.httpupgrade),
+            key: globalKey,
+            initialConfig: protocol.httpupgrade,
+          ),
         if (protocol.hasSplithttp())
           _TransportProtocolSplitHttp(
-              key: globalKey, config: protocol.splithttp),
+            key: globalKey,
+            config: protocol.splithttp,
+          ),
       ],
     );
   }
@@ -712,20 +770,22 @@ class __MultiInboundTransportConditionState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CheckboxListTile(
-              value: widget.protocol.always,
-              title: Text(AppLocalizations.of(context)!.matchAll),
-              subtitle: Text(
-                  AppLocalizations.of(context)!.transportConditionMatchAllDesc),
-              onChanged: (value) {
-                setState(() {
-                  widget.protocol.always = value ?? false;
-                  if (value == false) {
-                    handshakeAddressController.clear();
-                    alpnController.clear();
-                    pathController.clear();
-                  }
-                });
-              }),
+            value: widget.protocol.always,
+            title: Text(AppLocalizations.of(context)!.matchAll),
+            subtitle: Text(
+              AppLocalizations.of(context)!.transportConditionMatchAllDesc,
+            ),
+            onChanged: (value) {
+              setState(() {
+                widget.protocol.always = value ?? false;
+                if (value == false) {
+                  handshakeAddressController.clear();
+                  alpnController.clear();
+                  pathController.clear();
+                }
+              });
+            },
+          ),
           if (!widget.protocol.always)
             Column(
               children: [
@@ -774,15 +834,16 @@ class __MultiInboundTransportConditionState
                   value: widget.protocol.h2,
                   title: const Text('H2'),
                   subtitle: Text(
-                      AppLocalizations.of(context)!.transportConditionH2Desc),
+                    AppLocalizations.of(context)!.transportConditionH2Desc,
+                  ),
                   onChanged: (value) {
                     setState(() {
                       widget.protocol.h2 = value ?? false;
                     });
                   },
-                )
+                ),
               ],
-            )
+            ),
         ],
       ),
     );
@@ -805,7 +866,8 @@ enum MultiTransportProtocol {
         return MultiProxyInboundConfig_Protocol(http: HttpConfig());
       case MultiTransportProtocol.httpupgrade:
         return MultiProxyInboundConfig_Protocol(
-            httpupgrade: HttpUpgradeConfig());
+          httpupgrade: HttpUpgradeConfig(),
+        );
     }
   }
 }
@@ -820,7 +882,9 @@ enum MultiSecurityProtocol {
         return MultiProxyInboundConfig_Security(tls: TlsConfig(), always: true);
       case MultiSecurityProtocol.reality:
         return MultiProxyInboundConfig_Security(
-            reality: RealityConfig(), always: true);
+          reality: RealityConfig(),
+          always: true,
+        );
     }
   }
 }
@@ -883,14 +947,13 @@ class __MultiSecurityProtocolsState extends State<_MultiSecurityProtocols> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(
-          width: double.infinity,
-        ),
+        const SizedBox(width: double.infinity),
         Wrap(
-            spacing: 5,
-            runSpacing: 5,
-            children: _securityProtocols.map<Widget>((e) {
-              return DeleteMenuAnchor(
+          spacing: 5,
+          runSpacing: 5,
+          children:
+              _securityProtocols.map<Widget>((e) {
+                return DeleteMenuAnchor(
                   onDelete: (context) {
                     setState(() {
                       _errorMessage = null;
@@ -903,55 +966,65 @@ class __MultiSecurityProtocolsState extends State<_MultiSecurityProtocols> {
                     });
                   },
                   child: ChoiceChip(
-                      label: Text(e.label),
-                      selected: _selected == e,
-                      onSelected: (value) {
-                        if (value) {
-                          if (!Form.of(context).validate()) {
-                            setState(() {
-                              _errorMessage =
-                                  AppLocalizations.of(context)!.invalidFields;
-                            });
-                            return;
-                          }
+                    label: Text(e.label),
+                    selected: _selected == e,
+                    onSelected: (value) {
+                      if (value) {
+                        if (!Form.of(context).validate()) {
                           setState(() {
-                            _errorMessage = null;
-                            _selected = e;
+                            _errorMessage = AppLocalizations.of(
+                              context,
+                            )!.invalidFields;
                           });
+                          return;
                         }
-                      }));
-            }).toList()
-              ..addAll([
+                        setState(() {
+                          _errorMessage = null;
+                          _selected = e;
+                        });
+                      }
+                    },
+                  ),
+                );
+              }).toList()..addAll([
                 MenuAnchor(
                   menuChildren: MultiSecurityProtocol.values.map((e) {
                     return MenuItemButton(
-                        child: Text(e.name),
-                        onPressed: () {
-                          setState(() {
-                            _securityProtocols.add(e.toProto());
-                            _selected ??= _securityProtocols.first;
-                          });
+                      child: Text(e.name),
+                      onPressed: () {
+                        setState(() {
+                          _securityProtocols.add(e.toProto());
+                          _selected ??= _securityProtocols.first;
                         });
+                      },
+                    );
                   }).toList(),
                   builder: (context, controller, child) {
-                    return getSmallAddButton(onPressed: () {
-                      controller.open();
-                    });
+                    return getSmallAddButton(
+                      onPressed: () {
+                        controller.open();
+                      },
+                    );
                   },
-                )
-              ])),
+                ),
+              ]),
+        ),
         const Gap(10),
         if (_errorMessage != null)
           Padding(
             padding: const EdgeInsets.only(bottom: 10.0),
-            child: Text(_errorMessage!,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall!
-                    .copyWith(color: Theme.of(context).colorScheme.error)),
+            child: Text(
+              _errorMessage!,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
           ),
         if (_selected != null)
-          _MultiSecurityProtocol(key: ValueKey(_selected), protocol: _selected!)
+          _MultiSecurityProtocol(
+            key: ValueKey(_selected),
+            protocol: _selected!,
+          ),
       ],
     );
   }
@@ -967,10 +1040,7 @@ class _MultiSecurityProtocol extends StatelessWidget {
         _MultiInboundSecurityCondition(protocol: protocol),
         const Gap(10),
         if (protocol.hasTls())
-          _TransportSecurityTls(
-            config: protocol.tls,
-            server: true,
-          ),
+          _TransportSecurityTls(config: protocol.tls, server: true),
         if (protocol.hasReality())
           _TransportSecurityReality(config: protocol.reality, server: true),
       ],
@@ -1018,19 +1088,21 @@ class __MultiInboundSecurityConditionState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CheckboxListTile(
-              value: widget.protocol.always,
-              title: Text(AppLocalizations.of(context)!.matchAll),
-              subtitle: Text(
-                  AppLocalizations.of(context)!.securityConditionMatchAllDesc),
-              onChanged: (value) {
-                setState(() {
-                  widget.protocol.always = value ?? false;
-                  if (value == false) {
-                    domainsController.clear();
-                    regularExpressionController.clear();
-                  }
-                });
-              }),
+            value: widget.protocol.always,
+            title: Text(AppLocalizations.of(context)!.matchAll),
+            subtitle: Text(
+              AppLocalizations.of(context)!.securityConditionMatchAllDesc,
+            ),
+            onChanged: (value) {
+              setState(() {
+                widget.protocol.always = value ?? false;
+                if (value == false) {
+                  domainsController.clear();
+                  regularExpressionController.clear();
+                }
+              });
+            },
+          ),
           if (!widget.protocol.always)
             Column(
               children: [
@@ -1057,13 +1129,15 @@ class __MultiInboundSecurityConditionState
                 const Gap(10),
                 TextFormField(
                   controller: regularExpressionController,
-                  decoration: const InputDecoration(labelText: 'Regular Expression'),
+                  decoration: const InputDecoration(
+                    labelText: 'Regular Expression',
+                  ),
                   onChanged: (value) {
                     widget.protocol.regularExpression = value;
                   },
                 ),
               ],
-            )
+            ),
         ],
       ),
     );
@@ -1106,8 +1180,9 @@ class __UserConfigState extends State<_UserConfig> {
             widget.config.id = value;
           },
           decoration: InputDecoration(
-              helperText: AppLocalizations.of(context)!.optional,
-              labelText: AppLocalizations.of(context)!.accountName),
+            helperText: AppLocalizations.of(context)!.optional,
+            labelText: AppLocalizations.of(context)!.accountName,
+          ),
         ),
         const Gap(10),
         TextFormField(
@@ -1116,17 +1191,18 @@ class __UserConfigState extends State<_UserConfig> {
             widget.config.secret = value;
           },
           decoration: InputDecoration(
-              helper: Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                    onPressed: () {
-                      _userSecretController.text = const Uuid().v4();
-                      widget.config.secret = _userSecretController.text;
-                    },
-                    child:
-                        Text(AppLocalizations.of(context)!.generatePassword)),
+            helper: Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  _userSecretController.text = const Uuid().v4();
+                  widget.config.secret = _userSecretController.text;
+                },
+                child: Text(AppLocalizations.of(context)!.generatePassword),
               ),
-              labelText: AppLocalizations.of(context)!.password),
+            ),
+            labelText: AppLocalizations.of(context)!.password,
+          ),
         ),
       ],
     );

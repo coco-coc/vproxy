@@ -27,4 +27,3 @@ class IAPConnection {
     return _instance!;
   }
 }
-

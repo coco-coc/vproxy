@@ -57,7 +57,10 @@ class OpenSourceSoftwareNoticeScreen extends StatelessWidget {
   final bool showAppBar;
 
   Future<void> _showLicenseDialog(
-      BuildContext context, String name, String licenseText) async {
+    BuildContext context,
+    String name,
+    String licenseText,
+  ) async {
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     try {
@@ -90,9 +93,7 @@ class OpenSourceSoftwareNoticeScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   Expanded(
                     child: SingleChildScrollView(
-                      child: SelectableText(
-                        licenseText,
-                      ),
+                      child: SelectableText(licenseText),
                     ),
                   ),
                 ],
@@ -104,19 +105,15 @@ class OpenSourceSoftwareNoticeScreen extends StatelessWidget {
         // Show full screen on small screens
         Navigator.of(context).push(
           CupertinoPageRoute(
-            builder: (context) => LicenseDetailScreen(
-              name: name,
-              licenseText: licenseText,
-            ),
+            builder: (context) =>
+                LicenseDetailScreen(name: name, licenseText: licenseText),
           ),
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to load license: $e'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to load license: $e')));
     }
   }
 
@@ -124,8 +121,10 @@ class OpenSourceSoftwareNoticeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: showAppBar
-          ? getAdaptiveAppBar(context,
-              Text(AppLocalizations.of(context)!.openSourceSoftwareNotice))
+          ? getAdaptiveAppBar(
+              context,
+              Text(AppLocalizations.of(context)!.openSourceSoftwareNotice),
+            )
           : null,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -142,17 +141,20 @@ class OpenSourceSoftwareNoticeScreen extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: [
-                  ...dependencies.map((package) => ListTile(
-                        title: Text(package.name),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () => _showLicenseDialog(
-                            context,
-                            package.name,
-                            package.license ??
-                                package.repository ??
-                                package.homepage ??
-                                ''),
-                      )),
+                  ...dependencies.map(
+                    (package) => ListTile(
+                      title: Text(package.name),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => _showLicenseDialog(
+                        context,
+                        package.name,
+                        package.license ??
+                            package.repository ??
+                            package.homepage ??
+                            '',
+                      ),
+                    ),
+                  ),
                   const TextDivider(text: '内核'),
                   ...openSourceSoftwareList.map((item) {
                     final (name, assetPath) = item;
@@ -160,8 +162,11 @@ class OpenSourceSoftwareNoticeScreen extends StatelessWidget {
                       title: Text(name),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () async {
-                        _showLicenseDialog(context, name,
-                            await rootBundle.loadString(assetPath));
+                        _showLicenseDialog(
+                          context,
+                          name,
+                          await rootBundle.loadString(assetPath),
+                        );
                       },
                     );
                   }),
@@ -188,14 +193,10 @@ class LicenseDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(name),
-      ),
+      appBar: AppBar(title: Text(name)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child: SelectableText(
-          licenseText,
-        ),
+        child: SelectableText(licenseText),
       ),
     );
   }

@@ -78,5 +78,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'vproxy-1407e-staging.firebasestorage.app',
     measurementId: 'G-VE4XPNYPS5',
   );
-
 }

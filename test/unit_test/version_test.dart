@@ -23,7 +23,6 @@ void main() {
       expect(versionNewerThan('0.0.0', '0.0.0'), isFalse);
     });
 
-
     test('should handle single segment versions', () {
       expect(versionNewerThan('2', '1'), isTrue);
       expect(versionNewerThan('1', '2'), isFalse);
@@ -48,19 +47,25 @@ void main() {
     });
 
     test('should handle very long version strings', () {
-      expect(versionNewerThan('1.2.3.4.5.6.7.8.9.10', '1.2.3.4.5.6.7.8.9.9'), isTrue);
-      expect(versionNewerThan('1.2.3.4.5.6.7.8.9.9', '1.2.3.4.5.6.7.8.9.10'), isFalse);
+      expect(
+        versionNewerThan('1.2.3.4.5.6.7.8.9.10', '1.2.3.4.5.6.7.8.9.9'),
+        isTrue,
+      );
+      expect(
+        versionNewerThan('1.2.3.4.5.6.7.8.9.9', '1.2.3.4.5.6.7.8.9.10'),
+        isFalse,
+      );
     });
 
     test('should handle semantic versioning examples', () {
       // Major version differences
       expect(versionNewerThan('2.0.0', '1.9.9'), isTrue);
       expect(versionNewerThan('1.9.9', '2.0.0'), isFalse);
-      
+
       // Minor version differences
       expect(versionNewerThan('1.2.0', '1.1.9'), isTrue);
       expect(versionNewerThan('1.1.9', '1.2.0'), isFalse);
-      
+
       // Patch version differences
       expect(versionNewerThan('1.1.2', '1.1.1'), isTrue);
       expect(versionNewerThan('1.1.1', '1.1.2'), isFalse);

@@ -31,37 +31,43 @@ class LanguagePage extends StatelessWidget {
     return Scaffold(
       appBar: showAppBar
           ? getAdaptiveAppBar(
-              context, Text(AppLocalizations.of(context)!.language))
+              context,
+              Text(AppLocalizations.of(context)!.language),
+            )
           : null,
-      body: Column(children: [
-        ...Language.values.where((l) => !l.aiTranslated).map((l) {
-          return RadioListTile(
-            title: Text(l.localText),
-            value: l,
-            groupValue:
-                Language.fromCode(Localizations.localeOf(context).languageCode),
-            onChanged: (value) {
-              context.read<SharedPreferences>().setLanguage(value);
-              // change locale
-              App.of(context)?.setLocale(value?.locale);
-            },
-          );
-        }),
-        Text(AppLocalizations.of(context)!.followingAiTranslated),
-        ...Language.values.where((l) => l.aiTranslated).map((l) {
-          return RadioListTile(
-            title: Text(l.localText),
-            value: l,
-            groupValue:
-                Language.fromCode(Localizations.localeOf(context).languageCode),
-            onChanged: (value) {
-              context.read<SharedPreferences>().setLanguage(value);
-              // change locale
-              App.of(context)?.setLocale(value?.locale);
-            },
-          );
-        }),
-      ]),
+      body: Column(
+        children: [
+          ...Language.values.where((l) => !l.aiTranslated).map((l) {
+            return RadioListTile(
+              title: Text(l.localText),
+              value: l,
+              groupValue: Language.fromCode(
+                Localizations.localeOf(context).languageCode,
+              ),
+              onChanged: (value) {
+                context.read<SharedPreferences>().setLanguage(value);
+                // change locale
+                App.of(context)?.setLocale(value?.locale);
+              },
+            );
+          }),
+          Text(AppLocalizations.of(context)!.followingAiTranslated),
+          ...Language.values.where((l) => l.aiTranslated).map((l) {
+            return RadioListTile(
+              title: Text(l.localText),
+              value: l,
+              groupValue: Language.fromCode(
+                Localizations.localeOf(context).languageCode,
+              ),
+              onChanged: (value) {
+                context.read<SharedPreferences>().setLanguage(value);
+                // change locale
+                App.of(context)?.setLocale(value?.locale);
+              },
+            );
+          }),
+        ],
+      ),
     );
   }
 }

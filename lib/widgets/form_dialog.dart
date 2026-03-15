@@ -35,71 +35,81 @@ Future<T> showMyAdaptiveDialog<T>(
 }) async {
   late Object? result;
   if (Provider.of<MyLayout>(context, listen: false).fullScreen()) {
-    result = await Navigator.of(context, rootNavigator: true)
-        .push(CupertinoPageRoute(
-            builder: (ctx) => Scaffold(
-                  appBar: AppBar(
-                    title:
-                        !Platform.isMacOS && title != null ? Text(title) : null,
-                    automaticallyImplyLeading: false,
-                    leading: !Platform.isMacOS
-                        ? IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () => ctx.pop(),
-                          )
-                        : null,
-                    actions: [
-                      if (Platform.isMacOS)
-                        TextButton(
-                            onPressed: () => ctx.pop(),
-                            child: Text(AppLocalizations.of(ctx)!.cancel)),
-                      if (editable)
-                        TextButton(
-                            onPressed: () => onSave?.call(ctx),
-                            child: Text(AppLocalizations.of(ctx)!.save))
-                    ],
-                  ),
-                  body: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SingleChildScrollView(child: widget),
-                    ),
-                  ),
-                )));
+    result = await Navigator.of(context, rootNavigator: true).push(
+      CupertinoPageRoute(
+        builder: (ctx) => Scaffold(
+          appBar: AppBar(
+            title: !Platform.isMacOS && title != null ? Text(title) : null,
+            automaticallyImplyLeading: false,
+            leading: !Platform.isMacOS
+                ? IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => ctx.pop(),
+                  )
+                : null,
+            actions: [
+              if (Platform.isMacOS)
+                TextButton(
+                  onPressed: () => ctx.pop(),
+                  child: Text(AppLocalizations.of(ctx)!.cancel),
+                ),
+              if (editable)
+                TextButton(
+                  onPressed: () => onSave?.call(ctx),
+                  child: Text(AppLocalizations.of(ctx)!.save),
+                ),
+            ],
+          ),
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SingleChildScrollView(child: widget),
+            ),
+          ),
+        ),
+      ),
+    );
   } else {
     result = await showGeneralDialog(
-        context: context,
-        barrierDismissible: false,
-        barrierLabel: AppLocalizations.of(context)!.edit,
-        pageBuilder: (context, animation, secondaryAnimation) => AlertDialog(
-              scrollable: true,
-              title: title != null ? Text(title) : null,
-              actions: [
-                FilledButton.tonal(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: AppLocalizations.of(context)!.edit,
+      pageBuilder: (context, animation, secondaryAnimation) => AlertDialog(
+        scrollable: true,
+        title: title != null ? Text(title) : null,
+        actions: [
+          FilledButton.tonal(
+            style: FilledButton.styleFrom(
+              fixedSize: const Size(100, 40),
+              elevation: 1,
+            ),
+            onPressed: () => context.pop(),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          const SizedBox(width: 10),
+          if (editable)
+            Builder(
+              builder: (context) {
+                return FilledButton(
                   style: FilledButton.styleFrom(
-                      fixedSize: const Size(100, 40), elevation: 1),
-                  onPressed: () => context.pop(),
-                  child: Text(AppLocalizations.of(context)!.cancel),
-                ),
-                const SizedBox(width: 10),
-                if (editable)
-                  Builder(builder: (context) {
-                    return FilledButton(
-                      style: FilledButton.styleFrom(
-                          fixedSize: const Size(100, 40), elevation: 1),
-                      onPressed: () => onSave?.call(context),
-                      child: Text(AppLocalizations.of(context)!.save),
-                    );
-                  })
-              ],
-              content: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 450),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: widget,
-                ),
-              ),
-            ));
+                    fixedSize: const Size(100, 40),
+                    elevation: 1,
+                  ),
+                  onPressed: () => onSave?.call(context),
+                  child: Text(AppLocalizations.of(context)!.save),
+                );
+              },
+            ),
+        ],
+        content: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 450),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: widget,
+          ),
+        ),
+      ),
+    );
   }
   return result as T;
 }
@@ -129,15 +139,16 @@ Future<String?> showStringForm(
 }
 
 class StringForm extends StatefulWidget {
-  const StringForm(
-      {super.key,
-      this.initialValue,
-      this.title,
-      this.helperText,
-      this.maxLines = 1,
-      this.labelText,
-      this.obscureText = false,
-      this.cancelText});
+  const StringForm({
+    super.key,
+    this.initialValue,
+    this.title,
+    this.helperText,
+    this.maxLines = 1,
+    this.labelText,
+    this.obscureText = false,
+    this.cancelText,
+  });
   final String? initialValue;
   final String? title;
   final String? helperText;
@@ -178,29 +189,32 @@ class _StringFormState extends State<StringForm> {
             maxLines: widget.maxLines,
             obscureText: widget.obscureText,
             decoration: InputDecoration(
-                helperText: widget.helperText,
-                labelText: widget.labelText,
-                helperStyle: Theme.of(context).textTheme.labelSmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                border: const OutlineInputBorder()),
+              helperText: widget.helperText,
+              labelText: widget.labelText,
+              helperStyle: Theme.of(context).textTheme.labelSmall!.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+              border: const OutlineInputBorder(),
+            ),
           ),
         ],
       ),
       actions: [
         TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-                widget.cancelText ?? AppLocalizations.of(context)!.cancel)),
+          onPressed: () => Navigator.pop(context),
+          child: Text(
+            widget.cancelText ?? AppLocalizations.of(context)!.cancel,
+          ),
+        ),
         TextButton(
-            onPressed: () {
-              if (_nameController.text.isNotEmpty) {
-                Navigator.pop(context, _nameController.text);
-              }
-            },
-            child: Text(AppLocalizations.of(context)!.confirm)),
+          onPressed: () {
+            if (_nameController.text.isNotEmpty) {
+              Navigator.pop(context, _nameController.text);
+            }
+          },
+          child: Text(AppLocalizations.of(context)!.confirm),
+        ),
       ],
     );
   }
 }
-

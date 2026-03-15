@@ -53,14 +53,13 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
     _serverNameController.text = widget.config.serverName;
     _nextProtocolController.text = widget.config.nextProtocol.join(',');
     if (widget.config.pinnedPeerCertificateChainSha256.isNotEmpty) {
-      _peerSHA256HashControlller.text =
-          hex.encode(widget.config.pinnedPeerCertificateChainSha256.first);
+      _peerSHA256HashControlller.text = hex.encode(
+        widget.config.pinnedPeerCertificateChainSha256.first,
+      );
     }
     // Initialize multiple Root CAs
     for (var cert in widget.config.rootCas) {
-      final controller = TextEditingController(
-        text: utf8.decode(cert),
-      );
+      final controller = TextEditingController(text: utf8.decode(cert));
       _CAControllers.add(controller);
     }
     if (widget.config.echConfig.isNotEmpty) {
@@ -95,19 +94,22 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: TextFormField(
-                controller: _nextProtocolController,
-                decoration: const InputDecoration(
-                    label: Text('Next Protocol'), hintText: 'h2,http/1.1'),
-                validator: (value) {
-                  if (value != null && value.isNotEmpty) {
-                    List<String> protocols = value.split(',');
-                    widget.config.nextProtocol.clear();
-                    widget.config.nextProtocol.addAll(protocols);
-                  } else {
-                    widget.config.nextProtocol.clear();
-                  }
-                  return null;
-                }),
+              controller: _nextProtocolController,
+              decoration: const InputDecoration(
+                label: Text('Next Protocol'),
+                hintText: 'h2,http/1.1',
+              ),
+              validator: (value) {
+                if (value != null && value.isNotEmpty) {
+                  List<String> protocols = value.split(',');
+                  widget.config.nextProtocol.clear();
+                  widget.config.nextProtocol.addAll(protocols);
+                } else {
+                  widget.config.nextProtocol.clear();
+                }
+                return null;
+              },
+            ),
           ),
         // Multiple Certificates Section
         _CertificateCollection(
@@ -120,85 +122,89 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
         const Gap(10),
         // Multiple Root CAs Section
         ExpansionTile(
-            title:
-                Text('Root CA', style: Theme.of(context).textTheme.titleMedium),
-            subtitle: Text(AppLocalizations.of(context)!.verifyPeerCertDesc,
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
-            backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-            collapsedBackgroundColor:
-                Theme.of(context).colorScheme.surfaceContainerLow,
-            collapsedShape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: BorderSide(
-                color: Theme.of(context).colorScheme.outline,
-              ),
+          title: Text(
+            'Root CA',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          subtitle: Text(
+            AppLocalizations.of(context)!.verifyPeerCertDesc,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: BorderSide(
-                color: Theme.of(context).colorScheme.outline,
-              ),
-            ),
-            childrenPadding: const EdgeInsets.all(10),
-            children: [
-              ..._CAControllers.asMap().entries.map((entry) {
-                final index = entry.key;
-                final controller = entry.value;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: controller,
-                          maxLines: 5,
-                          decoration: InputDecoration(
-                            label: Text('Root CA ${index + 1}'),
-                          ),
-                          validator: (value) {
-                            // Validation happens globally for all Root CAs
-                            if (index == 0) {
-                              // Only validate once for all Root CAs
-                              widget.config.rootCas.clear();
-                              for (var ctrl in _CAControllers) {
-                                if (ctrl.text.isNotEmpty) {
-                                  widget.config.rootCas
-                                      .add(utf8.encode(ctrl.text));
-                                }
+          ),
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+          collapsedBackgroundColor: Theme.of(
+            context,
+          ).colorScheme.surfaceContainerLow,
+          collapsedShape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: Theme.of(context).colorScheme.outline),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: Theme.of(context).colorScheme.outline),
+          ),
+          childrenPadding: const EdgeInsets.all(10),
+          children: [
+            ..._CAControllers.asMap().entries.map((entry) {
+              final index = entry.key;
+              final controller = entry.value;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: controller,
+                        maxLines: 5,
+                        decoration: InputDecoration(
+                          label: Text('Root CA ${index + 1}'),
+                        ),
+                        validator: (value) {
+                          // Validation happens globally for all Root CAs
+                          if (index == 0) {
+                            // Only validate once for all Root CAs
+                            widget.config.rootCas.clear();
+                            for (var ctrl in _CAControllers) {
+                              if (ctrl.text.isNotEmpty) {
+                                widget.config.rootCas.add(
+                                  utf8.encode(ctrl.text),
+                                );
                               }
                             }
-                            return null;
-                          },
-                        ),
+                          }
+                          return null;
+                        },
                       ),
-                      if (_CAControllers.length > 1)
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () {
-                            setState(() {
-                              controller.dispose();
-                              _CAControllers.removeAt(index);
-                            });
-                          },
-                          tooltip: 'Remove Root CA',
-                        ),
-                    ],
-                  ),
-                );
-              }),
-              IconButton.filledTonal(
-                icon: const Icon(Icons.add),
-                onPressed: () {
-                  setState(() {
-                    _CAControllers.add(TextEditingController());
-                  });
-                },
-                tooltip: 'Add Root CA',
-              ),
-              const Gap(10),
-            ]),
+                    ),
+                    if (_CAControllers.length > 1)
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          setState(() {
+                            controller.dispose();
+                            _CAControllers.removeAt(index);
+                          });
+                        },
+                        tooltip: 'Remove Root CA',
+                      ),
+                  ],
+                ),
+              );
+            }),
+            IconButton.filledTonal(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                setState(() {
+                  _CAControllers.add(TextEditingController());
+                });
+              },
+              tooltip: 'Add Root CA',
+            ),
+            const Gap(10),
+          ],
+        ),
 
         const Gap(10),
         // Multiple Issue CAs Section
@@ -211,32 +217,37 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
           ),
         const Gap(10),
         TextFormField(
-            maxLines: 2,
-            controller: _peerSHA256HashControlller,
-            decoration: InputDecoration(
-                label: const Text('SHA256(hex)'),
-                helperText: AppLocalizations.of(context)!.verifyPeerCertDesc),
-            validator: (value) {
-              if (value != null && value.isNotEmpty) {
-                try {
-                  widget.config.pinnedPeerCertificateChainSha256.clear();
-                  widget.config.pinnedPeerCertificateChainSha256
-                      .add(hex.decode(_peerSHA256HashControlller.text));
-                } catch (e) {
-                  return 'Invalid';
-                }
-              } else {
+          maxLines: 2,
+          controller: _peerSHA256HashControlller,
+          decoration: InputDecoration(
+            label: const Text('SHA256(hex)'),
+            helperText: AppLocalizations.of(context)!.verifyPeerCertDesc,
+          ),
+          validator: (value) {
+            if (value != null && value.isNotEmpty) {
+              try {
                 widget.config.pinnedPeerCertificateChainSha256.clear();
+                widget.config.pinnedPeerCertificateChainSha256.add(
+                  hex.decode(_peerSHA256HashControlller.text),
+                );
+              } catch (e) {
+                return 'Invalid';
               }
-              return null;
-            }),
+            } else {
+              widget.config.pinnedPeerCertificateChainSha256.clear();
+            }
+            return null;
+          },
+        ),
         if (!widget.server)
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Row(
               children: [
-                Text('Allow Insecure',
-                    style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  'Allow Insecure',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const Gap(10),
                 Switch(
                   value: widget.config.allowInsecure,
@@ -249,8 +260,10 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
         const Gap(10),
         Row(
           children: [
-            Text('Disable System Root CAs',
-                style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Disable System Root CAs',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const Gap(10),
             Switch(
               value: widget.config.disableSystemRoot,
@@ -262,8 +275,10 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
         const Gap(10),
         Row(
           children: [
-            Text('Enable Session Resumption',
-                style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Enable Session Resumption',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const Gap(10),
             Switch(
               value: widget.config.enableSessionResumption,
@@ -276,167 +291,193 @@ class _TransportSecurityTlsState extends State<_TransportSecurityTls> {
         if (widget.server)
           Row(
             children: [
-              Text('Verify Client Certificate',
-                  style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                'Verify Client Certificate',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               const Gap(10),
               Switch(
                 value: widget.config.verifyClientCertificate,
                 onChanged: (value) => setState(
-                    () => widget.config.verifyClientCertificate = value),
+                  () => widget.config.verifyClientCertificate = value,
+                ),
               ),
             ],
           ),
         const Gap(10),
         if (widget.server)
           TextFormField(
-              controller: _echKeyController,
-              maxLines: 3,
-              decoration: const InputDecoration(
-                  label: Text('ECH Key'),
-                  helperText: 'Server ECH private key (hex encoded)'),
-              validator: (value) {
-                if (value != null && value.isNotEmpty) {
-                  try {
-                    widget.config.echKey = hex.decode(_echKeyController.text);
-                  } catch (e) {
-                    return 'Invalid hex';
-                  }
-                } else {
-                  widget.config.echKey = [];
+            controller: _echKeyController,
+            maxLines: 3,
+            decoration: const InputDecoration(
+              label: Text('ECH Key'),
+              helperText: 'Server ECH private key (hex encoded)',
+            ),
+            validator: (value) {
+              if (value != null && value.isNotEmpty) {
+                try {
+                  widget.config.echKey = hex.decode(_echKeyController.text);
+                } catch (e) {
+                  return 'Invalid hex';
                 }
-                return null;
-              }),
+              } else {
+                widget.config.echKey = [];
+              }
+              return null;
+            },
+          ),
         Padding(
           padding: const EdgeInsets.only(top: 10),
           child: TextFormField(
-              controller: _echConfigController,
-              decoration: const InputDecoration(
-                  label: Text('ECH Config'),
-                  helperText: 'Client ECH config (hex encoded)'),
-              validator: (value) {
-                if (value != null && value.isNotEmpty) {
-                  try {
-                    widget.config.echConfig =
-                        hex.decode(_echConfigController.text);
-                  } catch (e) {
-                    return 'Invalid hex';
-                  }
-                } else {
-                  widget.config.echConfig = [];
+            controller: _echConfigController,
+            decoration: const InputDecoration(
+              label: Text('ECH Config'),
+              helperText: 'Client ECH config (hex encoded)',
+            ),
+            validator: (value) {
+              if (value != null && value.isNotEmpty) {
+                try {
+                  widget.config.echConfig = hex.decode(
+                    _echConfigController.text,
+                  );
+                } catch (e) {
+                  return 'Invalid hex';
                 }
-                return null;
-              }),
+              } else {
+                widget.config.echConfig = [];
+              }
+              return null;
+            },
+          ),
         ),
         if (!widget.server)
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: SwitchListTile(
-                title: Text(AppLocalizations.of(context)!.lookupEch),
-                subtitle: Text(AppLocalizations.of(context)!.lookupEchDesc,
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                value: widget.config.enableEch,
-                onChanged: (value) =>
-                    setState(() => widget.config.enableEch = value)),
+              title: Text(AppLocalizations.of(context)!.lookupEch),
+              subtitle: Text(
+                AppLocalizations.of(context)!.lookupEchDesc,
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              value: widget.config.enableEch,
+              onChanged: (value) =>
+                  setState(() => widget.config.enableEch = value),
+            ),
           ),
         if (widget.server)
           Padding(
             padding: const EdgeInsets.only(top: 10),
-            child: FormContainer(children: [
-              TextFormField(
-                controller: _echConfigGenerateController,
-                decoration: InputDecoration(
+            child: FormContainer(
+              children: [
+                TextFormField(
+                  controller: _echConfigGenerateController,
+                  decoration: InputDecoration(
                     label: Text(AppLocalizations.of(context)!.echDomain),
                     errorText: _echConfigGenerateError,
                     errorMaxLines: 3,
-                    helperText: AppLocalizations.of(context)!.echDomainDesc),
-                validator: (value) {
-                  return null;
-                },
-              ),
-              const Gap(5),
-              FilledButton.tonal(
-                onPressed: () async {
-                  try {
-                    if (_echConfigGenerateController.text.trim().isEmpty) {
+                    helperText: AppLocalizations.of(context)!.echDomainDesc,
+                  ),
+                  validator: (value) {
+                    return null;
+                  },
+                ),
+                const Gap(5),
+                FilledButton.tonal(
+                  onPressed: () async {
+                    try {
+                      if (_echConfigGenerateController.text.trim().isEmpty) {
+                        setState(() {
+                          _echConfigGenerateError = AppLocalizations.of(
+                            context,
+                          )!.fieldRequired;
+                        });
+                        return;
+                      }
                       setState(() {
-                        _echConfigGenerateError =
-                            AppLocalizations.of(context)!.fieldRequired;
+                        _echConfigGenerateError = null;
                       });
-                      return;
+                      final response = await context
+                          .read<XApiClient>()
+                          .generateECHResponse(
+                            _echConfigGenerateController.text,
+                          );
+                      _echConfigController.text = hex.encode(response.config);
+                      _echKeyController.text = hex.encode(response.key);
+                    } catch (e) {
+                      logger.e(e);
+                      setState(() {
+                        _echConfigGenerateError = e.toString();
+                      });
                     }
-                    setState(() {
-                      _echConfigGenerateError = null;
-                    });
-                    final response = await context
-                        .read<XApiClient>()
-                        .generateECHResponse(_echConfigGenerateController.text);
-                    _echConfigController.text = hex.encode(response.config);
-                    _echKeyController.text = hex.encode(response.key);
-                  } catch (e) {
-                    logger.e(e);
-                    setState(() {
-                      _echConfigGenerateError = e.toString();
-                    });
-                  }
-                },
-                child: Text(AppLocalizations.of(context)!.generateEchConfig),
-              ),
-            ]),
+                  },
+                  child: Text(AppLocalizations.of(context)!.generateEchConfig),
+                ),
+              ],
+            ),
           ),
         const Gap(10),
         if (!widget.server)
-          FormContainer(children: [
-            Text('uTls Settings',
-                style: Theme.of(context).textTheme.titleMedium),
-            const Gap(10),
-            TextFormField(
+          FormContainer(
+            children: [
+              Text(
+                'uTls Settings',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const Gap(10),
+              TextFormField(
                 controller: _fingerprintController,
                 decoration: const InputDecoration(
-                    label: Text('Fingerprint'),
-                    helperText: 'uTLS fingerprint to imitate'),
+                  label: Text('Fingerprint'),
+                  helperText: 'uTLS fingerprint to imitate',
+                ),
                 validator: (value) {
                   widget.config.imitate = _fingerprintController.text;
                   return null;
-                }),
-            const Gap(10),
-            DropdownButtonFormField<ForceALPN>(
-              initialValue: widget.config.forceAlpn,
-              decoration: const InputDecoration(
+                },
+              ),
+              const Gap(10),
+              DropdownButtonFormField<ForceALPN>(
+                initialValue: widget.config.forceAlpn,
+                decoration: const InputDecoration(
                   label: Text('Force ALPN'),
-                  helperText: 'Force ALPN behavior (uTLS)'),
-              items: ForceALPN.values.map((ForceALPN value) {
-                String displayName;
-                switch (value) {
-                  case ForceALPN.TRANSPORT_PREFERENCE_TAKE_PRIORITY:
-                    displayName = 'Transport Preference';
-                    break;
-                  case ForceALPN.NO_ALPN:
-                    displayName = 'No ALPN';
-                    break;
-                  case ForceALPN.UTLS_PRESET:
-                    displayName = 'uTLS Preset';
-                    break;
-                  default:
-                    displayName = value.name;
-                }
-                return DropdownMenuItem<ForceALPN>(
-                  value: value,
-                  child: Text(displayName),
-                );
-              }).toList(),
-              onChanged: (ForceALPN? newValue) {
-                if (newValue != null) {
-                  setState(() => widget.config.forceAlpn = newValue);
-                }
-              },
-            ),
-            SwitchListTile(
-              value: widget.config.noSNI,
-              onChanged: (value) => setState(() => widget.config.noSNI = value),
-              title: const Text('No SNI'),
-            ),
-          ]),
+                  helperText: 'Force ALPN behavior (uTLS)',
+                ),
+                items: ForceALPN.values.map((ForceALPN value) {
+                  String displayName;
+                  switch (value) {
+                    case ForceALPN.TRANSPORT_PREFERENCE_TAKE_PRIORITY:
+                      displayName = 'Transport Preference';
+                      break;
+                    case ForceALPN.NO_ALPN:
+                      displayName = 'No ALPN';
+                      break;
+                    case ForceALPN.UTLS_PRESET:
+                      displayName = 'uTLS Preset';
+                      break;
+                    default:
+                      displayName = value.name;
+                  }
+                  return DropdownMenuItem<ForceALPN>(
+                    value: value,
+                    child: Text(displayName),
+                  );
+                }).toList(),
+                onChanged: (ForceALPN? newValue) {
+                  if (newValue != null) {
+                    setState(() => widget.config.forceAlpn = newValue);
+                  }
+                },
+              ),
+              SwitchListTile(
+                value: widget.config.noSNI,
+                onChanged: (value) =>
+                    setState(() => widget.config.noSNI = value),
+                title: const Text('No SNI'),
+              ),
+            ],
+          ),
         // Hidden FormField to trigger validation listener
         FormField<String>(
           initialValue: '',
@@ -514,18 +555,22 @@ class _CertificateCollectionState extends State<_CertificateCollection> {
 
   void _initializeControllers() {
     for (var cert in widget.certificates) {
-      _certControllers.add(TextEditingController(
-        text: cert.certificate.isNotEmpty ? utf8.decode(cert.certificate) : '',
-      ));
-      _keyControllers.add(TextEditingController(
-        text: cert.key.isNotEmpty ? utf8.decode(cert.key) : '',
-      ));
-      _certPathControllers.add(TextEditingController(
-        text: cert.certificateFilepath,
-      ));
-      _keyPathControllers.add(TextEditingController(
-        text: cert.keyFilepath,
-      ));
+      _certControllers.add(
+        TextEditingController(
+          text: cert.certificate.isNotEmpty
+              ? utf8.decode(cert.certificate)
+              : '',
+        ),
+      );
+      _keyControllers.add(
+        TextEditingController(
+          text: cert.key.isNotEmpty ? utf8.decode(cert.key) : '',
+        ),
+      );
+      _certPathControllers.add(
+        TextEditingController(text: cert.certificateFilepath),
+      );
+      _keyPathControllers.add(TextEditingController(text: cert.keyFilepath));
     }
   }
 
@@ -583,16 +628,13 @@ class _CertificateCollectionState extends State<_CertificateCollection> {
     try {
       final cert = await context.read<XApiClient>().generateCert(domain);
       setState(() {
-        widget.certificates.add(Certificate(
-          certificate: cert.cert,
-          key: cert.key,
-        ));
-        _certControllers.add(TextEditingController(
-          text: utf8.decode(cert.cert),
-        ));
-        _keyControllers.add(TextEditingController(
-          text: utf8.decode(cert.key),
-        ));
+        widget.certificates.add(
+          Certificate(certificate: cert.cert, key: cert.key),
+        );
+        _certControllers.add(
+          TextEditingController(text: utf8.decode(cert.cert)),
+        );
+        _keyControllers.add(TextEditingController(text: utf8.decode(cert.key)));
         _certPathControllers.add(TextEditingController());
         _keyPathControllers.add(TextEditingController());
         _domainController.clear();
@@ -647,216 +689,219 @@ class _CertificateCollectionState extends State<_CertificateCollection> {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
-        title:
-            Text(widget.title, style: Theme.of(context).textTheme.titleMedium),
-        subtitle: _certError != null || widget.errorMessage != null
-            ? Text(_certError != null ? _certError! : widget.errorMessage!,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall!
-                    .copyWith(color: Theme.of(context).colorScheme.error))
-            : Text(widget.description,
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
-        onExpansionChanged: (value) {
-          if (!value) {
-            _validateCertificates();
-          }
-        },
-        initiallyExpanded: widget.server,
-        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-        collapsedBackgroundColor:
-            Theme.of(context).colorScheme.surfaceContainerLow,
-        collapsedShape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.outline,
-          ),
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.outline,
-          ),
-        ),
-        childrenPadding: const EdgeInsets.all(10),
-        children: [
-          ..._certControllers.asMap().entries.map((entry) {
-            final index = entry.key;
-            final certController = entry.value;
-            final keyController = _keyControllers[index];
-            final certPathController = _certPathControllers[index];
-            final keyPathController = _keyPathControllers[index];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: certController,
-                          maxLines: 5,
-                          decoration: InputDecoration(
-                            label: Text('${widget.title} ${index + 1}'),
-                            errorMaxLines: 3,
-                            helper: certController.text.isNotEmpty
-                                ? FutureBuilder<String?>(
-                                    future: _extractDomainFromCert(
-                                        certController.text),
-                                    builder: (context, snapshot) {
-                                      return snapshot.hasData &&
-                                              snapshot.data!.isNotEmpty
-                                          ? Text(
-                                              '${AppLocalizations.of(context)!.domain}: ${snapshot.data}')
-                                          : const SizedBox.shrink();
-                                    },
-                                  )
-                                : null,
-                          ),
-                          onEditingComplete: () {
-                            // Trigger rebuild to update domain display
-                            setState(() {});
-                          },
-                          onChanged: (value) {
-                            widget.certificates[index].certificate =
-                                utf8.encode(value);
-                          },
-                          validator: (value) {
-                            final cert = _certControllers[index];
-                            final certPath = _certPathControllers[index];
-                            if (widget.server &&
-                                cert.text.isEmpty &&
-                                certPath.text.isEmpty) {
-                              return 'Certificate and certificate file path cannot be empty at the same time';
-                            } else if (!widget.server && cert.text.isEmpty) {
-                              return AppLocalizations.of(context)!
-                                  .fieldRequired;
-                            }
-                            return null;
-                          },
+      title: Text(widget.title, style: Theme.of(context).textTheme.titleMedium),
+      subtitle: _certError != null || widget.errorMessage != null
+          ? Text(
+              _certError != null ? _certError! : widget.errorMessage!,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            )
+          : Text(
+              widget.description,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+      onExpansionChanged: (value) {
+        if (!value) {
+          _validateCertificates();
+        }
+      },
+      initiallyExpanded: widget.server,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+      collapsedBackgroundColor: Theme.of(
+        context,
+      ).colorScheme.surfaceContainerLow,
+      collapsedShape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: Theme.of(context).colorScheme.outline),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: Theme.of(context).colorScheme.outline),
+      ),
+      childrenPadding: const EdgeInsets.all(10),
+      children: [
+        ..._certControllers.asMap().entries.map((entry) {
+          final index = entry.key;
+          final certController = entry.value;
+          final keyController = _keyControllers[index];
+          final certPathController = _certPathControllers[index];
+          final keyPathController = _keyPathControllers[index];
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: certController,
+                        maxLines: 5,
+                        decoration: InputDecoration(
+                          label: Text('${widget.title} ${index + 1}'),
+                          errorMaxLines: 3,
+                          helper: certController.text.isNotEmpty
+                              ? FutureBuilder<String?>(
+                                  future: _extractDomainFromCert(
+                                    certController.text,
+                                  ),
+                                  builder: (context, snapshot) {
+                                    return snapshot.hasData &&
+                                            snapshot.data!.isNotEmpty
+                                        ? Text(
+                                            '${AppLocalizations.of(context)!.domain}: ${snapshot.data}',
+                                          )
+                                        : const SizedBox.shrink();
+                                  },
+                                )
+                              : null,
                         ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          setState(() {
-                            _removeControllers(index);
-                          });
+                        onEditingComplete: () {
+                          // Trigger rebuild to update domain display
+                          setState(() {});
                         },
-                        tooltip: 'Remove ${widget.title}',
+                        onChanged: (value) {
+                          widget.certificates[index].certificate = utf8.encode(
+                            value,
+                          );
+                        },
+                        validator: (value) {
+                          final cert = _certControllers[index];
+                          final certPath = _certPathControllers[index];
+                          if (widget.server &&
+                              cert.text.isEmpty &&
+                              certPath.text.isEmpty) {
+                            return 'Certificate and certificate file path cannot be empty at the same time';
+                          } else if (!widget.server && cert.text.isEmpty) {
+                            return AppLocalizations.of(context)!.fieldRequired;
+                          }
+                          return null;
+                        },
                       ),
-                    ],
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () {
+                        setState(() {
+                          _removeControllers(index);
+                        });
+                      },
+                      tooltip: 'Remove ${widget.title}',
+                    ),
+                  ],
+                ),
+                const Gap(10),
+                TextFormField(
+                  controller: keyController,
+                  maxLines: 5,
+                  decoration: InputDecoration(
+                    label: Text('Private Key ${index + 1}'),
+                    helperText: 'Private key (PEM format)',
+                  ),
+                  onChanged: (value) {
+                    widget.certificates[index].key = utf8.encode(value);
+                  },
+                  validator: (value) {
+                    final key = _keyControllers[index];
+                    final keyPath = _keyPathControllers[index];
+                    if (widget.server &&
+                        key.text.isEmpty &&
+                        keyPath.text.isEmpty) {
+                      return 'Key and key file path cannot be empty at the same time';
+                    } else if (!widget.server && key.text.isEmpty) {
+                      return AppLocalizations.of(context)!.fieldRequired;
+                    }
+                    return null;
+                  },
+                ),
+                if (widget.server) ...[
+                  const Gap(10),
+                  TextFormField(
+                    controller: certPathController,
+                    decoration: InputDecoration(
+                      label: Text('${widget.title} ${index + 1} File Path'),
+                      helperText: 'Path to certificate file on server',
+                    ),
+                    onChanged: (value) {
+                      widget.certificates[index].certificateFilepath = value;
+                    },
                   ),
                   const Gap(10),
                   TextFormField(
-                    controller: keyController,
-                    maxLines: 5,
+                    controller: keyPathController,
                     decoration: InputDecoration(
-                      label: Text('Private Key ${index + 1}'),
-                      helperText: 'Private key (PEM format)',
+                      label: Text('Key ${index + 1} File Path'),
+                      helperText: 'Path to private key file on server',
                     ),
                     onChanged: (value) {
-                      widget.certificates[index].key = utf8.encode(value);
-                    },
-                    validator: (value) {
-                      final key = _keyControllers[index];
-                      final keyPath = _keyPathControllers[index];
-                      if (widget.server &&
-                          key.text.isEmpty &&
-                          keyPath.text.isEmpty) {
-                        return 'Key and key file path cannot be empty at the same time';
-                      } else if (!widget.server && key.text.isEmpty) {
-                        return AppLocalizations.of(context)!.fieldRequired;
-                      }
-                      return null;
+                      widget.certificates[index].keyFilepath = value;
                     },
                   ),
-                  if (widget.server) ...[
-                    const Gap(10),
-                    TextFormField(
-                      controller: certPathController,
-                      decoration: InputDecoration(
-                        label: Text('${widget.title} ${index + 1} File Path'),
-                        helperText: 'Path to certificate file on server',
-                      ),
-                      onChanged: (value) {
-                        widget.certificates[index].certificateFilepath = value;
-                      },
-                    ),
-                    const Gap(10),
-                    TextFormField(
-                      controller: keyPathController,
-                      decoration: InputDecoration(
-                        label: Text('Key ${index + 1} File Path'),
-                        helperText: 'Path to private key file on server',
-                      ),
-                      onChanged: (value) {
-                        widget.certificates[index].keyFilepath = value;
-                      },
-                    ),
-                  ],
                 ],
-              ),
-            );
-          }),
-          const Gap(10),
-          if (_certControllers.isNotEmpty)
-            const Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: Divider(),
+              ],
             ),
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: _domainController,
-                  decoration: InputDecoration(
-                    label: Text(AppLocalizations.of(context)!.domain),
-                    errorText: _domainError,
-                    helperText:
-                        AppLocalizations.of(context)!.generateSelfSignedCert,
-                    suffixIcon: _isGenerating
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: Padding(
-                              padding: EdgeInsets.all(12.0),
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          )
-                        : IconButton(
-                            icon: const Icon(Icons.add_box_outlined),
-                            onPressed:
-                                _isGenerating ? null : _generateCertificate,
-                            tooltip: AppLocalizations.of(context)!
-                                .generateSelfSignedCert,
+          );
+        }),
+        const Gap(10),
+        if (_certControllers.isNotEmpty)
+          const Padding(padding: EdgeInsets.only(bottom: 10), child: Divider()),
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _domainController,
+                decoration: InputDecoration(
+                  label: Text(AppLocalizations.of(context)!.domain),
+                  errorText: _domainError,
+                  helperText: AppLocalizations.of(
+                    context,
+                  )!.generateSelfSignedCert,
+                  suffixIcon: _isGenerating
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: Padding(
+                            padding: EdgeInsets.all(12.0),
+                            child: CircularProgressIndicator(strokeWidth: 2),
                           ),
-                  ),
-                  enabled: !_isGenerating,
+                        )
+                      : IconButton(
+                          icon: const Icon(Icons.add_box_outlined),
+                          onPressed: _isGenerating
+                              ? null
+                              : _generateCertificate,
+                          tooltip: AppLocalizations.of(
+                            context,
+                          )!.generateSelfSignedCert,
+                        ),
                 ),
+                enabled: !_isGenerating,
               ),
-            ],
-          ),
-          const Gap(10),
-          const TextDivider(text: 'OR'),
-          const Gap(10),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: FilledButton.tonalIcon(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                setState(() {
-                  _addEmptyControllers();
-                });
-              },
-              label: Text(AppLocalizations.of(context)!.add),
             ),
+          ],
+        ),
+        const Gap(10),
+        const TextDivider(text: 'OR'),
+        const Gap(10),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: FilledButton.tonalIcon(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              setState(() {
+                _addEmptyControllers();
+              });
+            },
+            label: Text(AppLocalizations.of(context)!.add),
           ),
-          const Gap(10),
-        ]);
+        ),
+        const Gap(10),
+      ],
+    );
   }
 }
 
@@ -914,9 +959,11 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
       // Initialize shortIds
       if (widget.config.shortIds.isNotEmpty) {
         for (var shortId in widget.config.shortIds) {
-          _shortIdsControllers.add(TextEditingController(
-            text: shortId.isNotEmpty ? hex.encode(shortId) : '',
-          ));
+          _shortIdsControllers.add(
+            TextEditingController(
+              text: shortId.isNotEmpty ? hex.encode(shortId) : '',
+            ),
+          );
         }
       } else {
         // Add at least one empty controller
@@ -965,9 +1012,7 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
         TextFormField(
           controller: _serverNameController,
           decoration: InputDecoration(
-            label: const Text(
-              'Server Name',
-            ),
+            label: const Text('Server Name'),
             helperText: AppLocalizations.of(context)!.clientOnly,
           ),
           validator: (value) {
@@ -993,9 +1038,10 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
           controller: _publicKeyController,
           maxLines: 2,
           decoration: const InputDecoration(
-              label: Text('Public Key(base64URL)'),
-              errorMaxLines: 2,
-              helperMaxLines: 2),
+            label: Text('Public Key(base64URL)'),
+            errorMaxLines: 2,
+            helperMaxLines: 2,
+          ),
           validator: (value) {
             if (value != null && value.isNotEmpty) {
               try {
@@ -1039,14 +1085,15 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                    onPressed: () async {
-                      final (publicKey, privateKey) = await context
-                          .read<XApiClient>()
-                          .generateX25519KeyPair();
-                      _publicKeyController.text = publicKey;
-                      _privateKeyController.text = privateKey;
-                    },
-                    child: Text(AppLocalizations.of(context)!.generate)),
+                  onPressed: () async {
+                    final (publicKey, privateKey) = await context
+                        .read<XApiClient>()
+                        .generateX25519KeyPair();
+                    _publicKeyController.text = publicKey;
+                    _privateKeyController.text = privateKey;
+                  },
+                  child: Text(AppLocalizations.of(context)!.generate),
+                ),
               ),
               const Gap(2),
             ],
@@ -1054,8 +1101,9 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
         TextFormField(
           controller: _shortIdController,
           decoration: InputDecoration(
-              label: const Text('Short ID(hex)'),
-              helperText: AppLocalizations.of(context)!.clientOnly),
+            label: const Text('Short ID(hex)'),
+            helperText: AppLocalizations.of(context)!.clientOnly,
+          ),
           validator: (value) {
             value = value ?? '';
             // if (value.length > 16) {
@@ -1087,35 +1135,36 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
         // Server-only fields
         if (widget.server) ...[
           ExpansionTile(
-            title: Text('Short IDs',
-                style: Theme.of(context).textTheme.titleMedium),
+            title: Text(
+              'Short IDs',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             subtitle: _shortIdError != null
-                ? Text(_shortIdError!,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: Theme.of(context).colorScheme.error))
+                ? Text(
+                    _shortIdError!,
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  )
                 : null,
             initiallyExpanded: true,
             backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-            collapsedBackgroundColor:
-                Theme.of(context).colorScheme.surfaceContainerLow,
+            collapsedBackgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerLow,
             collapsedShape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
-              side: BorderSide(
-                color: Theme.of(context).colorScheme.outline,
-              ),
+              side: BorderSide(color: Theme.of(context).colorScheme.outline),
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
-              side: BorderSide(
-                color: Theme.of(context).colorScheme.outline,
-              ),
+              side: BorderSide(color: Theme.of(context).colorScheme.outline),
             ),
             onExpansionChanged: (value) {
               if (!value) {
-                if (_shortIdsControllers
-                        .any((controller) => controller.text.isEmpty) ||
+                if (_shortIdsControllers.any(
+                      (controller) => controller.text.isEmpty,
+                    ) ||
                     _shortIdsControllers.isEmpty) {
                   setState(() {
                     _shortIdError = AppLocalizations.of(context)!.fieldRequired;
@@ -1148,14 +1197,16 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
                                   return 'Invalid';
                                 }
                                 value = value.padRight(16, '0');
-                                widget.config.shortIds[index] =
-                                    hex.decode(value);
+                                widget.config.shortIds[index] = hex.decode(
+                                  value,
+                                );
                               } catch (e) {
                                 return 'Invalid hex';
                               }
                             } else {
-                              return AppLocalizations.of(context)!
-                                  .fieldRequired;
+                              return AppLocalizations.of(
+                                context,
+                              )!.fieldRequired;
                             }
                             return null;
                           },
@@ -1193,37 +1244,44 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
           const Gap(10),
           if (widget.server)
             ExpansionTile(
-              title: Text('Server Names',
-                  style: Theme.of(context).textTheme.titleMedium),
+              title: Text(
+                'Server Names',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               subtitle: _serverNamesError != null
-                  ? Text(_serverNamesError!,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall!
-                          .copyWith(color: Theme.of(context).colorScheme.error))
-                  : Text('Server names for reality server',
+                  ? Text(
+                      _serverNamesError!,
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant)),
-              backgroundColor:
-                  Theme.of(context).colorScheme.surfaceContainerLow,
-              collapsedBackgroundColor:
-                  Theme.of(context).colorScheme.surfaceContainerLow,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    )
+                  : Text(
+                      'Server names for reality server',
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.surfaceContainerLow,
+              collapsedBackgroundColor: Theme.of(
+                context,
+              ).colorScheme.surfaceContainerLow,
               initiallyExpanded: true,
               collapsedShape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
-                side: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
+                side: BorderSide(color: Theme.of(context).colorScheme.outline),
               ),
               onExpansionChanged: (value) {
                 if (!value) {
-                  if (_serverNamesControllers
-                          .any((controller) => controller.text.isEmpty) ||
+                  if (_serverNamesControllers.any(
+                        (controller) => controller.text.isEmpty,
+                      ) ||
                       _serverNamesControllers.isEmpty) {
                     setState(() {
-                      _serverNamesError =
-                          AppLocalizations.of(context)!.fieldRequired;
+                      _serverNamesError = AppLocalizations.of(
+                        context,
+                      )!.fieldRequired;
                     });
                   } else {
                     setState(() {
@@ -1234,9 +1292,7 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
               },
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
-                side: BorderSide(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
+                side: BorderSide(color: Theme.of(context).colorScheme.outline),
               ),
               childrenPadding: const EdgeInsets.all(10),
               children: [
@@ -1262,8 +1318,9 @@ class __TransportSecurityRealityState extends State<_TransportSecurityReality> {
                                 }
                                 widget.config.serverNames[index] = value;
                               } else {
-                                return AppLocalizations.of(context)!
-                                    .fieldRequired;
+                                return AppLocalizations.of(
+                                  context,
+                                )!.fieldRequired;
                               }
                               return null;
                             },

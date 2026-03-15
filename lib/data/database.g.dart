@@ -9,165 +9,237 @@ class $SubscriptionsTable extends Subscriptions
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $SubscriptionsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      clientDefault: () => DateTime.now());
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    clientDefault: () => DateTime.now(),
+  );
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _linkMeta = const VerificationMeta('link');
   @override
   late final GeneratedColumn<String> link = GeneratedColumn<String>(
-      'link', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
-  static const VerificationMeta _remainingDataMeta =
-      const VerificationMeta('remainingData');
+    'link',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _remainingDataMeta = const VerificationMeta(
+    'remainingData',
+  );
   @override
   late final GeneratedColumn<double> remainingData = GeneratedColumn<double>(
-      'remaining_data', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
-  static const VerificationMeta _endTimeMeta =
-      const VerificationMeta('endTime');
+    'remaining_data',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _endTimeMeta = const VerificationMeta(
+    'endTime',
+  );
   @override
   late final GeneratedColumn<int> endTime = GeneratedColumn<int>(
-      'end_time', aliasedName, true,
-      type: DriftSqlType.int, requiredDuringInsert: false);
-  static const VerificationMeta _websiteMeta =
-      const VerificationMeta('website');
+    'end_time',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _websiteMeta = const VerificationMeta(
+    'website',
+  );
   @override
   late final GeneratedColumn<String> website = GeneratedColumn<String>(
-      'website', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(''));
-  static const VerificationMeta _descriptionMeta =
-      const VerificationMeta('description');
+    'website',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
   @override
   late final GeneratedColumn<String> description = GeneratedColumn<String>(
-      'description', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(''));
-  static const VerificationMeta _lastUpdateMeta =
-      const VerificationMeta('lastUpdate');
+    'description',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _lastUpdateMeta = const VerificationMeta(
+    'lastUpdate',
+  );
   @override
   late final GeneratedColumn<int> lastUpdate = GeneratedColumn<int>(
-      'last_update', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _lastSuccessUpdateMeta =
-      const VerificationMeta('lastSuccessUpdate');
+    'last_update',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastSuccessUpdateMeta = const VerificationMeta(
+    'lastSuccessUpdate',
+  );
   @override
   late final GeneratedColumn<int> lastSuccessUpdate = GeneratedColumn<int>(
-      'last_success_update', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _placeOnTopMeta =
-      const VerificationMeta('placeOnTop');
+    'last_success_update',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _placeOnTopMeta = const VerificationMeta(
+    'placeOnTop',
+  );
   @override
   late final GeneratedColumn<bool> placeOnTop = GeneratedColumn<bool>(
-      'place_on_top', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'CHECK ("place_on_top" IN (0, 1))'),
-      defaultValue: const Constant(false));
+    'place_on_top',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("place_on_top" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
-        updatedAt,
-        id,
-        name,
-        link,
-        remainingData,
-        endTime,
-        website,
-        description,
-        lastUpdate,
-        lastSuccessUpdate,
-        placeOnTop
-      ];
+    updatedAt,
+    id,
+    name,
+    link,
+    remainingData,
+    endTime,
+    website,
+    description,
+    lastUpdate,
+    lastSuccessUpdate,
+    placeOnTop,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'subscriptions';
   @override
-  VerificationContext validateIntegrity(Insertable<Subscription> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<Subscription> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
     }
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
     if (data.containsKey('link')) {
       context.handle(
-          _linkMeta, link.isAcceptableOrUnknown(data['link']!, _linkMeta));
+        _linkMeta,
+        link.isAcceptableOrUnknown(data['link']!, _linkMeta),
+      );
     } else if (isInserting) {
       context.missing(_linkMeta);
     }
     if (data.containsKey('remaining_data')) {
       context.handle(
+        _remainingDataMeta,
+        remainingData.isAcceptableOrUnknown(
+          data['remaining_data']!,
           _remainingDataMeta,
-          remainingData.isAcceptableOrUnknown(
-              data['remaining_data']!, _remainingDataMeta));
+        ),
+      );
     }
     if (data.containsKey('end_time')) {
-      context.handle(_endTimeMeta,
-          endTime.isAcceptableOrUnknown(data['end_time']!, _endTimeMeta));
+      context.handle(
+        _endTimeMeta,
+        endTime.isAcceptableOrUnknown(data['end_time']!, _endTimeMeta),
+      );
     }
     if (data.containsKey('website')) {
-      context.handle(_websiteMeta,
-          website.isAcceptableOrUnknown(data['website']!, _websiteMeta));
+      context.handle(
+        _websiteMeta,
+        website.isAcceptableOrUnknown(data['website']!, _websiteMeta),
+      );
     }
     if (data.containsKey('description')) {
       context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
           _descriptionMeta,
-          description.isAcceptableOrUnknown(
-              data['description']!, _descriptionMeta));
+        ),
+      );
     }
     if (data.containsKey('last_update')) {
       context.handle(
-          _lastUpdateMeta,
-          lastUpdate.isAcceptableOrUnknown(
-              data['last_update']!, _lastUpdateMeta));
+        _lastUpdateMeta,
+        lastUpdate.isAcceptableOrUnknown(data['last_update']!, _lastUpdateMeta),
+      );
     } else if (isInserting) {
       context.missing(_lastUpdateMeta);
     }
     if (data.containsKey('last_success_update')) {
       context.handle(
+        _lastSuccessUpdateMeta,
+        lastSuccessUpdate.isAcceptableOrUnknown(
+          data['last_success_update']!,
           _lastSuccessUpdateMeta,
-          lastSuccessUpdate.isAcceptableOrUnknown(
-              data['last_success_update']!, _lastSuccessUpdateMeta));
+        ),
+      );
     } else if (isInserting) {
       context.missing(_lastSuccessUpdateMeta);
     }
     if (data.containsKey('place_on_top')) {
       context.handle(
+        _placeOnTopMeta,
+        placeOnTop.isAcceptableOrUnknown(
+          data['place_on_top']!,
           _placeOnTopMeta,
-          placeOnTop.isAcceptableOrUnknown(
-              data['place_on_top']!, _placeOnTopMeta));
+        ),
+      );
     }
     return context;
   }
@@ -178,28 +250,50 @@ class $SubscriptionsTable extends Subscriptions
   Subscription map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Subscription(
-      updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      link: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}link'])!,
-      remainingData: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}remaining_data']),
-      endTime: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}end_time']),
-      website: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}website'])!,
-      description: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}description'])!,
-      lastUpdate: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}last_update'])!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      ),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      link: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}link'],
+      )!,
+      remainingData: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}remaining_data'],
+      ),
+      endTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}end_time'],
+      ),
+      website: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}website'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      )!,
+      lastUpdate: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_update'],
+      )!,
       lastSuccessUpdate: attachedDatabase.typeMapping.read(
-          DriftSqlType.int, data['${effectivePrefix}last_success_update'])!,
-      placeOnTop: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}place_on_top'])!,
+        DriftSqlType.int,
+        data['${effectivePrefix}last_success_update'],
+      )!,
+      placeOnTop: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}place_on_top'],
+      )!,
     );
   }
 
@@ -221,18 +315,19 @@ class Subscription extends DataClass implements Insertable<Subscription> {
   final int lastUpdate;
   final int lastSuccessUpdate;
   final bool placeOnTop;
-  const Subscription(
-      {this.updatedAt,
-      required this.id,
-      required this.name,
-      required this.link,
-      this.remainingData,
-      this.endTime,
-      required this.website,
-      required this.description,
-      required this.lastUpdate,
-      required this.lastSuccessUpdate,
-      required this.placeOnTop});
+  const Subscription({
+    this.updatedAt,
+    required this.id,
+    required this.name,
+    required this.link,
+    this.remainingData,
+    this.endTime,
+    required this.website,
+    required this.description,
+    required this.lastUpdate,
+    required this.lastSuccessUpdate,
+    required this.placeOnTop,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -278,8 +373,10 @@ class Subscription extends DataClass implements Insertable<Subscription> {
     );
   }
 
-  factory Subscription.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory Subscription.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Subscription(
       updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
@@ -313,32 +410,33 @@ class Subscription extends DataClass implements Insertable<Subscription> {
     };
   }
 
-  Subscription copyWith(
-          {Value<DateTime?> updatedAt = const Value.absent(),
-          int? id,
-          String? name,
-          String? link,
-          Value<double?> remainingData = const Value.absent(),
-          Value<int?> endTime = const Value.absent(),
-          String? website,
-          String? description,
-          int? lastUpdate,
-          int? lastSuccessUpdate,
-          bool? placeOnTop}) =>
-      Subscription(
-        updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
-        id: id ?? this.id,
-        name: name ?? this.name,
-        link: link ?? this.link,
-        remainingData:
-            remainingData.present ? remainingData.value : this.remainingData,
-        endTime: endTime.present ? endTime.value : this.endTime,
-        website: website ?? this.website,
-        description: description ?? this.description,
-        lastUpdate: lastUpdate ?? this.lastUpdate,
-        lastSuccessUpdate: lastSuccessUpdate ?? this.lastSuccessUpdate,
-        placeOnTop: placeOnTop ?? this.placeOnTop,
-      );
+  Subscription copyWith({
+    Value<DateTime?> updatedAt = const Value.absent(),
+    int? id,
+    String? name,
+    String? link,
+    Value<double?> remainingData = const Value.absent(),
+    Value<int?> endTime = const Value.absent(),
+    String? website,
+    String? description,
+    int? lastUpdate,
+    int? lastSuccessUpdate,
+    bool? placeOnTop,
+  }) => Subscription(
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
+    id: id ?? this.id,
+    name: name ?? this.name,
+    link: link ?? this.link,
+    remainingData: remainingData.present
+        ? remainingData.value
+        : this.remainingData,
+    endTime: endTime.present ? endTime.value : this.endTime,
+    website: website ?? this.website,
+    description: description ?? this.description,
+    lastUpdate: lastUpdate ?? this.lastUpdate,
+    lastSuccessUpdate: lastSuccessUpdate ?? this.lastSuccessUpdate,
+    placeOnTop: placeOnTop ?? this.placeOnTop,
+  );
   Subscription copyWithCompanion(SubscriptionsCompanion data) {
     return Subscription(
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
@@ -350,15 +448,18 @@ class Subscription extends DataClass implements Insertable<Subscription> {
           : this.remainingData,
       endTime: data.endTime.present ? data.endTime.value : this.endTime,
       website: data.website.present ? data.website.value : this.website,
-      description:
-          data.description.present ? data.description.value : this.description,
-      lastUpdate:
-          data.lastUpdate.present ? data.lastUpdate.value : this.lastUpdate,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      lastUpdate: data.lastUpdate.present
+          ? data.lastUpdate.value
+          : this.lastUpdate,
       lastSuccessUpdate: data.lastSuccessUpdate.present
           ? data.lastSuccessUpdate.value
           : this.lastSuccessUpdate,
-      placeOnTop:
-          data.placeOnTop.present ? data.placeOnTop.value : this.placeOnTop,
+      placeOnTop: data.placeOnTop.present
+          ? data.placeOnTop.value
+          : this.placeOnTop,
     );
   }
 
@@ -381,8 +482,19 @@ class Subscription extends DataClass implements Insertable<Subscription> {
   }
 
   @override
-  int get hashCode => Object.hash(updatedAt, id, name, link, remainingData,
-      endTime, website, description, lastUpdate, lastSuccessUpdate, placeOnTop);
+  int get hashCode => Object.hash(
+    updatedAt,
+    id,
+    name,
+    link,
+    remainingData,
+    endTime,
+    website,
+    description,
+    lastUpdate,
+    lastSuccessUpdate,
+    placeOnTop,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -437,10 +549,10 @@ class SubscriptionsCompanion extends UpdateCompanion<Subscription> {
     required int lastUpdate,
     required int lastSuccessUpdate,
     this.placeOnTop = const Value.absent(),
-  })  : name = Value(name),
-        link = Value(link),
-        lastUpdate = Value(lastUpdate),
-        lastSuccessUpdate = Value(lastSuccessUpdate);
+  }) : name = Value(name),
+       link = Value(link),
+       lastUpdate = Value(lastUpdate),
+       lastSuccessUpdate = Value(lastSuccessUpdate);
   static Insertable<Subscription> custom({
     Expression<DateTime>? updatedAt,
     Expression<int>? id,
@@ -469,18 +581,19 @@ class SubscriptionsCompanion extends UpdateCompanion<Subscription> {
     });
   }
 
-  SubscriptionsCompanion copyWith(
-      {Value<DateTime?>? updatedAt,
-      Value<int>? id,
-      Value<String>? name,
-      Value<String>? link,
-      Value<double?>? remainingData,
-      Value<int?>? endTime,
-      Value<String>? website,
-      Value<String>? description,
-      Value<int>? lastUpdate,
-      Value<int>? lastSuccessUpdate,
-      Value<bool>? placeOnTop}) {
+  SubscriptionsCompanion copyWith({
+    Value<DateTime?>? updatedAt,
+    Value<int>? id,
+    Value<String>? name,
+    Value<String>? link,
+    Value<double?>? remainingData,
+    Value<int?>? endTime,
+    Value<String>? website,
+    Value<String>? description,
+    Value<int>? lastUpdate,
+    Value<int>? lastSuccessUpdate,
+    Value<bool>? placeOnTop,
+  }) {
     return SubscriptionsCompanion(
       updatedAt: updatedAt ?? this.updatedAt,
       id: id ?? this.id,
@@ -560,208 +673,294 @@ class $OutboundHandlersTable extends OutboundHandlers
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $OutboundHandlersTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      clientDefault: () => DateTime.now());
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    clientDefault: () => DateTime.now(),
+  );
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: false);
-  static const VerificationMeta _selectedMeta =
-      const VerificationMeta('selected');
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _selectedMeta = const VerificationMeta(
+    'selected',
+  );
   @override
   late final GeneratedColumn<bool> selected = GeneratedColumn<bool>(
-      'selected', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("selected" IN (0, 1))'),
-      clientDefault: () => false);
-  static const VerificationMeta _countryCodeMeta =
-      const VerificationMeta('countryCode');
+    'selected',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("selected" IN (0, 1))',
+    ),
+    clientDefault: () => false,
+  );
+  static const VerificationMeta _countryCodeMeta = const VerificationMeta(
+    'countryCode',
+  );
   @override
   late final GeneratedColumn<String> countryCode = GeneratedColumn<String>(
-      'country_code', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      clientDefault: () => '');
+    'country_code',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => '',
+  );
   static const VerificationMeta _sniMeta = const VerificationMeta('sni');
   @override
   late final GeneratedColumn<String> sni = GeneratedColumn<String>(
-      'sni', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      clientDefault: () => '');
+    'sni',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => '',
+  );
   static const VerificationMeta _speedMeta = const VerificationMeta('speed');
   @override
   late final GeneratedColumn<double> speed = GeneratedColumn<double>(
-      'speed', aliasedName, false,
-      type: DriftSqlType.double,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
-  static const VerificationMeta _speedTestTimeMeta =
-      const VerificationMeta('speedTestTime');
+    'speed',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _speedTestTimeMeta = const VerificationMeta(
+    'speedTestTime',
+  );
   @override
   late final GeneratedColumn<int> speedTestTime = GeneratedColumn<int>(
-      'speed_test_time', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
+    'speed_test_time',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   static const VerificationMeta _pingMeta = const VerificationMeta('ping');
   @override
   late final GeneratedColumn<int> ping = GeneratedColumn<int>(
-      'ping', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
-  static const VerificationMeta _pingTestTimeMeta =
-      const VerificationMeta('pingTestTime');
+    'ping',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _pingTestTimeMeta = const VerificationMeta(
+    'pingTestTime',
+  );
   @override
   late final GeneratedColumn<int> pingTestTime = GeneratedColumn<int>(
-      'ping_test_time', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
+    'ping_test_time',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   static const VerificationMeta _okMeta = const VerificationMeta('ok');
   @override
   late final GeneratedColumn<int> ok = GeneratedColumn<int>(
-      'ok', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
-  static const VerificationMeta _serverIpMeta =
-      const VerificationMeta('serverIp');
+    'ok',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _serverIpMeta = const VerificationMeta(
+    'serverIp',
+  );
   @override
   late final GeneratedColumn<String> serverIp = GeneratedColumn<String>(
-      'server_ip', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      clientDefault: () => '');
+    'server_ip',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => '',
+  );
   @override
   late final GeneratedColumnWithTypeConverter<HandlerConfig, Uint8List> config =
-      GeneratedColumn<Uint8List>('config', aliasedName, false,
-              type: DriftSqlType.blob, requiredDuringInsert: true)
-          .withConverter<HandlerConfig>(
-              $OutboundHandlersTable.$converterconfig);
-  static const VerificationMeta _support6Meta =
-      const VerificationMeta('support6');
+      GeneratedColumn<Uint8List>(
+        'config',
+        aliasedName,
+        false,
+        type: DriftSqlType.blob,
+        requiredDuringInsert: true,
+      ).withConverter<HandlerConfig>($OutboundHandlersTable.$converterconfig);
+  static const VerificationMeta _support6Meta = const VerificationMeta(
+    'support6',
+  );
   @override
   late final GeneratedColumn<int> support6 = GeneratedColumn<int>(
-      'support6', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
-  static const VerificationMeta _support6TestTimeMeta =
-      const VerificationMeta('support6TestTime');
+    'support6',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _support6TestTimeMeta = const VerificationMeta(
+    'support6TestTime',
+  );
   @override
   late final GeneratedColumn<int> support6TestTime = GeneratedColumn<int>(
-      'support6_test_time', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0));
+    'support6_test_time',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
   static const VerificationMeta _subIdMeta = const VerificationMeta('subId');
   @override
   late final GeneratedColumn<int> subId = GeneratedColumn<int>(
-      'sub_id', aliasedName, true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES subscriptions (id) ON DELETE CASCADE'));
+    'sub_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES subscriptions (id) ON DELETE CASCADE',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [
-        updatedAt,
-        id,
-        selected,
-        countryCode,
-        sni,
-        speed,
-        speedTestTime,
-        ping,
-        pingTestTime,
-        ok,
-        serverIp,
-        config,
-        support6,
-        support6TestTime,
-        subId
-      ];
+    updatedAt,
+    id,
+    selected,
+    countryCode,
+    sni,
+    speed,
+    speedTestTime,
+    ping,
+    pingTestTime,
+    ok,
+    serverIp,
+    config,
+    support6,
+    support6TestTime,
+    subId,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'outbound_handlers';
   @override
-  VerificationContext validateIntegrity(Insertable<OutboundHandler> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<OutboundHandler> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
     }
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('selected')) {
-      context.handle(_selectedMeta,
-          selected.isAcceptableOrUnknown(data['selected']!, _selectedMeta));
+      context.handle(
+        _selectedMeta,
+        selected.isAcceptableOrUnknown(data['selected']!, _selectedMeta),
+      );
     }
     if (data.containsKey('country_code')) {
       context.handle(
+        _countryCodeMeta,
+        countryCode.isAcceptableOrUnknown(
+          data['country_code']!,
           _countryCodeMeta,
-          countryCode.isAcceptableOrUnknown(
-              data['country_code']!, _countryCodeMeta));
+        ),
+      );
     }
     if (data.containsKey('sni')) {
       context.handle(
-          _sniMeta, sni.isAcceptableOrUnknown(data['sni']!, _sniMeta));
+        _sniMeta,
+        sni.isAcceptableOrUnknown(data['sni']!, _sniMeta),
+      );
     }
     if (data.containsKey('speed')) {
       context.handle(
-          _speedMeta, speed.isAcceptableOrUnknown(data['speed']!, _speedMeta));
+        _speedMeta,
+        speed.isAcceptableOrUnknown(data['speed']!, _speedMeta),
+      );
     }
     if (data.containsKey('speed_test_time')) {
       context.handle(
+        _speedTestTimeMeta,
+        speedTestTime.isAcceptableOrUnknown(
+          data['speed_test_time']!,
           _speedTestTimeMeta,
-          speedTestTime.isAcceptableOrUnknown(
-              data['speed_test_time']!, _speedTestTimeMeta));
+        ),
+      );
     }
     if (data.containsKey('ping')) {
       context.handle(
-          _pingMeta, ping.isAcceptableOrUnknown(data['ping']!, _pingMeta));
+        _pingMeta,
+        ping.isAcceptableOrUnknown(data['ping']!, _pingMeta),
+      );
     }
     if (data.containsKey('ping_test_time')) {
       context.handle(
+        _pingTestTimeMeta,
+        pingTestTime.isAcceptableOrUnknown(
+          data['ping_test_time']!,
           _pingTestTimeMeta,
-          pingTestTime.isAcceptableOrUnknown(
-              data['ping_test_time']!, _pingTestTimeMeta));
+        ),
+      );
     }
     if (data.containsKey('ok')) {
       context.handle(_okMeta, ok.isAcceptableOrUnknown(data['ok']!, _okMeta));
     }
     if (data.containsKey('server_ip')) {
-      context.handle(_serverIpMeta,
-          serverIp.isAcceptableOrUnknown(data['server_ip']!, _serverIpMeta));
+      context.handle(
+        _serverIpMeta,
+        serverIp.isAcceptableOrUnknown(data['server_ip']!, _serverIpMeta),
+      );
     }
     if (data.containsKey('support6')) {
-      context.handle(_support6Meta,
-          support6.isAcceptableOrUnknown(data['support6']!, _support6Meta));
+      context.handle(
+        _support6Meta,
+        support6.isAcceptableOrUnknown(data['support6']!, _support6Meta),
+      );
     }
     if (data.containsKey('support6_test_time')) {
       context.handle(
+        _support6TestTimeMeta,
+        support6TestTime.isAcceptableOrUnknown(
+          data['support6_test_time']!,
           _support6TestTimeMeta,
-          support6TestTime.isAcceptableOrUnknown(
-              data['support6_test_time']!, _support6TestTimeMeta));
+        ),
+      );
     }
     if (data.containsKey('sub_id')) {
       context.handle(
-          _subIdMeta, subId.isAcceptableOrUnknown(data['sub_id']!, _subIdMeta));
+        _subIdMeta,
+        subId.isAcceptableOrUnknown(data['sub_id']!, _subIdMeta),
+      );
     }
     return context;
   }
@@ -772,35 +971,64 @@ class $OutboundHandlersTable extends OutboundHandlers
   OutboundHandler map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return OutboundHandler(
-      config: $OutboundHandlersTable.$converterconfig.fromSql(attachedDatabase
-          .typeMapping
-          .read(DriftSqlType.blob, data['${effectivePrefix}config'])!),
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      countryCode: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}country_code'])!,
-      selected: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}selected'])!,
-      speed: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}speed'])!,
-      ping: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}ping'])!,
-      ok: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}ok'])!,
-      serverIp: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}server_ip'])!,
-      speedTestTime: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}speed_test_time'])!,
-      pingTestTime: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}ping_test_time'])!,
-      support6: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}support6'])!,
+      config: $OutboundHandlersTable.$converterconfig.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.blob,
+          data['${effectivePrefix}config'],
+        )!,
+      ),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      countryCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}country_code'],
+      )!,
+      selected: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}selected'],
+      )!,
+      speed: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}speed'],
+      )!,
+      ping: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}ping'],
+      )!,
+      ok: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}ok'],
+      )!,
+      serverIp: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}server_ip'],
+      )!,
+      speedTestTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}speed_test_time'],
+      )!,
+      pingTestTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}ping_test_time'],
+      )!,
+      support6: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}support6'],
+      )!,
       support6TestTime: attachedDatabase.typeMapping.read(
-          DriftSqlType.int, data['${effectivePrefix}support6_test_time'])!,
-      subId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}sub_id']),
-      updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
+        DriftSqlType.int,
+        data['${effectivePrefix}support6_test_time'],
+      )!,
+      subId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sub_id'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      ),
     );
   }
 
@@ -899,22 +1127,23 @@ class OutboundHandlersCompanion extends UpdateCompanion<OutboundHandler> {
     });
   }
 
-  OutboundHandlersCompanion copyWith(
-      {Value<DateTime?>? updatedAt,
-      Value<int>? id,
-      Value<bool>? selected,
-      Value<String>? countryCode,
-      Value<String>? sni,
-      Value<double>? speed,
-      Value<int>? speedTestTime,
-      Value<int>? ping,
-      Value<int>? pingTestTime,
-      Value<int>? ok,
-      Value<String>? serverIp,
-      Value<HandlerConfig>? config,
-      Value<int>? support6,
-      Value<int>? support6TestTime,
-      Value<int?>? subId}) {
+  OutboundHandlersCompanion copyWith({
+    Value<DateTime?>? updatedAt,
+    Value<int>? id,
+    Value<bool>? selected,
+    Value<String>? countryCode,
+    Value<String>? sni,
+    Value<double>? speed,
+    Value<int>? speedTestTime,
+    Value<int>? ping,
+    Value<int>? pingTestTime,
+    Value<int>? ok,
+    Value<String>? serverIp,
+    Value<HandlerConfig>? config,
+    Value<int>? support6,
+    Value<int>? support6TestTime,
+    Value<int?>? subId,
+  }) {
     return OutboundHandlersCompanion(
       updatedAt: updatedAt ?? this.updatedAt,
       id: id ?? this.id,
@@ -972,7 +1201,8 @@ class OutboundHandlersCompanion extends UpdateCompanion<OutboundHandler> {
     }
     if (config.present) {
       map['config'] = Variable<Uint8List>(
-          $OutboundHandlersTable.$converterconfig.toSql(config.value));
+        $OutboundHandlersTable.$converterconfig.toSql(config.value),
+      );
     }
     if (support6.present) {
       map['support6'] = Variable<int>(support6.value);
@@ -1015,29 +1245,42 @@ class $OutboundHandlerGroupsTable extends OutboundHandlerGroups
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $OutboundHandlerGroupsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      clientDefault: () => DateTime.now());
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    clientDefault: () => DateTime.now(),
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _placeOnTopMeta =
-      const VerificationMeta('placeOnTop');
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _placeOnTopMeta = const VerificationMeta(
+    'placeOnTop',
+  );
   @override
   late final GeneratedColumn<bool> placeOnTop = GeneratedColumn<bool>(
-      'place_on_top', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'CHECK ("place_on_top" IN (0, 1))'),
-      defaultValue: const Constant(false));
+    'place_on_top',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("place_on_top" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [updatedAt, name, placeOnTop];
   @override
@@ -1047,25 +1290,33 @@ class $OutboundHandlerGroupsTable extends OutboundHandlerGroups
   static const String $name = 'outbound_handler_groups';
   @override
   VerificationContext validateIntegrity(
-      Insertable<OutboundHandlerGroup> instance,
-      {bool isInserting = false}) {
+    Insertable<OutboundHandlerGroup> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
     }
     if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
     if (data.containsKey('place_on_top')) {
       context.handle(
+        _placeOnTopMeta,
+        placeOnTop.isAcceptableOrUnknown(
+          data['place_on_top']!,
           _placeOnTopMeta,
-          placeOnTop.isAcceptableOrUnknown(
-              data['place_on_top']!, _placeOnTopMeta));
+        ),
+      );
     }
     return context;
   }
@@ -1076,12 +1327,18 @@ class $OutboundHandlerGroupsTable extends OutboundHandlerGroups
   OutboundHandlerGroup map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return OutboundHandlerGroup(
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      placeOnTop: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}place_on_top'])!,
-      updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      placeOnTop: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}place_on_top'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      ),
     );
   }
 
@@ -1123,11 +1380,12 @@ class OutboundHandlerGroupsCompanion
     });
   }
 
-  OutboundHandlerGroupsCompanion copyWith(
-      {Value<DateTime?>? updatedAt,
-      Value<String>? name,
-      Value<bool>? placeOnTop,
-      Value<int>? rowid}) {
+  OutboundHandlerGroupsCompanion copyWith({
+    Value<DateTime?>? updatedAt,
+    Value<String>? name,
+    Value<bool>? placeOnTop,
+    Value<int>? rowid,
+  }) {
     return OutboundHandlerGroupsCompanion(
       updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
@@ -1168,30 +1426,42 @@ class OutboundHandlerGroupsCompanion
 
 class $OutboundHandlerGroupRelationsTable extends OutboundHandlerGroupRelations
     with
-        TableInfo<$OutboundHandlerGroupRelationsTable,
-            OutboundHandlerGroupRelation> {
+        TableInfo<
+          $OutboundHandlerGroupRelationsTable,
+          OutboundHandlerGroupRelation
+        > {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $OutboundHandlerGroupRelationsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _groupNameMeta =
-      const VerificationMeta('groupName');
+  static const VerificationMeta _groupNameMeta = const VerificationMeta(
+    'groupName',
+  );
   @override
   late final GeneratedColumn<String> groupName = GeneratedColumn<String>(
-      'group_name', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES outbound_handler_groups (name) ON DELETE CASCADE'));
-  static const VerificationMeta _handlerIdMeta =
-      const VerificationMeta('handlerId');
+    'group_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES outbound_handler_groups (name) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _handlerIdMeta = const VerificationMeta(
+    'handlerId',
+  );
   @override
   late final GeneratedColumn<int> handlerId = GeneratedColumn<int>(
-      'handler_id', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES outbound_handlers (id) ON DELETE CASCADE'));
+    'handler_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES outbound_handlers (id) ON DELETE CASCADE',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [groupName, handlerId];
   @override
@@ -1201,19 +1471,24 @@ class $OutboundHandlerGroupRelationsTable extends OutboundHandlerGroupRelations
   static const String $name = 'outbound_handler_group_relations';
   @override
   VerificationContext validateIntegrity(
-      Insertable<OutboundHandlerGroupRelation> instance,
-      {bool isInserting = false}) {
+    Insertable<OutboundHandlerGroupRelation> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('group_name')) {
-      context.handle(_groupNameMeta,
-          groupName.isAcceptableOrUnknown(data['group_name']!, _groupNameMeta));
+      context.handle(
+        _groupNameMeta,
+        groupName.isAcceptableOrUnknown(data['group_name']!, _groupNameMeta),
+      );
     } else if (isInserting) {
       context.missing(_groupNameMeta);
     }
     if (data.containsKey('handler_id')) {
-      context.handle(_handlerIdMeta,
-          handlerId.isAcceptableOrUnknown(data['handler_id']!, _handlerIdMeta));
+      context.handle(
+        _handlerIdMeta,
+        handlerId.isAcceptableOrUnknown(data['handler_id']!, _handlerIdMeta),
+      );
     } else if (isInserting) {
       context.missing(_handlerIdMeta);
     }
@@ -1223,14 +1498,20 @@ class $OutboundHandlerGroupRelationsTable extends OutboundHandlerGroupRelations
   @override
   Set<GeneratedColumn> get $primaryKey => {groupName, handlerId};
   @override
-  OutboundHandlerGroupRelation map(Map<String, dynamic> data,
-      {String? tablePrefix}) {
+  OutboundHandlerGroupRelation map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return OutboundHandlerGroupRelation(
-      groupName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}group_name'])!,
-      handlerId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}handler_id'])!,
+      groupName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}group_name'],
+      )!,
+      handlerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}handler_id'],
+      )!,
     );
   }
 
@@ -1244,8 +1525,10 @@ class OutboundHandlerGroupRelation extends DataClass
     implements Insertable<OutboundHandlerGroupRelation> {
   final String groupName;
   final int handlerId;
-  const OutboundHandlerGroupRelation(
-      {required this.groupName, required this.handlerId});
+  const OutboundHandlerGroupRelation({
+    required this.groupName,
+    required this.handlerId,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1261,8 +1544,10 @@ class OutboundHandlerGroupRelation extends DataClass
     );
   }
 
-  factory OutboundHandlerGroupRelation.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory OutboundHandlerGroupRelation.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return OutboundHandlerGroupRelation(
       groupName: serializer.fromJson<String>(json['groupName']),
@@ -1284,7 +1569,8 @@ class OutboundHandlerGroupRelation extends DataClass
         handlerId: handlerId ?? this.handlerId,
       );
   OutboundHandlerGroupRelation copyWithCompanion(
-      OutboundHandlerGroupRelationsCompanion data) {
+    OutboundHandlerGroupRelationsCompanion data,
+  ) {
     return OutboundHandlerGroupRelation(
       groupName: data.groupName.present ? data.groupName.value : this.groupName,
       handlerId: data.handlerId.present ? data.handlerId.value : this.handlerId,
@@ -1324,8 +1610,8 @@ class OutboundHandlerGroupRelationsCompanion
     required String groupName,
     required int handlerId,
     this.rowid = const Value.absent(),
-  })  : groupName = Value(groupName),
-        handlerId = Value(handlerId);
+  }) : groupName = Value(groupName),
+       handlerId = Value(handlerId);
   static Insertable<OutboundHandlerGroupRelation> custom({
     Expression<String>? groupName,
     Expression<int>? handlerId,
@@ -1338,8 +1624,11 @@ class OutboundHandlerGroupRelationsCompanion
     });
   }
 
-  OutboundHandlerGroupRelationsCompanion copyWith(
-      {Value<String>? groupName, Value<int>? handlerId, Value<int>? rowid}) {
+  OutboundHandlerGroupRelationsCompanion copyWith({
+    Value<String>? groupName,
+    Value<int>? handlerId,
+    Value<int>? rowid,
+  }) {
     return OutboundHandlerGroupRelationsCompanion(
       groupName: groupName ?? this.groupName,
       handlerId: handlerId ?? this.handlerId,
@@ -1382,17 +1671,25 @@ class $DnsRecordsTable extends DnsRecords
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
   @override
   late final GeneratedColumnWithTypeConverter<dns.Record, Uint8List> dnsRecord =
-      GeneratedColumn<Uint8List>('dns_record', aliasedName, false,
-              type: DriftSqlType.blob, requiredDuringInsert: true)
-          .withConverter<dns.Record>($DnsRecordsTable.$converterdnsRecord);
+      GeneratedColumn<Uint8List>(
+        'dns_record',
+        aliasedName,
+        false,
+        type: DriftSqlType.blob,
+        requiredDuringInsert: true,
+      ).withConverter<dns.Record>($DnsRecordsTable.$converterdnsRecord);
   @override
   List<GeneratedColumn> get $columns => [id, dnsRecord];
   @override
@@ -1401,8 +1698,10 @@ class $DnsRecordsTable extends DnsRecords
   String get actualTableName => $name;
   static const String $name = 'dns_records';
   @override
-  VerificationContext validateIntegrity(Insertable<DnsRecord> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<DnsRecord> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -1417,11 +1716,16 @@ class $DnsRecordsTable extends DnsRecords
   DnsRecord map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return DnsRecord(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      dnsRecord: $DnsRecordsTable.$converterdnsRecord.fromSql(attachedDatabase
-          .typeMapping
-          .read(DriftSqlType.blob, data['${effectivePrefix}dns_record'])!),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      dnsRecord: $DnsRecordsTable.$converterdnsRecord.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.blob,
+          data['${effectivePrefix}dns_record'],
+        )!,
+      ),
     );
   }
 
@@ -1444,20 +1748,20 @@ class DnsRecord extends DataClass implements Insertable<DnsRecord> {
     map['id'] = Variable<int>(id);
     {
       map['dns_record'] = Variable<Uint8List>(
-          $DnsRecordsTable.$converterdnsRecord.toSql(dnsRecord));
+        $DnsRecordsTable.$converterdnsRecord.toSql(dnsRecord),
+      );
     }
     return map;
   }
 
   DnsRecordsCompanion toCompanion(bool nullToAbsent) {
-    return DnsRecordsCompanion(
-      id: Value(id),
-      dnsRecord: Value(dnsRecord),
-    );
+    return DnsRecordsCompanion(id: Value(id), dnsRecord: Value(dnsRecord));
   }
 
-  factory DnsRecord.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory DnsRecord.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return DnsRecord(
       id: serializer.fromJson<int>(json['id']),
@@ -1473,10 +1777,8 @@ class DnsRecord extends DataClass implements Insertable<DnsRecord> {
     };
   }
 
-  DnsRecord copyWith({int? id, dns.Record? dnsRecord}) => DnsRecord(
-        id: id ?? this.id,
-        dnsRecord: dnsRecord ?? this.dnsRecord,
-      );
+  DnsRecord copyWith({int? id, dns.Record? dnsRecord}) =>
+      DnsRecord(id: id ?? this.id, dnsRecord: dnsRecord ?? this.dnsRecord);
   DnsRecord copyWithCompanion(DnsRecordsCompanion data) {
     return DnsRecord(
       id: data.id.present ? data.id.value : this.id,
@@ -1539,7 +1841,8 @@ class DnsRecordsCompanion extends UpdateCompanion<DnsRecord> {
     }
     if (dnsRecord.present) {
       map['dns_record'] = Variable<Uint8List>(
-          $DnsRecordsTable.$converterdnsRecord.toSql(dnsRecord.value));
+        $DnsRecordsTable.$converterdnsRecord.toSql(dnsRecord.value),
+      );
     }
     return map;
   }
@@ -1560,80 +1863,124 @@ class $AtomicDomainSetsTable extends AtomicDomainSets
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $AtomicDomainSetsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      clientDefault: () => DateTime.now());
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    clientDefault: () => DateTime.now(),
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   @override
   late final GeneratedColumnWithTypeConverter<GeositeConfig?, Uint8List>
-      geositeConfig = GeneratedColumn<Uint8List>(
-              'geosite_config', aliasedName, true,
-              type: DriftSqlType.blob, requiredDuringInsert: false)
-          .withConverter<GeositeConfig?>(
-              $AtomicDomainSetsTable.$convertergeositeConfign);
-  static const VerificationMeta _useBloomFilterMeta =
-      const VerificationMeta('useBloomFilter');
+  geositeConfig =
+      GeneratedColumn<Uint8List>(
+        'geosite_config',
+        aliasedName,
+        true,
+        type: DriftSqlType.blob,
+        requiredDuringInsert: false,
+      ).withConverter<GeositeConfig?>(
+        $AtomicDomainSetsTable.$convertergeositeConfign,
+      );
+  static const VerificationMeta _useBloomFilterMeta = const VerificationMeta(
+    'useBloomFilter',
+  );
   @override
   late final GeneratedColumn<bool> useBloomFilter = GeneratedColumn<bool>(
-      'use_bloom_filter', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'CHECK ("use_bloom_filter" IN (0, 1))'),
-      defaultValue: const Constant(false));
+    'use_bloom_filter',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("use_bloom_filter" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   late final GeneratedColumnWithTypeConverter<List<String>?, String>
-      clashRuleUrls = GeneratedColumn<String>(
-              'clash_rule_urls', aliasedName, true,
-              type: DriftSqlType.string, requiredDuringInsert: false)
-          .withConverter<List<String>?>(
-              $AtomicDomainSetsTable.$converterclashRuleUrlsn);
+  clashRuleUrls =
+      GeneratedColumn<String>(
+        'clash_rule_urls',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      ).withConverter<List<String>?>(
+        $AtomicDomainSetsTable.$converterclashRuleUrlsn,
+      );
   static const VerificationMeta _geoUrlMeta = const VerificationMeta('geoUrl');
   @override
   late final GeneratedColumn<String> geoUrl = GeneratedColumn<String>(
-      'geo_url', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+    'geo_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
-  List<GeneratedColumn> get $columns =>
-      [updatedAt, name, geositeConfig, useBloomFilter, clashRuleUrls, geoUrl];
+  List<GeneratedColumn> get $columns => [
+    updatedAt,
+    name,
+    geositeConfig,
+    useBloomFilter,
+    clashRuleUrls,
+    geoUrl,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'atomic_domain_sets';
   @override
-  VerificationContext validateIntegrity(Insertable<AtomicDomainSet> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<AtomicDomainSet> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
     }
     if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
     if (data.containsKey('use_bloom_filter')) {
       context.handle(
+        _useBloomFilterMeta,
+        useBloomFilter.isAcceptableOrUnknown(
+          data['use_bloom_filter']!,
           _useBloomFilterMeta,
-          useBloomFilter.isAcceptableOrUnknown(
-              data['use_bloom_filter']!, _useBloomFilterMeta));
+        ),
+      );
     }
     if (data.containsKey('geo_url')) {
-      context.handle(_geoUrlMeta,
-          geoUrl.isAcceptableOrUnknown(data['geo_url']!, _geoUrlMeta));
+      context.handle(
+        _geoUrlMeta,
+        geoUrl.isAcceptableOrUnknown(data['geo_url']!, _geoUrlMeta),
+      );
     }
     return context;
   }
@@ -1644,20 +1991,34 @@ class $AtomicDomainSetsTable extends AtomicDomainSets
   AtomicDomainSet map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return AtomicDomainSet(
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
       geositeConfig: $AtomicDomainSetsTable.$convertergeositeConfign.fromSql(
-          attachedDatabase.typeMapping.read(
-              DriftSqlType.blob, data['${effectivePrefix}geosite_config'])),
-      useBloomFilter: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}use_bloom_filter'])!,
-      updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
-      geoUrl: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}geo_url']),
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.blob,
+          data['${effectivePrefix}geosite_config'],
+        ),
+      ),
+      useBloomFilter: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}use_bloom_filter'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      ),
+      geoUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}geo_url'],
+      ),
       clashRuleUrls: $AtomicDomainSetsTable.$converterclashRuleUrlsn.fromSql(
-          attachedDatabase.typeMapping.read(
-              DriftSqlType.string, data['${effectivePrefix}clash_rule_urls'])),
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}clash_rule_urls'],
+        ),
+      ),
     );
   }
 
@@ -1722,14 +2083,15 @@ class AtomicDomainSetsCompanion extends UpdateCompanion<AtomicDomainSet> {
     });
   }
 
-  AtomicDomainSetsCompanion copyWith(
-      {Value<DateTime?>? updatedAt,
-      Value<String>? name,
-      Value<GeositeConfig?>? geositeConfig,
-      Value<bool>? useBloomFilter,
-      Value<List<String>?>? clashRuleUrls,
-      Value<String?>? geoUrl,
-      Value<int>? rowid}) {
+  AtomicDomainSetsCompanion copyWith({
+    Value<DateTime?>? updatedAt,
+    Value<String>? name,
+    Value<GeositeConfig?>? geositeConfig,
+    Value<bool>? useBloomFilter,
+    Value<List<String>?>? clashRuleUrls,
+    Value<String?>? geoUrl,
+    Value<int>? rowid,
+  }) {
     return AtomicDomainSetsCompanion(
       updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
@@ -1751,17 +2113,21 @@ class AtomicDomainSetsCompanion extends UpdateCompanion<AtomicDomainSet> {
       map['name'] = Variable<String>(name.value);
     }
     if (geositeConfig.present) {
-      map['geosite_config'] = Variable<Uint8List>($AtomicDomainSetsTable
-          .$convertergeositeConfign
-          .toSql(geositeConfig.value));
+      map['geosite_config'] = Variable<Uint8List>(
+        $AtomicDomainSetsTable.$convertergeositeConfign.toSql(
+          geositeConfig.value,
+        ),
+      );
     }
     if (useBloomFilter.present) {
       map['use_bloom_filter'] = Variable<bool>(useBloomFilter.value);
     }
     if (clashRuleUrls.present) {
-      map['clash_rule_urls'] = Variable<String>($AtomicDomainSetsTable
-          .$converterclashRuleUrlsn
-          .toSql(clashRuleUrls.value));
+      map['clash_rule_urls'] = Variable<String>(
+        $AtomicDomainSetsTable.$converterclashRuleUrlsn.toSql(
+          clashRuleUrls.value,
+        ),
+      );
     }
     if (geoUrl.present) {
       map['geo_url'] = Variable<String>(geoUrl.value);
@@ -1796,26 +2162,39 @@ class $GeoDomainsTable extends GeoDomains
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
   @override
   late final GeneratedColumnWithTypeConverter<Domain, Uint8List> geoDomain =
-      GeneratedColumn<Uint8List>('geo_domain', aliasedName, false,
-              type: DriftSqlType.blob, requiredDuringInsert: true)
-          .withConverter<Domain>($GeoDomainsTable.$convertergeoDomain);
-  static const VerificationMeta _domainSetNameMeta =
-      const VerificationMeta('domainSetName');
+      GeneratedColumn<Uint8List>(
+        'geo_domain',
+        aliasedName,
+        false,
+        type: DriftSqlType.blob,
+        requiredDuringInsert: true,
+      ).withConverter<Domain>($GeoDomainsTable.$convertergeoDomain);
+  static const VerificationMeta _domainSetNameMeta = const VerificationMeta(
+    'domainSetName',
+  );
   @override
   late final GeneratedColumn<String> domainSetName = GeneratedColumn<String>(
-      'domain_set_name', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES atomic_domain_sets (name) ON UPDATE CASCADE ON DELETE CASCADE'));
+    'domain_set_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES atomic_domain_sets (name) ON UPDATE CASCADE ON DELETE CASCADE',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [id, geoDomain, domainSetName];
   @override
@@ -1824,8 +2203,10 @@ class $GeoDomainsTable extends GeoDomains
   String get actualTableName => $name;
   static const String $name = 'geo_domains';
   @override
-  VerificationContext validateIntegrity(Insertable<GeoDomain> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<GeoDomain> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -1833,9 +2214,12 @@ class $GeoDomainsTable extends GeoDomains
     }
     if (data.containsKey('domain_set_name')) {
       context.handle(
+        _domainSetNameMeta,
+        domainSetName.isAcceptableOrUnknown(
+          data['domain_set_name']!,
           _domainSetNameMeta,
-          domainSetName.isAcceptableOrUnknown(
-              data['domain_set_name']!, _domainSetNameMeta));
+        ),
+      );
     } else if (isInserting) {
       context.missing(_domainSetNameMeta);
     }
@@ -1846,19 +2230,26 @@ class $GeoDomainsTable extends GeoDomains
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   List<Set<GeneratedColumn>> get uniqueKeys => [
-        {geoDomain, domainSetName},
-      ];
+    {geoDomain, domainSetName},
+  ];
   @override
   GeoDomain map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return GeoDomain(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      geoDomain: $GeoDomainsTable.$convertergeoDomain.fromSql(attachedDatabase
-          .typeMapping
-          .read(DriftSqlType.blob, data['${effectivePrefix}geo_domain'])!),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      geoDomain: $GeoDomainsTable.$convertergeoDomain.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.blob,
+          data['${effectivePrefix}geo_domain'],
+        )!,
+      ),
       domainSetName: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}domain_set_name'])!,
+        DriftSqlType.string,
+        data['${effectivePrefix}domain_set_name'],
+      )!,
     );
   }
 
@@ -1884,8 +2275,8 @@ class GeoDomainsCompanion extends UpdateCompanion<GeoDomain> {
     this.id = const Value.absent(),
     required Domain geoDomain,
     required String domainSetName,
-  })  : geoDomain = Value(geoDomain),
-        domainSetName = Value(domainSetName);
+  }) : geoDomain = Value(geoDomain),
+       domainSetName = Value(domainSetName);
   static Insertable<GeoDomain> custom({
     Expression<int>? id,
     Expression<Uint8List>? geoDomain,
@@ -1898,10 +2289,11 @@ class GeoDomainsCompanion extends UpdateCompanion<GeoDomain> {
     });
   }
 
-  GeoDomainsCompanion copyWith(
-      {Value<int>? id,
-      Value<Domain>? geoDomain,
-      Value<String>? domainSetName}) {
+  GeoDomainsCompanion copyWith({
+    Value<int>? id,
+    Value<Domain>? geoDomain,
+    Value<String>? domainSetName,
+  }) {
     return GeoDomainsCompanion(
       id: id ?? this.id,
       geoDomain: geoDomain ?? this.geoDomain,
@@ -1917,7 +2309,8 @@ class GeoDomainsCompanion extends UpdateCompanion<GeoDomain> {
     }
     if (geoDomain.present) {
       map['geo_domain'] = Variable<Uint8List>(
-          $GeoDomainsTable.$convertergeoDomain.toSql(geoDomain.value));
+        $GeoDomainsTable.$convertergeoDomain.toSql(geoDomain.value),
+      );
     }
     if (domainSetName.present) {
       map['domain_set_name'] = Variable<String>(domainSetName.value);
@@ -1942,31 +2335,47 @@ class $GreatDomainSetsTable extends GreatDomainSets
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $GreatDomainSetsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      clientDefault: () => DateTime.now());
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    clientDefault: () => DateTime.now(),
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _oppositeNameMeta =
-      const VerificationMeta('oppositeName');
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _oppositeNameMeta = const VerificationMeta(
+    'oppositeName',
+  );
   @override
   late final GeneratedColumn<String> oppositeName = GeneratedColumn<String>(
-      'opposite_name', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+    'opposite_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   late final GeneratedColumnWithTypeConverter<GreatDomainSetConfig, Uint8List>
-      set = GeneratedColumn<Uint8List>('set', aliasedName, false,
-              type: DriftSqlType.blob, requiredDuringInsert: true)
-          .withConverter<GreatDomainSetConfig>(
-              $GreatDomainSetsTable.$converterset);
+  set = GeneratedColumn<Uint8List>(
+    'set',
+    aliasedName,
+    false,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: true,
+  ).withConverter<GreatDomainSetConfig>($GreatDomainSetsTable.$converterset);
   @override
   List<GeneratedColumn> get $columns => [updatedAt, name, oppositeName, set];
   @override
@@ -1975,25 +2384,34 @@ class $GreatDomainSetsTable extends GreatDomainSets
   String get actualTableName => $name;
   static const String $name = 'great_domain_sets';
   @override
-  VerificationContext validateIntegrity(Insertable<GreatDomainSet> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<GreatDomainSet> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
     }
     if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
     if (data.containsKey('opposite_name')) {
       context.handle(
+        _oppositeNameMeta,
+        oppositeName.isAcceptableOrUnknown(
+          data['opposite_name']!,
           _oppositeNameMeta,
-          oppositeName.isAcceptableOrUnknown(
-              data['opposite_name']!, _oppositeNameMeta));
+        ),
+      );
     }
     return context;
   }
@@ -2004,15 +2422,24 @@ class $GreatDomainSetsTable extends GreatDomainSets
   GreatDomainSet map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return GreatDomainSet(
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      oppositeName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}opposite_name']),
-      set: $GreatDomainSetsTable.$converterset.fromSql(attachedDatabase
-          .typeMapping
-          .read(DriftSqlType.blob, data['${effectivePrefix}set'])!),
-      updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      oppositeName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}opposite_name'],
+      ),
+      set: $GreatDomainSetsTable.$converterset.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.blob,
+          data['${effectivePrefix}set'],
+        )!,
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      ),
     );
   }
 
@@ -2044,8 +2471,8 @@ class GreatDomainSetsCompanion extends UpdateCompanion<GreatDomainSet> {
     this.oppositeName = const Value.absent(),
     required GreatDomainSetConfig set,
     this.rowid = const Value.absent(),
-  })  : name = Value(name),
-        set = Value(set);
+  }) : name = Value(name),
+       set = Value(set);
   static Insertable<GreatDomainSet> custom({
     Expression<DateTime>? updatedAt,
     Expression<String>? name,
@@ -2062,12 +2489,13 @@ class GreatDomainSetsCompanion extends UpdateCompanion<GreatDomainSet> {
     });
   }
 
-  GreatDomainSetsCompanion copyWith(
-      {Value<DateTime?>? updatedAt,
-      Value<String>? name,
-      Value<String?>? oppositeName,
-      Value<GreatDomainSetConfig>? set,
-      Value<int>? rowid}) {
+  GreatDomainSetsCompanion copyWith({
+    Value<DateTime?>? updatedAt,
+    Value<String>? name,
+    Value<String?>? oppositeName,
+    Value<GreatDomainSetConfig>? set,
+    Value<int>? rowid,
+  }) {
     return GreatDomainSetsCompanion(
       updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
@@ -2091,7 +2519,8 @@ class GreatDomainSetsCompanion extends UpdateCompanion<GreatDomainSet> {
     }
     if (set.present) {
       map['set'] = Variable<Uint8List>(
-          $GreatDomainSetsTable.$converterset.toSql(set.value));
+        $GreatDomainSetsTable.$converterset.toSql(set.value),
+      );
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -2118,78 +2547,115 @@ class $AtomicIpSetsTable extends AtomicIpSets
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $AtomicIpSetsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      clientDefault: () => DateTime.now());
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    clientDefault: () => DateTime.now(),
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _inverseMeta =
-      const VerificationMeta('inverse');
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _inverseMeta = const VerificationMeta(
+    'inverse',
+  );
   @override
   late final GeneratedColumn<bool> inverse = GeneratedColumn<bool>(
-      'inverse', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("inverse" IN (0, 1))'),
-      defaultValue: const Constant(false));
+    'inverse',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("inverse" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   late final GeneratedColumnWithTypeConverter<GeoIPConfig?, Uint8List>
-      geoIpConfig = GeneratedColumn<Uint8List>(
-              'geo_ip_config', aliasedName, true,
-              type: DriftSqlType.blob, requiredDuringInsert: false)
-          .withConverter<GeoIPConfig?>(
-              $AtomicIpSetsTable.$convertergeoIpConfign);
+  geoIpConfig = GeneratedColumn<Uint8List>(
+    'geo_ip_config',
+    aliasedName,
+    true,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: false,
+  ).withConverter<GeoIPConfig?>($AtomicIpSetsTable.$convertergeoIpConfign);
   @override
   late final GeneratedColumnWithTypeConverter<List<String>?, String>
-      clashRuleUrls = GeneratedColumn<String>(
-              'clash_rule_urls', aliasedName, true,
-              type: DriftSqlType.string, requiredDuringInsert: false)
-          .withConverter<List<String>?>(
-              $AtomicIpSetsTable.$converterclashRuleUrlsn);
+  clashRuleUrls = GeneratedColumn<String>(
+    'clash_rule_urls',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  ).withConverter<List<String>?>($AtomicIpSetsTable.$converterclashRuleUrlsn);
   static const VerificationMeta _geoUrlMeta = const VerificationMeta('geoUrl');
   @override
   late final GeneratedColumn<String> geoUrl = GeneratedColumn<String>(
-      'geo_url', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+    'geo_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
-  List<GeneratedColumn> get $columns =>
-      [updatedAt, name, inverse, geoIpConfig, clashRuleUrls, geoUrl];
+  List<GeneratedColumn> get $columns => [
+    updatedAt,
+    name,
+    inverse,
+    geoIpConfig,
+    clashRuleUrls,
+    geoUrl,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'atomic_ip_sets';
   @override
-  VerificationContext validateIntegrity(Insertable<AtomicIpSet> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<AtomicIpSet> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
     }
     if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
     if (data.containsKey('inverse')) {
-      context.handle(_inverseMeta,
-          inverse.isAcceptableOrUnknown(data['inverse']!, _inverseMeta));
+      context.handle(
+        _inverseMeta,
+        inverse.isAcceptableOrUnknown(data['inverse']!, _inverseMeta),
+      );
     }
     if (data.containsKey('geo_url')) {
-      context.handle(_geoUrlMeta,
-          geoUrl.isAcceptableOrUnknown(data['geo_url']!, _geoUrlMeta));
+      context.handle(
+        _geoUrlMeta,
+        geoUrl.isAcceptableOrUnknown(data['geo_url']!, _geoUrlMeta),
+      );
     }
     return context;
   }
@@ -2200,20 +2666,34 @@ class $AtomicIpSetsTable extends AtomicIpSets
   AtomicIpSet map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return AtomicIpSet(
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      inverse: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}inverse'])!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      inverse: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}inverse'],
+      )!,
       geoIpConfig: $AtomicIpSetsTable.$convertergeoIpConfign.fromSql(
-          attachedDatabase.typeMapping.read(
-              DriftSqlType.blob, data['${effectivePrefix}geo_ip_config'])),
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.blob,
+          data['${effectivePrefix}geo_ip_config'],
+        ),
+      ),
       clashRuleUrls: $AtomicIpSetsTable.$converterclashRuleUrlsn.fromSql(
-          attachedDatabase.typeMapping.read(
-              DriftSqlType.string, data['${effectivePrefix}clash_rule_urls'])),
-      updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
-      geoUrl: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}geo_url']),
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}clash_rule_urls'],
+        ),
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      ),
+      geoUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}geo_url'],
+      ),
     );
   }
 
@@ -2278,14 +2758,15 @@ class AtomicIpSetsCompanion extends UpdateCompanion<AtomicIpSet> {
     });
   }
 
-  AtomicIpSetsCompanion copyWith(
-      {Value<DateTime?>? updatedAt,
-      Value<String>? name,
-      Value<bool>? inverse,
-      Value<GeoIPConfig?>? geoIpConfig,
-      Value<List<String>?>? clashRuleUrls,
-      Value<String?>? geoUrl,
-      Value<int>? rowid}) {
+  AtomicIpSetsCompanion copyWith({
+    Value<DateTime?>? updatedAt,
+    Value<String>? name,
+    Value<bool>? inverse,
+    Value<GeoIPConfig?>? geoIpConfig,
+    Value<List<String>?>? clashRuleUrls,
+    Value<String?>? geoUrl,
+    Value<int>? rowid,
+  }) {
     return AtomicIpSetsCompanion(
       updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
@@ -2311,12 +2792,13 @@ class AtomicIpSetsCompanion extends UpdateCompanion<AtomicIpSet> {
     }
     if (geoIpConfig.present) {
       map['geo_ip_config'] = Variable<Uint8List>(
-          $AtomicIpSetsTable.$convertergeoIpConfign.toSql(geoIpConfig.value));
+        $AtomicIpSetsTable.$convertergeoIpConfign.toSql(geoIpConfig.value),
+      );
     }
     if (clashRuleUrls.present) {
-      map['clash_rule_urls'] = Variable<String>($AtomicIpSetsTable
-          .$converterclashRuleUrlsn
-          .toSql(clashRuleUrls.value));
+      map['clash_rule_urls'] = Variable<String>(
+        $AtomicIpSetsTable.$converterclashRuleUrlsn.toSql(clashRuleUrls.value),
+      );
     }
     if (geoUrl.present) {
       map['geo_url'] = Variable<String>(geoUrl.value);
@@ -2348,47 +2830,91 @@ class $GreatIpSetsTable extends GreatIpSets
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $GreatIpSetsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      clientDefault: () => DateTime.now());
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    clientDefault: () => DateTime.now(),
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   @override
   late final GeneratedColumnWithTypeConverter<GreatIPSetConfig, Uint8List>
-      greatIpSetConfig = GeneratedColumn<Uint8List>(
-              'great_ip_set_config', aliasedName, false,
-              type: DriftSqlType.blob, requiredDuringInsert: true)
-          .withConverter<GreatIPSetConfig>(
-              $GreatIpSetsTable.$convertergreatIpSetConfig);
+  greatIpSetConfig =
+      GeneratedColumn<Uint8List>(
+        'great_ip_set_config',
+        aliasedName,
+        false,
+        type: DriftSqlType.blob,
+        requiredDuringInsert: true,
+      ).withConverter<GreatIPSetConfig>(
+        $GreatIpSetsTable.$convertergreatIpSetConfig,
+      );
+  static const VerificationMeta _oppositeNameMeta = const VerificationMeta(
+    'oppositeName',
+  );
   @override
-  List<GeneratedColumn> get $columns => [updatedAt, name, greatIpSetConfig];
+  late final GeneratedColumn<String> oppositeName = GeneratedColumn<String>(
+    'opposite_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    updatedAt,
+    name,
+    greatIpSetConfig,
+    oppositeName,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'great_ip_sets';
   @override
-  VerificationContext validateIntegrity(Insertable<GreatIpSet> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<GreatIpSet> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
     }
     if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
     } else if (isInserting) {
       context.missing(_nameMeta);
+    }
+    if (data.containsKey('opposite_name')) {
+      context.handle(
+        _oppositeNameMeta,
+        oppositeName.isAcceptableOrUnknown(
+          data['opposite_name']!,
+          _oppositeNameMeta,
+        ),
+      );
     }
     return context;
   }
@@ -2399,13 +2925,24 @@ class $GreatIpSetsTable extends GreatIpSets
   GreatIpSet map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return GreatIpSet(
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
       greatIpSetConfig: $GreatIpSetsTable.$convertergreatIpSetConfig.fromSql(
-          attachedDatabase.typeMapping.read(DriftSqlType.blob,
-              data['${effectivePrefix}great_ip_set_config'])!),
-      updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.blob,
+          data['${effectivePrefix}great_ip_set_config'],
+        )!,
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      ),
+      oppositeName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}opposite_name'],
+      ),
     );
   }
 
@@ -2422,43 +2959,51 @@ class GreatIpSetsCompanion extends UpdateCompanion<GreatIpSet> {
   final Value<DateTime?> updatedAt;
   final Value<String> name;
   final Value<GreatIPSetConfig> greatIpSetConfig;
+  final Value<String?> oppositeName;
   final Value<int> rowid;
   const GreatIpSetsCompanion({
     this.updatedAt = const Value.absent(),
     this.name = const Value.absent(),
     this.greatIpSetConfig = const Value.absent(),
+    this.oppositeName = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   GreatIpSetsCompanion.insert({
     this.updatedAt = const Value.absent(),
     required String name,
     required GreatIPSetConfig greatIpSetConfig,
+    this.oppositeName = const Value.absent(),
     this.rowid = const Value.absent(),
-  })  : name = Value(name),
-        greatIpSetConfig = Value(greatIpSetConfig);
+  }) : name = Value(name),
+       greatIpSetConfig = Value(greatIpSetConfig);
   static Insertable<GreatIpSet> custom({
     Expression<DateTime>? updatedAt,
     Expression<String>? name,
     Expression<Uint8List>? greatIpSetConfig,
+    Expression<String>? oppositeName,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (updatedAt != null) 'updated_at': updatedAt,
       if (name != null) 'name': name,
       if (greatIpSetConfig != null) 'great_ip_set_config': greatIpSetConfig,
+      if (oppositeName != null) 'opposite_name': oppositeName,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
-  GreatIpSetsCompanion copyWith(
-      {Value<DateTime?>? updatedAt,
-      Value<String>? name,
-      Value<GreatIPSetConfig>? greatIpSetConfig,
-      Value<int>? rowid}) {
+  GreatIpSetsCompanion copyWith({
+    Value<DateTime?>? updatedAt,
+    Value<String>? name,
+    Value<GreatIPSetConfig>? greatIpSetConfig,
+    Value<String?>? oppositeName,
+    Value<int>? rowid,
+  }) {
     return GreatIpSetsCompanion(
       updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
       greatIpSetConfig: greatIpSetConfig ?? this.greatIpSetConfig,
+      oppositeName: oppositeName ?? this.oppositeName,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2473,9 +3018,14 @@ class GreatIpSetsCompanion extends UpdateCompanion<GreatIpSet> {
       map['name'] = Variable<String>(name.value);
     }
     if (greatIpSetConfig.present) {
-      map['great_ip_set_config'] = Variable<Uint8List>($GreatIpSetsTable
-          .$convertergreatIpSetConfig
-          .toSql(greatIpSetConfig.value));
+      map['great_ip_set_config'] = Variable<Uint8List>(
+        $GreatIpSetsTable.$convertergreatIpSetConfig.toSql(
+          greatIpSetConfig.value,
+        ),
+      );
+    }
+    if (oppositeName.present) {
+      map['opposite_name'] = Variable<String>(oppositeName.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -2489,6 +3039,7 @@ class GreatIpSetsCompanion extends UpdateCompanion<GreatIpSet> {
           ..write('updatedAt: $updatedAt, ')
           ..write('name: $name, ')
           ..write('greatIpSetConfig: $greatIpSetConfig, ')
+          ..write('oppositeName: $oppositeName, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2500,25 +3051,36 @@ class $AppSetsTable extends AppSets with TableInfo<$AppSetsTable, AppSet> {
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $AppSetsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      clientDefault: () => DateTime.now());
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    clientDefault: () => DateTime.now(),
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   @override
   late final GeneratedColumnWithTypeConverter<List<String>?, String>
-      clashRuleUrls = GeneratedColumn<String>(
-              'clash_rule_urls', aliasedName, true,
-              type: DriftSqlType.string, requiredDuringInsert: false)
-          .withConverter<List<String>?>($AppSetsTable.$converterclashRuleUrlsn);
+  clashRuleUrls = GeneratedColumn<String>(
+    'clash_rule_urls',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  ).withConverter<List<String>?>($AppSetsTable.$converterclashRuleUrlsn);
   @override
   List<GeneratedColumn> get $columns => [updatedAt, name, clashRuleUrls];
   @override
@@ -2527,17 +3089,23 @@ class $AppSetsTable extends AppSets with TableInfo<$AppSetsTable, AppSet> {
   String get actualTableName => $name;
   static const String $name = 'app_sets';
   @override
-  VerificationContext validateIntegrity(Insertable<AppSet> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<AppSet> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
     }
     if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
@@ -2550,13 +3118,20 @@ class $AppSetsTable extends AppSets with TableInfo<$AppSetsTable, AppSet> {
   AppSet map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return AppSet(
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
       clashRuleUrls: $AppSetsTable.$converterclashRuleUrlsn.fromSql(
-          attachedDatabase.typeMapping.read(
-              DriftSqlType.string, data['${effectivePrefix}clash_rule_urls'])),
-      updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}clash_rule_urls'],
+        ),
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      ),
     );
   }
 
@@ -2602,11 +3177,12 @@ class AppSetsCompanion extends UpdateCompanion<AppSet> {
     });
   }
 
-  AppSetsCompanion copyWith(
-      {Value<DateTime?>? updatedAt,
-      Value<String>? name,
-      Value<List<String>?>? clashRuleUrls,
-      Value<int>? rowid}) {
+  AppSetsCompanion copyWith({
+    Value<DateTime?>? updatedAt,
+    Value<String>? name,
+    Value<List<String>?>? clashRuleUrls,
+    Value<int>? rowid,
+  }) {
     return AppSetsCompanion(
       updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
@@ -2626,7 +3202,8 @@ class AppSetsCompanion extends UpdateCompanion<AppSet> {
     }
     if (clashRuleUrls.present) {
       map['clash_rule_urls'] = Variable<String>(
-          $AppSetsTable.$converterclashRuleUrlsn.toSql(clashRuleUrls.value));
+        $AppSetsTable.$converterclashRuleUrlsn.toSql(clashRuleUrls.value),
+      );
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -2654,31 +3231,48 @@ class $AppsTable extends Apps with TableInfo<$AppsTable, App> {
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _appSetNameMeta =
-      const VerificationMeta('appSetName');
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _appSetNameMeta = const VerificationMeta(
+    'appSetName',
+  );
   @override
   late final GeneratedColumn<String> appSetName = GeneratedColumn<String>(
-      'app_set_name', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES app_sets (name) ON UPDATE CASCADE ON DELETE CASCADE'));
+    'app_set_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES app_sets (name) ON UPDATE CASCADE ON DELETE CASCADE',
+    ),
+  );
   @override
   late final GeneratedColumnWithTypeConverter<AppId, Uint8List> appId =
-      GeneratedColumn<Uint8List>('app_id', aliasedName, false,
-              type: DriftSqlType.blob, requiredDuringInsert: true)
-          .withConverter<AppId>($AppsTable.$converterappId);
+      GeneratedColumn<Uint8List>(
+        'app_id',
+        aliasedName,
+        false,
+        type: DriftSqlType.blob,
+        requiredDuringInsert: true,
+      ).withConverter<AppId>($AppsTable.$converterappId);
   static const VerificationMeta _iconMeta = const VerificationMeta('icon');
   @override
   late final GeneratedColumn<Uint8List> icon = GeneratedColumn<Uint8List>(
-      'icon', aliasedName, true,
-      type: DriftSqlType.blob, requiredDuringInsert: false);
+    'icon',
+    aliasedName,
+    true,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [id, appSetName, appId, icon];
   @override
@@ -2687,8 +3281,10 @@ class $AppsTable extends Apps with TableInfo<$AppsTable, App> {
   String get actualTableName => $name;
   static const String $name = 'apps';
   @override
-  VerificationContext validateIntegrity(Insertable<App> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<App> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -2696,15 +3292,20 @@ class $AppsTable extends Apps with TableInfo<$AppsTable, App> {
     }
     if (data.containsKey('app_set_name')) {
       context.handle(
+        _appSetNameMeta,
+        appSetName.isAcceptableOrUnknown(
+          data['app_set_name']!,
           _appSetNameMeta,
-          appSetName.isAcceptableOrUnknown(
-              data['app_set_name']!, _appSetNameMeta));
+        ),
+      );
     } else if (isInserting) {
       context.missing(_appSetNameMeta);
     }
     if (data.containsKey('icon')) {
       context.handle(
-          _iconMeta, icon.isAcceptableOrUnknown(data['icon']!, _iconMeta));
+        _iconMeta,
+        icon.isAcceptableOrUnknown(data['icon']!, _iconMeta),
+      );
     }
     return context;
   }
@@ -2713,20 +3314,30 @@ class $AppsTable extends Apps with TableInfo<$AppsTable, App> {
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   List<Set<GeneratedColumn>> get uniqueKeys => [
-        {appId, appSetName},
-      ];
+    {appId, appSetName},
+  ];
   @override
   App map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return App(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      appSetName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}app_set_name'])!,
-      appId: $AppsTable.$converterappId.fromSql(attachedDatabase.typeMapping
-          .read(DriftSqlType.blob, data['${effectivePrefix}app_id'])!),
-      icon: attachedDatabase.typeMapping
-          .read(DriftSqlType.blob, data['${effectivePrefix}icon']),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      appSetName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}app_set_name'],
+      )!,
+      appId: $AppsTable.$converterappId.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.blob,
+          data['${effectivePrefix}app_id'],
+        )!,
+      ),
+      icon: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}icon'],
+      ),
     );
   }
 
@@ -2755,8 +3366,8 @@ class AppsCompanion extends UpdateCompanion<App> {
     required String appSetName,
     required AppId appId,
     this.icon = const Value.absent(),
-  })  : appSetName = Value(appSetName),
-        appId = Value(appId);
+  }) : appSetName = Value(appSetName),
+       appId = Value(appId);
   static Insertable<App> custom({
     Expression<int>? id,
     Expression<String>? appSetName,
@@ -2771,11 +3382,12 @@ class AppsCompanion extends UpdateCompanion<App> {
     });
   }
 
-  AppsCompanion copyWith(
-      {Value<int>? id,
-      Value<String>? appSetName,
-      Value<AppId>? appId,
-      Value<Uint8List?>? icon}) {
+  AppsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? appSetName,
+    Value<AppId>? appId,
+    Value<Uint8List?>? icon,
+  }) {
     return AppsCompanion(
       id: id ?? this.id,
       appSetName: appSetName ?? this.appSetName,
@@ -2794,8 +3406,9 @@ class AppsCompanion extends UpdateCompanion<App> {
       map['app_set_name'] = Variable<String>(appSetName.value);
     }
     if (appId.present) {
-      map['app_id'] =
-          Variable<Uint8List>($AppsTable.$converterappId.toSql(appId.value));
+      map['app_id'] = Variable<Uint8List>(
+        $AppsTable.$converterappId.toSql(appId.value),
+      );
     }
     if (icon.present) {
       map['icon'] = Variable<Uint8List>(icon.value);
@@ -2823,26 +3436,39 @@ class $CidrsTable extends Cidrs with TableInfo<$CidrsTable, Cidr> {
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _ipSetNameMeta =
-      const VerificationMeta('ipSetName');
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _ipSetNameMeta = const VerificationMeta(
+    'ipSetName',
+  );
   @override
   late final GeneratedColumn<String> ipSetName = GeneratedColumn<String>(
-      'ip_set_name', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES atomic_ip_sets (name) ON UPDATE CASCADE ON DELETE CASCADE'));
+    'ip_set_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES atomic_ip_sets (name) ON UPDATE CASCADE ON DELETE CASCADE',
+    ),
+  );
   @override
   late final GeneratedColumnWithTypeConverter<CIDR, Uint8List> cidr =
-      GeneratedColumn<Uint8List>('cidr', aliasedName, false,
-              type: DriftSqlType.blob, requiredDuringInsert: true)
-          .withConverter<CIDR>($CidrsTable.$convertercidr);
+      GeneratedColumn<Uint8List>(
+        'cidr',
+        aliasedName,
+        false,
+        type: DriftSqlType.blob,
+        requiredDuringInsert: true,
+      ).withConverter<CIDR>($CidrsTable.$convertercidr);
   @override
   List<GeneratedColumn> get $columns => [id, ipSetName, cidr];
   @override
@@ -2851,8 +3477,10 @@ class $CidrsTable extends Cidrs with TableInfo<$CidrsTable, Cidr> {
   String get actualTableName => $name;
   static const String $name = 'cidrs';
   @override
-  VerificationContext validateIntegrity(Insertable<Cidr> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<Cidr> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -2860,9 +3488,9 @@ class $CidrsTable extends Cidrs with TableInfo<$CidrsTable, Cidr> {
     }
     if (data.containsKey('ip_set_name')) {
       context.handle(
-          _ipSetNameMeta,
-          ipSetName.isAcceptableOrUnknown(
-              data['ip_set_name']!, _ipSetNameMeta));
+        _ipSetNameMeta,
+        ipSetName.isAcceptableOrUnknown(data['ip_set_name']!, _ipSetNameMeta),
+      );
     } else if (isInserting) {
       context.missing(_ipSetNameMeta);
     }
@@ -2873,18 +3501,26 @@ class $CidrsTable extends Cidrs with TableInfo<$CidrsTable, Cidr> {
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   List<Set<GeneratedColumn>> get uniqueKeys => [
-        {cidr, ipSetName},
-      ];
+    {cidr, ipSetName},
+  ];
   @override
   Cidr map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Cidr(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      ipSetName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}ip_set_name'])!,
-      cidr: $CidrsTable.$convertercidr.fromSql(attachedDatabase.typeMapping
-          .read(DriftSqlType.blob, data['${effectivePrefix}cidr'])!),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      ipSetName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ip_set_name'],
+      )!,
+      cidr: $CidrsTable.$convertercidr.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.blob,
+          data['${effectivePrefix}cidr'],
+        )!,
+      ),
     );
   }
 
@@ -2909,8 +3545,8 @@ class CidrsCompanion extends UpdateCompanion<Cidr> {
     this.id = const Value.absent(),
     required String ipSetName,
     required CIDR cidr,
-  })  : ipSetName = Value(ipSetName),
-        cidr = Value(cidr);
+  }) : ipSetName = Value(ipSetName),
+       cidr = Value(cidr);
   static Insertable<Cidr> custom({
     Expression<int>? id,
     Expression<String>? ipSetName,
@@ -2923,8 +3559,11 @@ class CidrsCompanion extends UpdateCompanion<Cidr> {
     });
   }
 
-  CidrsCompanion copyWith(
-      {Value<int>? id, Value<String>? ipSetName, Value<CIDR>? cidr}) {
+  CidrsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? ipSetName,
+    Value<CIDR>? cidr,
+  }) {
     return CidrsCompanion(
       id: id ?? this.id,
       ipSetName: ipSetName ?? this.ipSetName,
@@ -2942,8 +3581,9 @@ class CidrsCompanion extends UpdateCompanion<Cidr> {
       map['ip_set_name'] = Variable<String>(ipSetName.value);
     }
     if (cidr.present) {
-      map['cidr'] =
-          Variable<Uint8List>($CidrsTable.$convertercidr.toSql(cidr.value));
+      map['cidr'] = Variable<Uint8List>(
+        $CidrsTable.$convertercidr.toSql(cidr.value),
+      );
     }
     return map;
   }
@@ -2965,94 +3605,142 @@ class $SshServersTable extends SshServers
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $SshServersTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      clientDefault: () => DateTime.now());
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    clientDefault: () => DateTime.now(),
+  );
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _addressMeta =
-      const VerificationMeta('address');
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _addressMeta = const VerificationMeta(
+    'address',
+  );
   @override
   late final GeneratedColumn<String> address = GeneratedColumn<String>(
-      'address', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _storageKeyMeta =
-      const VerificationMeta('storageKey');
+    'address',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _storageKeyMeta = const VerificationMeta(
+    'storageKey',
+  );
   @override
   late final GeneratedColumn<String> storageKey = GeneratedColumn<String>(
-      'storage_key', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _countryMeta =
-      const VerificationMeta('country');
+    'storage_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _countryMeta = const VerificationMeta(
+    'country',
+  );
   @override
   late final GeneratedColumn<String> country = GeneratedColumn<String>(
-      'country', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+    'country',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   late final GeneratedColumnWithTypeConverter<AuthMethod, int> authMethod =
-      GeneratedColumn<int>('auth_method', aliasedName, false,
-              type: DriftSqlType.int, requiredDuringInsert: true)
-          .withConverter<AuthMethod>($SshServersTable.$converterauthMethod);
+      GeneratedColumn<int>(
+        'auth_method',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: true,
+      ).withConverter<AuthMethod>($SshServersTable.$converterauthMethod);
   @override
-  List<GeneratedColumn> get $columns =>
-      [updatedAt, id, name, address, storageKey, country, authMethod];
+  List<GeneratedColumn> get $columns => [
+    updatedAt,
+    id,
+    name,
+    address,
+    storageKey,
+    country,
+    authMethod,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'ssh_servers';
   @override
-  VerificationContext validateIntegrity(Insertable<SshServer> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<SshServer> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
     }
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
     if (data.containsKey('address')) {
-      context.handle(_addressMeta,
-          address.isAcceptableOrUnknown(data['address']!, _addressMeta));
+      context.handle(
+        _addressMeta,
+        address.isAcceptableOrUnknown(data['address']!, _addressMeta),
+      );
     } else if (isInserting) {
       context.missing(_addressMeta);
     }
     if (data.containsKey('storage_key')) {
       context.handle(
-          _storageKeyMeta,
-          storageKey.isAcceptableOrUnknown(
-              data['storage_key']!, _storageKeyMeta));
+        _storageKeyMeta,
+        storageKey.isAcceptableOrUnknown(data['storage_key']!, _storageKeyMeta),
+      );
     } else if (isInserting) {
       context.missing(_storageKeyMeta);
     }
     if (data.containsKey('country')) {
-      context.handle(_countryMeta,
-          country.isAcceptableOrUnknown(data['country']!, _countryMeta));
+      context.handle(
+        _countryMeta,
+        country.isAcceptableOrUnknown(data['country']!, _countryMeta),
+      );
     }
     return context;
   }
@@ -3063,21 +3751,36 @@ class $SshServersTable extends SshServers
   SshServer map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return SshServer(
-      updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      address: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}address'])!,
-      storageKey: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}storage_key'])!,
-      country: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}country']),
-      authMethod: $SshServersTable.$converterauthMethod.fromSql(attachedDatabase
-          .typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}auth_method'])!),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      ),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      address: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}address'],
+      )!,
+      storageKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}storage_key'],
+      )!,
+      country: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}country'],
+      ),
+      authMethod: $SshServersTable.$converterauthMethod.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}auth_method'],
+        )!,
+      ),
     );
   }
 
@@ -3098,14 +3801,15 @@ class SshServer extends DataClass implements Insertable<SshServer> {
   final String storageKey;
   final String? country;
   final AuthMethod authMethod;
-  const SshServer(
-      {this.updatedAt,
-      required this.id,
-      required this.name,
-      required this.address,
-      required this.storageKey,
-      this.country,
-      required this.authMethod});
+  const SshServer({
+    this.updatedAt,
+    required this.id,
+    required this.name,
+    required this.address,
+    required this.storageKey,
+    this.country,
+    required this.authMethod,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -3121,7 +3825,8 @@ class SshServer extends DataClass implements Insertable<SshServer> {
     }
     {
       map['auth_method'] = Variable<int>(
-          $SshServersTable.$converterauthMethod.toSql(authMethod));
+        $SshServersTable.$converterauthMethod.toSql(authMethod),
+      );
     }
     return map;
   }
@@ -3142,8 +3847,10 @@ class SshServer extends DataClass implements Insertable<SshServer> {
     );
   }
 
-  factory SshServer.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory SshServer.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return SshServer(
       updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
@@ -3152,8 +3859,9 @@ class SshServer extends DataClass implements Insertable<SshServer> {
       address: serializer.fromJson<String>(json['address']),
       storageKey: serializer.fromJson<String>(json['storageKey']),
       country: serializer.fromJson<String?>(json['country']),
-      authMethod: $SshServersTable.$converterauthMethod
-          .fromJson(serializer.fromJson<int>(json['authMethod'])),
+      authMethod: $SshServersTable.$converterauthMethod.fromJson(
+        serializer.fromJson<int>(json['authMethod']),
+      ),
     );
   }
   @override
@@ -3167,38 +3875,41 @@ class SshServer extends DataClass implements Insertable<SshServer> {
       'storageKey': serializer.toJson<String>(storageKey),
       'country': serializer.toJson<String?>(country),
       'authMethod': serializer.toJson<int>(
-          $SshServersTable.$converterauthMethod.toJson(authMethod)),
+        $SshServersTable.$converterauthMethod.toJson(authMethod),
+      ),
     };
   }
 
-  SshServer copyWith(
-          {Value<DateTime?> updatedAt = const Value.absent(),
-          int? id,
-          String? name,
-          String? address,
-          String? storageKey,
-          Value<String?> country = const Value.absent(),
-          AuthMethod? authMethod}) =>
-      SshServer(
-        updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
-        id: id ?? this.id,
-        name: name ?? this.name,
-        address: address ?? this.address,
-        storageKey: storageKey ?? this.storageKey,
-        country: country.present ? country.value : this.country,
-        authMethod: authMethod ?? this.authMethod,
-      );
+  SshServer copyWith({
+    Value<DateTime?> updatedAt = const Value.absent(),
+    int? id,
+    String? name,
+    String? address,
+    String? storageKey,
+    Value<String?> country = const Value.absent(),
+    AuthMethod? authMethod,
+  }) => SshServer(
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
+    id: id ?? this.id,
+    name: name ?? this.name,
+    address: address ?? this.address,
+    storageKey: storageKey ?? this.storageKey,
+    country: country.present ? country.value : this.country,
+    authMethod: authMethod ?? this.authMethod,
+  );
   SshServer copyWithCompanion(SshServersCompanion data) {
     return SshServer(
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       address: data.address.present ? data.address.value : this.address,
-      storageKey:
-          data.storageKey.present ? data.storageKey.value : this.storageKey,
+      storageKey: data.storageKey.present
+          ? data.storageKey.value
+          : this.storageKey,
       country: data.country.present ? data.country.value : this.country,
-      authMethod:
-          data.authMethod.present ? data.authMethod.value : this.authMethod,
+      authMethod: data.authMethod.present
+          ? data.authMethod.value
+          : this.authMethod,
     );
   }
 
@@ -3218,7 +3929,14 @@ class SshServer extends DataClass implements Insertable<SshServer> {
 
   @override
   int get hashCode => Object.hash(
-      updatedAt, id, name, address, storageKey, country, authMethod);
+    updatedAt,
+    id,
+    name,
+    address,
+    storageKey,
+    country,
+    authMethod,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3257,10 +3975,10 @@ class SshServersCompanion extends UpdateCompanion<SshServer> {
     required String storageKey,
     this.country = const Value.absent(),
     required AuthMethod authMethod,
-  })  : name = Value(name),
-        address = Value(address),
-        storageKey = Value(storageKey),
-        authMethod = Value(authMethod);
+  }) : name = Value(name),
+       address = Value(address),
+       storageKey = Value(storageKey),
+       authMethod = Value(authMethod);
   static Insertable<SshServer> custom({
     Expression<DateTime>? updatedAt,
     Expression<int>? id,
@@ -3281,14 +3999,15 @@ class SshServersCompanion extends UpdateCompanion<SshServer> {
     });
   }
 
-  SshServersCompanion copyWith(
-      {Value<DateTime?>? updatedAt,
-      Value<int>? id,
-      Value<String>? name,
-      Value<String>? address,
-      Value<String>? storageKey,
-      Value<String?>? country,
-      Value<AuthMethod>? authMethod}) {
+  SshServersCompanion copyWith({
+    Value<DateTime?>? updatedAt,
+    Value<int>? id,
+    Value<String>? name,
+    Value<String>? address,
+    Value<String>? storageKey,
+    Value<String?>? country,
+    Value<AuthMethod>? authMethod,
+  }) {
     return SshServersCompanion(
       updatedAt: updatedAt ?? this.updatedAt,
       id: id ?? this.id,
@@ -3323,7 +4042,8 @@ class SshServersCompanion extends UpdateCompanion<SshServer> {
     }
     if (authMethod.present) {
       map['auth_method'] = Variable<int>(
-          $SshServersTable.$converterauthMethod.toSql(authMethod.value));
+        $SshServersTable.$converterauthMethod.toSql(authMethod.value),
+      );
     }
     return map;
   }
@@ -3352,24 +4072,35 @@ class $CommonSshKeysTable extends CommonSshKeys
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      hasAutoIncrement: true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultConstraints:
-          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
   static const VerificationMeta _remarkMeta = const VerificationMeta('remark');
   @override
   late final GeneratedColumn<String> remark = GeneratedColumn<String>(
-      'remark', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+    'remark',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [id, name, remark];
   @override
@@ -3378,8 +4109,10 @@ class $CommonSshKeysTable extends CommonSshKeys
   String get actualTableName => $name;
   static const String $name = 'common_ssh_keys';
   @override
-  VerificationContext validateIntegrity(Insertable<CommonSshKey> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<CommonSshKey> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -3387,13 +4120,17 @@ class $CommonSshKeysTable extends CommonSshKeys
     }
     if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
     if (data.containsKey('remark')) {
-      context.handle(_remarkMeta,
-          remark.isAcceptableOrUnknown(data['remark']!, _remarkMeta));
+      context.handle(
+        _remarkMeta,
+        remark.isAcceptableOrUnknown(data['remark']!, _remarkMeta),
+      );
     }
     return context;
   }
@@ -3404,12 +4141,18 @@ class $CommonSshKeysTable extends CommonSshKeys
   CommonSshKey map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return CommonSshKey(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      remark: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}remark']),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      remark: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remark'],
+      ),
     );
   }
 
@@ -3439,13 +4182,16 @@ class CommonSshKey extends DataClass implements Insertable<CommonSshKey> {
     return CommonSshKeysCompanion(
       id: Value(id),
       name: Value(name),
-      remark:
-          remark == null && nullToAbsent ? const Value.absent() : Value(remark),
+      remark: remark == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remark),
     );
   }
 
-  factory CommonSshKey.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory CommonSshKey.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return CommonSshKey(
       id: serializer.fromJson<int>(json['id']),
@@ -3463,15 +4209,15 @@ class CommonSshKey extends DataClass implements Insertable<CommonSshKey> {
     };
   }
 
-  CommonSshKey copyWith(
-          {int? id,
-          String? name,
-          Value<String?> remark = const Value.absent()}) =>
-      CommonSshKey(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        remark: remark.present ? remark.value : this.remark,
-      );
+  CommonSshKey copyWith({
+    int? id,
+    String? name,
+    Value<String?> remark = const Value.absent(),
+  }) => CommonSshKey(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    remark: remark.present ? remark.value : this.remark,
+  );
   CommonSshKey copyWithCompanion(CommonSshKeysCompanion data) {
     return CommonSshKey(
       id: data.id.present ? data.id.value : this.id,
@@ -3527,8 +4273,11 @@ class CommonSshKeysCompanion extends UpdateCompanion<CommonSshKey> {
     });
   }
 
-  CommonSshKeysCompanion copyWith(
-      {Value<int>? id, Value<String>? name, Value<String?>? remark}) {
+  CommonSshKeysCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<String?>? remark,
+  }) {
     return CommonSshKeysCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -3568,64 +4317,103 @@ class $CustomRouteModesTable extends CustomRouteModes
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $CustomRouteModesTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      clientDefault: () => DateTime.now());
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    clientDefault: () => DateTime.now(),
+  );
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
   @override
   late final GeneratedColumnWithTypeConverter<RouterConfig, Uint8List>
-      routerConfig = GeneratedColumn<Uint8List>(
-              'router_config', aliasedName, false,
-              type: DriftSqlType.blob, requiredDuringInsert: true)
-          .withConverter<RouterConfig>(
-              $CustomRouteModesTable.$converterrouterConfig);
+  routerConfig = GeneratedColumn<Uint8List>(
+    'router_config',
+    aliasedName,
+    false,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: true,
+  ).withConverter<RouterConfig>($CustomRouteModesTable.$converterrouterConfig);
   @override
   late final GeneratedColumnWithTypeConverter<dns.DnsRules, Uint8List>
-      dnsRules = GeneratedColumn<Uint8List>('dns_rules', aliasedName, false,
-              type: DriftSqlType.blob,
-              requiredDuringInsert: false,
-              defaultValue: Constant(dns.DnsRules().writeToBuffer()))
-          .withConverter<dns.DnsRules>(
-              $CustomRouteModesTable.$converterdnsRules);
+  dnsRules = GeneratedColumn<Uint8List>(
+    'dns_rules',
+    aliasedName,
+    false,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: false,
+    defaultValue: Constant(dns.DnsRules().writeToBuffer()),
+  ).withConverter<dns.DnsRules>($CustomRouteModesTable.$converterdnsRules);
   @override
-  List<GeneratedColumn> get $columns =>
-      [updatedAt, id, name, routerConfig, dnsRules];
+  late final GeneratedColumnWithTypeConverter<List<String>, String>
+  internalDnsServers =
+      GeneratedColumn<String>(
+        'internal_dns_servers',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<List<String>>(
+        $CustomRouteModesTable.$converterinternalDnsServers,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    updatedAt,
+    id,
+    name,
+    routerConfig,
+    dnsRules,
+    internalDnsServers,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'custom_route_modes';
   @override
-  VerificationContext validateIntegrity(Insertable<CustomRouteMode> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<CustomRouteMode> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
     }
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
@@ -3638,16 +4426,33 @@ class $CustomRouteModesTable extends CustomRouteModes
   CustomRouteMode map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return CustomRouteMode(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
       routerConfig: $CustomRouteModesTable.$converterrouterConfig.fromSql(
-          attachedDatabase.typeMapping.read(
-              DriftSqlType.blob, data['${effectivePrefix}router_config'])!),
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.blob,
+          data['${effectivePrefix}router_config'],
+        )!,
+      ),
       dnsRules: $CustomRouteModesTable.$converterdnsRules.fromSql(
-          attachedDatabase.typeMapping
-              .read(DriftSqlType.blob, data['${effectivePrefix}dns_rules'])!),
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.blob,
+          data['${effectivePrefix}dns_rules'],
+        )!,
+      ),
+      internalDnsServers: $CustomRouteModesTable.$converterinternalDnsServers
+          .fromSql(
+            attachedDatabase.typeMapping.read(
+              DriftSqlType.string,
+              data['${effectivePrefix}internal_dns_servers'],
+            )!,
+          ),
     );
   }
 
@@ -3660,6 +4465,8 @@ class $CustomRouteModesTable extends CustomRouteModes
       const RouterConfigConverter();
   static TypeConverter<dns.DnsRules, Uint8List> $converterdnsRules =
       const DnsRulesConverter();
+  static TypeConverter<List<String>, String> $converterinternalDnsServers =
+      const StringListConverter();
 }
 
 class CustomRouteModesCompanion extends UpdateCompanion<CustomRouteMode> {
@@ -3668,12 +4475,14 @@ class CustomRouteModesCompanion extends UpdateCompanion<CustomRouteMode> {
   final Value<String> name;
   final Value<RouterConfig> routerConfig;
   final Value<dns.DnsRules> dnsRules;
+  final Value<List<String>> internalDnsServers;
   const CustomRouteModesCompanion({
     this.updatedAt = const Value.absent(),
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.routerConfig = const Value.absent(),
     this.dnsRules = const Value.absent(),
+    this.internalDnsServers = const Value.absent(),
   });
   CustomRouteModesCompanion.insert({
     this.updatedAt = const Value.absent(),
@@ -3681,14 +4490,17 @@ class CustomRouteModesCompanion extends UpdateCompanion<CustomRouteMode> {
     required String name,
     required RouterConfig routerConfig,
     this.dnsRules = const Value.absent(),
-  })  : name = Value(name),
-        routerConfig = Value(routerConfig);
+    required List<String> internalDnsServers,
+  }) : name = Value(name),
+       routerConfig = Value(routerConfig),
+       internalDnsServers = Value(internalDnsServers);
   static Insertable<CustomRouteMode> custom({
     Expression<DateTime>? updatedAt,
     Expression<int>? id,
     Expression<String>? name,
     Expression<Uint8List>? routerConfig,
     Expression<Uint8List>? dnsRules,
+    Expression<String>? internalDnsServers,
   }) {
     return RawValuesInsertable({
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -3696,21 +4508,26 @@ class CustomRouteModesCompanion extends UpdateCompanion<CustomRouteMode> {
       if (name != null) 'name': name,
       if (routerConfig != null) 'router_config': routerConfig,
       if (dnsRules != null) 'dns_rules': dnsRules,
+      if (internalDnsServers != null)
+        'internal_dns_servers': internalDnsServers,
     });
   }
 
-  CustomRouteModesCompanion copyWith(
-      {Value<DateTime?>? updatedAt,
-      Value<int>? id,
-      Value<String>? name,
-      Value<RouterConfig>? routerConfig,
-      Value<dns.DnsRules>? dnsRules}) {
+  CustomRouteModesCompanion copyWith({
+    Value<DateTime?>? updatedAt,
+    Value<int>? id,
+    Value<String>? name,
+    Value<RouterConfig>? routerConfig,
+    Value<dns.DnsRules>? dnsRules,
+    Value<List<String>>? internalDnsServers,
+  }) {
     return CustomRouteModesCompanion(
       updatedAt: updatedAt ?? this.updatedAt,
       id: id ?? this.id,
       name: name ?? this.name,
       routerConfig: routerConfig ?? this.routerConfig,
       dnsRules: dnsRules ?? this.dnsRules,
+      internalDnsServers: internalDnsServers ?? this.internalDnsServers,
     );
   }
 
@@ -3727,13 +4544,21 @@ class CustomRouteModesCompanion extends UpdateCompanion<CustomRouteMode> {
       map['name'] = Variable<String>(name.value);
     }
     if (routerConfig.present) {
-      map['router_config'] = Variable<Uint8List>($CustomRouteModesTable
-          .$converterrouterConfig
-          .toSql(routerConfig.value));
+      map['router_config'] = Variable<Uint8List>(
+        $CustomRouteModesTable.$converterrouterConfig.toSql(routerConfig.value),
+      );
     }
     if (dnsRules.present) {
       map['dns_rules'] = Variable<Uint8List>(
-          $CustomRouteModesTable.$converterdnsRules.toSql(dnsRules.value));
+        $CustomRouteModesTable.$converterdnsRules.toSql(dnsRules.value),
+      );
+    }
+    if (internalDnsServers.present) {
+      map['internal_dns_servers'] = Variable<String>(
+        $CustomRouteModesTable.$converterinternalDnsServers.toSql(
+          internalDnsServers.value,
+        ),
+      );
     }
     return map;
   }
@@ -3745,7 +4570,8 @@ class CustomRouteModesCompanion extends UpdateCompanion<CustomRouteMode> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('routerConfig: $routerConfig, ')
-          ..write('dnsRules: $dnsRules')
+          ..write('dnsRules: $dnsRules, ')
+          ..write('internalDnsServers: $internalDnsServers')
           ..write(')'))
         .toString();
   }
@@ -3757,25 +4583,36 @@ class $HandlerSelectorsTable extends HandlerSelectors
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $HandlerSelectorsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      clientDefault: () => DateTime.now());
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    clientDefault: () => DateTime.now(),
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   @override
   late final GeneratedColumnWithTypeConverter<SelectorConfig, Uint8List>
-      config = GeneratedColumn<Uint8List>('config', aliasedName, false,
-              type: DriftSqlType.blob, requiredDuringInsert: true)
-          .withConverter<SelectorConfig>(
-              $HandlerSelectorsTable.$converterconfig);
+  config = GeneratedColumn<Uint8List>(
+    'config',
+    aliasedName,
+    false,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: true,
+  ).withConverter<SelectorConfig>($HandlerSelectorsTable.$converterconfig);
   @override
   List<GeneratedColumn> get $columns => [updatedAt, name, config];
   @override
@@ -3784,17 +4621,23 @@ class $HandlerSelectorsTable extends HandlerSelectors
   String get actualTableName => $name;
   static const String $name = 'handler_selectors';
   @override
-  VerificationContext validateIntegrity(Insertable<HandlerSelector> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<HandlerSelector> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
     }
     if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
@@ -3807,13 +4650,20 @@ class $HandlerSelectorsTable extends HandlerSelectors
   HandlerSelector map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return HandlerSelector(
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      config: $HandlerSelectorsTable.$converterconfig.fromSql(attachedDatabase
-          .typeMapping
-          .read(DriftSqlType.blob, data['${effectivePrefix}config'])!),
-      updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      config: $HandlerSelectorsTable.$converterconfig.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.blob,
+          data['${effectivePrefix}config'],
+        )!,
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      ),
     );
   }
 
@@ -3842,8 +4692,8 @@ class HandlerSelectorsCompanion extends UpdateCompanion<HandlerSelector> {
     required String name,
     required SelectorConfig config,
     this.rowid = const Value.absent(),
-  })  : name = Value(name),
-        config = Value(config);
+  }) : name = Value(name),
+       config = Value(config);
   static Insertable<HandlerSelector> custom({
     Expression<DateTime>? updatedAt,
     Expression<String>? name,
@@ -3858,11 +4708,12 @@ class HandlerSelectorsCompanion extends UpdateCompanion<HandlerSelector> {
     });
   }
 
-  HandlerSelectorsCompanion copyWith(
-      {Value<DateTime?>? updatedAt,
-      Value<String>? name,
-      Value<SelectorConfig>? config,
-      Value<int>? rowid}) {
+  HandlerSelectorsCompanion copyWith({
+    Value<DateTime?>? updatedAt,
+    Value<String>? name,
+    Value<SelectorConfig>? config,
+    Value<int>? rowid,
+  }) {
     return HandlerSelectorsCompanion(
       updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
@@ -3882,7 +4733,8 @@ class HandlerSelectorsCompanion extends UpdateCompanion<HandlerSelector> {
     }
     if (config.present) {
       map['config'] = Variable<Uint8List>(
-          $HandlerSelectorsTable.$converterconfig.toSql(config.value));
+        $HandlerSelectorsTable.$converterconfig.toSql(config.value),
+      );
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -3911,26 +4763,40 @@ class $SelectorHandlerRelationsTable extends SelectorHandlerRelations
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: false);
-  static const VerificationMeta _selectorNameMeta =
-      const VerificationMeta('selectorName');
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _selectorNameMeta = const VerificationMeta(
+    'selectorName',
+  );
   @override
   late final GeneratedColumn<String> selectorName = GeneratedColumn<String>(
-      'selector_name', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES handler_selectors (name) ON DELETE CASCADE'));
-  static const VerificationMeta _handlerIdMeta =
-      const VerificationMeta('handlerId');
+    'selector_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES handler_selectors (name) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _handlerIdMeta = const VerificationMeta(
+    'handlerId',
+  );
   @override
   late final GeneratedColumn<int> handlerId = GeneratedColumn<int>(
-      'handler_id', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES outbound_handlers (id) ON DELETE CASCADE'));
+    'handler_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES outbound_handlers (id) ON DELETE CASCADE',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [id, selectorName, handlerId];
   @override
@@ -3940,8 +4806,9 @@ class $SelectorHandlerRelationsTable extends SelectorHandlerRelations
   static const String $name = 'selector_handler_relations';
   @override
   VerificationContext validateIntegrity(
-      Insertable<SelectorHandlerRelation> instance,
-      {bool isInserting = false}) {
+    Insertable<SelectorHandlerRelation> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -3949,15 +4816,20 @@ class $SelectorHandlerRelationsTable extends SelectorHandlerRelations
     }
     if (data.containsKey('selector_name')) {
       context.handle(
+        _selectorNameMeta,
+        selectorName.isAcceptableOrUnknown(
+          data['selector_name']!,
           _selectorNameMeta,
-          selectorName.isAcceptableOrUnknown(
-              data['selector_name']!, _selectorNameMeta));
+        ),
+      );
     } else if (isInserting) {
       context.missing(_selectorNameMeta);
     }
     if (data.containsKey('handler_id')) {
-      context.handle(_handlerIdMeta,
-          handlerId.isAcceptableOrUnknown(data['handler_id']!, _handlerIdMeta));
+      context.handle(
+        _handlerIdMeta,
+        handlerId.isAcceptableOrUnknown(data['handler_id']!, _handlerIdMeta),
+      );
     } else if (isInserting) {
       context.missing(_handlerIdMeta);
     }
@@ -3968,19 +4840,27 @@ class $SelectorHandlerRelationsTable extends SelectorHandlerRelations
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   List<Set<GeneratedColumn>> get uniqueKeys => [
-        {selectorName, handlerId},
-      ];
+    {selectorName, handlerId},
+  ];
   @override
-  SelectorHandlerRelation map(Map<String, dynamic> data,
-      {String? tablePrefix}) {
+  SelectorHandlerRelation map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return SelectorHandlerRelation(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      selectorName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}selector_name'])!,
-      handlerId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}handler_id'])!,
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      selectorName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}selector_name'],
+      )!,
+      handlerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}handler_id'],
+      )!,
     );
   }
 
@@ -3995,8 +4875,11 @@ class SelectorHandlerRelation extends DataClass
   final int id;
   final String selectorName;
   final int handlerId;
-  const SelectorHandlerRelation(
-      {required this.id, required this.selectorName, required this.handlerId});
+  const SelectorHandlerRelation({
+    required this.id,
+    required this.selectorName,
+    required this.handlerId,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -4014,8 +4897,10 @@ class SelectorHandlerRelation extends DataClass
     );
   }
 
-  factory SelectorHandlerRelation.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory SelectorHandlerRelation.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return SelectorHandlerRelation(
       id: serializer.fromJson<int>(json['id']),
@@ -4033,15 +4918,18 @@ class SelectorHandlerRelation extends DataClass
     };
   }
 
-  SelectorHandlerRelation copyWith(
-          {int? id, String? selectorName, int? handlerId}) =>
-      SelectorHandlerRelation(
-        id: id ?? this.id,
-        selectorName: selectorName ?? this.selectorName,
-        handlerId: handlerId ?? this.handlerId,
-      );
+  SelectorHandlerRelation copyWith({
+    int? id,
+    String? selectorName,
+    int? handlerId,
+  }) => SelectorHandlerRelation(
+    id: id ?? this.id,
+    selectorName: selectorName ?? this.selectorName,
+    handlerId: handlerId ?? this.handlerId,
+  );
   SelectorHandlerRelation copyWithCompanion(
-      SelectorHandlerRelationsCompanion data) {
+    SelectorHandlerRelationsCompanion data,
+  ) {
     return SelectorHandlerRelation(
       id: data.id.present ? data.id.value : this.id,
       selectorName: data.selectorName.present
@@ -4086,8 +4974,8 @@ class SelectorHandlerRelationsCompanion
     this.id = const Value.absent(),
     required String selectorName,
     required int handlerId,
-  })  : selectorName = Value(selectorName),
-        handlerId = Value(handlerId);
+  }) : selectorName = Value(selectorName),
+       handlerId = Value(handlerId);
   static Insertable<SelectorHandlerRelation> custom({
     Expression<int>? id,
     Expression<String>? selectorName,
@@ -4100,8 +4988,11 @@ class SelectorHandlerRelationsCompanion
     });
   }
 
-  SelectorHandlerRelationsCompanion copyWith(
-      {Value<int>? id, Value<String>? selectorName, Value<int>? handlerId}) {
+  SelectorHandlerRelationsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? selectorName,
+    Value<int>? handlerId,
+  }) {
     return SelectorHandlerRelationsCompanion(
       id: id ?? this.id,
       selectorName: selectorName ?? this.selectorName,
@@ -4137,8 +5028,10 @@ class SelectorHandlerRelationsCompanion
 
 class $SelectorHandlerGroupRelationsTable extends SelectorHandlerGroupRelations
     with
-        TableInfo<$SelectorHandlerGroupRelationsTable,
-            SelectorHandlerGroupRelation> {
+        TableInfo<
+          $SelectorHandlerGroupRelationsTable,
+          SelectorHandlerGroupRelation
+        > {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -4146,26 +5039,40 @@ class $SelectorHandlerGroupRelationsTable extends SelectorHandlerGroupRelations
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: false);
-  static const VerificationMeta _selectorNameMeta =
-      const VerificationMeta('selectorName');
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _selectorNameMeta = const VerificationMeta(
+    'selectorName',
+  );
   @override
   late final GeneratedColumn<String> selectorName = GeneratedColumn<String>(
-      'selector_name', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES handler_selectors (name) ON DELETE CASCADE'));
-  static const VerificationMeta _groupNameMeta =
-      const VerificationMeta('groupName');
+    'selector_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES handler_selectors (name) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _groupNameMeta = const VerificationMeta(
+    'groupName',
+  );
   @override
   late final GeneratedColumn<String> groupName = GeneratedColumn<String>(
-      'group_name', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES outbound_handler_groups (name) ON DELETE CASCADE'));
+    'group_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES outbound_handler_groups (name) ON DELETE CASCADE',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [id, selectorName, groupName];
   @override
@@ -4175,8 +5082,9 @@ class $SelectorHandlerGroupRelationsTable extends SelectorHandlerGroupRelations
   static const String $name = 'selector_handler_group_relations';
   @override
   VerificationContext validateIntegrity(
-      Insertable<SelectorHandlerGroupRelation> instance,
-      {bool isInserting = false}) {
+    Insertable<SelectorHandlerGroupRelation> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -4184,15 +5092,20 @@ class $SelectorHandlerGroupRelationsTable extends SelectorHandlerGroupRelations
     }
     if (data.containsKey('selector_name')) {
       context.handle(
+        _selectorNameMeta,
+        selectorName.isAcceptableOrUnknown(
+          data['selector_name']!,
           _selectorNameMeta,
-          selectorName.isAcceptableOrUnknown(
-              data['selector_name']!, _selectorNameMeta));
+        ),
+      );
     } else if (isInserting) {
       context.missing(_selectorNameMeta);
     }
     if (data.containsKey('group_name')) {
-      context.handle(_groupNameMeta,
-          groupName.isAcceptableOrUnknown(data['group_name']!, _groupNameMeta));
+      context.handle(
+        _groupNameMeta,
+        groupName.isAcceptableOrUnknown(data['group_name']!, _groupNameMeta),
+      );
     } else if (isInserting) {
       context.missing(_groupNameMeta);
     }
@@ -4203,19 +5116,27 @@ class $SelectorHandlerGroupRelationsTable extends SelectorHandlerGroupRelations
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   List<Set<GeneratedColumn>> get uniqueKeys => [
-        {selectorName, groupName},
-      ];
+    {selectorName, groupName},
+  ];
   @override
-  SelectorHandlerGroupRelation map(Map<String, dynamic> data,
-      {String? tablePrefix}) {
+  SelectorHandlerGroupRelation map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return SelectorHandlerGroupRelation(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      selectorName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}selector_name'])!,
-      groupName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}group_name'])!,
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      selectorName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}selector_name'],
+      )!,
+      groupName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}group_name'],
+      )!,
     );
   }
 
@@ -4230,8 +5151,11 @@ class SelectorHandlerGroupRelation extends DataClass
   final int id;
   final String selectorName;
   final String groupName;
-  const SelectorHandlerGroupRelation(
-      {required this.id, required this.selectorName, required this.groupName});
+  const SelectorHandlerGroupRelation({
+    required this.id,
+    required this.selectorName,
+    required this.groupName,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -4249,8 +5173,10 @@ class SelectorHandlerGroupRelation extends DataClass
     );
   }
 
-  factory SelectorHandlerGroupRelation.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory SelectorHandlerGroupRelation.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return SelectorHandlerGroupRelation(
       id: serializer.fromJson<int>(json['id']),
@@ -4268,15 +5194,18 @@ class SelectorHandlerGroupRelation extends DataClass
     };
   }
 
-  SelectorHandlerGroupRelation copyWith(
-          {int? id, String? selectorName, String? groupName}) =>
-      SelectorHandlerGroupRelation(
-        id: id ?? this.id,
-        selectorName: selectorName ?? this.selectorName,
-        groupName: groupName ?? this.groupName,
-      );
+  SelectorHandlerGroupRelation copyWith({
+    int? id,
+    String? selectorName,
+    String? groupName,
+  }) => SelectorHandlerGroupRelation(
+    id: id ?? this.id,
+    selectorName: selectorName ?? this.selectorName,
+    groupName: groupName ?? this.groupName,
+  );
   SelectorHandlerGroupRelation copyWithCompanion(
-      SelectorHandlerGroupRelationsCompanion data) {
+    SelectorHandlerGroupRelationsCompanion data,
+  ) {
     return SelectorHandlerGroupRelation(
       id: data.id.present ? data.id.value : this.id,
       selectorName: data.selectorName.present
@@ -4321,8 +5250,8 @@ class SelectorHandlerGroupRelationsCompanion
     this.id = const Value.absent(),
     required String selectorName,
     required String groupName,
-  })  : selectorName = Value(selectorName),
-        groupName = Value(groupName);
+  }) : selectorName = Value(selectorName),
+       groupName = Value(groupName);
   static Insertable<SelectorHandlerGroupRelation> custom({
     Expression<int>? id,
     Expression<String>? selectorName,
@@ -4335,8 +5264,11 @@ class SelectorHandlerGroupRelationsCompanion
     });
   }
 
-  SelectorHandlerGroupRelationsCompanion copyWith(
-      {Value<int>? id, Value<String>? selectorName, Value<String>? groupName}) {
+  SelectorHandlerGroupRelationsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? selectorName,
+    Value<String>? groupName,
+  }) {
     return SelectorHandlerGroupRelationsCompanion(
       id: id ?? this.id,
       selectorName: selectorName ?? this.selectorName,
@@ -4372,8 +5304,10 @@ class SelectorHandlerGroupRelationsCompanion
 
 class $SelectorSubscriptionRelationsTable extends SelectorSubscriptionRelations
     with
-        TableInfo<$SelectorSubscriptionRelationsTable,
-            SelectorSubscriptionRelation> {
+        TableInfo<
+          $SelectorSubscriptionRelationsTable,
+          SelectorSubscriptionRelation
+        > {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -4381,26 +5315,40 @@ class $SelectorSubscriptionRelationsTable extends SelectorSubscriptionRelations
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: false);
-  static const VerificationMeta _selectorNameMeta =
-      const VerificationMeta('selectorName');
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _selectorNameMeta = const VerificationMeta(
+    'selectorName',
+  );
   @override
   late final GeneratedColumn<String> selectorName = GeneratedColumn<String>(
-      'selector_name', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES handler_selectors (name) ON DELETE CASCADE'));
-  static const VerificationMeta _subscriptionIdMeta =
-      const VerificationMeta('subscriptionId');
+    'selector_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES handler_selectors (name) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _subscriptionIdMeta = const VerificationMeta(
+    'subscriptionId',
+  );
   @override
   late final GeneratedColumn<int> subscriptionId = GeneratedColumn<int>(
-      'subscription_id', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'REFERENCES subscriptions (id) ON DELETE CASCADE'));
+    'subscription_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES subscriptions (id) ON DELETE CASCADE',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [id, selectorName, subscriptionId];
   @override
@@ -4410,8 +5358,9 @@ class $SelectorSubscriptionRelationsTable extends SelectorSubscriptionRelations
   static const String $name = 'selector_subscription_relations';
   @override
   VerificationContext validateIntegrity(
-      Insertable<SelectorSubscriptionRelation> instance,
-      {bool isInserting = false}) {
+    Insertable<SelectorSubscriptionRelation> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
@@ -4419,17 +5368,23 @@ class $SelectorSubscriptionRelationsTable extends SelectorSubscriptionRelations
     }
     if (data.containsKey('selector_name')) {
       context.handle(
+        _selectorNameMeta,
+        selectorName.isAcceptableOrUnknown(
+          data['selector_name']!,
           _selectorNameMeta,
-          selectorName.isAcceptableOrUnknown(
-              data['selector_name']!, _selectorNameMeta));
+        ),
+      );
     } else if (isInserting) {
       context.missing(_selectorNameMeta);
     }
     if (data.containsKey('subscription_id')) {
       context.handle(
+        _subscriptionIdMeta,
+        subscriptionId.isAcceptableOrUnknown(
+          data['subscription_id']!,
           _subscriptionIdMeta,
-          subscriptionId.isAcceptableOrUnknown(
-              data['subscription_id']!, _subscriptionIdMeta));
+        ),
+      );
     } else if (isInserting) {
       context.missing(_subscriptionIdMeta);
     }
@@ -4440,19 +5395,27 @@ class $SelectorSubscriptionRelationsTable extends SelectorSubscriptionRelations
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   List<Set<GeneratedColumn>> get uniqueKeys => [
-        {selectorName, subscriptionId},
-      ];
+    {selectorName, subscriptionId},
+  ];
   @override
-  SelectorSubscriptionRelation map(Map<String, dynamic> data,
-      {String? tablePrefix}) {
+  SelectorSubscriptionRelation map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return SelectorSubscriptionRelation(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      selectorName: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}selector_name'])!,
-      subscriptionId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}subscription_id'])!,
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      selectorName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}selector_name'],
+      )!,
+      subscriptionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}subscription_id'],
+      )!,
     );
   }
 
@@ -4467,10 +5430,11 @@ class SelectorSubscriptionRelation extends DataClass
   final int id;
   final String selectorName;
   final int subscriptionId;
-  const SelectorSubscriptionRelation(
-      {required this.id,
-      required this.selectorName,
-      required this.subscriptionId});
+  const SelectorSubscriptionRelation({
+    required this.id,
+    required this.selectorName,
+    required this.subscriptionId,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -4488,8 +5452,10 @@ class SelectorSubscriptionRelation extends DataClass
     );
   }
 
-  factory SelectorSubscriptionRelation.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory SelectorSubscriptionRelation.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return SelectorSubscriptionRelation(
       id: serializer.fromJson<int>(json['id']),
@@ -4507,15 +5473,18 @@ class SelectorSubscriptionRelation extends DataClass
     };
   }
 
-  SelectorSubscriptionRelation copyWith(
-          {int? id, String? selectorName, int? subscriptionId}) =>
-      SelectorSubscriptionRelation(
-        id: id ?? this.id,
-        selectorName: selectorName ?? this.selectorName,
-        subscriptionId: subscriptionId ?? this.subscriptionId,
-      );
+  SelectorSubscriptionRelation copyWith({
+    int? id,
+    String? selectorName,
+    int? subscriptionId,
+  }) => SelectorSubscriptionRelation(
+    id: id ?? this.id,
+    selectorName: selectorName ?? this.selectorName,
+    subscriptionId: subscriptionId ?? this.subscriptionId,
+  );
   SelectorSubscriptionRelation copyWithCompanion(
-      SelectorSubscriptionRelationsCompanion data) {
+    SelectorSubscriptionRelationsCompanion data,
+  ) {
     return SelectorSubscriptionRelation(
       id: data.id.present ? data.id.value : this.id,
       selectorName: data.selectorName.present
@@ -4562,8 +5531,8 @@ class SelectorSubscriptionRelationsCompanion
     this.id = const Value.absent(),
     required String selectorName,
     required int subscriptionId,
-  })  : selectorName = Value(selectorName),
-        subscriptionId = Value(subscriptionId);
+  }) : selectorName = Value(selectorName),
+       subscriptionId = Value(subscriptionId);
   static Insertable<SelectorSubscriptionRelation> custom({
     Expression<int>? id,
     Expression<String>? selectorName,
@@ -4576,10 +5545,11 @@ class SelectorSubscriptionRelationsCompanion
     });
   }
 
-  SelectorSubscriptionRelationsCompanion copyWith(
-      {Value<int>? id,
-      Value<String>? selectorName,
-      Value<int>? subscriptionId}) {
+  SelectorSubscriptionRelationsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? selectorName,
+    Value<int>? subscriptionId,
+  }) {
     return SelectorSubscriptionRelationsCompanion(
       id: id ?? this.id,
       selectorName: selectorName ?? this.selectorName,
@@ -4619,32 +5589,46 @@ class $DnsServersTable extends DnsServers
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $DnsServersTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _updatedAtMeta =
-      const VerificationMeta('updatedAt');
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
   @override
   late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-      'updated_at', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      clientDefault: () => DateTime.now());
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    clientDefault: () => DateTime.now(),
+  );
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
-      'id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
   @override
   late final GeneratedColumnWithTypeConverter<dns.DnsServerConfig, Uint8List>
-      dnsServer = GeneratedColumn<Uint8List>('dns_server', aliasedName, false,
-              type: DriftSqlType.blob, requiredDuringInsert: true)
-          .withConverter<dns.DnsServerConfig>(
-              $DnsServersTable.$converterdnsServer);
+  dnsServer = GeneratedColumn<Uint8List>(
+    'dns_server',
+    aliasedName,
+    false,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: true,
+  ).withConverter<dns.DnsServerConfig>($DnsServersTable.$converterdnsServer);
   @override
   List<GeneratedColumn> get $columns => [updatedAt, id, name, dnsServer];
   @override
@@ -4653,20 +5637,26 @@ class $DnsServersTable extends DnsServers
   String get actualTableName => $name;
   static const String $name = 'dns_servers';
   @override
-  VerificationContext validateIntegrity(Insertable<DnsServer> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(
+    Insertable<DnsServer> instance, {
+    bool isInserting = false,
+  }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('updated_at')) {
-      context.handle(_updatedAtMeta,
-          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
     }
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
@@ -4679,15 +5669,24 @@ class $DnsServersTable extends DnsServers
   DnsServer map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return DnsServer(
-      id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      dnsServer: $DnsServersTable.$converterdnsServer.fromSql(attachedDatabase
-          .typeMapping
-          .read(DriftSqlType.blob, data['${effectivePrefix}dns_server'])!),
-      updatedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at']),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      dnsServer: $DnsServersTable.$converterdnsServer.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.blob,
+          data['${effectivePrefix}dns_server'],
+        )!,
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      ),
     );
   }
 
@@ -4716,8 +5715,8 @@ class DnsServersCompanion extends UpdateCompanion<DnsServer> {
     this.id = const Value.absent(),
     required String name,
     required dns.DnsServerConfig dnsServer,
-  })  : name = Value(name),
-        dnsServer = Value(dnsServer);
+  }) : name = Value(name),
+       dnsServer = Value(dnsServer);
   static Insertable<DnsServer> custom({
     Expression<DateTime>? updatedAt,
     Expression<int>? id,
@@ -4732,11 +5731,12 @@ class DnsServersCompanion extends UpdateCompanion<DnsServer> {
     });
   }
 
-  DnsServersCompanion copyWith(
-      {Value<DateTime?>? updatedAt,
-      Value<int>? id,
-      Value<String>? name,
-      Value<dns.DnsServerConfig>? dnsServer}) {
+  DnsServersCompanion copyWith({
+    Value<DateTime?>? updatedAt,
+    Value<int>? id,
+    Value<String>? name,
+    Value<dns.DnsServerConfig>? dnsServer,
+  }) {
     return DnsServersCompanion(
       updatedAt: updatedAt ?? this.updatedAt,
       id: id ?? this.id,
@@ -4759,7 +5759,8 @@ class DnsServersCompanion extends UpdateCompanion<DnsServer> {
     }
     if (dnsServer.present) {
       map['dns_server'] = Variable<Uint8List>(
-          $DnsServersTable.$converterdnsServer.toSql(dnsServer.value));
+        $DnsServersTable.$converterdnsServer.toSql(dnsServer.value),
+      );
     }
     return map;
   }
@@ -4780,18 +5781,21 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $SubscriptionsTable subscriptions = $SubscriptionsTable(this);
-  late final $OutboundHandlersTable outboundHandlers =
-      $OutboundHandlersTable(this);
+  late final $OutboundHandlersTable outboundHandlers = $OutboundHandlersTable(
+    this,
+  );
   late final $OutboundHandlerGroupsTable outboundHandlerGroups =
       $OutboundHandlerGroupsTable(this);
   late final $OutboundHandlerGroupRelationsTable outboundHandlerGroupRelations =
       $OutboundHandlerGroupRelationsTable(this);
   late final $DnsRecordsTable dnsRecords = $DnsRecordsTable(this);
-  late final $AtomicDomainSetsTable atomicDomainSets =
-      $AtomicDomainSetsTable(this);
+  late final $AtomicDomainSetsTable atomicDomainSets = $AtomicDomainSetsTable(
+    this,
+  );
   late final $GeoDomainsTable geoDomains = $GeoDomainsTable(this);
-  late final $GreatDomainSetsTable greatDomainSets =
-      $GreatDomainSetsTable(this);
+  late final $GreatDomainSetsTable greatDomainSets = $GreatDomainSetsTable(
+    this,
+  );
   late final $AtomicIpSetsTable atomicIpSets = $AtomicIpSetsTable(this);
   late final $GreatIpSetsTable greatIpSets = $GreatIpSetsTable(this);
   late final $AppSetsTable appSets = $AppSetsTable(this);
@@ -4799,10 +5803,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $CidrsTable cidrs = $CidrsTable(this);
   late final $SshServersTable sshServers = $SshServersTable(this);
   late final $CommonSshKeysTable commonSshKeys = $CommonSshKeysTable(this);
-  late final $CustomRouteModesTable customRouteModes =
-      $CustomRouteModesTable(this);
-  late final $HandlerSelectorsTable handlerSelectors =
-      $HandlerSelectorsTable(this);
+  late final $CustomRouteModesTable customRouteModes = $CustomRouteModesTable(
+    this,
+  );
+  late final $HandlerSelectorsTable handlerSelectors = $HandlerSelectorsTable(
+    this,
+  );
   late final $SelectorHandlerRelationsTable selectorHandlerRelations =
       $SelectorHandlerRelationsTable(this);
   late final $SelectorHandlerGroupRelationsTable selectorHandlerGroupRelations =
@@ -4815,219 +5821,255 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
-        subscriptions,
-        outboundHandlers,
-        outboundHandlerGroups,
-        outboundHandlerGroupRelations,
-        dnsRecords,
-        atomicDomainSets,
-        geoDomains,
-        greatDomainSets,
-        atomicIpSets,
-        greatIpSets,
-        appSets,
-        apps,
-        cidrs,
-        sshServers,
-        commonSshKeys,
-        customRouteModes,
-        handlerSelectors,
-        selectorHandlerRelations,
-        selectorHandlerGroupRelations,
-        selectorSubscriptionRelations,
-        dnsServers
-      ];
+    subscriptions,
+    outboundHandlers,
+    outboundHandlerGroups,
+    outboundHandlerGroupRelations,
+    dnsRecords,
+    atomicDomainSets,
+    geoDomains,
+    greatDomainSets,
+    atomicIpSets,
+    greatIpSets,
+    appSets,
+    apps,
+    cidrs,
+    sshServers,
+    commonSshKeys,
+    customRouteModes,
+    handlerSelectors,
+    selectorHandlerRelations,
+    selectorHandlerGroupRelations,
+    selectorSubscriptionRelations,
+    dnsServers,
+  ];
   @override
-  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
-        [
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('subscriptions',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('outbound_handlers', kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('outbound_handler_groups',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('outbound_handler_group_relations',
-                  kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('outbound_handlers',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('outbound_handler_group_relations',
-                  kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('atomic_domain_sets',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('geo_domains', kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('atomic_domain_sets',
-                limitUpdateKind: UpdateKind.update),
-            result: [
-              TableUpdate('geo_domains', kind: UpdateKind.update),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('app_sets',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('apps', kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('app_sets',
-                limitUpdateKind: UpdateKind.update),
-            result: [
-              TableUpdate('apps', kind: UpdateKind.update),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('atomic_ip_sets',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('cidrs', kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('atomic_ip_sets',
-                limitUpdateKind: UpdateKind.update),
-            result: [
-              TableUpdate('cidrs', kind: UpdateKind.update),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('handler_selectors',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('selector_handler_relations',
-                  kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('outbound_handlers',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('selector_handler_relations',
-                  kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('handler_selectors',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('selector_handler_group_relations',
-                  kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('outbound_handler_groups',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('selector_handler_group_relations',
-                  kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('handler_selectors',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('selector_subscription_relations',
-                  kind: UpdateKind.delete),
-            ],
-          ),
-          WritePropagation(
-            on: TableUpdateQuery.onTableName('subscriptions',
-                limitUpdateKind: UpdateKind.delete),
-            result: [
-              TableUpdate('selector_subscription_relations',
-                  kind: UpdateKind.delete),
-            ],
-          ),
-        ],
-      );
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'subscriptions',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('outbound_handlers', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'outbound_handler_groups',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate(
+          'outbound_handler_group_relations',
+          kind: UpdateKind.delete,
+        ),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'outbound_handlers',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate(
+          'outbound_handler_group_relations',
+          kind: UpdateKind.delete,
+        ),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'atomic_domain_sets',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('geo_domains', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'atomic_domain_sets',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [TableUpdate('geo_domains', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'app_sets',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('apps', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'app_sets',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [TableUpdate('apps', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'atomic_ip_sets',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('cidrs', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'atomic_ip_sets',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [TableUpdate('cidrs', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'handler_selectors',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate('selector_handler_relations', kind: UpdateKind.delete),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'outbound_handlers',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate('selector_handler_relations', kind: UpdateKind.delete),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'handler_selectors',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate(
+          'selector_handler_group_relations',
+          kind: UpdateKind.delete,
+        ),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'outbound_handler_groups',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate(
+          'selector_handler_group_relations',
+          kind: UpdateKind.delete,
+        ),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'handler_selectors',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate('selector_subscription_relations', kind: UpdateKind.delete),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'subscriptions',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate('selector_subscription_relations', kind: UpdateKind.delete),
+      ],
+    ),
+  ]);
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
 }
 
-typedef $$SubscriptionsTableCreateCompanionBuilder = SubscriptionsCompanion
-    Function({
-  Value<DateTime?> updatedAt,
-  Value<int> id,
-  required String name,
-  required String link,
-  Value<double?> remainingData,
-  Value<int?> endTime,
-  Value<String> website,
-  Value<String> description,
-  required int lastUpdate,
-  required int lastSuccessUpdate,
-  Value<bool> placeOnTop,
-});
-typedef $$SubscriptionsTableUpdateCompanionBuilder = SubscriptionsCompanion
-    Function({
-  Value<DateTime?> updatedAt,
-  Value<int> id,
-  Value<String> name,
-  Value<String> link,
-  Value<double?> remainingData,
-  Value<int?> endTime,
-  Value<String> website,
-  Value<String> description,
-  Value<int> lastUpdate,
-  Value<int> lastSuccessUpdate,
-  Value<bool> placeOnTop,
-});
+typedef $$SubscriptionsTableCreateCompanionBuilder =
+    SubscriptionsCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<int> id,
+      required String name,
+      required String link,
+      Value<double?> remainingData,
+      Value<int?> endTime,
+      Value<String> website,
+      Value<String> description,
+      required int lastUpdate,
+      required int lastSuccessUpdate,
+      Value<bool> placeOnTop,
+    });
+typedef $$SubscriptionsTableUpdateCompanionBuilder =
+    SubscriptionsCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<int> id,
+      Value<String> name,
+      Value<String> link,
+      Value<double?> remainingData,
+      Value<int?> endTime,
+      Value<String> website,
+      Value<String> description,
+      Value<int> lastUpdate,
+      Value<int> lastSuccessUpdate,
+      Value<bool> placeOnTop,
+    });
 
 final class $$SubscriptionsTableReferences
     extends BaseReferences<_$AppDatabase, $SubscriptionsTable, Subscription> {
   $$SubscriptionsTableReferences(
-      super.$_db, super.$_table, super.$_typedResult);
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
 
   static MultiTypedResultKey<$OutboundHandlersTable, List<OutboundHandler>>
-      _outboundHandlersRefsTable(_$AppDatabase db) =>
-          MultiTypedResultKey.fromTable(db.outboundHandlers,
-              aliasName: $_aliasNameGenerator(
-                  db.subscriptions.id, db.outboundHandlers.subId));
+  _outboundHandlersRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.outboundHandlers,
+    aliasName: $_aliasNameGenerator(
+      db.subscriptions.id,
+      db.outboundHandlers.subId,
+    ),
+  );
 
   $$OutboundHandlersTableProcessedTableManager get outboundHandlersRefs {
-    final manager =
-        $$OutboundHandlersTableTableManager($_db, $_db.outboundHandlers)
-            .filter((f) => f.subId.id.sqlEquals($_itemColumn<int>('id')!));
+    final manager = $$OutboundHandlersTableTableManager(
+      $_db,
+      $_db.outboundHandlers,
+    ).filter((f) => f.subId.id.sqlEquals($_itemColumn<int>('id')!));
 
-    final cache =
-        $_typedResult.readTableOrNull(_outboundHandlersRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(
+      _outboundHandlersRefsTable($_db),
+    );
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
+      manager.$state.copyWith(prefetchedData: cache),
+    );
   }
 
-  static MultiTypedResultKey<$SelectorSubscriptionRelationsTable,
-          List<SelectorSubscriptionRelation>>
-      _selectorSubscriptionRelationsRefsTable(_$AppDatabase db) =>
-          MultiTypedResultKey.fromTable(db.selectorSubscriptionRelations,
-              aliasName: $_aliasNameGenerator(db.subscriptions.id,
-                  db.selectorSubscriptionRelations.subscriptionId));
+  static MultiTypedResultKey<
+    $SelectorSubscriptionRelationsTable,
+    List<SelectorSubscriptionRelation>
+  >
+  _selectorSubscriptionRelationsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.selectorSubscriptionRelations,
+        aliasName: $_aliasNameGenerator(
+          db.subscriptions.id,
+          db.selectorSubscriptionRelations.subscriptionId,
+        ),
+      );
 
   $$SelectorSubscriptionRelationsTableProcessedTableManager
-      get selectorSubscriptionRelationsRefs {
+  get selectorSubscriptionRelationsRefs {
     final manager = $$SelectorSubscriptionRelationsTableTableManager(
-            $_db, $_db.selectorSubscriptionRelations)
-        .filter((f) => f.subscriptionId.id.sqlEquals($_itemColumn<int>('id')!));
+      $_db,
+      $_db.selectorSubscriptionRelations,
+    ).filter((f) => f.subscriptionId.id.sqlEquals($_itemColumn<int>('id')!));
 
-    final cache = $_typedResult
-        .readTableOrNull(_selectorSubscriptionRelationsRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(
+      _selectorSubscriptionRelationsRefsTable($_db),
+    );
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
+      manager.$state.copyWith(prefetchedData: cache),
+    );
   }
 }
 
@@ -5041,81 +6083,111 @@ class $$SubscriptionsTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get link => $composableBuilder(
-      column: $table.link, builder: (column) => ColumnFilters(column));
+    column: $table.link,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<double> get remainingData => $composableBuilder(
-      column: $table.remainingData, builder: (column) => ColumnFilters(column));
+    column: $table.remainingData,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<int> get endTime => $composableBuilder(
-      column: $table.endTime, builder: (column) => ColumnFilters(column));
+    column: $table.endTime,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get website => $composableBuilder(
-      column: $table.website, builder: (column) => ColumnFilters(column));
+    column: $table.website,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get description => $composableBuilder(
-      column: $table.description, builder: (column) => ColumnFilters(column));
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<int> get lastUpdate => $composableBuilder(
-      column: $table.lastUpdate, builder: (column) => ColumnFilters(column));
+    column: $table.lastUpdate,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<int> get lastSuccessUpdate => $composableBuilder(
-      column: $table.lastSuccessUpdate,
-      builder: (column) => ColumnFilters(column));
+    column: $table.lastSuccessUpdate,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<bool> get placeOnTop => $composableBuilder(
-      column: $table.placeOnTop, builder: (column) => ColumnFilters(column));
+    column: $table.placeOnTop,
+    builder: (column) => ColumnFilters(column),
+  );
 
   Expression<bool> outboundHandlersRefs(
-      Expression<bool> Function($$OutboundHandlersTableFilterComposer f) f) {
+    Expression<bool> Function($$OutboundHandlersTableFilterComposer f) f,
+  ) {
     final $$OutboundHandlersTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $db.outboundHandlers,
-        getReferencedColumn: (t) => t.subId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$OutboundHandlersTableFilterComposer(
-              $db: $db,
-              $table: $db.outboundHandlers,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.outboundHandlers,
+      getReferencedColumn: (t) => t.subId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OutboundHandlersTableFilterComposer(
+            $db: $db,
+            $table: $db.outboundHandlers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return f(composer);
   }
 
   Expression<bool> selectorSubscriptionRelationsRefs(
-      Expression<bool> Function(
-              $$SelectorSubscriptionRelationsTableFilterComposer f)
-          f) {
+    Expression<bool> Function(
+      $$SelectorSubscriptionRelationsTableFilterComposer f,
+    )
+    f,
+  ) {
     final $$SelectorSubscriptionRelationsTableFilterComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.id,
-            referencedTable: $db.selectorSubscriptionRelations,
-            getReferencedColumn: (t) => t.subscriptionId,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$SelectorSubscriptionRelationsTableFilterComposer(
-                  $db: $db,
-                  $table: $db.selectorSubscriptionRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.selectorSubscriptionRelations,
+          getReferencedColumn: (t) => t.subscriptionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SelectorSubscriptionRelationsTableFilterComposer(
+                $db: $db,
+                $table: $db.selectorSubscriptionRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
@@ -5130,39 +6202,59 @@ class $$SubscriptionsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get link => $composableBuilder(
-      column: $table.link, builder: (column) => ColumnOrderings(column));
+    column: $table.link,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<double> get remainingData => $composableBuilder(
-      column: $table.remainingData,
-      builder: (column) => ColumnOrderings(column));
+    column: $table.remainingData,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get endTime => $composableBuilder(
-      column: $table.endTime, builder: (column) => ColumnOrderings(column));
+    column: $table.endTime,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get website => $composableBuilder(
-      column: $table.website, builder: (column) => ColumnOrderings(column));
+    column: $table.website,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get description => $composableBuilder(
-      column: $table.description, builder: (column) => ColumnOrderings(column));
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get lastUpdate => $composableBuilder(
-      column: $table.lastUpdate, builder: (column) => ColumnOrderings(column));
+    column: $table.lastUpdate,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get lastSuccessUpdate => $composableBuilder(
-      column: $table.lastSuccessUpdate,
-      builder: (column) => ColumnOrderings(column));
+    column: $table.lastSuccessUpdate,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<bool> get placeOnTop => $composableBuilder(
-      column: $table.placeOnTop, builder: (column) => ColumnOrderings(column));
+    column: $table.placeOnTop,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$SubscriptionsTableAnnotationComposer
@@ -5187,7 +6279,9 @@ class $$SubscriptionsTableAnnotationComposer
       $composableBuilder(column: $table.link, builder: (column) => column);
 
   GeneratedColumn<double> get remainingData => $composableBuilder(
-      column: $table.remainingData, builder: (column) => column);
+    column: $table.remainingData,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<int> get endTime =>
       $composableBuilder(column: $table.endTime, builder: (column) => column);
@@ -5196,78 +6290,101 @@ class $$SubscriptionsTableAnnotationComposer
       $composableBuilder(column: $table.website, builder: (column) => column);
 
   GeneratedColumn<String> get description => $composableBuilder(
-      column: $table.description, builder: (column) => column);
+    column: $table.description,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<int> get lastUpdate => $composableBuilder(
-      column: $table.lastUpdate, builder: (column) => column);
+    column: $table.lastUpdate,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<int> get lastSuccessUpdate => $composableBuilder(
-      column: $table.lastSuccessUpdate, builder: (column) => column);
+    column: $table.lastSuccessUpdate,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<bool> get placeOnTop => $composableBuilder(
-      column: $table.placeOnTop, builder: (column) => column);
+    column: $table.placeOnTop,
+    builder: (column) => column,
+  );
 
   Expression<T> outboundHandlersRefs<T extends Object>(
-      Expression<T> Function($$OutboundHandlersTableAnnotationComposer a) f) {
+    Expression<T> Function($$OutboundHandlersTableAnnotationComposer a) f,
+  ) {
     final $$OutboundHandlersTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.id,
-        referencedTable: $db.outboundHandlers,
-        getReferencedColumn: (t) => t.subId,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$OutboundHandlersTableAnnotationComposer(
-              $db: $db,
-              $table: $db.outboundHandlers,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.outboundHandlers,
+      getReferencedColumn: (t) => t.subId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OutboundHandlersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.outboundHandlers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return f(composer);
   }
 
   Expression<T> selectorSubscriptionRelationsRefs<T extends Object>(
-      Expression<T> Function(
-              $$SelectorSubscriptionRelationsTableAnnotationComposer a)
-          f) {
+    Expression<T> Function(
+      $$SelectorSubscriptionRelationsTableAnnotationComposer a,
+    )
+    f,
+  ) {
     final $$SelectorSubscriptionRelationsTableAnnotationComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.id,
-            referencedTable: $db.selectorSubscriptionRelations,
-            getReferencedColumn: (t) => t.subscriptionId,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$SelectorSubscriptionRelationsTableAnnotationComposer(
-                  $db: $db,
-                  $table: $db.selectorSubscriptionRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.selectorSubscriptionRelations,
+          getReferencedColumn: (t) => t.subscriptionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SelectorSubscriptionRelationsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.selectorSubscriptionRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
 
-class $$SubscriptionsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $SubscriptionsTable,
-    Subscription,
-    $$SubscriptionsTableFilterComposer,
-    $$SubscriptionsTableOrderingComposer,
-    $$SubscriptionsTableAnnotationComposer,
-    $$SubscriptionsTableCreateCompanionBuilder,
-    $$SubscriptionsTableUpdateCompanionBuilder,
-    (Subscription, $$SubscriptionsTableReferences),
-    Subscription,
-    PrefetchHooks Function(
-        {bool outboundHandlersRefs, bool selectorSubscriptionRelationsRefs})> {
+class $$SubscriptionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SubscriptionsTable,
+          Subscription,
+          $$SubscriptionsTableFilterComposer,
+          $$SubscriptionsTableOrderingComposer,
+          $$SubscriptionsTableAnnotationComposer,
+          $$SubscriptionsTableCreateCompanionBuilder,
+          $$SubscriptionsTableUpdateCompanionBuilder,
+          (Subscription, $$SubscriptionsTableReferences),
+          Subscription,
+          PrefetchHooks Function({
+            bool outboundHandlersRefs,
+            bool selectorSubscriptionRelationsRefs,
+          })
+        > {
   $$SubscriptionsTableTableManager(_$AppDatabase db, $SubscriptionsTable table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -5276,216 +6393,267 @@ class $$SubscriptionsTableTableManager extends RootTableManager<
               $$SubscriptionsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$SubscriptionsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<int> id = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<String> link = const Value.absent(),
-            Value<double?> remainingData = const Value.absent(),
-            Value<int?> endTime = const Value.absent(),
-            Value<String> website = const Value.absent(),
-            Value<String> description = const Value.absent(),
-            Value<int> lastUpdate = const Value.absent(),
-            Value<int> lastSuccessUpdate = const Value.absent(),
-            Value<bool> placeOnTop = const Value.absent(),
-          }) =>
-              SubscriptionsCompanion(
-            updatedAt: updatedAt,
-            id: id,
-            name: name,
-            link: link,
-            remainingData: remainingData,
-            endTime: endTime,
-            website: website,
-            description: description,
-            lastUpdate: lastUpdate,
-            lastSuccessUpdate: lastSuccessUpdate,
-            placeOnTop: placeOnTop,
-          ),
-          createCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<int> id = const Value.absent(),
-            required String name,
-            required String link,
-            Value<double?> remainingData = const Value.absent(),
-            Value<int?> endTime = const Value.absent(),
-            Value<String> website = const Value.absent(),
-            Value<String> description = const Value.absent(),
-            required int lastUpdate,
-            required int lastSuccessUpdate,
-            Value<bool> placeOnTop = const Value.absent(),
-          }) =>
-              SubscriptionsCompanion.insert(
-            updatedAt: updatedAt,
-            id: id,
-            name: name,
-            link: link,
-            remainingData: remainingData,
-            endTime: endTime,
-            website: website,
-            description: description,
-            lastUpdate: lastUpdate,
-            lastSuccessUpdate: lastSuccessUpdate,
-            placeOnTop: placeOnTop,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> link = const Value.absent(),
+                Value<double?> remainingData = const Value.absent(),
+                Value<int?> endTime = const Value.absent(),
+                Value<String> website = const Value.absent(),
+                Value<String> description = const Value.absent(),
+                Value<int> lastUpdate = const Value.absent(),
+                Value<int> lastSuccessUpdate = const Value.absent(),
+                Value<bool> placeOnTop = const Value.absent(),
+              }) => SubscriptionsCompanion(
+                updatedAt: updatedAt,
+                id: id,
+                name: name,
+                link: link,
+                remainingData: remainingData,
+                endTime: endTime,
+                website: website,
+                description: description,
+                lastUpdate: lastUpdate,
+                lastSuccessUpdate: lastSuccessUpdate,
+                placeOnTop: placeOnTop,
+              ),
+          createCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                required String name,
+                required String link,
+                Value<double?> remainingData = const Value.absent(),
+                Value<int?> endTime = const Value.absent(),
+                Value<String> website = const Value.absent(),
+                Value<String> description = const Value.absent(),
+                required int lastUpdate,
+                required int lastSuccessUpdate,
+                Value<bool> placeOnTop = const Value.absent(),
+              }) => SubscriptionsCompanion.insert(
+                updatedAt: updatedAt,
+                id: id,
+                name: name,
+                link: link,
+                remainingData: remainingData,
+                endTime: endTime,
+                website: website,
+                description: description,
+                lastUpdate: lastUpdate,
+                lastSuccessUpdate: lastSuccessUpdate,
+                placeOnTop: placeOnTop,
+              ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$SubscriptionsTableReferences(db, table, e)
-                  ))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SubscriptionsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: (
-              {outboundHandlersRefs = false,
-              selectorSubscriptionRelationsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (outboundHandlersRefs) db.outboundHandlers,
-                if (selectorSubscriptionRelationsRefs)
-                  db.selectorSubscriptionRelations
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (outboundHandlersRefs)
-                    await $_getPrefetchedData<Subscription, $SubscriptionsTable,
-                            OutboundHandler>(
-                        currentTable: table,
-                        referencedTable: $$SubscriptionsTableReferences
-                            ._outboundHandlersRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$SubscriptionsTableReferences(db, table, p0)
-                                .outboundHandlersRefs,
-                        referencedItemsForCurrentItem: (item,
-                                referencedItems) =>
-                            referencedItems.where((e) => e.subId == item.id),
-                        typedResults: items),
-                  if (selectorSubscriptionRelationsRefs)
-                    await $_getPrefetchedData<Subscription, $SubscriptionsTable,
-                            SelectorSubscriptionRelation>(
-                        currentTable: table,
-                        referencedTable: $$SubscriptionsTableReferences
-                            ._selectorSubscriptionRelationsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$SubscriptionsTableReferences(db, table, p0)
-                                .selectorSubscriptionRelationsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems
-                                .where((e) => e.subscriptionId == item.id),
-                        typedResults: items)
-                ];
+          prefetchHooksCallback:
+              ({
+                outboundHandlersRefs = false,
+                selectorSubscriptionRelationsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (outboundHandlersRefs) db.outboundHandlers,
+                    if (selectorSubscriptionRelationsRefs)
+                      db.selectorSubscriptionRelations,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (outboundHandlersRefs)
+                        await $_getPrefetchedData<
+                          Subscription,
+                          $SubscriptionsTable,
+                          OutboundHandler
+                        >(
+                          currentTable: table,
+                          referencedTable: $$SubscriptionsTableReferences
+                              ._outboundHandlersRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$SubscriptionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).outboundHandlersRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.subId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (selectorSubscriptionRelationsRefs)
+                        await $_getPrefetchedData<
+                          Subscription,
+                          $SubscriptionsTable,
+                          SelectorSubscriptionRelation
+                        >(
+                          currentTable: table,
+                          referencedTable: $$SubscriptionsTableReferences
+                              ._selectorSubscriptionRelationsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$SubscriptionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).selectorSubscriptionRelationsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.subscriptionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
-        ));
+        ),
+      );
 }
 
-typedef $$SubscriptionsTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $SubscriptionsTable,
-    Subscription,
-    $$SubscriptionsTableFilterComposer,
-    $$SubscriptionsTableOrderingComposer,
-    $$SubscriptionsTableAnnotationComposer,
-    $$SubscriptionsTableCreateCompanionBuilder,
-    $$SubscriptionsTableUpdateCompanionBuilder,
-    (Subscription, $$SubscriptionsTableReferences),
-    Subscription,
-    PrefetchHooks Function(
-        {bool outboundHandlersRefs, bool selectorSubscriptionRelationsRefs})>;
-typedef $$OutboundHandlersTableCreateCompanionBuilder
-    = OutboundHandlersCompanion Function({
-  Value<DateTime?> updatedAt,
-  Value<int> id,
-  Value<bool> selected,
-  Value<String> countryCode,
-  Value<String> sni,
-  Value<double> speed,
-  Value<int> speedTestTime,
-  Value<int> ping,
-  Value<int> pingTestTime,
-  Value<int> ok,
-  Value<String> serverIp,
-  required HandlerConfig config,
-  Value<int> support6,
-  Value<int> support6TestTime,
-  Value<int?> subId,
-});
-typedef $$OutboundHandlersTableUpdateCompanionBuilder
-    = OutboundHandlersCompanion Function({
-  Value<DateTime?> updatedAt,
-  Value<int> id,
-  Value<bool> selected,
-  Value<String> countryCode,
-  Value<String> sni,
-  Value<double> speed,
-  Value<int> speedTestTime,
-  Value<int> ping,
-  Value<int> pingTestTime,
-  Value<int> ok,
-  Value<String> serverIp,
-  Value<HandlerConfig> config,
-  Value<int> support6,
-  Value<int> support6TestTime,
-  Value<int?> subId,
-});
+typedef $$SubscriptionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SubscriptionsTable,
+      Subscription,
+      $$SubscriptionsTableFilterComposer,
+      $$SubscriptionsTableOrderingComposer,
+      $$SubscriptionsTableAnnotationComposer,
+      $$SubscriptionsTableCreateCompanionBuilder,
+      $$SubscriptionsTableUpdateCompanionBuilder,
+      (Subscription, $$SubscriptionsTableReferences),
+      Subscription,
+      PrefetchHooks Function({
+        bool outboundHandlersRefs,
+        bool selectorSubscriptionRelationsRefs,
+      })
+    >;
+typedef $$OutboundHandlersTableCreateCompanionBuilder =
+    OutboundHandlersCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<int> id,
+      Value<bool> selected,
+      Value<String> countryCode,
+      Value<String> sni,
+      Value<double> speed,
+      Value<int> speedTestTime,
+      Value<int> ping,
+      Value<int> pingTestTime,
+      Value<int> ok,
+      Value<String> serverIp,
+      required HandlerConfig config,
+      Value<int> support6,
+      Value<int> support6TestTime,
+      Value<int?> subId,
+    });
+typedef $$OutboundHandlersTableUpdateCompanionBuilder =
+    OutboundHandlersCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<int> id,
+      Value<bool> selected,
+      Value<String> countryCode,
+      Value<String> sni,
+      Value<double> speed,
+      Value<int> speedTestTime,
+      Value<int> ping,
+      Value<int> pingTestTime,
+      Value<int> ok,
+      Value<String> serverIp,
+      Value<HandlerConfig> config,
+      Value<int> support6,
+      Value<int> support6TestTime,
+      Value<int?> subId,
+    });
 
-final class $$OutboundHandlersTableReferences extends BaseReferences<
-    _$AppDatabase, $OutboundHandlersTable, OutboundHandler> {
+final class $$OutboundHandlersTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $OutboundHandlersTable, OutboundHandler> {
   $$OutboundHandlersTableReferences(
-      super.$_db, super.$_table, super.$_typedResult);
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
 
   static $SubscriptionsTable _subIdTable(_$AppDatabase db) =>
       db.subscriptions.createAlias(
-          $_aliasNameGenerator(db.outboundHandlers.subId, db.subscriptions.id));
+        $_aliasNameGenerator(db.outboundHandlers.subId, db.subscriptions.id),
+      );
 
   $$SubscriptionsTableProcessedTableManager? get subId {
     final $_column = $_itemColumn<int>('sub_id');
     if ($_column == null) return null;
-    final manager = $$SubscriptionsTableTableManager($_db, $_db.subscriptions)
-        .filter((f) => f.id.sqlEquals($_column));
+    final manager = $$SubscriptionsTableTableManager(
+      $_db,
+      $_db.subscriptions,
+    ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_subIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
   }
 
-  static MultiTypedResultKey<$OutboundHandlerGroupRelationsTable,
-          List<OutboundHandlerGroupRelation>>
-      _outboundHandlerGroupRelationsRefsTable(_$AppDatabase db) =>
-          MultiTypedResultKey.fromTable(db.outboundHandlerGroupRelations,
-              aliasName: $_aliasNameGenerator(db.outboundHandlers.id,
-                  db.outboundHandlerGroupRelations.handlerId));
+  static MultiTypedResultKey<
+    $OutboundHandlerGroupRelationsTable,
+    List<OutboundHandlerGroupRelation>
+  >
+  _outboundHandlerGroupRelationsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.outboundHandlerGroupRelations,
+        aliasName: $_aliasNameGenerator(
+          db.outboundHandlers.id,
+          db.outboundHandlerGroupRelations.handlerId,
+        ),
+      );
 
   $$OutboundHandlerGroupRelationsTableProcessedTableManager
-      get outboundHandlerGroupRelationsRefs {
+  get outboundHandlerGroupRelationsRefs {
     final manager = $$OutboundHandlerGroupRelationsTableTableManager(
-            $_db, $_db.outboundHandlerGroupRelations)
-        .filter((f) => f.handlerId.id.sqlEquals($_itemColumn<int>('id')!));
+      $_db,
+      $_db.outboundHandlerGroupRelations,
+    ).filter((f) => f.handlerId.id.sqlEquals($_itemColumn<int>('id')!));
 
-    final cache = $_typedResult
-        .readTableOrNull(_outboundHandlerGroupRelationsRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(
+      _outboundHandlerGroupRelationsRefsTable($_db),
+    );
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
+      manager.$state.copyWith(prefetchedData: cache),
+    );
   }
 
-  static MultiTypedResultKey<$SelectorHandlerRelationsTable,
-      List<SelectorHandlerRelation>> _selectorHandlerRelationsRefsTable(
-          _$AppDatabase db) =>
-      MultiTypedResultKey.fromTable(db.selectorHandlerRelations,
-          aliasName: $_aliasNameGenerator(
-              db.outboundHandlers.id, db.selectorHandlerRelations.handlerId));
+  static MultiTypedResultKey<
+    $SelectorHandlerRelationsTable,
+    List<SelectorHandlerRelation>
+  >
+  _selectorHandlerRelationsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.selectorHandlerRelations,
+        aliasName: $_aliasNameGenerator(
+          db.outboundHandlers.id,
+          db.selectorHandlerRelations.handlerId,
+        ),
+      );
 
   $$SelectorHandlerRelationsTableProcessedTableManager
-      get selectorHandlerRelationsRefs {
+  get selectorHandlerRelationsRefs {
     final manager = $$SelectorHandlerRelationsTableTableManager(
-            $_db, $_db.selectorHandlerRelations)
-        .filter((f) => f.handlerId.id.sqlEquals($_itemColumn<int>('id')!));
+      $_db,
+      $_db.selectorHandlerRelations,
+    ).filter((f) => f.handlerId.id.sqlEquals($_itemColumn<int>('id')!));
 
-    final cache =
-        $_typedResult.readTableOrNull(_selectorHandlerRelationsRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(
+      _selectorHandlerRelationsRefsTable($_db),
+    );
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
+      manager.$state.copyWith(prefetchedData: cache),
+    );
   }
 }
 
@@ -5499,114 +6667,152 @@ class $$OutboundHandlersTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<bool> get selected => $composableBuilder(
-      column: $table.selected, builder: (column) => ColumnFilters(column));
+    column: $table.selected,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get countryCode => $composableBuilder(
-      column: $table.countryCode, builder: (column) => ColumnFilters(column));
+    column: $table.countryCode,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get sni => $composableBuilder(
-      column: $table.sni, builder: (column) => ColumnFilters(column));
+    column: $table.sni,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<double> get speed => $composableBuilder(
-      column: $table.speed, builder: (column) => ColumnFilters(column));
+    column: $table.speed,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<int> get speedTestTime => $composableBuilder(
-      column: $table.speedTestTime, builder: (column) => ColumnFilters(column));
+    column: $table.speedTestTime,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<int> get ping => $composableBuilder(
-      column: $table.ping, builder: (column) => ColumnFilters(column));
+    column: $table.ping,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<int> get pingTestTime => $composableBuilder(
-      column: $table.pingTestTime, builder: (column) => ColumnFilters(column));
+    column: $table.pingTestTime,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<int> get ok => $composableBuilder(
-      column: $table.ok, builder: (column) => ColumnFilters(column));
+    column: $table.ok,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get serverIp => $composableBuilder(
-      column: $table.serverIp, builder: (column) => ColumnFilters(column));
+    column: $table.serverIp,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<HandlerConfig, HandlerConfig, Uint8List>
-      get config => $composableBuilder(
-          column: $table.config,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+  get config => $composableBuilder(
+    column: $table.config,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
   ColumnFilters<int> get support6 => $composableBuilder(
-      column: $table.support6, builder: (column) => ColumnFilters(column));
+    column: $table.support6,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<int> get support6TestTime => $composableBuilder(
-      column: $table.support6TestTime,
-      builder: (column) => ColumnFilters(column));
+    column: $table.support6TestTime,
+    builder: (column) => ColumnFilters(column),
+  );
 
   $$SubscriptionsTableFilterComposer get subId {
     final $$SubscriptionsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.subId,
-        referencedTable: $db.subscriptions,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$SubscriptionsTableFilterComposer(
-              $db: $db,
-              $table: $db.subscriptions,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.subId,
+      referencedTable: $db.subscriptions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SubscriptionsTableFilterComposer(
+            $db: $db,
+            $table: $db.subscriptions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 
   Expression<bool> outboundHandlerGroupRelationsRefs(
-      Expression<bool> Function(
-              $$OutboundHandlerGroupRelationsTableFilterComposer f)
-          f) {
+    Expression<bool> Function(
+      $$OutboundHandlerGroupRelationsTableFilterComposer f,
+    )
+    f,
+  ) {
     final $$OutboundHandlerGroupRelationsTableFilterComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.id,
-            referencedTable: $db.outboundHandlerGroupRelations,
-            getReferencedColumn: (t) => t.handlerId,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$OutboundHandlerGroupRelationsTableFilterComposer(
-                  $db: $db,
-                  $table: $db.outboundHandlerGroupRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.outboundHandlerGroupRelations,
+          getReferencedColumn: (t) => t.handlerId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$OutboundHandlerGroupRelationsTableFilterComposer(
+                $db: $db,
+                $table: $db.outboundHandlerGroupRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 
   Expression<bool> selectorHandlerRelationsRefs(
-      Expression<bool> Function($$SelectorHandlerRelationsTableFilterComposer f)
-          f) {
+    Expression<bool> Function($$SelectorHandlerRelationsTableFilterComposer f)
+    f,
+  ) {
     final $$SelectorHandlerRelationsTableFilterComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.id,
-            referencedTable: $db.selectorHandlerRelations,
-            getReferencedColumn: (t) => t.handlerId,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$SelectorHandlerRelationsTableFilterComposer(
-                  $db: $db,
-                  $table: $db.selectorHandlerRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.selectorHandlerRelations,
+          getReferencedColumn: (t) => t.handlerId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SelectorHandlerRelationsTableFilterComposer(
+                $db: $db,
+                $table: $db.selectorHandlerRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
@@ -5621,67 +6827,95 @@ class $$OutboundHandlersTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<bool> get selected => $composableBuilder(
-      column: $table.selected, builder: (column) => ColumnOrderings(column));
+    column: $table.selected,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get countryCode => $composableBuilder(
-      column: $table.countryCode, builder: (column) => ColumnOrderings(column));
+    column: $table.countryCode,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get sni => $composableBuilder(
-      column: $table.sni, builder: (column) => ColumnOrderings(column));
+    column: $table.sni,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<double> get speed => $composableBuilder(
-      column: $table.speed, builder: (column) => ColumnOrderings(column));
+    column: $table.speed,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get speedTestTime => $composableBuilder(
-      column: $table.speedTestTime,
-      builder: (column) => ColumnOrderings(column));
+    column: $table.speedTestTime,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get ping => $composableBuilder(
-      column: $table.ping, builder: (column) => ColumnOrderings(column));
+    column: $table.ping,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get pingTestTime => $composableBuilder(
-      column: $table.pingTestTime,
-      builder: (column) => ColumnOrderings(column));
+    column: $table.pingTestTime,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get ok => $composableBuilder(
-      column: $table.ok, builder: (column) => ColumnOrderings(column));
+    column: $table.ok,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get serverIp => $composableBuilder(
-      column: $table.serverIp, builder: (column) => ColumnOrderings(column));
+    column: $table.serverIp,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<Uint8List> get config => $composableBuilder(
-      column: $table.config, builder: (column) => ColumnOrderings(column));
+    column: $table.config,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get support6 => $composableBuilder(
-      column: $table.support6, builder: (column) => ColumnOrderings(column));
+    column: $table.support6,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get support6TestTime => $composableBuilder(
-      column: $table.support6TestTime,
-      builder: (column) => ColumnOrderings(column));
+    column: $table.support6TestTime,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   $$SubscriptionsTableOrderingComposer get subId {
     final $$SubscriptionsTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.subId,
-        referencedTable: $db.subscriptions,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$SubscriptionsTableOrderingComposer(
-              $db: $db,
-              $table: $db.subscriptions,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.subId,
+      referencedTable: $db.subscriptions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SubscriptionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.subscriptions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
@@ -5705,7 +6939,9 @@ class $$OutboundHandlersTableAnnotationComposer
       $composableBuilder(column: $table.selected, builder: (column) => column);
 
   GeneratedColumn<String> get countryCode => $composableBuilder(
-      column: $table.countryCode, builder: (column) => column);
+    column: $table.countryCode,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get sni =>
       $composableBuilder(column: $table.sni, builder: (column) => column);
@@ -5714,13 +6950,17 @@ class $$OutboundHandlersTableAnnotationComposer
       $composableBuilder(column: $table.speed, builder: (column) => column);
 
   GeneratedColumn<int> get speedTestTime => $composableBuilder(
-      column: $table.speedTestTime, builder: (column) => column);
+    column: $table.speedTestTime,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<int> get ping =>
       $composableBuilder(column: $table.ping, builder: (column) => column);
 
   GeneratedColumn<int> get pingTestTime => $composableBuilder(
-      column: $table.pingTestTime, builder: (column) => column);
+    column: $table.pingTestTime,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<int> get ok =>
       $composableBuilder(column: $table.ok, builder: (column) => column);
@@ -5735,95 +6975,114 @@ class $$OutboundHandlersTableAnnotationComposer
       $composableBuilder(column: $table.support6, builder: (column) => column);
 
   GeneratedColumn<int> get support6TestTime => $composableBuilder(
-      column: $table.support6TestTime, builder: (column) => column);
+    column: $table.support6TestTime,
+    builder: (column) => column,
+  );
 
   $$SubscriptionsTableAnnotationComposer get subId {
     final $$SubscriptionsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.subId,
-        referencedTable: $db.subscriptions,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$SubscriptionsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.subscriptions,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.subId,
+      referencedTable: $db.subscriptions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SubscriptionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.subscriptions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 
   Expression<T> outboundHandlerGroupRelationsRefs<T extends Object>(
-      Expression<T> Function(
-              $$OutboundHandlerGroupRelationsTableAnnotationComposer a)
-          f) {
+    Expression<T> Function(
+      $$OutboundHandlerGroupRelationsTableAnnotationComposer a,
+    )
+    f,
+  ) {
     final $$OutboundHandlerGroupRelationsTableAnnotationComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.id,
-            referencedTable: $db.outboundHandlerGroupRelations,
-            getReferencedColumn: (t) => t.handlerId,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$OutboundHandlerGroupRelationsTableAnnotationComposer(
-                  $db: $db,
-                  $table: $db.outboundHandlerGroupRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.outboundHandlerGroupRelations,
+          getReferencedColumn: (t) => t.handlerId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$OutboundHandlerGroupRelationsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.outboundHandlerGroupRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 
   Expression<T> selectorHandlerRelationsRefs<T extends Object>(
-      Expression<T> Function(
-              $$SelectorHandlerRelationsTableAnnotationComposer a)
-          f) {
+    Expression<T> Function($$SelectorHandlerRelationsTableAnnotationComposer a)
+    f,
+  ) {
     final $$SelectorHandlerRelationsTableAnnotationComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.id,
-            referencedTable: $db.selectorHandlerRelations,
-            getReferencedColumn: (t) => t.handlerId,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$SelectorHandlerRelationsTableAnnotationComposer(
-                  $db: $db,
-                  $table: $db.selectorHandlerRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.selectorHandlerRelations,
+          getReferencedColumn: (t) => t.handlerId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SelectorHandlerRelationsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.selectorHandlerRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
 
-class $$OutboundHandlersTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $OutboundHandlersTable,
-    OutboundHandler,
-    $$OutboundHandlersTableFilterComposer,
-    $$OutboundHandlersTableOrderingComposer,
-    $$OutboundHandlersTableAnnotationComposer,
-    $$OutboundHandlersTableCreateCompanionBuilder,
-    $$OutboundHandlersTableUpdateCompanionBuilder,
-    (OutboundHandler, $$OutboundHandlersTableReferences),
-    OutboundHandler,
-    PrefetchHooks Function(
-        {bool subId,
-        bool outboundHandlerGroupRelationsRefs,
-        bool selectorHandlerRelationsRefs})> {
+class $$OutboundHandlersTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $OutboundHandlersTable,
+          OutboundHandler,
+          $$OutboundHandlersTableFilterComposer,
+          $$OutboundHandlersTableOrderingComposer,
+          $$OutboundHandlersTableAnnotationComposer,
+          $$OutboundHandlersTableCreateCompanionBuilder,
+          $$OutboundHandlersTableUpdateCompanionBuilder,
+          (OutboundHandler, $$OutboundHandlersTableReferences),
+          OutboundHandler,
+          PrefetchHooks Function({
+            bool subId,
+            bool outboundHandlerGroupRelationsRefs,
+            bool selectorHandlerRelationsRefs,
+          })
+        > {
   $$OutboundHandlersTableTableManager(
-      _$AppDatabase db, $OutboundHandlersTable table)
-      : super(TableManagerState(
+    _$AppDatabase db,
+    $OutboundHandlersTable table,
+  ) : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -5832,227 +7091,282 @@ class $$OutboundHandlersTableTableManager extends RootTableManager<
               $$OutboundHandlersTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$OutboundHandlersTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<int> id = const Value.absent(),
-            Value<bool> selected = const Value.absent(),
-            Value<String> countryCode = const Value.absent(),
-            Value<String> sni = const Value.absent(),
-            Value<double> speed = const Value.absent(),
-            Value<int> speedTestTime = const Value.absent(),
-            Value<int> ping = const Value.absent(),
-            Value<int> pingTestTime = const Value.absent(),
-            Value<int> ok = const Value.absent(),
-            Value<String> serverIp = const Value.absent(),
-            Value<HandlerConfig> config = const Value.absent(),
-            Value<int> support6 = const Value.absent(),
-            Value<int> support6TestTime = const Value.absent(),
-            Value<int?> subId = const Value.absent(),
-          }) =>
-              OutboundHandlersCompanion(
-            updatedAt: updatedAt,
-            id: id,
-            selected: selected,
-            countryCode: countryCode,
-            sni: sni,
-            speed: speed,
-            speedTestTime: speedTestTime,
-            ping: ping,
-            pingTestTime: pingTestTime,
-            ok: ok,
-            serverIp: serverIp,
-            config: config,
-            support6: support6,
-            support6TestTime: support6TestTime,
-            subId: subId,
-          ),
-          createCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<int> id = const Value.absent(),
-            Value<bool> selected = const Value.absent(),
-            Value<String> countryCode = const Value.absent(),
-            Value<String> sni = const Value.absent(),
-            Value<double> speed = const Value.absent(),
-            Value<int> speedTestTime = const Value.absent(),
-            Value<int> ping = const Value.absent(),
-            Value<int> pingTestTime = const Value.absent(),
-            Value<int> ok = const Value.absent(),
-            Value<String> serverIp = const Value.absent(),
-            required HandlerConfig config,
-            Value<int> support6 = const Value.absent(),
-            Value<int> support6TestTime = const Value.absent(),
-            Value<int?> subId = const Value.absent(),
-          }) =>
-              OutboundHandlersCompanion.insert(
-            updatedAt: updatedAt,
-            id: id,
-            selected: selected,
-            countryCode: countryCode,
-            sni: sni,
-            speed: speed,
-            speedTestTime: speedTestTime,
-            ping: ping,
-            pingTestTime: pingTestTime,
-            ok: ok,
-            serverIp: serverIp,
-            config: config,
-            support6: support6,
-            support6TestTime: support6TestTime,
-            subId: subId,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                Value<bool> selected = const Value.absent(),
+                Value<String> countryCode = const Value.absent(),
+                Value<String> sni = const Value.absent(),
+                Value<double> speed = const Value.absent(),
+                Value<int> speedTestTime = const Value.absent(),
+                Value<int> ping = const Value.absent(),
+                Value<int> pingTestTime = const Value.absent(),
+                Value<int> ok = const Value.absent(),
+                Value<String> serverIp = const Value.absent(),
+                Value<HandlerConfig> config = const Value.absent(),
+                Value<int> support6 = const Value.absent(),
+                Value<int> support6TestTime = const Value.absent(),
+                Value<int?> subId = const Value.absent(),
+              }) => OutboundHandlersCompanion(
+                updatedAt: updatedAt,
+                id: id,
+                selected: selected,
+                countryCode: countryCode,
+                sni: sni,
+                speed: speed,
+                speedTestTime: speedTestTime,
+                ping: ping,
+                pingTestTime: pingTestTime,
+                ok: ok,
+                serverIp: serverIp,
+                config: config,
+                support6: support6,
+                support6TestTime: support6TestTime,
+                subId: subId,
+              ),
+          createCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                Value<bool> selected = const Value.absent(),
+                Value<String> countryCode = const Value.absent(),
+                Value<String> sni = const Value.absent(),
+                Value<double> speed = const Value.absent(),
+                Value<int> speedTestTime = const Value.absent(),
+                Value<int> ping = const Value.absent(),
+                Value<int> pingTestTime = const Value.absent(),
+                Value<int> ok = const Value.absent(),
+                Value<String> serverIp = const Value.absent(),
+                required HandlerConfig config,
+                Value<int> support6 = const Value.absent(),
+                Value<int> support6TestTime = const Value.absent(),
+                Value<int?> subId = const Value.absent(),
+              }) => OutboundHandlersCompanion.insert(
+                updatedAt: updatedAt,
+                id: id,
+                selected: selected,
+                countryCode: countryCode,
+                sni: sni,
+                speed: speed,
+                speedTestTime: speedTestTime,
+                ping: ping,
+                pingTestTime: pingTestTime,
+                ok: ok,
+                serverIp: serverIp,
+                config: config,
+                support6: support6,
+                support6TestTime: support6TestTime,
+                subId: subId,
+              ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$OutboundHandlersTableReferences(db, table, e)
-                  ))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$OutboundHandlersTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: (
-              {subId = false,
-              outboundHandlerGroupRelationsRefs = false,
-              selectorHandlerRelationsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (outboundHandlerGroupRelationsRefs)
-                  db.outboundHandlerGroupRelations,
-                if (selectorHandlerRelationsRefs) db.selectorHandlerRelations
-              ],
-              addJoins: <
-                  T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic>>(state) {
-                if (subId) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.subId,
-                    referencedTable:
-                        $$OutboundHandlersTableReferences._subIdTable(db),
-                    referencedColumn:
-                        $$OutboundHandlersTableReferences._subIdTable(db).id,
-                  ) as T;
-                }
+          prefetchHooksCallback:
+              ({
+                subId = false,
+                outboundHandlerGroupRelationsRefs = false,
+                selectorHandlerRelationsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (outboundHandlerGroupRelationsRefs)
+                      db.outboundHandlerGroupRelations,
+                    if (selectorHandlerRelationsRefs)
+                      db.selectorHandlerRelations,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (subId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.subId,
+                                    referencedTable:
+                                        $$OutboundHandlersTableReferences
+                                            ._subIdTable(db),
+                                    referencedColumn:
+                                        $$OutboundHandlersTableReferences
+                                            ._subIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
 
-                return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (outboundHandlerGroupRelationsRefs)
+                        await $_getPrefetchedData<
+                          OutboundHandler,
+                          $OutboundHandlersTable,
+                          OutboundHandlerGroupRelation
+                        >(
+                          currentTable: table,
+                          referencedTable: $$OutboundHandlersTableReferences
+                              ._outboundHandlerGroupRelationsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$OutboundHandlersTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).outboundHandlerGroupRelationsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.handlerId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (selectorHandlerRelationsRefs)
+                        await $_getPrefetchedData<
+                          OutboundHandler,
+                          $OutboundHandlersTable,
+                          SelectorHandlerRelation
+                        >(
+                          currentTable: table,
+                          referencedTable: $$OutboundHandlersTableReferences
+                              ._selectorHandlerRelationsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$OutboundHandlersTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).selectorHandlerRelationsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.handlerId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (outboundHandlerGroupRelationsRefs)
-                    await $_getPrefetchedData<
-                            OutboundHandler,
-                            $OutboundHandlersTable,
-                            OutboundHandlerGroupRelation>(
-                        currentTable: table,
-                        referencedTable: $$OutboundHandlersTableReferences
-                            ._outboundHandlerGroupRelationsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$OutboundHandlersTableReferences(db, table, p0)
-                                .outboundHandlerGroupRelationsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems
-                                .where((e) => e.handlerId == item.id),
-                        typedResults: items),
-                  if (selectorHandlerRelationsRefs)
-                    await $_getPrefetchedData<OutboundHandler,
-                            $OutboundHandlersTable, SelectorHandlerRelation>(
-                        currentTable: table,
-                        referencedTable: $$OutboundHandlersTableReferences
-                            ._selectorHandlerRelationsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$OutboundHandlersTableReferences(db, table, p0)
-                                .selectorHandlerRelationsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems
-                                .where((e) => e.handlerId == item.id),
-                        typedResults: items)
-                ];
-              },
-            );
-          },
-        ));
+        ),
+      );
 }
 
-typedef $$OutboundHandlersTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $OutboundHandlersTable,
-    OutboundHandler,
-    $$OutboundHandlersTableFilterComposer,
-    $$OutboundHandlersTableOrderingComposer,
-    $$OutboundHandlersTableAnnotationComposer,
-    $$OutboundHandlersTableCreateCompanionBuilder,
-    $$OutboundHandlersTableUpdateCompanionBuilder,
-    (OutboundHandler, $$OutboundHandlersTableReferences),
-    OutboundHandler,
-    PrefetchHooks Function(
-        {bool subId,
+typedef $$OutboundHandlersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $OutboundHandlersTable,
+      OutboundHandler,
+      $$OutboundHandlersTableFilterComposer,
+      $$OutboundHandlersTableOrderingComposer,
+      $$OutboundHandlersTableAnnotationComposer,
+      $$OutboundHandlersTableCreateCompanionBuilder,
+      $$OutboundHandlersTableUpdateCompanionBuilder,
+      (OutboundHandler, $$OutboundHandlersTableReferences),
+      OutboundHandler,
+      PrefetchHooks Function({
+        bool subId,
         bool outboundHandlerGroupRelationsRefs,
-        bool selectorHandlerRelationsRefs})>;
-typedef $$OutboundHandlerGroupsTableCreateCompanionBuilder
-    = OutboundHandlerGroupsCompanion Function({
-  Value<DateTime?> updatedAt,
-  required String name,
-  Value<bool> placeOnTop,
-  Value<int> rowid,
-});
-typedef $$OutboundHandlerGroupsTableUpdateCompanionBuilder
-    = OutboundHandlerGroupsCompanion Function({
-  Value<DateTime?> updatedAt,
-  Value<String> name,
-  Value<bool> placeOnTop,
-  Value<int> rowid,
-});
+        bool selectorHandlerRelationsRefs,
+      })
+    >;
+typedef $$OutboundHandlerGroupsTableCreateCompanionBuilder =
+    OutboundHandlerGroupsCompanion Function({
+      Value<DateTime?> updatedAt,
+      required String name,
+      Value<bool> placeOnTop,
+      Value<int> rowid,
+    });
+typedef $$OutboundHandlerGroupsTableUpdateCompanionBuilder =
+    OutboundHandlerGroupsCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<String> name,
+      Value<bool> placeOnTop,
+      Value<int> rowid,
+    });
 
-final class $$OutboundHandlerGroupsTableReferences extends BaseReferences<
-    _$AppDatabase, $OutboundHandlerGroupsTable, OutboundHandlerGroup> {
+final class $$OutboundHandlerGroupsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $OutboundHandlerGroupsTable,
+          OutboundHandlerGroup
+        > {
   $$OutboundHandlerGroupsTableReferences(
-      super.$_db, super.$_table, super.$_typedResult);
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
 
-  static MultiTypedResultKey<$OutboundHandlerGroupRelationsTable,
-          List<OutboundHandlerGroupRelation>>
-      _outboundHandlerGroupRelationsRefsTable(_$AppDatabase db) =>
-          MultiTypedResultKey.fromTable(db.outboundHandlerGroupRelations,
-              aliasName: $_aliasNameGenerator(db.outboundHandlerGroups.name,
-                  db.outboundHandlerGroupRelations.groupName));
+  static MultiTypedResultKey<
+    $OutboundHandlerGroupRelationsTable,
+    List<OutboundHandlerGroupRelation>
+  >
+  _outboundHandlerGroupRelationsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.outboundHandlerGroupRelations,
+        aliasName: $_aliasNameGenerator(
+          db.outboundHandlerGroups.name,
+          db.outboundHandlerGroupRelations.groupName,
+        ),
+      );
 
   $$OutboundHandlerGroupRelationsTableProcessedTableManager
-      get outboundHandlerGroupRelationsRefs {
+  get outboundHandlerGroupRelationsRefs {
     final manager = $$OutboundHandlerGroupRelationsTableTableManager(
-            $_db, $_db.outboundHandlerGroupRelations)
-        .filter(
-            (f) => f.groupName.name.sqlEquals($_itemColumn<String>('name')!));
+      $_db,
+      $_db.outboundHandlerGroupRelations,
+    ).filter((f) => f.groupName.name.sqlEquals($_itemColumn<String>('name')!));
 
-    final cache = $_typedResult
-        .readTableOrNull(_outboundHandlerGroupRelationsRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(
+      _outboundHandlerGroupRelationsRefsTable($_db),
+    );
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
+      manager.$state.copyWith(prefetchedData: cache),
+    );
   }
 
-  static MultiTypedResultKey<$SelectorHandlerGroupRelationsTable,
-          List<SelectorHandlerGroupRelation>>
-      _selectorHandlerGroupRelationsRefsTable(_$AppDatabase db) =>
-          MultiTypedResultKey.fromTable(db.selectorHandlerGroupRelations,
-              aliasName: $_aliasNameGenerator(db.outboundHandlerGroups.name,
-                  db.selectorHandlerGroupRelations.groupName));
+  static MultiTypedResultKey<
+    $SelectorHandlerGroupRelationsTable,
+    List<SelectorHandlerGroupRelation>
+  >
+  _selectorHandlerGroupRelationsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.selectorHandlerGroupRelations,
+        aliasName: $_aliasNameGenerator(
+          db.outboundHandlerGroups.name,
+          db.selectorHandlerGroupRelations.groupName,
+        ),
+      );
 
   $$SelectorHandlerGroupRelationsTableProcessedTableManager
-      get selectorHandlerGroupRelationsRefs {
+  get selectorHandlerGroupRelationsRefs {
     final manager = $$SelectorHandlerGroupRelationsTableTableManager(
-            $_db, $_db.selectorHandlerGroupRelations)
-        .filter(
-            (f) => f.groupName.name.sqlEquals($_itemColumn<String>('name')!));
+      $_db,
+      $_db.selectorHandlerGroupRelations,
+    ).filter((f) => f.groupName.name.sqlEquals($_itemColumn<String>('name')!));
 
-    final cache = $_typedResult
-        .readTableOrNull(_selectorHandlerGroupRelationsRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(
+      _selectorHandlerGroupRelationsRefsTable($_db),
+    );
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
+      manager.$state.copyWith(prefetchedData: cache),
+    );
   }
 }
 
@@ -6066,59 +7380,75 @@ class $$OutboundHandlerGroupsTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<bool> get placeOnTop => $composableBuilder(
-      column: $table.placeOnTop, builder: (column) => ColumnFilters(column));
+    column: $table.placeOnTop,
+    builder: (column) => ColumnFilters(column),
+  );
 
   Expression<bool> outboundHandlerGroupRelationsRefs(
-      Expression<bool> Function(
-              $$OutboundHandlerGroupRelationsTableFilterComposer f)
-          f) {
+    Expression<bool> Function(
+      $$OutboundHandlerGroupRelationsTableFilterComposer f,
+    )
+    f,
+  ) {
     final $$OutboundHandlerGroupRelationsTableFilterComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.name,
-            referencedTable: $db.outboundHandlerGroupRelations,
-            getReferencedColumn: (t) => t.groupName,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$OutboundHandlerGroupRelationsTableFilterComposer(
-                  $db: $db,
-                  $table: $db.outboundHandlerGroupRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.name,
+          referencedTable: $db.outboundHandlerGroupRelations,
+          getReferencedColumn: (t) => t.groupName,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$OutboundHandlerGroupRelationsTableFilterComposer(
+                $db: $db,
+                $table: $db.outboundHandlerGroupRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 
   Expression<bool> selectorHandlerGroupRelationsRefs(
-      Expression<bool> Function(
-              $$SelectorHandlerGroupRelationsTableFilterComposer f)
-          f) {
+    Expression<bool> Function(
+      $$SelectorHandlerGroupRelationsTableFilterComposer f,
+    )
+    f,
+  ) {
     final $$SelectorHandlerGroupRelationsTableFilterComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.name,
-            referencedTable: $db.selectorHandlerGroupRelations,
-            getReferencedColumn: (t) => t.groupName,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$SelectorHandlerGroupRelationsTableFilterComposer(
-                  $db: $db,
-                  $table: $db.selectorHandlerGroupRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.name,
+          referencedTable: $db.selectorHandlerGroupRelations,
+          getReferencedColumn: (t) => t.groupName,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SelectorHandlerGroupRelationsTableFilterComposer(
+                $db: $db,
+                $table: $db.selectorHandlerGroupRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
@@ -6133,13 +7463,19 @@ class $$OutboundHandlerGroupsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<bool> get placeOnTop => $composableBuilder(
-      column: $table.placeOnTop, builder: (column) => ColumnOrderings(column));
+    column: $table.placeOnTop,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$OutboundHandlerGroupsTableAnnotationComposer
@@ -6158,233 +7494,294 @@ class $$OutboundHandlerGroupsTableAnnotationComposer
       $composableBuilder(column: $table.name, builder: (column) => column);
 
   GeneratedColumn<bool> get placeOnTop => $composableBuilder(
-      column: $table.placeOnTop, builder: (column) => column);
+    column: $table.placeOnTop,
+    builder: (column) => column,
+  );
 
   Expression<T> outboundHandlerGroupRelationsRefs<T extends Object>(
-      Expression<T> Function(
-              $$OutboundHandlerGroupRelationsTableAnnotationComposer a)
-          f) {
+    Expression<T> Function(
+      $$OutboundHandlerGroupRelationsTableAnnotationComposer a,
+    )
+    f,
+  ) {
     final $$OutboundHandlerGroupRelationsTableAnnotationComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.name,
-            referencedTable: $db.outboundHandlerGroupRelations,
-            getReferencedColumn: (t) => t.groupName,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$OutboundHandlerGroupRelationsTableAnnotationComposer(
-                  $db: $db,
-                  $table: $db.outboundHandlerGroupRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.name,
+          referencedTable: $db.outboundHandlerGroupRelations,
+          getReferencedColumn: (t) => t.groupName,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$OutboundHandlerGroupRelationsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.outboundHandlerGroupRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 
   Expression<T> selectorHandlerGroupRelationsRefs<T extends Object>(
-      Expression<T> Function(
-              $$SelectorHandlerGroupRelationsTableAnnotationComposer a)
-          f) {
+    Expression<T> Function(
+      $$SelectorHandlerGroupRelationsTableAnnotationComposer a,
+    )
+    f,
+  ) {
     final $$SelectorHandlerGroupRelationsTableAnnotationComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.name,
-            referencedTable: $db.selectorHandlerGroupRelations,
-            getReferencedColumn: (t) => t.groupName,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$SelectorHandlerGroupRelationsTableAnnotationComposer(
-                  $db: $db,
-                  $table: $db.selectorHandlerGroupRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.name,
+          referencedTable: $db.selectorHandlerGroupRelations,
+          getReferencedColumn: (t) => t.groupName,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SelectorHandlerGroupRelationsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.selectorHandlerGroupRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
 
-class $$OutboundHandlerGroupsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $OutboundHandlerGroupsTable,
-    OutboundHandlerGroup,
-    $$OutboundHandlerGroupsTableFilterComposer,
-    $$OutboundHandlerGroupsTableOrderingComposer,
-    $$OutboundHandlerGroupsTableAnnotationComposer,
-    $$OutboundHandlerGroupsTableCreateCompanionBuilder,
-    $$OutboundHandlerGroupsTableUpdateCompanionBuilder,
-    (OutboundHandlerGroup, $$OutboundHandlerGroupsTableReferences),
-    OutboundHandlerGroup,
-    PrefetchHooks Function(
-        {bool outboundHandlerGroupRelationsRefs,
-        bool selectorHandlerGroupRelationsRefs})> {
+class $$OutboundHandlerGroupsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $OutboundHandlerGroupsTable,
+          OutboundHandlerGroup,
+          $$OutboundHandlerGroupsTableFilterComposer,
+          $$OutboundHandlerGroupsTableOrderingComposer,
+          $$OutboundHandlerGroupsTableAnnotationComposer,
+          $$OutboundHandlerGroupsTableCreateCompanionBuilder,
+          $$OutboundHandlerGroupsTableUpdateCompanionBuilder,
+          (OutboundHandlerGroup, $$OutboundHandlerGroupsTableReferences),
+          OutboundHandlerGroup,
+          PrefetchHooks Function({
+            bool outboundHandlerGroupRelationsRefs,
+            bool selectorHandlerGroupRelationsRefs,
+          })
+        > {
   $$OutboundHandlerGroupsTableTableManager(
-      _$AppDatabase db, $OutboundHandlerGroupsTable table)
-      : super(TableManagerState(
+    _$AppDatabase db,
+    $OutboundHandlerGroupsTable table,
+  ) : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
               $$OutboundHandlerGroupsTableFilterComposer(
-                  $db: db, $table: table),
+                $db: db,
+                $table: table,
+              ),
           createOrderingComposer: () =>
               $$OutboundHandlerGroupsTableOrderingComposer(
-                  $db: db, $table: table),
+                $db: db,
+                $table: table,
+              ),
           createComputedFieldComposer: () =>
               $$OutboundHandlerGroupsTableAnnotationComposer(
-                  $db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<bool> placeOnTop = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              OutboundHandlerGroupsCompanion(
-            updatedAt: updatedAt,
-            name: name,
-            placeOnTop: placeOnTop,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            required String name,
-            Value<bool> placeOnTop = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              OutboundHandlerGroupsCompanion.insert(
-            updatedAt: updatedAt,
-            name: name,
-            placeOnTop: placeOnTop,
-            rowid: rowid,
-          ),
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<bool> placeOnTop = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OutboundHandlerGroupsCompanion(
+                updatedAt: updatedAt,
+                name: name,
+                placeOnTop: placeOnTop,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                required String name,
+                Value<bool> placeOnTop = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OutboundHandlerGroupsCompanion.insert(
+                updatedAt: updatedAt,
+                name: name,
+                placeOnTop: placeOnTop,
+                rowid: rowid,
+              ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$OutboundHandlerGroupsTableReferences(db, table, e)
-                  ))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$OutboundHandlerGroupsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: (
-              {outboundHandlerGroupRelationsRefs = false,
-              selectorHandlerGroupRelationsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (outboundHandlerGroupRelationsRefs)
-                  db.outboundHandlerGroupRelations,
-                if (selectorHandlerGroupRelationsRefs)
-                  db.selectorHandlerGroupRelations
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (outboundHandlerGroupRelationsRefs)
-                    await $_getPrefetchedData<
-                            OutboundHandlerGroup,
-                            $OutboundHandlerGroupsTable,
-                            OutboundHandlerGroupRelation>(
-                        currentTable: table,
-                        referencedTable: $$OutboundHandlerGroupsTableReferences
-                            ._outboundHandlerGroupRelationsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$OutboundHandlerGroupsTableReferences(
-                                    db, table, p0)
-                                .outboundHandlerGroupRelationsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems
-                                .where((e) => e.groupName == item.name),
-                        typedResults: items),
-                  if (selectorHandlerGroupRelationsRefs)
-                    await $_getPrefetchedData<
-                            OutboundHandlerGroup,
-                            $OutboundHandlerGroupsTable,
-                            SelectorHandlerGroupRelation>(
-                        currentTable: table,
-                        referencedTable: $$OutboundHandlerGroupsTableReferences
-                            ._selectorHandlerGroupRelationsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$OutboundHandlerGroupsTableReferences(
-                                    db, table, p0)
-                                .selectorHandlerGroupRelationsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems
-                                .where((e) => e.groupName == item.name),
-                        typedResults: items)
-                ];
+          prefetchHooksCallback:
+              ({
+                outboundHandlerGroupRelationsRefs = false,
+                selectorHandlerGroupRelationsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (outboundHandlerGroupRelationsRefs)
+                      db.outboundHandlerGroupRelations,
+                    if (selectorHandlerGroupRelationsRefs)
+                      db.selectorHandlerGroupRelations,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (outboundHandlerGroupRelationsRefs)
+                        await $_getPrefetchedData<
+                          OutboundHandlerGroup,
+                          $OutboundHandlerGroupsTable,
+                          OutboundHandlerGroupRelation
+                        >(
+                          currentTable: table,
+                          referencedTable:
+                              $$OutboundHandlerGroupsTableReferences
+                                  ._outboundHandlerGroupRelationsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$OutboundHandlerGroupsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).outboundHandlerGroupRelationsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.groupName == item.name,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (selectorHandlerGroupRelationsRefs)
+                        await $_getPrefetchedData<
+                          OutboundHandlerGroup,
+                          $OutboundHandlerGroupsTable,
+                          SelectorHandlerGroupRelation
+                        >(
+                          currentTable: table,
+                          referencedTable:
+                              $$OutboundHandlerGroupsTableReferences
+                                  ._selectorHandlerGroupRelationsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$OutboundHandlerGroupsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).selectorHandlerGroupRelationsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.groupName == item.name,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
-        ));
+        ),
+      );
 }
 
-typedef $$OutboundHandlerGroupsTableProcessedTableManager
-    = ProcessedTableManager<
-        _$AppDatabase,
-        $OutboundHandlerGroupsTable,
-        OutboundHandlerGroup,
-        $$OutboundHandlerGroupsTableFilterComposer,
-        $$OutboundHandlerGroupsTableOrderingComposer,
-        $$OutboundHandlerGroupsTableAnnotationComposer,
-        $$OutboundHandlerGroupsTableCreateCompanionBuilder,
-        $$OutboundHandlerGroupsTableUpdateCompanionBuilder,
-        (OutboundHandlerGroup, $$OutboundHandlerGroupsTableReferences),
-        OutboundHandlerGroup,
-        PrefetchHooks Function(
-            {bool outboundHandlerGroupRelationsRefs,
-            bool selectorHandlerGroupRelationsRefs})>;
-typedef $$OutboundHandlerGroupRelationsTableCreateCompanionBuilder
-    = OutboundHandlerGroupRelationsCompanion Function({
-  required String groupName,
-  required int handlerId,
-  Value<int> rowid,
-});
-typedef $$OutboundHandlerGroupRelationsTableUpdateCompanionBuilder
-    = OutboundHandlerGroupRelationsCompanion Function({
-  Value<String> groupName,
-  Value<int> handlerId,
-  Value<int> rowid,
-});
+typedef $$OutboundHandlerGroupsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $OutboundHandlerGroupsTable,
+      OutboundHandlerGroup,
+      $$OutboundHandlerGroupsTableFilterComposer,
+      $$OutboundHandlerGroupsTableOrderingComposer,
+      $$OutboundHandlerGroupsTableAnnotationComposer,
+      $$OutboundHandlerGroupsTableCreateCompanionBuilder,
+      $$OutboundHandlerGroupsTableUpdateCompanionBuilder,
+      (OutboundHandlerGroup, $$OutboundHandlerGroupsTableReferences),
+      OutboundHandlerGroup,
+      PrefetchHooks Function({
+        bool outboundHandlerGroupRelationsRefs,
+        bool selectorHandlerGroupRelationsRefs,
+      })
+    >;
+typedef $$OutboundHandlerGroupRelationsTableCreateCompanionBuilder =
+    OutboundHandlerGroupRelationsCompanion Function({
+      required String groupName,
+      required int handlerId,
+      Value<int> rowid,
+    });
+typedef $$OutboundHandlerGroupRelationsTableUpdateCompanionBuilder =
+    OutboundHandlerGroupRelationsCompanion Function({
+      Value<String> groupName,
+      Value<int> handlerId,
+      Value<int> rowid,
+    });
 
 final class $$OutboundHandlerGroupRelationsTableReferences
-    extends BaseReferences<_$AppDatabase, $OutboundHandlerGroupRelationsTable,
-        OutboundHandlerGroupRelation> {
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $OutboundHandlerGroupRelationsTable,
+          OutboundHandlerGroupRelation
+        > {
   $$OutboundHandlerGroupRelationsTableReferences(
-      super.$_db, super.$_table, super.$_typedResult);
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
 
   static $OutboundHandlerGroupsTable _groupNameTable(_$AppDatabase db) =>
-      db.outboundHandlerGroups.createAlias($_aliasNameGenerator(
+      db.outboundHandlerGroups.createAlias(
+        $_aliasNameGenerator(
           db.outboundHandlerGroupRelations.groupName,
-          db.outboundHandlerGroups.name));
+          db.outboundHandlerGroups.name,
+        ),
+      );
 
   $$OutboundHandlerGroupsTableProcessedTableManager get groupName {
     final $_column = $_itemColumn<String>('group_name')!;
 
     final manager = $$OutboundHandlerGroupsTableTableManager(
-            $_db, $_db.outboundHandlerGroups)
-        .filter((f) => f.name.sqlEquals($_column));
+      $_db,
+      $_db.outboundHandlerGroups,
+    ).filter((f) => f.name.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_groupNameTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
   }
 
   static $OutboundHandlersTable _handlerIdTable(_$AppDatabase db) =>
-      db.outboundHandlers.createAlias($_aliasNameGenerator(
-          db.outboundHandlerGroupRelations.handlerId, db.outboundHandlers.id));
+      db.outboundHandlers.createAlias(
+        $_aliasNameGenerator(
+          db.outboundHandlerGroupRelations.handlerId,
+          db.outboundHandlers.id,
+        ),
+      );
 
   $$OutboundHandlersTableProcessedTableManager get handlerId {
     final $_column = $_itemColumn<int>('handler_id')!;
 
-    final manager =
-        $$OutboundHandlersTableTableManager($_db, $_db.outboundHandlers)
-            .filter((f) => f.id.sqlEquals($_column));
+    final manager = $$OutboundHandlersTableTableManager(
+      $_db,
+      $_db.outboundHandlers,
+    ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_handlerIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
   }
 }
 
@@ -6400,41 +7797,47 @@ class $$OutboundHandlerGroupRelationsTableFilterComposer
   $$OutboundHandlerGroupsTableFilterComposer get groupName {
     final $$OutboundHandlerGroupsTableFilterComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.groupName,
-            referencedTable: $db.outboundHandlerGroups,
-            getReferencedColumn: (t) => t.name,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$OutboundHandlerGroupsTableFilterComposer(
-                  $db: $db,
-                  $table: $db.outboundHandlerGroups,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.groupName,
+          referencedTable: $db.outboundHandlerGroups,
+          getReferencedColumn: (t) => t.name,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$OutboundHandlerGroupsTableFilterComposer(
+                $db: $db,
+                $table: $db.outboundHandlerGroups,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return composer;
   }
 
   $$OutboundHandlersTableFilterComposer get handlerId {
     final $$OutboundHandlersTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.handlerId,
-        referencedTable: $db.outboundHandlers,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$OutboundHandlersTableFilterComposer(
-              $db: $db,
-              $table: $db.outboundHandlers,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.handlerId,
+      referencedTable: $db.outboundHandlers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OutboundHandlersTableFilterComposer(
+            $db: $db,
+            $table: $db.outboundHandlers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
@@ -6451,41 +7854,47 @@ class $$OutboundHandlerGroupRelationsTableOrderingComposer
   $$OutboundHandlerGroupsTableOrderingComposer get groupName {
     final $$OutboundHandlerGroupsTableOrderingComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.groupName,
-            referencedTable: $db.outboundHandlerGroups,
-            getReferencedColumn: (t) => t.name,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$OutboundHandlerGroupsTableOrderingComposer(
-                  $db: $db,
-                  $table: $db.outboundHandlerGroups,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.groupName,
+          referencedTable: $db.outboundHandlerGroups,
+          getReferencedColumn: (t) => t.name,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$OutboundHandlerGroupsTableOrderingComposer(
+                $db: $db,
+                $table: $db.outboundHandlerGroups,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return composer;
   }
 
   $$OutboundHandlersTableOrderingComposer get handlerId {
     final $$OutboundHandlersTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.handlerId,
-        referencedTable: $db.outboundHandlers,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$OutboundHandlersTableOrderingComposer(
-              $db: $db,
-              $table: $db.outboundHandlers,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.handlerId,
+      referencedTable: $db.outboundHandlers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OutboundHandlersTableOrderingComposer(
+            $db: $db,
+            $table: $db.outboundHandlers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
@@ -6502,106 +7911,126 @@ class $$OutboundHandlerGroupRelationsTableAnnotationComposer
   $$OutboundHandlerGroupsTableAnnotationComposer get groupName {
     final $$OutboundHandlerGroupsTableAnnotationComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.groupName,
-            referencedTable: $db.outboundHandlerGroups,
-            getReferencedColumn: (t) => t.name,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$OutboundHandlerGroupsTableAnnotationComposer(
-                  $db: $db,
-                  $table: $db.outboundHandlerGroups,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.groupName,
+          referencedTable: $db.outboundHandlerGroups,
+          getReferencedColumn: (t) => t.name,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$OutboundHandlerGroupsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.outboundHandlerGroups,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return composer;
   }
 
   $$OutboundHandlersTableAnnotationComposer get handlerId {
     final $$OutboundHandlersTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.handlerId,
-        referencedTable: $db.outboundHandlers,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$OutboundHandlersTableAnnotationComposer(
-              $db: $db,
-              $table: $db.outboundHandlers,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.handlerId,
+      referencedTable: $db.outboundHandlers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OutboundHandlersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.outboundHandlers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
 
-class $$OutboundHandlerGroupRelationsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $OutboundHandlerGroupRelationsTable,
-    OutboundHandlerGroupRelation,
-    $$OutboundHandlerGroupRelationsTableFilterComposer,
-    $$OutboundHandlerGroupRelationsTableOrderingComposer,
-    $$OutboundHandlerGroupRelationsTableAnnotationComposer,
-    $$OutboundHandlerGroupRelationsTableCreateCompanionBuilder,
-    $$OutboundHandlerGroupRelationsTableUpdateCompanionBuilder,
-    (
-      OutboundHandlerGroupRelation,
-      $$OutboundHandlerGroupRelationsTableReferences
-    ),
-    OutboundHandlerGroupRelation,
-    PrefetchHooks Function({bool groupName, bool handlerId})> {
+class $$OutboundHandlerGroupRelationsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $OutboundHandlerGroupRelationsTable,
+          OutboundHandlerGroupRelation,
+          $$OutboundHandlerGroupRelationsTableFilterComposer,
+          $$OutboundHandlerGroupRelationsTableOrderingComposer,
+          $$OutboundHandlerGroupRelationsTableAnnotationComposer,
+          $$OutboundHandlerGroupRelationsTableCreateCompanionBuilder,
+          $$OutboundHandlerGroupRelationsTableUpdateCompanionBuilder,
+          (
+            OutboundHandlerGroupRelation,
+            $$OutboundHandlerGroupRelationsTableReferences,
+          ),
+          OutboundHandlerGroupRelation,
+          PrefetchHooks Function({bool groupName, bool handlerId})
+        > {
   $$OutboundHandlerGroupRelationsTableTableManager(
-      _$AppDatabase db, $OutboundHandlerGroupRelationsTable table)
-      : super(TableManagerState(
+    _$AppDatabase db,
+    $OutboundHandlerGroupRelationsTable table,
+  ) : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
               $$OutboundHandlerGroupRelationsTableFilterComposer(
-                  $db: db, $table: table),
+                $db: db,
+                $table: table,
+              ),
           createOrderingComposer: () =>
               $$OutboundHandlerGroupRelationsTableOrderingComposer(
-                  $db: db, $table: table),
+                $db: db,
+                $table: table,
+              ),
           createComputedFieldComposer: () =>
               $$OutboundHandlerGroupRelationsTableAnnotationComposer(
-                  $db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<String> groupName = const Value.absent(),
-            Value<int> handlerId = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              OutboundHandlerGroupRelationsCompanion(
-            groupName: groupName,
-            handlerId: handlerId,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            required String groupName,
-            required int handlerId,
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              OutboundHandlerGroupRelationsCompanion.insert(
-            groupName: groupName,
-            handlerId: handlerId,
-            rowid: rowid,
-          ),
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> groupName = const Value.absent(),
+                Value<int> handlerId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OutboundHandlerGroupRelationsCompanion(
+                groupName: groupName,
+                handlerId: handlerId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String groupName,
+                required int handlerId,
+                Value<int> rowid = const Value.absent(),
+              }) => OutboundHandlerGroupRelationsCompanion.insert(
+                groupName: groupName,
+                handlerId: handlerId,
+                rowid: rowid,
+              ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$OutboundHandlerGroupRelationsTableReferences(db, table, e)
-                  ))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$OutboundHandlerGroupRelationsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: ({groupName = false, handlerId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
-              addJoins: <
-                  T extends TableManagerState<
+              addJoins:
+                  <
+                    T extends TableManagerState<
                       dynamic,
                       dynamic,
                       dynamic,
@@ -6612,68 +8041,75 @@ class $$OutboundHandlerGroupRelationsTableTableManager extends RootTableManager<
                       dynamic,
                       dynamic,
                       dynamic,
-                      dynamic>>(state) {
-                if (groupName) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.groupName,
-                    referencedTable:
-                        $$OutboundHandlerGroupRelationsTableReferences
-                            ._groupNameTable(db),
-                    referencedColumn:
-                        $$OutboundHandlerGroupRelationsTableReferences
-                            ._groupNameTable(db)
-                            .name,
-                  ) as T;
-                }
-                if (handlerId) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.handlerId,
-                    referencedTable:
-                        $$OutboundHandlerGroupRelationsTableReferences
-                            ._handlerIdTable(db),
-                    referencedColumn:
-                        $$OutboundHandlerGroupRelationsTableReferences
-                            ._handlerIdTable(db)
-                            .id,
-                  ) as T;
-                }
+                      dynamic
+                    >
+                  >(state) {
+                    if (groupName) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.groupName,
+                                referencedTable:
+                                    $$OutboundHandlerGroupRelationsTableReferences
+                                        ._groupNameTable(db),
+                                referencedColumn:
+                                    $$OutboundHandlerGroupRelationsTableReferences
+                                        ._groupNameTable(db)
+                                        .name,
+                              )
+                              as T;
+                    }
+                    if (handlerId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.handlerId,
+                                referencedTable:
+                                    $$OutboundHandlerGroupRelationsTableReferences
+                                        ._handlerIdTable(db),
+                                referencedColumn:
+                                    $$OutboundHandlerGroupRelationsTableReferences
+                                        ._handlerIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
 
-                return state;
-              },
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [];
               },
             );
           },
-        ));
+        ),
+      );
 }
 
-typedef $$OutboundHandlerGroupRelationsTableProcessedTableManager
-    = ProcessedTableManager<
-        _$AppDatabase,
-        $OutboundHandlerGroupRelationsTable,
+typedef $$OutboundHandlerGroupRelationsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $OutboundHandlerGroupRelationsTable,
+      OutboundHandlerGroupRelation,
+      $$OutboundHandlerGroupRelationsTableFilterComposer,
+      $$OutboundHandlerGroupRelationsTableOrderingComposer,
+      $$OutboundHandlerGroupRelationsTableAnnotationComposer,
+      $$OutboundHandlerGroupRelationsTableCreateCompanionBuilder,
+      $$OutboundHandlerGroupRelationsTableUpdateCompanionBuilder,
+      (
         OutboundHandlerGroupRelation,
-        $$OutboundHandlerGroupRelationsTableFilterComposer,
-        $$OutboundHandlerGroupRelationsTableOrderingComposer,
-        $$OutboundHandlerGroupRelationsTableAnnotationComposer,
-        $$OutboundHandlerGroupRelationsTableCreateCompanionBuilder,
-        $$OutboundHandlerGroupRelationsTableUpdateCompanionBuilder,
-        (
-          OutboundHandlerGroupRelation,
-          $$OutboundHandlerGroupRelationsTableReferences
-        ),
-        OutboundHandlerGroupRelation,
-        PrefetchHooks Function({bool groupName, bool handlerId})>;
-typedef $$DnsRecordsTableCreateCompanionBuilder = DnsRecordsCompanion Function({
-  Value<int> id,
-  required dns.Record dnsRecord,
-});
-typedef $$DnsRecordsTableUpdateCompanionBuilder = DnsRecordsCompanion Function({
-  Value<int> id,
-  Value<dns.Record> dnsRecord,
-});
+        $$OutboundHandlerGroupRelationsTableReferences,
+      ),
+      OutboundHandlerGroupRelation,
+      PrefetchHooks Function({bool groupName, bool handlerId})
+    >;
+typedef $$DnsRecordsTableCreateCompanionBuilder =
+    DnsRecordsCompanion Function({
+      Value<int> id,
+      required dns.Record dnsRecord,
+    });
+typedef $$DnsRecordsTableUpdateCompanionBuilder =
+    DnsRecordsCompanion Function({Value<int> id, Value<dns.Record> dnsRecord});
 
 class $$DnsRecordsTableFilterComposer
     extends Composer<_$AppDatabase, $DnsRecordsTable> {
@@ -6685,12 +8121,15 @@ class $$DnsRecordsTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<dns.Record, dns.Record, Uint8List>
-      get dnsRecord => $composableBuilder(
-          column: $table.dnsRecord,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+  get dnsRecord => $composableBuilder(
+    column: $table.dnsRecord,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 }
 
 class $$DnsRecordsTableOrderingComposer
@@ -6703,10 +8142,14 @@ class $$DnsRecordsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<Uint8List> get dnsRecord => $composableBuilder(
-      column: $table.dnsRecord, builder: (column) => ColumnOrderings(column));
+    column: $table.dnsRecord,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$DnsRecordsTableAnnotationComposer
@@ -6725,20 +8168,27 @@ class $$DnsRecordsTableAnnotationComposer
       $composableBuilder(column: $table.dnsRecord, builder: (column) => column);
 }
 
-class $$DnsRecordsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $DnsRecordsTable,
-    DnsRecord,
-    $$DnsRecordsTableFilterComposer,
-    $$DnsRecordsTableOrderingComposer,
-    $$DnsRecordsTableAnnotationComposer,
-    $$DnsRecordsTableCreateCompanionBuilder,
-    $$DnsRecordsTableUpdateCompanionBuilder,
-    (DnsRecord, BaseReferences<_$AppDatabase, $DnsRecordsTable, DnsRecord>),
-    DnsRecord,
-    PrefetchHooks Function()> {
+class $$DnsRecordsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DnsRecordsTable,
+          DnsRecord,
+          $$DnsRecordsTableFilterComposer,
+          $$DnsRecordsTableOrderingComposer,
+          $$DnsRecordsTableAnnotationComposer,
+          $$DnsRecordsTableCreateCompanionBuilder,
+          $$DnsRecordsTableUpdateCompanionBuilder,
+          (
+            DnsRecord,
+            BaseReferences<_$AppDatabase, $DnsRecordsTable, DnsRecord>,
+          ),
+          DnsRecord,
+          PrefetchHooks Function()
+        > {
   $$DnsRecordsTableTableManager(_$AppDatabase db, $DnsRecordsTable table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -6747,80 +8197,86 @@ class $$DnsRecordsTableTableManager extends RootTableManager<
               $$DnsRecordsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$DnsRecordsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<dns.Record> dnsRecord = const Value.absent(),
-          }) =>
-              DnsRecordsCompanion(
-            id: id,
-            dnsRecord: dnsRecord,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required dns.Record dnsRecord,
-          }) =>
-              DnsRecordsCompanion.insert(
-            id: id,
-            dnsRecord: dnsRecord,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<dns.Record> dnsRecord = const Value.absent(),
+              }) => DnsRecordsCompanion(id: id, dnsRecord: dnsRecord),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required dns.Record dnsRecord,
+              }) => DnsRecordsCompanion.insert(id: id, dnsRecord: dnsRecord),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
           prefetchHooksCallback: null,
-        ));
+        ),
+      );
 }
 
-typedef $$DnsRecordsTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $DnsRecordsTable,
-    DnsRecord,
-    $$DnsRecordsTableFilterComposer,
-    $$DnsRecordsTableOrderingComposer,
-    $$DnsRecordsTableAnnotationComposer,
-    $$DnsRecordsTableCreateCompanionBuilder,
-    $$DnsRecordsTableUpdateCompanionBuilder,
-    (DnsRecord, BaseReferences<_$AppDatabase, $DnsRecordsTable, DnsRecord>),
-    DnsRecord,
-    PrefetchHooks Function()>;
-typedef $$AtomicDomainSetsTableCreateCompanionBuilder
-    = AtomicDomainSetsCompanion Function({
-  Value<DateTime?> updatedAt,
-  required String name,
-  Value<GeositeConfig?> geositeConfig,
-  Value<bool> useBloomFilter,
-  Value<List<String>?> clashRuleUrls,
-  Value<String?> geoUrl,
-  Value<int> rowid,
-});
-typedef $$AtomicDomainSetsTableUpdateCompanionBuilder
-    = AtomicDomainSetsCompanion Function({
-  Value<DateTime?> updatedAt,
-  Value<String> name,
-  Value<GeositeConfig?> geositeConfig,
-  Value<bool> useBloomFilter,
-  Value<List<String>?> clashRuleUrls,
-  Value<String?> geoUrl,
-  Value<int> rowid,
-});
+typedef $$DnsRecordsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DnsRecordsTable,
+      DnsRecord,
+      $$DnsRecordsTableFilterComposer,
+      $$DnsRecordsTableOrderingComposer,
+      $$DnsRecordsTableAnnotationComposer,
+      $$DnsRecordsTableCreateCompanionBuilder,
+      $$DnsRecordsTableUpdateCompanionBuilder,
+      (DnsRecord, BaseReferences<_$AppDatabase, $DnsRecordsTable, DnsRecord>),
+      DnsRecord,
+      PrefetchHooks Function()
+    >;
+typedef $$AtomicDomainSetsTableCreateCompanionBuilder =
+    AtomicDomainSetsCompanion Function({
+      Value<DateTime?> updatedAt,
+      required String name,
+      Value<GeositeConfig?> geositeConfig,
+      Value<bool> useBloomFilter,
+      Value<List<String>?> clashRuleUrls,
+      Value<String?> geoUrl,
+      Value<int> rowid,
+    });
+typedef $$AtomicDomainSetsTableUpdateCompanionBuilder =
+    AtomicDomainSetsCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<String> name,
+      Value<GeositeConfig?> geositeConfig,
+      Value<bool> useBloomFilter,
+      Value<List<String>?> clashRuleUrls,
+      Value<String?> geoUrl,
+      Value<int> rowid,
+    });
 
-final class $$AtomicDomainSetsTableReferences extends BaseReferences<
-    _$AppDatabase, $AtomicDomainSetsTable, AtomicDomainSet> {
+final class $$AtomicDomainSetsTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $AtomicDomainSetsTable, AtomicDomainSet> {
   $$AtomicDomainSetsTableReferences(
-      super.$_db, super.$_table, super.$_typedResult);
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
 
   static MultiTypedResultKey<$GeoDomainsTable, List<GeoDomain>>
-      _geoDomainsRefsTable(_$AppDatabase db) =>
-          MultiTypedResultKey.fromTable(db.geoDomains,
-              aliasName: $_aliasNameGenerator(
-                  db.atomicDomainSets.name, db.geoDomains.domainSetName));
+  _geoDomainsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.geoDomains,
+    aliasName: $_aliasNameGenerator(
+      db.atomicDomainSets.name,
+      db.geoDomains.domainSetName,
+    ),
+  );
 
   $$GeoDomainsTableProcessedTableManager get geoDomainsRefs {
     final manager = $$GeoDomainsTableTableManager($_db, $_db.geoDomains).filter(
-        (f) => f.domainSetName.name.sqlEquals($_itemColumn<String>('name')!));
+      (f) => f.domainSetName.name.sqlEquals($_itemColumn<String>('name')!),
+    );
 
     final cache = $_typedResult.readTableOrNull(_geoDomainsRefsTable($_db));
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
+      manager.$state.copyWith(prefetchedData: cache),
+    );
   }
 }
 
@@ -6834,46 +8290,59 @@ class $$AtomicDomainSetsTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<GeositeConfig?, GeositeConfig, Uint8List>
-      get geositeConfig => $composableBuilder(
-          column: $table.geositeConfig,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+  get geositeConfig => $composableBuilder(
+    column: $table.geositeConfig,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
   ColumnFilters<bool> get useBloomFilter => $composableBuilder(
-      column: $table.useBloomFilter,
-      builder: (column) => ColumnFilters(column));
+    column: $table.useBloomFilter,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<List<String>?, List<String>, String>
-      get clashRuleUrls => $composableBuilder(
-          column: $table.clashRuleUrls,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+  get clashRuleUrls => $composableBuilder(
+    column: $table.clashRuleUrls,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
   ColumnFilters<String> get geoUrl => $composableBuilder(
-      column: $table.geoUrl, builder: (column) => ColumnFilters(column));
+    column: $table.geoUrl,
+    builder: (column) => ColumnFilters(column),
+  );
 
   Expression<bool> geoDomainsRefs(
-      Expression<bool> Function($$GeoDomainsTableFilterComposer f) f) {
+    Expression<bool> Function($$GeoDomainsTableFilterComposer f) f,
+  ) {
     final $$GeoDomainsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.name,
-        referencedTable: $db.geoDomains,
-        getReferencedColumn: (t) => t.domainSetName,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$GeoDomainsTableFilterComposer(
-              $db: $db,
-              $table: $db.geoDomains,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.name,
+      referencedTable: $db.geoDomains,
+      getReferencedColumn: (t) => t.domainSetName,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GeoDomainsTableFilterComposer(
+            $db: $db,
+            $table: $db.geoDomains,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return f(composer);
   }
 }
@@ -6888,25 +8357,34 @@ class $$AtomicDomainSetsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<Uint8List> get geositeConfig => $composableBuilder(
-      column: $table.geositeConfig,
-      builder: (column) => ColumnOrderings(column));
+    column: $table.geositeConfig,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<bool> get useBloomFilter => $composableBuilder(
-      column: $table.useBloomFilter,
-      builder: (column) => ColumnOrderings(column));
+    column: $table.useBloomFilter,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get clashRuleUrls => $composableBuilder(
-      column: $table.clashRuleUrls,
-      builder: (column) => ColumnOrderings(column));
+    column: $table.clashRuleUrls,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get geoUrl => $composableBuilder(
-      column: $table.geoUrl, builder: (column) => ColumnOrderings(column));
+    column: $table.geoUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$AtomicDomainSetsTableAnnotationComposer
@@ -6925,56 +8403,71 @@ class $$AtomicDomainSetsTableAnnotationComposer
       $composableBuilder(column: $table.name, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<GeositeConfig?, Uint8List>
-      get geositeConfig => $composableBuilder(
-          column: $table.geositeConfig, builder: (column) => column);
+  get geositeConfig => $composableBuilder(
+    column: $table.geositeConfig,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<bool> get useBloomFilter => $composableBuilder(
-      column: $table.useBloomFilter, builder: (column) => column);
+    column: $table.useBloomFilter,
+    builder: (column) => column,
+  );
 
   GeneratedColumnWithTypeConverter<List<String>?, String> get clashRuleUrls =>
       $composableBuilder(
-          column: $table.clashRuleUrls, builder: (column) => column);
+        column: $table.clashRuleUrls,
+        builder: (column) => column,
+      );
 
   GeneratedColumn<String> get geoUrl =>
       $composableBuilder(column: $table.geoUrl, builder: (column) => column);
 
   Expression<T> geoDomainsRefs<T extends Object>(
-      Expression<T> Function($$GeoDomainsTableAnnotationComposer a) f) {
+    Expression<T> Function($$GeoDomainsTableAnnotationComposer a) f,
+  ) {
     final $$GeoDomainsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.name,
-        referencedTable: $db.geoDomains,
-        getReferencedColumn: (t) => t.domainSetName,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$GeoDomainsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.geoDomains,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.name,
+      referencedTable: $db.geoDomains,
+      getReferencedColumn: (t) => t.domainSetName,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GeoDomainsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.geoDomains,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return f(composer);
   }
 }
 
-class $$AtomicDomainSetsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $AtomicDomainSetsTable,
-    AtomicDomainSet,
-    $$AtomicDomainSetsTableFilterComposer,
-    $$AtomicDomainSetsTableOrderingComposer,
-    $$AtomicDomainSetsTableAnnotationComposer,
-    $$AtomicDomainSetsTableCreateCompanionBuilder,
-    $$AtomicDomainSetsTableUpdateCompanionBuilder,
-    (AtomicDomainSet, $$AtomicDomainSetsTableReferences),
-    AtomicDomainSet,
-    PrefetchHooks Function({bool geoDomainsRefs})> {
+class $$AtomicDomainSetsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AtomicDomainSetsTable,
+          AtomicDomainSet,
+          $$AtomicDomainSetsTableFilterComposer,
+          $$AtomicDomainSetsTableOrderingComposer,
+          $$AtomicDomainSetsTableAnnotationComposer,
+          $$AtomicDomainSetsTableCreateCompanionBuilder,
+          $$AtomicDomainSetsTableUpdateCompanionBuilder,
+          (AtomicDomainSet, $$AtomicDomainSetsTableReferences),
+          AtomicDomainSet,
+          PrefetchHooks Function({bool geoDomainsRefs})
+        > {
   $$AtomicDomainSetsTableTableManager(
-      _$AppDatabase db, $AtomicDomainSetsTable table)
-      : super(TableManagerState(
+    _$AppDatabase db,
+    $AtomicDomainSetsTable table,
+  ) : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -6983,47 +8476,49 @@ class $$AtomicDomainSetsTableTableManager extends RootTableManager<
               $$AtomicDomainSetsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$AtomicDomainSetsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<GeositeConfig?> geositeConfig = const Value.absent(),
-            Value<bool> useBloomFilter = const Value.absent(),
-            Value<List<String>?> clashRuleUrls = const Value.absent(),
-            Value<String?> geoUrl = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              AtomicDomainSetsCompanion(
-            updatedAt: updatedAt,
-            name: name,
-            geositeConfig: geositeConfig,
-            useBloomFilter: useBloomFilter,
-            clashRuleUrls: clashRuleUrls,
-            geoUrl: geoUrl,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            required String name,
-            Value<GeositeConfig?> geositeConfig = const Value.absent(),
-            Value<bool> useBloomFilter = const Value.absent(),
-            Value<List<String>?> clashRuleUrls = const Value.absent(),
-            Value<String?> geoUrl = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              AtomicDomainSetsCompanion.insert(
-            updatedAt: updatedAt,
-            name: name,
-            geositeConfig: geositeConfig,
-            useBloomFilter: useBloomFilter,
-            clashRuleUrls: clashRuleUrls,
-            geoUrl: geoUrl,
-            rowid: rowid,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<GeositeConfig?> geositeConfig = const Value.absent(),
+                Value<bool> useBloomFilter = const Value.absent(),
+                Value<List<String>?> clashRuleUrls = const Value.absent(),
+                Value<String?> geoUrl = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AtomicDomainSetsCompanion(
+                updatedAt: updatedAt,
+                name: name,
+                geositeConfig: geositeConfig,
+                useBloomFilter: useBloomFilter,
+                clashRuleUrls: clashRuleUrls,
+                geoUrl: geoUrl,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                required String name,
+                Value<GeositeConfig?> geositeConfig = const Value.absent(),
+                Value<bool> useBloomFilter = const Value.absent(),
+                Value<List<String>?> clashRuleUrls = const Value.absent(),
+                Value<String?> geoUrl = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AtomicDomainSetsCompanion.insert(
+                updatedAt: updatedAt,
+                name: name,
+                geositeConfig: geositeConfig,
+                useBloomFilter: useBloomFilter,
+                clashRuleUrls: clashRuleUrls,
+                geoUrl: geoUrl,
+                rowid: rowid,
+              ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$AtomicDomainSetsTableReferences(db, table, e)
-                  ))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$AtomicDomainSetsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: ({geoDomainsRefs = false}) {
             return PrefetchHooks(
@@ -7033,66 +8528,85 @@ class $$AtomicDomainSetsTableTableManager extends RootTableManager<
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (geoDomainsRefs)
-                    await $_getPrefetchedData<AtomicDomainSet,
-                            $AtomicDomainSetsTable, GeoDomain>(
-                        currentTable: table,
-                        referencedTable: $$AtomicDomainSetsTableReferences
-                            ._geoDomainsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$AtomicDomainSetsTableReferences(db, table, p0)
-                                .geoDomainsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems
-                                .where((e) => e.domainSetName == item.name),
-                        typedResults: items)
+                    await $_getPrefetchedData<
+                      AtomicDomainSet,
+                      $AtomicDomainSetsTable,
+                      GeoDomain
+                    >(
+                      currentTable: table,
+                      referencedTable: $$AtomicDomainSetsTableReferences
+                          ._geoDomainsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$AtomicDomainSetsTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).geoDomainsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where(
+                            (e) => e.domainSetName == item.name,
+                          ),
+                      typedResults: items,
+                    ),
                 ];
               },
             );
           },
-        ));
+        ),
+      );
 }
 
-typedef $$AtomicDomainSetsTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $AtomicDomainSetsTable,
-    AtomicDomainSet,
-    $$AtomicDomainSetsTableFilterComposer,
-    $$AtomicDomainSetsTableOrderingComposer,
-    $$AtomicDomainSetsTableAnnotationComposer,
-    $$AtomicDomainSetsTableCreateCompanionBuilder,
-    $$AtomicDomainSetsTableUpdateCompanionBuilder,
-    (AtomicDomainSet, $$AtomicDomainSetsTableReferences),
-    AtomicDomainSet,
-    PrefetchHooks Function({bool geoDomainsRefs})>;
-typedef $$GeoDomainsTableCreateCompanionBuilder = GeoDomainsCompanion Function({
-  Value<int> id,
-  required Domain geoDomain,
-  required String domainSetName,
-});
-typedef $$GeoDomainsTableUpdateCompanionBuilder = GeoDomainsCompanion Function({
-  Value<int> id,
-  Value<Domain> geoDomain,
-  Value<String> domainSetName,
-});
+typedef $$AtomicDomainSetsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AtomicDomainSetsTable,
+      AtomicDomainSet,
+      $$AtomicDomainSetsTableFilterComposer,
+      $$AtomicDomainSetsTableOrderingComposer,
+      $$AtomicDomainSetsTableAnnotationComposer,
+      $$AtomicDomainSetsTableCreateCompanionBuilder,
+      $$AtomicDomainSetsTableUpdateCompanionBuilder,
+      (AtomicDomainSet, $$AtomicDomainSetsTableReferences),
+      AtomicDomainSet,
+      PrefetchHooks Function({bool geoDomainsRefs})
+    >;
+typedef $$GeoDomainsTableCreateCompanionBuilder =
+    GeoDomainsCompanion Function({
+      Value<int> id,
+      required Domain geoDomain,
+      required String domainSetName,
+    });
+typedef $$GeoDomainsTableUpdateCompanionBuilder =
+    GeoDomainsCompanion Function({
+      Value<int> id,
+      Value<Domain> geoDomain,
+      Value<String> domainSetName,
+    });
 
 final class $$GeoDomainsTableReferences
     extends BaseReferences<_$AppDatabase, $GeoDomainsTable, GeoDomain> {
   $$GeoDomainsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $AtomicDomainSetsTable _domainSetNameTable(_$AppDatabase db) =>
-      db.atomicDomainSets.createAlias($_aliasNameGenerator(
-          db.geoDomains.domainSetName, db.atomicDomainSets.name));
+      db.atomicDomainSets.createAlias(
+        $_aliasNameGenerator(
+          db.geoDomains.domainSetName,
+          db.atomicDomainSets.name,
+        ),
+      );
 
   $$AtomicDomainSetsTableProcessedTableManager get domainSetName {
     final $_column = $_itemColumn<String>('domain_set_name')!;
 
-    final manager =
-        $$AtomicDomainSetsTableTableManager($_db, $_db.atomicDomainSets)
-            .filter((f) => f.name.sqlEquals($_column));
+    final manager = $$AtomicDomainSetsTableTableManager(
+      $_db,
+      $_db.atomicDomainSets,
+    ).filter((f) => f.name.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_domainSetNameTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
   }
 }
 
@@ -7106,30 +8620,36 @@ class $$GeoDomainsTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<Domain, Domain, Uint8List> get geoDomain =>
       $composableBuilder(
-          column: $table.geoDomain,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+        column: $table.geoDomain,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 
   $$AtomicDomainSetsTableFilterComposer get domainSetName {
     final $$AtomicDomainSetsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.domainSetName,
-        referencedTable: $db.atomicDomainSets,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$AtomicDomainSetsTableFilterComposer(
-              $db: $db,
-              $table: $db.atomicDomainSets,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.domainSetName,
+      referencedTable: $db.atomicDomainSets,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AtomicDomainSetsTableFilterComposer(
+            $db: $db,
+            $table: $db.atomicDomainSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
@@ -7144,28 +8664,35 @@ class $$GeoDomainsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<Uint8List> get geoDomain => $composableBuilder(
-      column: $table.geoDomain, builder: (column) => ColumnOrderings(column));
+    column: $table.geoDomain,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   $$AtomicDomainSetsTableOrderingComposer get domainSetName {
     final $$AtomicDomainSetsTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.domainSetName,
-        referencedTable: $db.atomicDomainSets,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$AtomicDomainSetsTableOrderingComposer(
-              $db: $db,
-              $table: $db.atomicDomainSets,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.domainSetName,
+      referencedTable: $db.atomicDomainSets,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AtomicDomainSetsTableOrderingComposer(
+            $db: $db,
+            $table: $db.atomicDomainSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
@@ -7187,39 +8714,46 @@ class $$GeoDomainsTableAnnotationComposer
 
   $$AtomicDomainSetsTableAnnotationComposer get domainSetName {
     final $$AtomicDomainSetsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.domainSetName,
-        referencedTable: $db.atomicDomainSets,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$AtomicDomainSetsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.atomicDomainSets,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.domainSetName,
+      referencedTable: $db.atomicDomainSets,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AtomicDomainSetsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.atomicDomainSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
 
-class $$GeoDomainsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $GeoDomainsTable,
-    GeoDomain,
-    $$GeoDomainsTableFilterComposer,
-    $$GeoDomainsTableOrderingComposer,
-    $$GeoDomainsTableAnnotationComposer,
-    $$GeoDomainsTableCreateCompanionBuilder,
-    $$GeoDomainsTableUpdateCompanionBuilder,
-    (GeoDomain, $$GeoDomainsTableReferences),
-    GeoDomain,
-    PrefetchHooks Function({bool domainSetName})> {
+class $$GeoDomainsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $GeoDomainsTable,
+          GeoDomain,
+          $$GeoDomainsTableFilterComposer,
+          $$GeoDomainsTableOrderingComposer,
+          $$GeoDomainsTableAnnotationComposer,
+          $$GeoDomainsTableCreateCompanionBuilder,
+          $$GeoDomainsTableUpdateCompanionBuilder,
+          (GeoDomain, $$GeoDomainsTableReferences),
+          GeoDomain,
+          PrefetchHooks Function({bool domainSetName})
+        > {
   $$GeoDomainsTableTableManager(_$AppDatabase db, $GeoDomainsTable table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -7228,38 +8762,41 @@ class $$GeoDomainsTableTableManager extends RootTableManager<
               $$GeoDomainsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$GeoDomainsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<Domain> geoDomain = const Value.absent(),
-            Value<String> domainSetName = const Value.absent(),
-          }) =>
-              GeoDomainsCompanion(
-            id: id,
-            geoDomain: geoDomain,
-            domainSetName: domainSetName,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required Domain geoDomain,
-            required String domainSetName,
-          }) =>
-              GeoDomainsCompanion.insert(
-            id: id,
-            geoDomain: geoDomain,
-            domainSetName: domainSetName,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<Domain> geoDomain = const Value.absent(),
+                Value<String> domainSetName = const Value.absent(),
+              }) => GeoDomainsCompanion(
+                id: id,
+                geoDomain: geoDomain,
+                domainSetName: domainSetName,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required Domain geoDomain,
+                required String domainSetName,
+              }) => GeoDomainsCompanion.insert(
+                id: id,
+                geoDomain: geoDomain,
+                domainSetName: domainSetName,
+              ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$GeoDomainsTableReferences(db, table, e)
-                  ))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$GeoDomainsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: ({domainSetName = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
-              addJoins: <
-                  T extends TableManagerState<
+              addJoins:
+                  <
+                    T extends TableManagerState<
                       dynamic,
                       dynamic,
                       dynamic,
@@ -7270,57 +8807,64 @@ class $$GeoDomainsTableTableManager extends RootTableManager<
                       dynamic,
                       dynamic,
                       dynamic,
-                      dynamic>>(state) {
-                if (domainSetName) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.domainSetName,
-                    referencedTable:
-                        $$GeoDomainsTableReferences._domainSetNameTable(db),
-                    referencedColumn: $$GeoDomainsTableReferences
-                        ._domainSetNameTable(db)
-                        .name,
-                  ) as T;
-                }
+                      dynamic
+                    >
+                  >(state) {
+                    if (domainSetName) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.domainSetName,
+                                referencedTable: $$GeoDomainsTableReferences
+                                    ._domainSetNameTable(db),
+                                referencedColumn: $$GeoDomainsTableReferences
+                                    ._domainSetNameTable(db)
+                                    .name,
+                              )
+                              as T;
+                    }
 
-                return state;
-              },
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [];
               },
             );
           },
-        ));
+        ),
+      );
 }
 
-typedef $$GeoDomainsTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $GeoDomainsTable,
-    GeoDomain,
-    $$GeoDomainsTableFilterComposer,
-    $$GeoDomainsTableOrderingComposer,
-    $$GeoDomainsTableAnnotationComposer,
-    $$GeoDomainsTableCreateCompanionBuilder,
-    $$GeoDomainsTableUpdateCompanionBuilder,
-    (GeoDomain, $$GeoDomainsTableReferences),
-    GeoDomain,
-    PrefetchHooks Function({bool domainSetName})>;
-typedef $$GreatDomainSetsTableCreateCompanionBuilder = GreatDomainSetsCompanion
-    Function({
-  Value<DateTime?> updatedAt,
-  required String name,
-  Value<String?> oppositeName,
-  required GreatDomainSetConfig set,
-  Value<int> rowid,
-});
-typedef $$GreatDomainSetsTableUpdateCompanionBuilder = GreatDomainSetsCompanion
-    Function({
-  Value<DateTime?> updatedAt,
-  Value<String> name,
-  Value<String?> oppositeName,
-  Value<GreatDomainSetConfig> set,
-  Value<int> rowid,
-});
+typedef $$GeoDomainsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $GeoDomainsTable,
+      GeoDomain,
+      $$GeoDomainsTableFilterComposer,
+      $$GeoDomainsTableOrderingComposer,
+      $$GeoDomainsTableAnnotationComposer,
+      $$GeoDomainsTableCreateCompanionBuilder,
+      $$GeoDomainsTableUpdateCompanionBuilder,
+      (GeoDomain, $$GeoDomainsTableReferences),
+      GeoDomain,
+      PrefetchHooks Function({bool domainSetName})
+    >;
+typedef $$GreatDomainSetsTableCreateCompanionBuilder =
+    GreatDomainSetsCompanion Function({
+      Value<DateTime?> updatedAt,
+      required String name,
+      Value<String?> oppositeName,
+      required GreatDomainSetConfig set,
+      Value<int> rowid,
+    });
+typedef $$GreatDomainSetsTableUpdateCompanionBuilder =
+    GreatDomainSetsCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<String> name,
+      Value<String?> oppositeName,
+      Value<GreatDomainSetConfig> set,
+      Value<int> rowid,
+    });
 
 class $$GreatDomainSetsTableFilterComposer
     extends Composer<_$AppDatabase, $GreatDomainSetsTable> {
@@ -7332,19 +8876,29 @@ class $$GreatDomainSetsTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get oppositeName => $composableBuilder(
-      column: $table.oppositeName, builder: (column) => ColumnFilters(column));
+    column: $table.oppositeName,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnWithTypeConverterFilters<GreatDomainSetConfig, GreatDomainSetConfig,
-          Uint8List>
-      get set => $composableBuilder(
-          column: $table.set,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+  ColumnWithTypeConverterFilters<
+    GreatDomainSetConfig,
+    GreatDomainSetConfig,
+    Uint8List
+  >
+  get set => $composableBuilder(
+    column: $table.set,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 }
 
 class $$GreatDomainSetsTableOrderingComposer
@@ -7357,17 +8911,24 @@ class $$GreatDomainSetsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get oppositeName => $composableBuilder(
-      column: $table.oppositeName,
-      builder: (column) => ColumnOrderings(column));
+    column: $table.oppositeName,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<Uint8List> get set => $composableBuilder(
-      column: $table.set, builder: (column) => ColumnOrderings(column));
+    column: $table.set,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$GreatDomainSetsTableAnnotationComposer
@@ -7386,30 +8947,41 @@ class $$GreatDomainSetsTableAnnotationComposer
       $composableBuilder(column: $table.name, builder: (column) => column);
 
   GeneratedColumn<String> get oppositeName => $composableBuilder(
-      column: $table.oppositeName, builder: (column) => column);
+    column: $table.oppositeName,
+    builder: (column) => column,
+  );
 
   GeneratedColumnWithTypeConverter<GreatDomainSetConfig, Uint8List> get set =>
       $composableBuilder(column: $table.set, builder: (column) => column);
 }
 
-class $$GreatDomainSetsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $GreatDomainSetsTable,
-    GreatDomainSet,
-    $$GreatDomainSetsTableFilterComposer,
-    $$GreatDomainSetsTableOrderingComposer,
-    $$GreatDomainSetsTableAnnotationComposer,
-    $$GreatDomainSetsTableCreateCompanionBuilder,
-    $$GreatDomainSetsTableUpdateCompanionBuilder,
-    (
-      GreatDomainSet,
-      BaseReferences<_$AppDatabase, $GreatDomainSetsTable, GreatDomainSet>
-    ),
-    GreatDomainSet,
-    PrefetchHooks Function()> {
+class $$GreatDomainSetsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $GreatDomainSetsTable,
+          GreatDomainSet,
+          $$GreatDomainSetsTableFilterComposer,
+          $$GreatDomainSetsTableOrderingComposer,
+          $$GreatDomainSetsTableAnnotationComposer,
+          $$GreatDomainSetsTableCreateCompanionBuilder,
+          $$GreatDomainSetsTableUpdateCompanionBuilder,
+          (
+            GreatDomainSet,
+            BaseReferences<
+              _$AppDatabase,
+              $GreatDomainSetsTable,
+              GreatDomainSet
+            >,
+          ),
+          GreatDomainSet,
+          PrefetchHooks Function()
+        > {
   $$GreatDomainSetsTableTableManager(
-      _$AppDatabase db, $GreatDomainSetsTable table)
-      : super(TableManagerState(
+    _$AppDatabase db,
+    $GreatDomainSetsTable table,
+  ) : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -7418,94 +8990,101 @@ class $$GreatDomainSetsTableTableManager extends RootTableManager<
               $$GreatDomainSetsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$GreatDomainSetsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<String?> oppositeName = const Value.absent(),
-            Value<GreatDomainSetConfig> set = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              GreatDomainSetsCompanion(
-            updatedAt: updatedAt,
-            name: name,
-            oppositeName: oppositeName,
-            set: set,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            required String name,
-            Value<String?> oppositeName = const Value.absent(),
-            required GreatDomainSetConfig set,
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              GreatDomainSetsCompanion.insert(
-            updatedAt: updatedAt,
-            name: name,
-            oppositeName: oppositeName,
-            set: set,
-            rowid: rowid,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String?> oppositeName = const Value.absent(),
+                Value<GreatDomainSetConfig> set = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => GreatDomainSetsCompanion(
+                updatedAt: updatedAt,
+                name: name,
+                oppositeName: oppositeName,
+                set: set,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                required String name,
+                Value<String?> oppositeName = const Value.absent(),
+                required GreatDomainSetConfig set,
+                Value<int> rowid = const Value.absent(),
+              }) => GreatDomainSetsCompanion.insert(
+                updatedAt: updatedAt,
+                name: name,
+                oppositeName: oppositeName,
+                set: set,
+                rowid: rowid,
+              ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
           prefetchHooksCallback: null,
-        ));
+        ),
+      );
 }
 
-typedef $$GreatDomainSetsTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $GreatDomainSetsTable,
-    GreatDomainSet,
-    $$GreatDomainSetsTableFilterComposer,
-    $$GreatDomainSetsTableOrderingComposer,
-    $$GreatDomainSetsTableAnnotationComposer,
-    $$GreatDomainSetsTableCreateCompanionBuilder,
-    $$GreatDomainSetsTableUpdateCompanionBuilder,
-    (
+typedef $$GreatDomainSetsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $GreatDomainSetsTable,
       GreatDomainSet,
-      BaseReferences<_$AppDatabase, $GreatDomainSetsTable, GreatDomainSet>
-    ),
-    GreatDomainSet,
-    PrefetchHooks Function()>;
-typedef $$AtomicIpSetsTableCreateCompanionBuilder = AtomicIpSetsCompanion
-    Function({
-  Value<DateTime?> updatedAt,
-  required String name,
-  Value<bool> inverse,
-  Value<GeoIPConfig?> geoIpConfig,
-  Value<List<String>?> clashRuleUrls,
-  Value<String?> geoUrl,
-  Value<int> rowid,
-});
-typedef $$AtomicIpSetsTableUpdateCompanionBuilder = AtomicIpSetsCompanion
-    Function({
-  Value<DateTime?> updatedAt,
-  Value<String> name,
-  Value<bool> inverse,
-  Value<GeoIPConfig?> geoIpConfig,
-  Value<List<String>?> clashRuleUrls,
-  Value<String?> geoUrl,
-  Value<int> rowid,
-});
+      $$GreatDomainSetsTableFilterComposer,
+      $$GreatDomainSetsTableOrderingComposer,
+      $$GreatDomainSetsTableAnnotationComposer,
+      $$GreatDomainSetsTableCreateCompanionBuilder,
+      $$GreatDomainSetsTableUpdateCompanionBuilder,
+      (
+        GreatDomainSet,
+        BaseReferences<_$AppDatabase, $GreatDomainSetsTable, GreatDomainSet>,
+      ),
+      GreatDomainSet,
+      PrefetchHooks Function()
+    >;
+typedef $$AtomicIpSetsTableCreateCompanionBuilder =
+    AtomicIpSetsCompanion Function({
+      Value<DateTime?> updatedAt,
+      required String name,
+      Value<bool> inverse,
+      Value<GeoIPConfig?> geoIpConfig,
+      Value<List<String>?> clashRuleUrls,
+      Value<String?> geoUrl,
+      Value<int> rowid,
+    });
+typedef $$AtomicIpSetsTableUpdateCompanionBuilder =
+    AtomicIpSetsCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<String> name,
+      Value<bool> inverse,
+      Value<GeoIPConfig?> geoIpConfig,
+      Value<List<String>?> clashRuleUrls,
+      Value<String?> geoUrl,
+      Value<int> rowid,
+    });
 
 final class $$AtomicIpSetsTableReferences
     extends BaseReferences<_$AppDatabase, $AtomicIpSetsTable, AtomicIpSet> {
   $$AtomicIpSetsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static MultiTypedResultKey<$CidrsTable, List<Cidr>> _cidrsRefsTable(
-          _$AppDatabase db) =>
-      MultiTypedResultKey.fromTable(db.cidrs,
-          aliasName:
-              $_aliasNameGenerator(db.atomicIpSets.name, db.cidrs.ipSetName));
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.cidrs,
+    aliasName: $_aliasNameGenerator(db.atomicIpSets.name, db.cidrs.ipSetName),
+  );
 
   $$CidrsTableProcessedTableManager get cidrsRefs {
-    final manager = $$CidrsTableTableManager($_db, $_db.cidrs).filter(
-        (f) => f.ipSetName.name.sqlEquals($_itemColumn<String>('name')!));
+    final manager = $$CidrsTableTableManager(
+      $_db,
+      $_db.cidrs,
+    ).filter((f) => f.ipSetName.name.sqlEquals($_itemColumn<String>('name')!));
 
     final cache = $_typedResult.readTableOrNull(_cidrsRefsTable($_db));
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
+      manager.$state.copyWith(prefetchedData: cache),
+    );
   }
 }
 
@@ -7519,45 +9098,59 @@ class $$AtomicIpSetsTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<bool> get inverse => $composableBuilder(
-      column: $table.inverse, builder: (column) => ColumnFilters(column));
+    column: $table.inverse,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<GeoIPConfig?, GeoIPConfig, Uint8List>
-      get geoIpConfig => $composableBuilder(
-          column: $table.geoIpConfig,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+  get geoIpConfig => $composableBuilder(
+    column: $table.geoIpConfig,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<List<String>?, List<String>, String>
-      get clashRuleUrls => $composableBuilder(
-          column: $table.clashRuleUrls,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+  get clashRuleUrls => $composableBuilder(
+    column: $table.clashRuleUrls,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
   ColumnFilters<String> get geoUrl => $composableBuilder(
-      column: $table.geoUrl, builder: (column) => ColumnFilters(column));
+    column: $table.geoUrl,
+    builder: (column) => ColumnFilters(column),
+  );
 
   Expression<bool> cidrsRefs(
-      Expression<bool> Function($$CidrsTableFilterComposer f) f) {
+    Expression<bool> Function($$CidrsTableFilterComposer f) f,
+  ) {
     final $$CidrsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.name,
-        referencedTable: $db.cidrs,
-        getReferencedColumn: (t) => t.ipSetName,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$CidrsTableFilterComposer(
-              $db: $db,
-              $table: $db.cidrs,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.name,
+      referencedTable: $db.cidrs,
+      getReferencedColumn: (t) => t.ipSetName,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CidrsTableFilterComposer(
+            $db: $db,
+            $table: $db.cidrs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return f(composer);
   }
 }
@@ -7572,23 +9165,34 @@ class $$AtomicIpSetsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<bool> get inverse => $composableBuilder(
-      column: $table.inverse, builder: (column) => ColumnOrderings(column));
+    column: $table.inverse,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<Uint8List> get geoIpConfig => $composableBuilder(
-      column: $table.geoIpConfig, builder: (column) => ColumnOrderings(column));
+    column: $table.geoIpConfig,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get clashRuleUrls => $composableBuilder(
-      column: $table.clashRuleUrls,
-      builder: (column) => ColumnOrderings(column));
+    column: $table.clashRuleUrls,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get geoUrl => $composableBuilder(
-      column: $table.geoUrl, builder: (column) => ColumnOrderings(column));
+    column: $table.geoUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$AtomicIpSetsTableAnnotationComposer
@@ -7611,51 +9215,63 @@ class $$AtomicIpSetsTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<GeoIPConfig?, Uint8List> get geoIpConfig =>
       $composableBuilder(
-          column: $table.geoIpConfig, builder: (column) => column);
+        column: $table.geoIpConfig,
+        builder: (column) => column,
+      );
 
   GeneratedColumnWithTypeConverter<List<String>?, String> get clashRuleUrls =>
       $composableBuilder(
-          column: $table.clashRuleUrls, builder: (column) => column);
+        column: $table.clashRuleUrls,
+        builder: (column) => column,
+      );
 
   GeneratedColumn<String> get geoUrl =>
       $composableBuilder(column: $table.geoUrl, builder: (column) => column);
 
   Expression<T> cidrsRefs<T extends Object>(
-      Expression<T> Function($$CidrsTableAnnotationComposer a) f) {
+    Expression<T> Function($$CidrsTableAnnotationComposer a) f,
+  ) {
     final $$CidrsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.name,
-        referencedTable: $db.cidrs,
-        getReferencedColumn: (t) => t.ipSetName,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$CidrsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.cidrs,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.name,
+      referencedTable: $db.cidrs,
+      getReferencedColumn: (t) => t.ipSetName,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CidrsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.cidrs,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return f(composer);
   }
 }
 
-class $$AtomicIpSetsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $AtomicIpSetsTable,
-    AtomicIpSet,
-    $$AtomicIpSetsTableFilterComposer,
-    $$AtomicIpSetsTableOrderingComposer,
-    $$AtomicIpSetsTableAnnotationComposer,
-    $$AtomicIpSetsTableCreateCompanionBuilder,
-    $$AtomicIpSetsTableUpdateCompanionBuilder,
-    (AtomicIpSet, $$AtomicIpSetsTableReferences),
-    AtomicIpSet,
-    PrefetchHooks Function({bool cidrsRefs})> {
+class $$AtomicIpSetsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AtomicIpSetsTable,
+          AtomicIpSet,
+          $$AtomicIpSetsTableFilterComposer,
+          $$AtomicIpSetsTableOrderingComposer,
+          $$AtomicIpSetsTableAnnotationComposer,
+          $$AtomicIpSetsTableCreateCompanionBuilder,
+          $$AtomicIpSetsTableUpdateCompanionBuilder,
+          (AtomicIpSet, $$AtomicIpSetsTableReferences),
+          AtomicIpSet,
+          PrefetchHooks Function({bool cidrsRefs})
+        > {
   $$AtomicIpSetsTableTableManager(_$AppDatabase db, $AtomicIpSetsTable table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -7664,47 +9280,49 @@ class $$AtomicIpSetsTableTableManager extends RootTableManager<
               $$AtomicIpSetsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$AtomicIpSetsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<bool> inverse = const Value.absent(),
-            Value<GeoIPConfig?> geoIpConfig = const Value.absent(),
-            Value<List<String>?> clashRuleUrls = const Value.absent(),
-            Value<String?> geoUrl = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              AtomicIpSetsCompanion(
-            updatedAt: updatedAt,
-            name: name,
-            inverse: inverse,
-            geoIpConfig: geoIpConfig,
-            clashRuleUrls: clashRuleUrls,
-            geoUrl: geoUrl,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            required String name,
-            Value<bool> inverse = const Value.absent(),
-            Value<GeoIPConfig?> geoIpConfig = const Value.absent(),
-            Value<List<String>?> clashRuleUrls = const Value.absent(),
-            Value<String?> geoUrl = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              AtomicIpSetsCompanion.insert(
-            updatedAt: updatedAt,
-            name: name,
-            inverse: inverse,
-            geoIpConfig: geoIpConfig,
-            clashRuleUrls: clashRuleUrls,
-            geoUrl: geoUrl,
-            rowid: rowid,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<bool> inverse = const Value.absent(),
+                Value<GeoIPConfig?> geoIpConfig = const Value.absent(),
+                Value<List<String>?> clashRuleUrls = const Value.absent(),
+                Value<String?> geoUrl = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AtomicIpSetsCompanion(
+                updatedAt: updatedAt,
+                name: name,
+                inverse: inverse,
+                geoIpConfig: geoIpConfig,
+                clashRuleUrls: clashRuleUrls,
+                geoUrl: geoUrl,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                required String name,
+                Value<bool> inverse = const Value.absent(),
+                Value<GeoIPConfig?> geoIpConfig = const Value.absent(),
+                Value<List<String>?> clashRuleUrls = const Value.absent(),
+                Value<String?> geoUrl = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AtomicIpSetsCompanion.insert(
+                updatedAt: updatedAt,
+                name: name,
+                inverse: inverse,
+                geoIpConfig: geoIpConfig,
+                clashRuleUrls: clashRuleUrls,
+                geoUrl: geoUrl,
+                rowid: rowid,
+              ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$AtomicIpSetsTableReferences(db, table, e)
-                  ))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$AtomicIpSetsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: ({cidrsRefs = false}) {
             return PrefetchHooks(
@@ -7714,51 +9332,64 @@ class $$AtomicIpSetsTableTableManager extends RootTableManager<
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (cidrsRefs)
-                    await $_getPrefetchedData<AtomicIpSet, $AtomicIpSetsTable,
-                            Cidr>(
-                        currentTable: table,
-                        referencedTable:
-                            $$AtomicIpSetsTableReferences._cidrsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$AtomicIpSetsTableReferences(db, table, p0)
-                                .cidrsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems
-                                .where((e) => e.ipSetName == item.name),
-                        typedResults: items)
+                    await $_getPrefetchedData<
+                      AtomicIpSet,
+                      $AtomicIpSetsTable,
+                      Cidr
+                    >(
+                      currentTable: table,
+                      referencedTable: $$AtomicIpSetsTableReferences
+                          ._cidrsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$AtomicIpSetsTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).cidrsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where(
+                            (e) => e.ipSetName == item.name,
+                          ),
+                      typedResults: items,
+                    ),
                 ];
               },
             );
           },
-        ));
+        ),
+      );
 }
 
-typedef $$AtomicIpSetsTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $AtomicIpSetsTable,
-    AtomicIpSet,
-    $$AtomicIpSetsTableFilterComposer,
-    $$AtomicIpSetsTableOrderingComposer,
-    $$AtomicIpSetsTableAnnotationComposer,
-    $$AtomicIpSetsTableCreateCompanionBuilder,
-    $$AtomicIpSetsTableUpdateCompanionBuilder,
-    (AtomicIpSet, $$AtomicIpSetsTableReferences),
-    AtomicIpSet,
-    PrefetchHooks Function({bool cidrsRefs})>;
-typedef $$GreatIpSetsTableCreateCompanionBuilder = GreatIpSetsCompanion
-    Function({
-  Value<DateTime?> updatedAt,
-  required String name,
-  required GreatIPSetConfig greatIpSetConfig,
-  Value<int> rowid,
-});
-typedef $$GreatIpSetsTableUpdateCompanionBuilder = GreatIpSetsCompanion
-    Function({
-  Value<DateTime?> updatedAt,
-  Value<String> name,
-  Value<GreatIPSetConfig> greatIpSetConfig,
-  Value<int> rowid,
-});
+typedef $$AtomicIpSetsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AtomicIpSetsTable,
+      AtomicIpSet,
+      $$AtomicIpSetsTableFilterComposer,
+      $$AtomicIpSetsTableOrderingComposer,
+      $$AtomicIpSetsTableAnnotationComposer,
+      $$AtomicIpSetsTableCreateCompanionBuilder,
+      $$AtomicIpSetsTableUpdateCompanionBuilder,
+      (AtomicIpSet, $$AtomicIpSetsTableReferences),
+      AtomicIpSet,
+      PrefetchHooks Function({bool cidrsRefs})
+    >;
+typedef $$GreatIpSetsTableCreateCompanionBuilder =
+    GreatIpSetsCompanion Function({
+      Value<DateTime?> updatedAt,
+      required String name,
+      required GreatIPSetConfig greatIpSetConfig,
+      Value<String?> oppositeName,
+      Value<int> rowid,
+    });
+typedef $$GreatIpSetsTableUpdateCompanionBuilder =
+    GreatIpSetsCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<String> name,
+      Value<GreatIPSetConfig> greatIpSetConfig,
+      Value<String?> oppositeName,
+      Value<int> rowid,
+    });
 
 class $$GreatIpSetsTableFilterComposer
     extends Composer<_$AppDatabase, $GreatIpSetsTable> {
@@ -7770,15 +9401,25 @@ class $$GreatIpSetsTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<GreatIPSetConfig, GreatIPSetConfig, Uint8List>
-      get greatIpSetConfig => $composableBuilder(
-          column: $table.greatIpSetConfig,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+  get greatIpSetConfig => $composableBuilder(
+    column: $table.greatIpSetConfig,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<String> get oppositeName => $composableBuilder(
+    column: $table.oppositeName,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$GreatIpSetsTableOrderingComposer
@@ -7791,14 +9432,24 @@ class $$GreatIpSetsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<Uint8List> get greatIpSetConfig => $composableBuilder(
-      column: $table.greatIpSetConfig,
-      builder: (column) => ColumnOrderings(column));
+    column: $table.greatIpSetConfig,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get oppositeName => $composableBuilder(
+    column: $table.oppositeName,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$GreatIpSetsTableAnnotationComposer
@@ -7817,24 +9468,38 @@ class $$GreatIpSetsTableAnnotationComposer
       $composableBuilder(column: $table.name, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<GreatIPSetConfig, Uint8List>
-      get greatIpSetConfig => $composableBuilder(
-          column: $table.greatIpSetConfig, builder: (column) => column);
+  get greatIpSetConfig => $composableBuilder(
+    column: $table.greatIpSetConfig,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get oppositeName => $composableBuilder(
+    column: $table.oppositeName,
+    builder: (column) => column,
+  );
 }
 
-class $$GreatIpSetsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $GreatIpSetsTable,
-    GreatIpSet,
-    $$GreatIpSetsTableFilterComposer,
-    $$GreatIpSetsTableOrderingComposer,
-    $$GreatIpSetsTableAnnotationComposer,
-    $$GreatIpSetsTableCreateCompanionBuilder,
-    $$GreatIpSetsTableUpdateCompanionBuilder,
-    (GreatIpSet, BaseReferences<_$AppDatabase, $GreatIpSetsTable, GreatIpSet>),
-    GreatIpSet,
-    PrefetchHooks Function()> {
+class $$GreatIpSetsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $GreatIpSetsTable,
+          GreatIpSet,
+          $$GreatIpSetsTableFilterComposer,
+          $$GreatIpSetsTableOrderingComposer,
+          $$GreatIpSetsTableAnnotationComposer,
+          $$GreatIpSetsTableCreateCompanionBuilder,
+          $$GreatIpSetsTableUpdateCompanionBuilder,
+          (
+            GreatIpSet,
+            BaseReferences<_$AppDatabase, $GreatIpSetsTable, GreatIpSet>,
+          ),
+          GreatIpSet,
+          PrefetchHooks Function()
+        > {
   $$GreatIpSetsTableTableManager(_$AppDatabase db, $GreatIpSetsTable table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -7843,78 +9508,95 @@ class $$GreatIpSetsTableTableManager extends RootTableManager<
               $$GreatIpSetsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$GreatIpSetsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<GreatIPSetConfig> greatIpSetConfig = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              GreatIpSetsCompanion(
-            updatedAt: updatedAt,
-            name: name,
-            greatIpSetConfig: greatIpSetConfig,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            required String name,
-            required GreatIPSetConfig greatIpSetConfig,
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              GreatIpSetsCompanion.insert(
-            updatedAt: updatedAt,
-            name: name,
-            greatIpSetConfig: greatIpSetConfig,
-            rowid: rowid,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<GreatIPSetConfig> greatIpSetConfig = const Value.absent(),
+                Value<String?> oppositeName = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => GreatIpSetsCompanion(
+                updatedAt: updatedAt,
+                name: name,
+                greatIpSetConfig: greatIpSetConfig,
+                oppositeName: oppositeName,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                required String name,
+                required GreatIPSetConfig greatIpSetConfig,
+                Value<String?> oppositeName = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => GreatIpSetsCompanion.insert(
+                updatedAt: updatedAt,
+                name: name,
+                greatIpSetConfig: greatIpSetConfig,
+                oppositeName: oppositeName,
+                rowid: rowid,
+              ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
           prefetchHooksCallback: null,
-        ));
+        ),
+      );
 }
 
-typedef $$GreatIpSetsTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $GreatIpSetsTable,
-    GreatIpSet,
-    $$GreatIpSetsTableFilterComposer,
-    $$GreatIpSetsTableOrderingComposer,
-    $$GreatIpSetsTableAnnotationComposer,
-    $$GreatIpSetsTableCreateCompanionBuilder,
-    $$GreatIpSetsTableUpdateCompanionBuilder,
-    (GreatIpSet, BaseReferences<_$AppDatabase, $GreatIpSetsTable, GreatIpSet>),
-    GreatIpSet,
-    PrefetchHooks Function()>;
-typedef $$AppSetsTableCreateCompanionBuilder = AppSetsCompanion Function({
-  Value<DateTime?> updatedAt,
-  required String name,
-  Value<List<String>?> clashRuleUrls,
-  Value<int> rowid,
-});
-typedef $$AppSetsTableUpdateCompanionBuilder = AppSetsCompanion Function({
-  Value<DateTime?> updatedAt,
-  Value<String> name,
-  Value<List<String>?> clashRuleUrls,
-  Value<int> rowid,
-});
+typedef $$GreatIpSetsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $GreatIpSetsTable,
+      GreatIpSet,
+      $$GreatIpSetsTableFilterComposer,
+      $$GreatIpSetsTableOrderingComposer,
+      $$GreatIpSetsTableAnnotationComposer,
+      $$GreatIpSetsTableCreateCompanionBuilder,
+      $$GreatIpSetsTableUpdateCompanionBuilder,
+      (
+        GreatIpSet,
+        BaseReferences<_$AppDatabase, $GreatIpSetsTable, GreatIpSet>,
+      ),
+      GreatIpSet,
+      PrefetchHooks Function()
+    >;
+typedef $$AppSetsTableCreateCompanionBuilder =
+    AppSetsCompanion Function({
+      Value<DateTime?> updatedAt,
+      required String name,
+      Value<List<String>?> clashRuleUrls,
+      Value<int> rowid,
+    });
+typedef $$AppSetsTableUpdateCompanionBuilder =
+    AppSetsCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<String> name,
+      Value<List<String>?> clashRuleUrls,
+      Value<int> rowid,
+    });
 
 final class $$AppSetsTableReferences
     extends BaseReferences<_$AppDatabase, $AppSetsTable, AppSet> {
   $$AppSetsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static MultiTypedResultKey<$AppsTable, List<App>> _appsRefsTable(
-          _$AppDatabase db) =>
-      MultiTypedResultKey.fromTable(db.apps,
-          aliasName: $_aliasNameGenerator(db.appSets.name, db.apps.appSetName));
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.apps,
+    aliasName: $_aliasNameGenerator(db.appSets.name, db.apps.appSetName),
+  );
 
   $$AppsTableProcessedTableManager get appsRefs {
-    final manager = $$AppsTableTableManager($_db, $_db.apps).filter(
-        (f) => f.appSetName.name.sqlEquals($_itemColumn<String>('name')!));
+    final manager = $$AppsTableTableManager(
+      $_db,
+      $_db.apps,
+    ).filter((f) => f.appSetName.name.sqlEquals($_itemColumn<String>('name')!));
 
     final cache = $_typedResult.readTableOrNull(_appsRefsTable($_db));
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
+      manager.$state.copyWith(prefetchedData: cache),
+    );
   }
 }
 
@@ -7928,34 +9610,43 @@ class $$AppSetsTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<List<String>?, List<String>, String>
-      get clashRuleUrls => $composableBuilder(
-          column: $table.clashRuleUrls,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+  get clashRuleUrls => $composableBuilder(
+    column: $table.clashRuleUrls,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
   Expression<bool> appsRefs(
-      Expression<bool> Function($$AppsTableFilterComposer f) f) {
+    Expression<bool> Function($$AppsTableFilterComposer f) f,
+  ) {
     final $$AppsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.name,
-        referencedTable: $db.apps,
-        getReferencedColumn: (t) => t.appSetName,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$AppsTableFilterComposer(
-              $db: $db,
-              $table: $db.apps,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.name,
+      referencedTable: $db.apps,
+      getReferencedColumn: (t) => t.appSetName,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AppsTableFilterComposer(
+            $db: $db,
+            $table: $db.apps,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return f(composer);
   }
 }
@@ -7970,14 +9661,19 @@ class $$AppSetsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get clashRuleUrls => $composableBuilder(
-      column: $table.clashRuleUrls,
-      builder: (column) => ColumnOrderings(column));
+    column: $table.clashRuleUrls,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$AppSetsTableAnnotationComposer
@@ -7997,44 +9693,54 @@ class $$AppSetsTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<List<String>?, String> get clashRuleUrls =>
       $composableBuilder(
-          column: $table.clashRuleUrls, builder: (column) => column);
+        column: $table.clashRuleUrls,
+        builder: (column) => column,
+      );
 
   Expression<T> appsRefs<T extends Object>(
-      Expression<T> Function($$AppsTableAnnotationComposer a) f) {
+    Expression<T> Function($$AppsTableAnnotationComposer a) f,
+  ) {
     final $$AppsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.name,
-        referencedTable: $db.apps,
-        getReferencedColumn: (t) => t.appSetName,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$AppsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.apps,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.name,
+      referencedTable: $db.apps,
+      getReferencedColumn: (t) => t.appSetName,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AppsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.apps,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return f(composer);
   }
 }
 
-class $$AppSetsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $AppSetsTable,
-    AppSet,
-    $$AppSetsTableFilterComposer,
-    $$AppSetsTableOrderingComposer,
-    $$AppSetsTableAnnotationComposer,
-    $$AppSetsTableCreateCompanionBuilder,
-    $$AppSetsTableUpdateCompanionBuilder,
-    (AppSet, $$AppSetsTableReferences),
-    AppSet,
-    PrefetchHooks Function({bool appsRefs})> {
+class $$AppSetsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AppSetsTable,
+          AppSet,
+          $$AppSetsTableFilterComposer,
+          $$AppSetsTableOrderingComposer,
+          $$AppSetsTableAnnotationComposer,
+          $$AppSetsTableCreateCompanionBuilder,
+          $$AppSetsTableUpdateCompanionBuilder,
+          (AppSet, $$AppSetsTableReferences),
+          AppSet,
+          PrefetchHooks Function({bool appsRefs})
+        > {
   $$AppSetsTableTableManager(_$AppDatabase db, $AppSetsTable table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -8043,33 +9749,37 @@ class $$AppSetsTableTableManager extends RootTableManager<
               $$AppSetsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$AppSetsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<List<String>?> clashRuleUrls = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              AppSetsCompanion(
-            updatedAt: updatedAt,
-            name: name,
-            clashRuleUrls: clashRuleUrls,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            required String name,
-            Value<List<String>?> clashRuleUrls = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              AppSetsCompanion.insert(
-            updatedAt: updatedAt,
-            name: name,
-            clashRuleUrls: clashRuleUrls,
-            rowid: rowid,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<List<String>?> clashRuleUrls = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AppSetsCompanion(
+                updatedAt: updatedAt,
+                name: name,
+                clashRuleUrls: clashRuleUrls,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                required String name,
+                Value<List<String>?> clashRuleUrls = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AppSetsCompanion.insert(
+                updatedAt: updatedAt,
+                name: name,
+                clashRuleUrls: clashRuleUrls,
+                rowid: rowid,
+              ),
           withReferenceMapper: (p0) => p0
-              .map((e) =>
-                  (e.readTable(table), $$AppSetsTableReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$AppSetsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: ({appsRefs = false}) {
             return PrefetchHooks(
@@ -8080,46 +9790,54 @@ class $$AppSetsTableTableManager extends RootTableManager<
                 return [
                   if (appsRefs)
                     await $_getPrefetchedData<AppSet, $AppSetsTable, App>(
-                        currentTable: table,
-                        referencedTable:
-                            $$AppSetsTableReferences._appsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$AppSetsTableReferences(db, table, p0).appsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems
-                                .where((e) => e.appSetName == item.name),
-                        typedResults: items)
+                      currentTable: table,
+                      referencedTable: $$AppSetsTableReferences._appsRefsTable(
+                        db,
+                      ),
+                      managerFromTypedResult: (p0) =>
+                          $$AppSetsTableReferences(db, table, p0).appsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where(
+                            (e) => e.appSetName == item.name,
+                          ),
+                      typedResults: items,
+                    ),
                 ];
               },
             );
           },
-        ));
+        ),
+      );
 }
 
-typedef $$AppSetsTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $AppSetsTable,
-    AppSet,
-    $$AppSetsTableFilterComposer,
-    $$AppSetsTableOrderingComposer,
-    $$AppSetsTableAnnotationComposer,
-    $$AppSetsTableCreateCompanionBuilder,
-    $$AppSetsTableUpdateCompanionBuilder,
-    (AppSet, $$AppSetsTableReferences),
-    AppSet,
-    PrefetchHooks Function({bool appsRefs})>;
-typedef $$AppsTableCreateCompanionBuilder = AppsCompanion Function({
-  Value<int> id,
-  required String appSetName,
-  required AppId appId,
-  Value<Uint8List?> icon,
-});
-typedef $$AppsTableUpdateCompanionBuilder = AppsCompanion Function({
-  Value<int> id,
-  Value<String> appSetName,
-  Value<AppId> appId,
-  Value<Uint8List?> icon,
-});
+typedef $$AppSetsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AppSetsTable,
+      AppSet,
+      $$AppSetsTableFilterComposer,
+      $$AppSetsTableOrderingComposer,
+      $$AppSetsTableAnnotationComposer,
+      $$AppSetsTableCreateCompanionBuilder,
+      $$AppSetsTableUpdateCompanionBuilder,
+      (AppSet, $$AppSetsTableReferences),
+      AppSet,
+      PrefetchHooks Function({bool appsRefs})
+    >;
+typedef $$AppsTableCreateCompanionBuilder =
+    AppsCompanion Function({
+      Value<int> id,
+      required String appSetName,
+      required AppId appId,
+      Value<Uint8List?> icon,
+    });
+typedef $$AppsTableUpdateCompanionBuilder =
+    AppsCompanion Function({
+      Value<int> id,
+      Value<String> appSetName,
+      Value<AppId> appId,
+      Value<Uint8List?> icon,
+    });
 
 final class $$AppsTableReferences
     extends BaseReferences<_$AppDatabase, $AppsTable, App> {
@@ -8131,12 +9849,15 @@ final class $$AppsTableReferences
   $$AppSetsTableProcessedTableManager get appSetName {
     final $_column = $_itemColumn<String>('app_set_name')!;
 
-    final manager = $$AppSetsTableTableManager($_db, $_db.appSets)
-        .filter((f) => f.name.sqlEquals($_column));
+    final manager = $$AppSetsTableTableManager(
+      $_db,
+      $_db.appSets,
+    ).filter((f) => f.name.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_appSetNameTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
   }
 }
 
@@ -8149,33 +9870,41 @@ class $$AppsTableFilterComposer extends Composer<_$AppDatabase, $AppsTable> {
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<AppId, AppId, Uint8List> get appId =>
       $composableBuilder(
-          column: $table.appId,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+        column: $table.appId,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 
   ColumnFilters<Uint8List> get icon => $composableBuilder(
-      column: $table.icon, builder: (column) => ColumnFilters(column));
+    column: $table.icon,
+    builder: (column) => ColumnFilters(column),
+  );
 
   $$AppSetsTableFilterComposer get appSetName {
     final $$AppSetsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.appSetName,
-        referencedTable: $db.appSets,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$AppSetsTableFilterComposer(
-              $db: $db,
-              $table: $db.appSets,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.appSetName,
+      referencedTable: $db.appSets,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AppSetsTableFilterComposer(
+            $db: $db,
+            $table: $db.appSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
@@ -8189,31 +9918,40 @@ class $$AppsTableOrderingComposer extends Composer<_$AppDatabase, $AppsTable> {
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<Uint8List> get appId => $composableBuilder(
-      column: $table.appId, builder: (column) => ColumnOrderings(column));
+    column: $table.appId,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<Uint8List> get icon => $composableBuilder(
-      column: $table.icon, builder: (column) => ColumnOrderings(column));
+    column: $table.icon,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   $$AppSetsTableOrderingComposer get appSetName {
     final $$AppSetsTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.appSetName,
-        referencedTable: $db.appSets,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$AppSetsTableOrderingComposer(
-              $db: $db,
-              $table: $db.appSets,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.appSetName,
+      referencedTable: $db.appSets,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AppSetsTableOrderingComposer(
+            $db: $db,
+            $table: $db.appSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
@@ -8238,39 +9976,46 @@ class $$AppsTableAnnotationComposer
 
   $$AppSetsTableAnnotationComposer get appSetName {
     final $$AppSetsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.appSetName,
-        referencedTable: $db.appSets,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$AppSetsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.appSets,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.appSetName,
+      referencedTable: $db.appSets,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AppSetsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.appSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
 
-class $$AppsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $AppsTable,
-    App,
-    $$AppsTableFilterComposer,
-    $$AppsTableOrderingComposer,
-    $$AppsTableAnnotationComposer,
-    $$AppsTableCreateCompanionBuilder,
-    $$AppsTableUpdateCompanionBuilder,
-    (App, $$AppsTableReferences),
-    App,
-    PrefetchHooks Function({bool appSetName})> {
+class $$AppsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AppsTable,
+          App,
+          $$AppsTableFilterComposer,
+          $$AppsTableOrderingComposer,
+          $$AppsTableAnnotationComposer,
+          $$AppsTableCreateCompanionBuilder,
+          $$AppsTableUpdateCompanionBuilder,
+          (App, $$AppsTableReferences),
+          App,
+          PrefetchHooks Function({bool appSetName})
+        > {
   $$AppsTableTableManager(_$AppDatabase db, $AppsTable table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -8279,40 +10024,43 @@ class $$AppsTableTableManager extends RootTableManager<
               $$AppsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$AppsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> appSetName = const Value.absent(),
-            Value<AppId> appId = const Value.absent(),
-            Value<Uint8List?> icon = const Value.absent(),
-          }) =>
-              AppsCompanion(
-            id: id,
-            appSetName: appSetName,
-            appId: appId,
-            icon: icon,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required String appSetName,
-            required AppId appId,
-            Value<Uint8List?> icon = const Value.absent(),
-          }) =>
-              AppsCompanion.insert(
-            id: id,
-            appSetName: appSetName,
-            appId: appId,
-            icon: icon,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> appSetName = const Value.absent(),
+                Value<AppId> appId = const Value.absent(),
+                Value<Uint8List?> icon = const Value.absent(),
+              }) => AppsCompanion(
+                id: id,
+                appSetName: appSetName,
+                appId: appId,
+                icon: icon,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String appSetName,
+                required AppId appId,
+                Value<Uint8List?> icon = const Value.absent(),
+              }) => AppsCompanion.insert(
+                id: id,
+                appSetName: appSetName,
+                appId: appId,
+                icon: icon,
+              ),
           withReferenceMapper: (p0) => p0
-              .map((e) =>
-                  (e.readTable(table), $$AppsTableReferences(db, table, e)))
+              .map(
+                (e) =>
+                    (e.readTable(table), $$AppsTableReferences(db, table, e)),
+              )
               .toList(),
           prefetchHooksCallback: ({appSetName = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
-              addJoins: <
-                  T extends TableManagerState<
+              addJoins:
+                  <
+                    T extends TableManagerState<
                       dynamic,
                       dynamic,
                       dynamic,
@@ -8323,49 +10071,60 @@ class $$AppsTableTableManager extends RootTableManager<
                       dynamic,
                       dynamic,
                       dynamic,
-                      dynamic>>(state) {
-                if (appSetName) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.appSetName,
-                    referencedTable: $$AppsTableReferences._appSetNameTable(db),
-                    referencedColumn:
-                        $$AppsTableReferences._appSetNameTable(db).name,
-                  ) as T;
-                }
+                      dynamic
+                    >
+                  >(state) {
+                    if (appSetName) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.appSetName,
+                                referencedTable: $$AppsTableReferences
+                                    ._appSetNameTable(db),
+                                referencedColumn: $$AppsTableReferences
+                                    ._appSetNameTable(db)
+                                    .name,
+                              )
+                              as T;
+                    }
 
-                return state;
-              },
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [];
               },
             );
           },
-        ));
+        ),
+      );
 }
 
-typedef $$AppsTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $AppsTable,
-    App,
-    $$AppsTableFilterComposer,
-    $$AppsTableOrderingComposer,
-    $$AppsTableAnnotationComposer,
-    $$AppsTableCreateCompanionBuilder,
-    $$AppsTableUpdateCompanionBuilder,
-    (App, $$AppsTableReferences),
-    App,
-    PrefetchHooks Function({bool appSetName})>;
-typedef $$CidrsTableCreateCompanionBuilder = CidrsCompanion Function({
-  Value<int> id,
-  required String ipSetName,
-  required CIDR cidr,
-});
-typedef $$CidrsTableUpdateCompanionBuilder = CidrsCompanion Function({
-  Value<int> id,
-  Value<String> ipSetName,
-  Value<CIDR> cidr,
-});
+typedef $$AppsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AppsTable,
+      App,
+      $$AppsTableFilterComposer,
+      $$AppsTableOrderingComposer,
+      $$AppsTableAnnotationComposer,
+      $$AppsTableCreateCompanionBuilder,
+      $$AppsTableUpdateCompanionBuilder,
+      (App, $$AppsTableReferences),
+      App,
+      PrefetchHooks Function({bool appSetName})
+    >;
+typedef $$CidrsTableCreateCompanionBuilder =
+    CidrsCompanion Function({
+      Value<int> id,
+      required String ipSetName,
+      required CIDR cidr,
+    });
+typedef $$CidrsTableUpdateCompanionBuilder =
+    CidrsCompanion Function({
+      Value<int> id,
+      Value<String> ipSetName,
+      Value<CIDR> cidr,
+    });
 
 final class $$CidrsTableReferences
     extends BaseReferences<_$AppDatabase, $CidrsTable, Cidr> {
@@ -8373,17 +10132,21 @@ final class $$CidrsTableReferences
 
   static $AtomicIpSetsTable _ipSetNameTable(_$AppDatabase db) =>
       db.atomicIpSets.createAlias(
-          $_aliasNameGenerator(db.cidrs.ipSetName, db.atomicIpSets.name));
+        $_aliasNameGenerator(db.cidrs.ipSetName, db.atomicIpSets.name),
+      );
 
   $$AtomicIpSetsTableProcessedTableManager get ipSetName {
     final $_column = $_itemColumn<String>('ip_set_name')!;
 
-    final manager = $$AtomicIpSetsTableTableManager($_db, $_db.atomicIpSets)
-        .filter((f) => f.name.sqlEquals($_column));
+    final manager = $$AtomicIpSetsTableTableManager(
+      $_db,
+      $_db.atomicIpSets,
+    ).filter((f) => f.name.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_ipSetNameTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
   }
 }
 
@@ -8396,30 +10159,36 @@ class $$CidrsTableFilterComposer extends Composer<_$AppDatabase, $CidrsTable> {
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<CIDR, CIDR, Uint8List> get cidr =>
       $composableBuilder(
-          column: $table.cidr,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+        column: $table.cidr,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 
   $$AtomicIpSetsTableFilterComposer get ipSetName {
     final $$AtomicIpSetsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.ipSetName,
-        referencedTable: $db.atomicIpSets,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$AtomicIpSetsTableFilterComposer(
-              $db: $db,
-              $table: $db.atomicIpSets,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.ipSetName,
+      referencedTable: $db.atomicIpSets,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AtomicIpSetsTableFilterComposer(
+            $db: $db,
+            $table: $db.atomicIpSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
@@ -8434,28 +10203,35 @@ class $$CidrsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<Uint8List> get cidr => $composableBuilder(
-      column: $table.cidr, builder: (column) => ColumnOrderings(column));
+    column: $table.cidr,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   $$AtomicIpSetsTableOrderingComposer get ipSetName {
     final $$AtomicIpSetsTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.ipSetName,
-        referencedTable: $db.atomicIpSets,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$AtomicIpSetsTableOrderingComposer(
-              $db: $db,
-              $table: $db.atomicIpSets,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.ipSetName,
+      referencedTable: $db.atomicIpSets,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AtomicIpSetsTableOrderingComposer(
+            $db: $db,
+            $table: $db.atomicIpSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
@@ -8477,39 +10253,46 @@ class $$CidrsTableAnnotationComposer
 
   $$AtomicIpSetsTableAnnotationComposer get ipSetName {
     final $$AtomicIpSetsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.ipSetName,
-        referencedTable: $db.atomicIpSets,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$AtomicIpSetsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.atomicIpSets,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.ipSetName,
+      referencedTable: $db.atomicIpSets,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AtomicIpSetsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.atomicIpSets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
 
-class $$CidrsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $CidrsTable,
-    Cidr,
-    $$CidrsTableFilterComposer,
-    $$CidrsTableOrderingComposer,
-    $$CidrsTableAnnotationComposer,
-    $$CidrsTableCreateCompanionBuilder,
-    $$CidrsTableUpdateCompanionBuilder,
-    (Cidr, $$CidrsTableReferences),
-    Cidr,
-    PrefetchHooks Function({bool ipSetName})> {
+class $$CidrsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CidrsTable,
+          Cidr,
+          $$CidrsTableFilterComposer,
+          $$CidrsTableOrderingComposer,
+          $$CidrsTableAnnotationComposer,
+          $$CidrsTableCreateCompanionBuilder,
+          $$CidrsTableUpdateCompanionBuilder,
+          (Cidr, $$CidrsTableReferences),
+          Cidr,
+          PrefetchHooks Function({bool ipSetName})
+        > {
   $$CidrsTableTableManager(_$AppDatabase db, $CidrsTable table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -8518,36 +10301,35 @@ class $$CidrsTableTableManager extends RootTableManager<
               $$CidrsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$CidrsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> ipSetName = const Value.absent(),
-            Value<CIDR> cidr = const Value.absent(),
-          }) =>
-              CidrsCompanion(
-            id: id,
-            ipSetName: ipSetName,
-            cidr: cidr,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required String ipSetName,
-            required CIDR cidr,
-          }) =>
-              CidrsCompanion.insert(
-            id: id,
-            ipSetName: ipSetName,
-            cidr: cidr,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> ipSetName = const Value.absent(),
+                Value<CIDR> cidr = const Value.absent(),
+              }) => CidrsCompanion(id: id, ipSetName: ipSetName, cidr: cidr),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String ipSetName,
+                required CIDR cidr,
+              }) => CidrsCompanion.insert(
+                id: id,
+                ipSetName: ipSetName,
+                cidr: cidr,
+              ),
           withReferenceMapper: (p0) => p0
-              .map((e) =>
-                  (e.readTable(table), $$CidrsTableReferences(db, table, e)))
+              .map(
+                (e) =>
+                    (e.readTable(table), $$CidrsTableReferences(db, table, e)),
+              )
               .toList(),
           prefetchHooksCallback: ({ipSetName = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
-              addJoins: <
-                  T extends TableManagerState<
+              addJoins:
+                  <
+                    T extends TableManagerState<
                       dynamic,
                       dynamic,
                       dynamic,
@@ -8558,57 +10340,68 @@ class $$CidrsTableTableManager extends RootTableManager<
                       dynamic,
                       dynamic,
                       dynamic,
-                      dynamic>>(state) {
-                if (ipSetName) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.ipSetName,
-                    referencedTable: $$CidrsTableReferences._ipSetNameTable(db),
-                    referencedColumn:
-                        $$CidrsTableReferences._ipSetNameTable(db).name,
-                  ) as T;
-                }
+                      dynamic
+                    >
+                  >(state) {
+                    if (ipSetName) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.ipSetName,
+                                referencedTable: $$CidrsTableReferences
+                                    ._ipSetNameTable(db),
+                                referencedColumn: $$CidrsTableReferences
+                                    ._ipSetNameTable(db)
+                                    .name,
+                              )
+                              as T;
+                    }
 
-                return state;
-              },
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [];
               },
             );
           },
-        ));
+        ),
+      );
 }
 
-typedef $$CidrsTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $CidrsTable,
-    Cidr,
-    $$CidrsTableFilterComposer,
-    $$CidrsTableOrderingComposer,
-    $$CidrsTableAnnotationComposer,
-    $$CidrsTableCreateCompanionBuilder,
-    $$CidrsTableUpdateCompanionBuilder,
-    (Cidr, $$CidrsTableReferences),
-    Cidr,
-    PrefetchHooks Function({bool ipSetName})>;
-typedef $$SshServersTableCreateCompanionBuilder = SshServersCompanion Function({
-  Value<DateTime?> updatedAt,
-  Value<int> id,
-  required String name,
-  required String address,
-  required String storageKey,
-  Value<String?> country,
-  required AuthMethod authMethod,
-});
-typedef $$SshServersTableUpdateCompanionBuilder = SshServersCompanion Function({
-  Value<DateTime?> updatedAt,
-  Value<int> id,
-  Value<String> name,
-  Value<String> address,
-  Value<String> storageKey,
-  Value<String?> country,
-  Value<AuthMethod> authMethod,
-});
+typedef $$CidrsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CidrsTable,
+      Cidr,
+      $$CidrsTableFilterComposer,
+      $$CidrsTableOrderingComposer,
+      $$CidrsTableAnnotationComposer,
+      $$CidrsTableCreateCompanionBuilder,
+      $$CidrsTableUpdateCompanionBuilder,
+      (Cidr, $$CidrsTableReferences),
+      Cidr,
+      PrefetchHooks Function({bool ipSetName})
+    >;
+typedef $$SshServersTableCreateCompanionBuilder =
+    SshServersCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<int> id,
+      required String name,
+      required String address,
+      required String storageKey,
+      Value<String?> country,
+      required AuthMethod authMethod,
+    });
+typedef $$SshServersTableUpdateCompanionBuilder =
+    SshServersCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<int> id,
+      Value<String> name,
+      Value<String> address,
+      Value<String> storageKey,
+      Value<String?> country,
+      Value<AuthMethod> authMethod,
+    });
 
 class $$SshServersTableFilterComposer
     extends Composer<_$AppDatabase, $SshServersTable> {
@@ -8620,27 +10413,40 @@ class $$SshServersTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get address => $composableBuilder(
-      column: $table.address, builder: (column) => ColumnFilters(column));
+    column: $table.address,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get storageKey => $composableBuilder(
-      column: $table.storageKey, builder: (column) => ColumnFilters(column));
+    column: $table.storageKey,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get country => $composableBuilder(
-      column: $table.country, builder: (column) => ColumnFilters(column));
+    column: $table.country,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<AuthMethod, AuthMethod, int> get authMethod =>
       $composableBuilder(
-          column: $table.authMethod,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+        column: $table.authMethod,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 }
 
 class $$SshServersTableOrderingComposer
@@ -8653,25 +10459,39 @@ class $$SshServersTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get address => $composableBuilder(
-      column: $table.address, builder: (column) => ColumnOrderings(column));
+    column: $table.address,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get storageKey => $composableBuilder(
-      column: $table.storageKey, builder: (column) => ColumnOrderings(column));
+    column: $table.storageKey,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get country => $composableBuilder(
-      column: $table.country, builder: (column) => ColumnOrderings(column));
+    column: $table.country,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get authMethod => $composableBuilder(
-      column: $table.authMethod, builder: (column) => ColumnOrderings(column));
+    column: $table.authMethod,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$SshServersTableAnnotationComposer
@@ -8696,30 +10516,41 @@ class $$SshServersTableAnnotationComposer
       $composableBuilder(column: $table.address, builder: (column) => column);
 
   GeneratedColumn<String> get storageKey => $composableBuilder(
-      column: $table.storageKey, builder: (column) => column);
+    column: $table.storageKey,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get country =>
       $composableBuilder(column: $table.country, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<AuthMethod, int> get authMethod =>
       $composableBuilder(
-          column: $table.authMethod, builder: (column) => column);
+        column: $table.authMethod,
+        builder: (column) => column,
+      );
 }
 
-class $$SshServersTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $SshServersTable,
-    SshServer,
-    $$SshServersTableFilterComposer,
-    $$SshServersTableOrderingComposer,
-    $$SshServersTableAnnotationComposer,
-    $$SshServersTableCreateCompanionBuilder,
-    $$SshServersTableUpdateCompanionBuilder,
-    (SshServer, BaseReferences<_$AppDatabase, $SshServersTable, SshServer>),
-    SshServer,
-    PrefetchHooks Function()> {
+class $$SshServersTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SshServersTable,
+          SshServer,
+          $$SshServersTableFilterComposer,
+          $$SshServersTableOrderingComposer,
+          $$SshServersTableAnnotationComposer,
+          $$SshServersTableCreateCompanionBuilder,
+          $$SshServersTableUpdateCompanionBuilder,
+          (
+            SshServer,
+            BaseReferences<_$AppDatabase, $SshServersTable, SshServer>,
+          ),
+          SshServer,
+          PrefetchHooks Function()
+        > {
   $$SshServersTableTableManager(_$AppDatabase db, $SshServersTable table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -8728,73 +10559,76 @@ class $$SshServersTableTableManager extends RootTableManager<
               $$SshServersTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$SshServersTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<int> id = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<String> address = const Value.absent(),
-            Value<String> storageKey = const Value.absent(),
-            Value<String?> country = const Value.absent(),
-            Value<AuthMethod> authMethod = const Value.absent(),
-          }) =>
-              SshServersCompanion(
-            updatedAt: updatedAt,
-            id: id,
-            name: name,
-            address: address,
-            storageKey: storageKey,
-            country: country,
-            authMethod: authMethod,
-          ),
-          createCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<int> id = const Value.absent(),
-            required String name,
-            required String address,
-            required String storageKey,
-            Value<String?> country = const Value.absent(),
-            required AuthMethod authMethod,
-          }) =>
-              SshServersCompanion.insert(
-            updatedAt: updatedAt,
-            id: id,
-            name: name,
-            address: address,
-            storageKey: storageKey,
-            country: country,
-            authMethod: authMethod,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> address = const Value.absent(),
+                Value<String> storageKey = const Value.absent(),
+                Value<String?> country = const Value.absent(),
+                Value<AuthMethod> authMethod = const Value.absent(),
+              }) => SshServersCompanion(
+                updatedAt: updatedAt,
+                id: id,
+                name: name,
+                address: address,
+                storageKey: storageKey,
+                country: country,
+                authMethod: authMethod,
+              ),
+          createCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                required String name,
+                required String address,
+                required String storageKey,
+                Value<String?> country = const Value.absent(),
+                required AuthMethod authMethod,
+              }) => SshServersCompanion.insert(
+                updatedAt: updatedAt,
+                id: id,
+                name: name,
+                address: address,
+                storageKey: storageKey,
+                country: country,
+                authMethod: authMethod,
+              ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
           prefetchHooksCallback: null,
-        ));
+        ),
+      );
 }
 
-typedef $$SshServersTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $SshServersTable,
-    SshServer,
-    $$SshServersTableFilterComposer,
-    $$SshServersTableOrderingComposer,
-    $$SshServersTableAnnotationComposer,
-    $$SshServersTableCreateCompanionBuilder,
-    $$SshServersTableUpdateCompanionBuilder,
-    (SshServer, BaseReferences<_$AppDatabase, $SshServersTable, SshServer>),
-    SshServer,
-    PrefetchHooks Function()>;
-typedef $$CommonSshKeysTableCreateCompanionBuilder = CommonSshKeysCompanion
-    Function({
-  Value<int> id,
-  required String name,
-  Value<String?> remark,
-});
-typedef $$CommonSshKeysTableUpdateCompanionBuilder = CommonSshKeysCompanion
-    Function({
-  Value<int> id,
-  Value<String> name,
-  Value<String?> remark,
-});
+typedef $$SshServersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SshServersTable,
+      SshServer,
+      $$SshServersTableFilterComposer,
+      $$SshServersTableOrderingComposer,
+      $$SshServersTableAnnotationComposer,
+      $$SshServersTableCreateCompanionBuilder,
+      $$SshServersTableUpdateCompanionBuilder,
+      (SshServer, BaseReferences<_$AppDatabase, $SshServersTable, SshServer>),
+      SshServer,
+      PrefetchHooks Function()
+    >;
+typedef $$CommonSshKeysTableCreateCompanionBuilder =
+    CommonSshKeysCompanion Function({
+      Value<int> id,
+      required String name,
+      Value<String?> remark,
+    });
+typedef $$CommonSshKeysTableUpdateCompanionBuilder =
+    CommonSshKeysCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<String?> remark,
+    });
 
 class $$CommonSshKeysTableFilterComposer
     extends Composer<_$AppDatabase, $CommonSshKeysTable> {
@@ -8806,13 +10640,19 @@ class $$CommonSshKeysTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get remark => $composableBuilder(
-      column: $table.remark, builder: (column) => ColumnFilters(column));
+    column: $table.remark,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$CommonSshKeysTableOrderingComposer
@@ -8825,13 +10665,19 @@ class $$CommonSshKeysTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get remark => $composableBuilder(
-      column: $table.remark, builder: (column) => ColumnOrderings(column));
+    column: $table.remark,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$CommonSshKeysTableAnnotationComposer
@@ -8853,23 +10699,27 @@ class $$CommonSshKeysTableAnnotationComposer
       $composableBuilder(column: $table.remark, builder: (column) => column);
 }
 
-class $$CommonSshKeysTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $CommonSshKeysTable,
-    CommonSshKey,
-    $$CommonSshKeysTableFilterComposer,
-    $$CommonSshKeysTableOrderingComposer,
-    $$CommonSshKeysTableAnnotationComposer,
-    $$CommonSshKeysTableCreateCompanionBuilder,
-    $$CommonSshKeysTableUpdateCompanionBuilder,
-    (
-      CommonSshKey,
-      BaseReferences<_$AppDatabase, $CommonSshKeysTable, CommonSshKey>
-    ),
-    CommonSshKey,
-    PrefetchHooks Function()> {
+class $$CommonSshKeysTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CommonSshKeysTable,
+          CommonSshKey,
+          $$CommonSshKeysTableFilterComposer,
+          $$CommonSshKeysTableOrderingComposer,
+          $$CommonSshKeysTableAnnotationComposer,
+          $$CommonSshKeysTableCreateCompanionBuilder,
+          $$CommonSshKeysTableUpdateCompanionBuilder,
+          (
+            CommonSshKey,
+            BaseReferences<_$AppDatabase, $CommonSshKeysTable, CommonSshKey>,
+          ),
+          CommonSshKey,
+          PrefetchHooks Function()
+        > {
   $$CommonSshKeysTableTableManager(_$AppDatabase db, $CommonSshKeysTable table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -8878,64 +10728,65 @@ class $$CommonSshKeysTableTableManager extends RootTableManager<
               $$CommonSshKeysTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$CommonSshKeysTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<String?> remark = const Value.absent(),
-          }) =>
-              CommonSshKeysCompanion(
-            id: id,
-            name: name,
-            remark: remark,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required String name,
-            Value<String?> remark = const Value.absent(),
-          }) =>
-              CommonSshKeysCompanion.insert(
-            id: id,
-            name: name,
-            remark: remark,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String?> remark = const Value.absent(),
+              }) => CommonSshKeysCompanion(id: id, name: name, remark: remark),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                Value<String?> remark = const Value.absent(),
+              }) => CommonSshKeysCompanion.insert(
+                id: id,
+                name: name,
+                remark: remark,
+              ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
           prefetchHooksCallback: null,
-        ));
+        ),
+      );
 }
 
-typedef $$CommonSshKeysTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $CommonSshKeysTable,
-    CommonSshKey,
-    $$CommonSshKeysTableFilterComposer,
-    $$CommonSshKeysTableOrderingComposer,
-    $$CommonSshKeysTableAnnotationComposer,
-    $$CommonSshKeysTableCreateCompanionBuilder,
-    $$CommonSshKeysTableUpdateCompanionBuilder,
-    (
+typedef $$CommonSshKeysTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CommonSshKeysTable,
       CommonSshKey,
-      BaseReferences<_$AppDatabase, $CommonSshKeysTable, CommonSshKey>
-    ),
-    CommonSshKey,
-    PrefetchHooks Function()>;
-typedef $$CustomRouteModesTableCreateCompanionBuilder
-    = CustomRouteModesCompanion Function({
-  Value<DateTime?> updatedAt,
-  Value<int> id,
-  required String name,
-  required RouterConfig routerConfig,
-  Value<dns.DnsRules> dnsRules,
-});
-typedef $$CustomRouteModesTableUpdateCompanionBuilder
-    = CustomRouteModesCompanion Function({
-  Value<DateTime?> updatedAt,
-  Value<int> id,
-  Value<String> name,
-  Value<RouterConfig> routerConfig,
-  Value<dns.DnsRules> dnsRules,
-});
+      $$CommonSshKeysTableFilterComposer,
+      $$CommonSshKeysTableOrderingComposer,
+      $$CommonSshKeysTableAnnotationComposer,
+      $$CommonSshKeysTableCreateCompanionBuilder,
+      $$CommonSshKeysTableUpdateCompanionBuilder,
+      (
+        CommonSshKey,
+        BaseReferences<_$AppDatabase, $CommonSshKeysTable, CommonSshKey>,
+      ),
+      CommonSshKey,
+      PrefetchHooks Function()
+    >;
+typedef $$CustomRouteModesTableCreateCompanionBuilder =
+    CustomRouteModesCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<int> id,
+      required String name,
+      required RouterConfig routerConfig,
+      Value<dns.DnsRules> dnsRules,
+      required List<String> internalDnsServers,
+    });
+typedef $$CustomRouteModesTableUpdateCompanionBuilder =
+    CustomRouteModesCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<int> id,
+      Value<String> name,
+      Value<RouterConfig> routerConfig,
+      Value<dns.DnsRules> dnsRules,
+      Value<List<String>> internalDnsServers,
+    });
 
 class $$CustomRouteModesTableFilterComposer
     extends Composer<_$AppDatabase, $CustomRouteModesTable> {
@@ -8947,23 +10798,37 @@ class $$CustomRouteModesTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<RouterConfig, RouterConfig, Uint8List>
-      get routerConfig => $composableBuilder(
-          column: $table.routerConfig,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+  get routerConfig => $composableBuilder(
+    column: $table.routerConfig,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<dns.DnsRules, dns.DnsRules, Uint8List>
-      get dnsRules => $composableBuilder(
-          column: $table.dnsRules,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+  get dnsRules => $composableBuilder(
+    column: $table.dnsRules,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<List<String>, List<String>, String>
+  get internalDnsServers => $composableBuilder(
+    column: $table.internalDnsServers,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 }
 
 class $$CustomRouteModesTableOrderingComposer
@@ -8976,20 +10841,34 @@ class $$CustomRouteModesTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<Uint8List> get routerConfig => $composableBuilder(
-      column: $table.routerConfig,
-      builder: (column) => ColumnOrderings(column));
+    column: $table.routerConfig,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<Uint8List> get dnsRules => $composableBuilder(
-      column: $table.dnsRules, builder: (column) => ColumnOrderings(column));
+    column: $table.dnsRules,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get internalDnsServers => $composableBuilder(
+    column: $table.internalDnsServers,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$CustomRouteModesTableAnnotationComposer
@@ -9012,30 +10891,47 @@ class $$CustomRouteModesTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<RouterConfig, Uint8List> get routerConfig =>
       $composableBuilder(
-          column: $table.routerConfig, builder: (column) => column);
+        column: $table.routerConfig,
+        builder: (column) => column,
+      );
 
   GeneratedColumnWithTypeConverter<dns.DnsRules, Uint8List> get dnsRules =>
       $composableBuilder(column: $table.dnsRules, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<List<String>, String>
+  get internalDnsServers => $composableBuilder(
+    column: $table.internalDnsServers,
+    builder: (column) => column,
+  );
 }
 
-class $$CustomRouteModesTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $CustomRouteModesTable,
-    CustomRouteMode,
-    $$CustomRouteModesTableFilterComposer,
-    $$CustomRouteModesTableOrderingComposer,
-    $$CustomRouteModesTableAnnotationComposer,
-    $$CustomRouteModesTableCreateCompanionBuilder,
-    $$CustomRouteModesTableUpdateCompanionBuilder,
-    (
-      CustomRouteMode,
-      BaseReferences<_$AppDatabase, $CustomRouteModesTable, CustomRouteMode>
-    ),
-    CustomRouteMode,
-    PrefetchHooks Function()> {
+class $$CustomRouteModesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CustomRouteModesTable,
+          CustomRouteMode,
+          $$CustomRouteModesTableFilterComposer,
+          $$CustomRouteModesTableOrderingComposer,
+          $$CustomRouteModesTableAnnotationComposer,
+          $$CustomRouteModesTableCreateCompanionBuilder,
+          $$CustomRouteModesTableUpdateCompanionBuilder,
+          (
+            CustomRouteMode,
+            BaseReferences<
+              _$AppDatabase,
+              $CustomRouteModesTable,
+              CustomRouteMode
+            >,
+          ),
+          CustomRouteMode,
+          PrefetchHooks Function()
+        > {
   $$CustomRouteModesTableTableManager(
-      _$AppDatabase db, $CustomRouteModesTable table)
-      : super(TableManagerState(
+    _$AppDatabase db,
+    $CustomRouteModesTable table,
+  ) : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -9044,134 +10940,178 @@ class $$CustomRouteModesTableTableManager extends RootTableManager<
               $$CustomRouteModesTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$CustomRouteModesTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<int> id = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<RouterConfig> routerConfig = const Value.absent(),
-            Value<dns.DnsRules> dnsRules = const Value.absent(),
-          }) =>
-              CustomRouteModesCompanion(
-            updatedAt: updatedAt,
-            id: id,
-            name: name,
-            routerConfig: routerConfig,
-            dnsRules: dnsRules,
-          ),
-          createCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<int> id = const Value.absent(),
-            required String name,
-            required RouterConfig routerConfig,
-            Value<dns.DnsRules> dnsRules = const Value.absent(),
-          }) =>
-              CustomRouteModesCompanion.insert(
-            updatedAt: updatedAt,
-            id: id,
-            name: name,
-            routerConfig: routerConfig,
-            dnsRules: dnsRules,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<RouterConfig> routerConfig = const Value.absent(),
+                Value<dns.DnsRules> dnsRules = const Value.absent(),
+                Value<List<String>> internalDnsServers = const Value.absent(),
+              }) => CustomRouteModesCompanion(
+                updatedAt: updatedAt,
+                id: id,
+                name: name,
+                routerConfig: routerConfig,
+                dnsRules: dnsRules,
+                internalDnsServers: internalDnsServers,
+              ),
+          createCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                required String name,
+                required RouterConfig routerConfig,
+                Value<dns.DnsRules> dnsRules = const Value.absent(),
+                required List<String> internalDnsServers,
+              }) => CustomRouteModesCompanion.insert(
+                updatedAt: updatedAt,
+                id: id,
+                name: name,
+                routerConfig: routerConfig,
+                dnsRules: dnsRules,
+                internalDnsServers: internalDnsServers,
+              ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
           prefetchHooksCallback: null,
-        ));
+        ),
+      );
 }
 
-typedef $$CustomRouteModesTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $CustomRouteModesTable,
-    CustomRouteMode,
-    $$CustomRouteModesTableFilterComposer,
-    $$CustomRouteModesTableOrderingComposer,
-    $$CustomRouteModesTableAnnotationComposer,
-    $$CustomRouteModesTableCreateCompanionBuilder,
-    $$CustomRouteModesTableUpdateCompanionBuilder,
-    (
+typedef $$CustomRouteModesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CustomRouteModesTable,
       CustomRouteMode,
-      BaseReferences<_$AppDatabase, $CustomRouteModesTable, CustomRouteMode>
-    ),
-    CustomRouteMode,
-    PrefetchHooks Function()>;
-typedef $$HandlerSelectorsTableCreateCompanionBuilder
-    = HandlerSelectorsCompanion Function({
-  Value<DateTime?> updatedAt,
-  required String name,
-  required SelectorConfig config,
-  Value<int> rowid,
-});
-typedef $$HandlerSelectorsTableUpdateCompanionBuilder
-    = HandlerSelectorsCompanion Function({
-  Value<DateTime?> updatedAt,
-  Value<String> name,
-  Value<SelectorConfig> config,
-  Value<int> rowid,
-});
+      $$CustomRouteModesTableFilterComposer,
+      $$CustomRouteModesTableOrderingComposer,
+      $$CustomRouteModesTableAnnotationComposer,
+      $$CustomRouteModesTableCreateCompanionBuilder,
+      $$CustomRouteModesTableUpdateCompanionBuilder,
+      (
+        CustomRouteMode,
+        BaseReferences<_$AppDatabase, $CustomRouteModesTable, CustomRouteMode>,
+      ),
+      CustomRouteMode,
+      PrefetchHooks Function()
+    >;
+typedef $$HandlerSelectorsTableCreateCompanionBuilder =
+    HandlerSelectorsCompanion Function({
+      Value<DateTime?> updatedAt,
+      required String name,
+      required SelectorConfig config,
+      Value<int> rowid,
+    });
+typedef $$HandlerSelectorsTableUpdateCompanionBuilder =
+    HandlerSelectorsCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<String> name,
+      Value<SelectorConfig> config,
+      Value<int> rowid,
+    });
 
-final class $$HandlerSelectorsTableReferences extends BaseReferences<
-    _$AppDatabase, $HandlerSelectorsTable, HandlerSelector> {
+final class $$HandlerSelectorsTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $HandlerSelectorsTable, HandlerSelector> {
   $$HandlerSelectorsTableReferences(
-      super.$_db, super.$_table, super.$_typedResult);
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
 
-  static MultiTypedResultKey<$SelectorHandlerRelationsTable,
-      List<SelectorHandlerRelation>> _selectorHandlerRelationsRefsTable(
-          _$AppDatabase db) =>
-      MultiTypedResultKey.fromTable(db.selectorHandlerRelations,
-          aliasName: $_aliasNameGenerator(db.handlerSelectors.name,
-              db.selectorHandlerRelations.selectorName));
+  static MultiTypedResultKey<
+    $SelectorHandlerRelationsTable,
+    List<SelectorHandlerRelation>
+  >
+  _selectorHandlerRelationsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.selectorHandlerRelations,
+        aliasName: $_aliasNameGenerator(
+          db.handlerSelectors.name,
+          db.selectorHandlerRelations.selectorName,
+        ),
+      );
 
   $$SelectorHandlerRelationsTableProcessedTableManager
-      get selectorHandlerRelationsRefs {
-    final manager = $$SelectorHandlerRelationsTableTableManager(
-            $_db, $_db.selectorHandlerRelations)
-        .filter((f) =>
-            f.selectorName.name.sqlEquals($_itemColumn<String>('name')!));
+  get selectorHandlerRelationsRefs {
+    final manager =
+        $$SelectorHandlerRelationsTableTableManager(
+          $_db,
+          $_db.selectorHandlerRelations,
+        ).filter(
+          (f) => f.selectorName.name.sqlEquals($_itemColumn<String>('name')!),
+        );
 
-    final cache =
-        $_typedResult.readTableOrNull(_selectorHandlerRelationsRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(
+      _selectorHandlerRelationsRefsTable($_db),
+    );
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
+      manager.$state.copyWith(prefetchedData: cache),
+    );
   }
 
-  static MultiTypedResultKey<$SelectorHandlerGroupRelationsTable,
-          List<SelectorHandlerGroupRelation>>
-      _selectorHandlerGroupRelationsRefsTable(_$AppDatabase db) =>
-          MultiTypedResultKey.fromTable(db.selectorHandlerGroupRelations,
-              aliasName: $_aliasNameGenerator(db.handlerSelectors.name,
-                  db.selectorHandlerGroupRelations.selectorName));
+  static MultiTypedResultKey<
+    $SelectorHandlerGroupRelationsTable,
+    List<SelectorHandlerGroupRelation>
+  >
+  _selectorHandlerGroupRelationsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.selectorHandlerGroupRelations,
+        aliasName: $_aliasNameGenerator(
+          db.handlerSelectors.name,
+          db.selectorHandlerGroupRelations.selectorName,
+        ),
+      );
 
   $$SelectorHandlerGroupRelationsTableProcessedTableManager
-      get selectorHandlerGroupRelationsRefs {
-    final manager = $$SelectorHandlerGroupRelationsTableTableManager(
-            $_db, $_db.selectorHandlerGroupRelations)
-        .filter((f) =>
-            f.selectorName.name.sqlEquals($_itemColumn<String>('name')!));
+  get selectorHandlerGroupRelationsRefs {
+    final manager =
+        $$SelectorHandlerGroupRelationsTableTableManager(
+          $_db,
+          $_db.selectorHandlerGroupRelations,
+        ).filter(
+          (f) => f.selectorName.name.sqlEquals($_itemColumn<String>('name')!),
+        );
 
-    final cache = $_typedResult
-        .readTableOrNull(_selectorHandlerGroupRelationsRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(
+      _selectorHandlerGroupRelationsRefsTable($_db),
+    );
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
+      manager.$state.copyWith(prefetchedData: cache),
+    );
   }
 
-  static MultiTypedResultKey<$SelectorSubscriptionRelationsTable,
-          List<SelectorSubscriptionRelation>>
-      _selectorSubscriptionRelationsRefsTable(_$AppDatabase db) =>
-          MultiTypedResultKey.fromTable(db.selectorSubscriptionRelations,
-              aliasName: $_aliasNameGenerator(db.handlerSelectors.name,
-                  db.selectorSubscriptionRelations.selectorName));
+  static MultiTypedResultKey<
+    $SelectorSubscriptionRelationsTable,
+    List<SelectorSubscriptionRelation>
+  >
+  _selectorSubscriptionRelationsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.selectorSubscriptionRelations,
+        aliasName: $_aliasNameGenerator(
+          db.handlerSelectors.name,
+          db.selectorSubscriptionRelations.selectorName,
+        ),
+      );
 
   $$SelectorSubscriptionRelationsTableProcessedTableManager
-      get selectorSubscriptionRelationsRefs {
-    final manager = $$SelectorSubscriptionRelationsTableTableManager(
-            $_db, $_db.selectorSubscriptionRelations)
-        .filter((f) =>
-            f.selectorName.name.sqlEquals($_itemColumn<String>('name')!));
+  get selectorSubscriptionRelationsRefs {
+    final manager =
+        $$SelectorSubscriptionRelationsTableTableManager(
+          $_db,
+          $_db.selectorSubscriptionRelations,
+        ).filter(
+          (f) => f.selectorName.name.sqlEquals($_itemColumn<String>('name')!),
+        );
 
-    final cache = $_typedResult
-        .readTableOrNull(_selectorSubscriptionRelationsRefsTable($_db));
+    final cache = $_typedResult.readTableOrNull(
+      _selectorSubscriptionRelationsRefsTable($_db),
+    );
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: cache));
+      manager.$state.copyWith(prefetchedData: cache),
+    );
   }
 }
 
@@ -9185,84 +11125,103 @@ class $$HandlerSelectorsTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnWithTypeConverterFilters<SelectorConfig, SelectorConfig, Uint8List>
-      get config => $composableBuilder(
-          column: $table.config,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+  get config => $composableBuilder(
+    column: $table.config,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 
   Expression<bool> selectorHandlerRelationsRefs(
-      Expression<bool> Function($$SelectorHandlerRelationsTableFilterComposer f)
-          f) {
+    Expression<bool> Function($$SelectorHandlerRelationsTableFilterComposer f)
+    f,
+  ) {
     final $$SelectorHandlerRelationsTableFilterComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.name,
-            referencedTable: $db.selectorHandlerRelations,
-            getReferencedColumn: (t) => t.selectorName,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$SelectorHandlerRelationsTableFilterComposer(
-                  $db: $db,
-                  $table: $db.selectorHandlerRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.name,
+          referencedTable: $db.selectorHandlerRelations,
+          getReferencedColumn: (t) => t.selectorName,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SelectorHandlerRelationsTableFilterComposer(
+                $db: $db,
+                $table: $db.selectorHandlerRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 
   Expression<bool> selectorHandlerGroupRelationsRefs(
-      Expression<bool> Function(
-              $$SelectorHandlerGroupRelationsTableFilterComposer f)
-          f) {
+    Expression<bool> Function(
+      $$SelectorHandlerGroupRelationsTableFilterComposer f,
+    )
+    f,
+  ) {
     final $$SelectorHandlerGroupRelationsTableFilterComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.name,
-            referencedTable: $db.selectorHandlerGroupRelations,
-            getReferencedColumn: (t) => t.selectorName,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$SelectorHandlerGroupRelationsTableFilterComposer(
-                  $db: $db,
-                  $table: $db.selectorHandlerGroupRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.name,
+          referencedTable: $db.selectorHandlerGroupRelations,
+          getReferencedColumn: (t) => t.selectorName,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SelectorHandlerGroupRelationsTableFilterComposer(
+                $db: $db,
+                $table: $db.selectorHandlerGroupRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 
   Expression<bool> selectorSubscriptionRelationsRefs(
-      Expression<bool> Function(
-              $$SelectorSubscriptionRelationsTableFilterComposer f)
-          f) {
+    Expression<bool> Function(
+      $$SelectorSubscriptionRelationsTableFilterComposer f,
+    )
+    f,
+  ) {
     final $$SelectorSubscriptionRelationsTableFilterComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.name,
-            referencedTable: $db.selectorSubscriptionRelations,
-            getReferencedColumn: (t) => t.selectorName,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$SelectorSubscriptionRelationsTableFilterComposer(
-                  $db: $db,
-                  $table: $db.selectorSubscriptionRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.name,
+          referencedTable: $db.selectorSubscriptionRelations,
+          getReferencedColumn: (t) => t.selectorName,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SelectorSubscriptionRelationsTableFilterComposer(
+                $db: $db,
+                $table: $db.selectorSubscriptionRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
@@ -9277,13 +11236,19 @@ class $$HandlerSelectorsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<Uint8List> get config => $composableBuilder(
-      column: $table.config, builder: (column) => ColumnOrderings(column));
+    column: $table.config,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$HandlerSelectorsTableAnnotationComposer
@@ -9305,96 +11270,115 @@ class $$HandlerSelectorsTableAnnotationComposer
       $composableBuilder(column: $table.config, builder: (column) => column);
 
   Expression<T> selectorHandlerRelationsRefs<T extends Object>(
-      Expression<T> Function(
-              $$SelectorHandlerRelationsTableAnnotationComposer a)
-          f) {
+    Expression<T> Function($$SelectorHandlerRelationsTableAnnotationComposer a)
+    f,
+  ) {
     final $$SelectorHandlerRelationsTableAnnotationComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.name,
-            referencedTable: $db.selectorHandlerRelations,
-            getReferencedColumn: (t) => t.selectorName,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$SelectorHandlerRelationsTableAnnotationComposer(
-                  $db: $db,
-                  $table: $db.selectorHandlerRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.name,
+          referencedTable: $db.selectorHandlerRelations,
+          getReferencedColumn: (t) => t.selectorName,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SelectorHandlerRelationsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.selectorHandlerRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 
   Expression<T> selectorHandlerGroupRelationsRefs<T extends Object>(
-      Expression<T> Function(
-              $$SelectorHandlerGroupRelationsTableAnnotationComposer a)
-          f) {
+    Expression<T> Function(
+      $$SelectorHandlerGroupRelationsTableAnnotationComposer a,
+    )
+    f,
+  ) {
     final $$SelectorHandlerGroupRelationsTableAnnotationComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.name,
-            referencedTable: $db.selectorHandlerGroupRelations,
-            getReferencedColumn: (t) => t.selectorName,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$SelectorHandlerGroupRelationsTableAnnotationComposer(
-                  $db: $db,
-                  $table: $db.selectorHandlerGroupRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.name,
+          referencedTable: $db.selectorHandlerGroupRelations,
+          getReferencedColumn: (t) => t.selectorName,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SelectorHandlerGroupRelationsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.selectorHandlerGroupRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 
   Expression<T> selectorSubscriptionRelationsRefs<T extends Object>(
-      Expression<T> Function(
-              $$SelectorSubscriptionRelationsTableAnnotationComposer a)
-          f) {
+    Expression<T> Function(
+      $$SelectorSubscriptionRelationsTableAnnotationComposer a,
+    )
+    f,
+  ) {
     final $$SelectorSubscriptionRelationsTableAnnotationComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.name,
-            referencedTable: $db.selectorSubscriptionRelations,
-            getReferencedColumn: (t) => t.selectorName,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$SelectorSubscriptionRelationsTableAnnotationComposer(
-                  $db: $db,
-                  $table: $db.selectorSubscriptionRelations,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.name,
+          referencedTable: $db.selectorSubscriptionRelations,
+          getReferencedColumn: (t) => t.selectorName,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SelectorSubscriptionRelationsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.selectorSubscriptionRelations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
 
-class $$HandlerSelectorsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $HandlerSelectorsTable,
-    HandlerSelector,
-    $$HandlerSelectorsTableFilterComposer,
-    $$HandlerSelectorsTableOrderingComposer,
-    $$HandlerSelectorsTableAnnotationComposer,
-    $$HandlerSelectorsTableCreateCompanionBuilder,
-    $$HandlerSelectorsTableUpdateCompanionBuilder,
-    (HandlerSelector, $$HandlerSelectorsTableReferences),
-    HandlerSelector,
-    PrefetchHooks Function(
-        {bool selectorHandlerRelationsRefs,
-        bool selectorHandlerGroupRelationsRefs,
-        bool selectorSubscriptionRelationsRefs})> {
+class $$HandlerSelectorsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $HandlerSelectorsTable,
+          HandlerSelector,
+          $$HandlerSelectorsTableFilterComposer,
+          $$HandlerSelectorsTableOrderingComposer,
+          $$HandlerSelectorsTableAnnotationComposer,
+          $$HandlerSelectorsTableCreateCompanionBuilder,
+          $$HandlerSelectorsTableUpdateCompanionBuilder,
+          (HandlerSelector, $$HandlerSelectorsTableReferences),
+          HandlerSelector,
+          PrefetchHooks Function({
+            bool selectorHandlerRelationsRefs,
+            bool selectorHandlerGroupRelationsRefs,
+            bool selectorSubscriptionRelationsRefs,
+          })
+        > {
   $$HandlerSelectorsTableTableManager(
-      _$AppDatabase db, $HandlerSelectorsTable table)
-      : super(TableManagerState(
+    _$AppDatabase db,
+    $HandlerSelectorsTable table,
+  ) : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -9403,165 +11387,214 @@ class $$HandlerSelectorsTableTableManager extends RootTableManager<
               $$HandlerSelectorsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$HandlerSelectorsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<SelectorConfig> config = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              HandlerSelectorsCompanion(
-            updatedAt: updatedAt,
-            name: name,
-            config: config,
-            rowid: rowid,
-          ),
-          createCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            required String name,
-            required SelectorConfig config,
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              HandlerSelectorsCompanion.insert(
-            updatedAt: updatedAt,
-            name: name,
-            config: config,
-            rowid: rowid,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<SelectorConfig> config = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => HandlerSelectorsCompanion(
+                updatedAt: updatedAt,
+                name: name,
+                config: config,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                required String name,
+                required SelectorConfig config,
+                Value<int> rowid = const Value.absent(),
+              }) => HandlerSelectorsCompanion.insert(
+                updatedAt: updatedAt,
+                name: name,
+                config: config,
+                rowid: rowid,
+              ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$HandlerSelectorsTableReferences(db, table, e)
-                  ))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$HandlerSelectorsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: (
-              {selectorHandlerRelationsRefs = false,
-              selectorHandlerGroupRelationsRefs = false,
-              selectorSubscriptionRelationsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (selectorHandlerRelationsRefs) db.selectorHandlerRelations,
-                if (selectorHandlerGroupRelationsRefs)
-                  db.selectorHandlerGroupRelations,
-                if (selectorSubscriptionRelationsRefs)
-                  db.selectorSubscriptionRelations
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (selectorHandlerRelationsRefs)
-                    await $_getPrefetchedData<HandlerSelector,
-                            $HandlerSelectorsTable, SelectorHandlerRelation>(
-                        currentTable: table,
-                        referencedTable: $$HandlerSelectorsTableReferences
-                            ._selectorHandlerRelationsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$HandlerSelectorsTableReferences(db, table, p0)
-                                .selectorHandlerRelationsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems
-                                .where((e) => e.selectorName == item.name),
-                        typedResults: items),
-                  if (selectorHandlerGroupRelationsRefs)
-                    await $_getPrefetchedData<
-                            HandlerSelector,
-                            $HandlerSelectorsTable,
-                            SelectorHandlerGroupRelation>(
-                        currentTable: table,
-                        referencedTable: $$HandlerSelectorsTableReferences
-                            ._selectorHandlerGroupRelationsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$HandlerSelectorsTableReferences(db, table, p0)
-                                .selectorHandlerGroupRelationsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems
-                                .where((e) => e.selectorName == item.name),
-                        typedResults: items),
-                  if (selectorSubscriptionRelationsRefs)
-                    await $_getPrefetchedData<
-                            HandlerSelector,
-                            $HandlerSelectorsTable,
-                            SelectorSubscriptionRelation>(
-                        currentTable: table,
-                        referencedTable: $$HandlerSelectorsTableReferences
-                            ._selectorSubscriptionRelationsRefsTable(db),
-                        managerFromTypedResult: (p0) =>
-                            $$HandlerSelectorsTableReferences(db, table, p0)
-                                .selectorSubscriptionRelationsRefs,
-                        referencedItemsForCurrentItem:
-                            (item, referencedItems) => referencedItems
-                                .where((e) => e.selectorName == item.name),
-                        typedResults: items)
-                ];
+          prefetchHooksCallback:
+              ({
+                selectorHandlerRelationsRefs = false,
+                selectorHandlerGroupRelationsRefs = false,
+                selectorSubscriptionRelationsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (selectorHandlerRelationsRefs)
+                      db.selectorHandlerRelations,
+                    if (selectorHandlerGroupRelationsRefs)
+                      db.selectorHandlerGroupRelations,
+                    if (selectorSubscriptionRelationsRefs)
+                      db.selectorSubscriptionRelations,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (selectorHandlerRelationsRefs)
+                        await $_getPrefetchedData<
+                          HandlerSelector,
+                          $HandlerSelectorsTable,
+                          SelectorHandlerRelation
+                        >(
+                          currentTable: table,
+                          referencedTable: $$HandlerSelectorsTableReferences
+                              ._selectorHandlerRelationsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$HandlerSelectorsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).selectorHandlerRelationsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.selectorName == item.name,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (selectorHandlerGroupRelationsRefs)
+                        await $_getPrefetchedData<
+                          HandlerSelector,
+                          $HandlerSelectorsTable,
+                          SelectorHandlerGroupRelation
+                        >(
+                          currentTable: table,
+                          referencedTable: $$HandlerSelectorsTableReferences
+                              ._selectorHandlerGroupRelationsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$HandlerSelectorsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).selectorHandlerGroupRelationsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.selectorName == item.name,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (selectorSubscriptionRelationsRefs)
+                        await $_getPrefetchedData<
+                          HandlerSelector,
+                          $HandlerSelectorsTable,
+                          SelectorSubscriptionRelation
+                        >(
+                          currentTable: table,
+                          referencedTable: $$HandlerSelectorsTableReferences
+                              ._selectorSubscriptionRelationsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$HandlerSelectorsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).selectorSubscriptionRelationsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.selectorName == item.name,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
-        ));
+        ),
+      );
 }
 
-typedef $$HandlerSelectorsTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $HandlerSelectorsTable,
-    HandlerSelector,
-    $$HandlerSelectorsTableFilterComposer,
-    $$HandlerSelectorsTableOrderingComposer,
-    $$HandlerSelectorsTableAnnotationComposer,
-    $$HandlerSelectorsTableCreateCompanionBuilder,
-    $$HandlerSelectorsTableUpdateCompanionBuilder,
-    (HandlerSelector, $$HandlerSelectorsTableReferences),
-    HandlerSelector,
-    PrefetchHooks Function(
-        {bool selectorHandlerRelationsRefs,
+typedef $$HandlerSelectorsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $HandlerSelectorsTable,
+      HandlerSelector,
+      $$HandlerSelectorsTableFilterComposer,
+      $$HandlerSelectorsTableOrderingComposer,
+      $$HandlerSelectorsTableAnnotationComposer,
+      $$HandlerSelectorsTableCreateCompanionBuilder,
+      $$HandlerSelectorsTableUpdateCompanionBuilder,
+      (HandlerSelector, $$HandlerSelectorsTableReferences),
+      HandlerSelector,
+      PrefetchHooks Function({
+        bool selectorHandlerRelationsRefs,
         bool selectorHandlerGroupRelationsRefs,
-        bool selectorSubscriptionRelationsRefs})>;
-typedef $$SelectorHandlerRelationsTableCreateCompanionBuilder
-    = SelectorHandlerRelationsCompanion Function({
-  Value<int> id,
-  required String selectorName,
-  required int handlerId,
-});
-typedef $$SelectorHandlerRelationsTableUpdateCompanionBuilder
-    = SelectorHandlerRelationsCompanion Function({
-  Value<int> id,
-  Value<String> selectorName,
-  Value<int> handlerId,
-});
+        bool selectorSubscriptionRelationsRefs,
+      })
+    >;
+typedef $$SelectorHandlerRelationsTableCreateCompanionBuilder =
+    SelectorHandlerRelationsCompanion Function({
+      Value<int> id,
+      required String selectorName,
+      required int handlerId,
+    });
+typedef $$SelectorHandlerRelationsTableUpdateCompanionBuilder =
+    SelectorHandlerRelationsCompanion Function({
+      Value<int> id,
+      Value<String> selectorName,
+      Value<int> handlerId,
+    });
 
-final class $$SelectorHandlerRelationsTableReferences extends BaseReferences<
-    _$AppDatabase, $SelectorHandlerRelationsTable, SelectorHandlerRelation> {
+final class $$SelectorHandlerRelationsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $SelectorHandlerRelationsTable,
+          SelectorHandlerRelation
+        > {
   $$SelectorHandlerRelationsTableReferences(
-      super.$_db, super.$_table, super.$_typedResult);
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
 
   static $HandlerSelectorsTable _selectorNameTable(_$AppDatabase db) =>
-      db.handlerSelectors.createAlias($_aliasNameGenerator(
-          db.selectorHandlerRelations.selectorName, db.handlerSelectors.name));
+      db.handlerSelectors.createAlias(
+        $_aliasNameGenerator(
+          db.selectorHandlerRelations.selectorName,
+          db.handlerSelectors.name,
+        ),
+      );
 
   $$HandlerSelectorsTableProcessedTableManager get selectorName {
     final $_column = $_itemColumn<String>('selector_name')!;
 
-    final manager =
-        $$HandlerSelectorsTableTableManager($_db, $_db.handlerSelectors)
-            .filter((f) => f.name.sqlEquals($_column));
+    final manager = $$HandlerSelectorsTableTableManager(
+      $_db,
+      $_db.handlerSelectors,
+    ).filter((f) => f.name.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_selectorNameTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
   }
 
   static $OutboundHandlersTable _handlerIdTable(_$AppDatabase db) =>
-      db.outboundHandlers.createAlias($_aliasNameGenerator(
-          db.selectorHandlerRelations.handlerId, db.outboundHandlers.id));
+      db.outboundHandlers.createAlias(
+        $_aliasNameGenerator(
+          db.selectorHandlerRelations.handlerId,
+          db.outboundHandlers.id,
+        ),
+      );
 
   $$OutboundHandlersTableProcessedTableManager get handlerId {
     final $_column = $_itemColumn<int>('handler_id')!;
 
-    final manager =
-        $$OutboundHandlersTableTableManager($_db, $_db.outboundHandlers)
-            .filter((f) => f.id.sqlEquals($_column));
+    final manager = $$OutboundHandlersTableTableManager(
+      $_db,
+      $_db.outboundHandlers,
+    ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_handlerIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
   }
 }
 
@@ -9575,45 +11608,53 @@ class $$SelectorHandlerRelationsTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   $$HandlerSelectorsTableFilterComposer get selectorName {
     final $$HandlerSelectorsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.selectorName,
-        referencedTable: $db.handlerSelectors,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HandlerSelectorsTableFilterComposer(
-              $db: $db,
-              $table: $db.handlerSelectors,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.selectorName,
+      referencedTable: $db.handlerSelectors,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HandlerSelectorsTableFilterComposer(
+            $db: $db,
+            $table: $db.handlerSelectors,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 
   $$OutboundHandlersTableFilterComposer get handlerId {
     final $$OutboundHandlersTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.handlerId,
-        referencedTable: $db.outboundHandlers,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$OutboundHandlersTableFilterComposer(
-              $db: $db,
-              $table: $db.outboundHandlers,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.handlerId,
+      referencedTable: $db.outboundHandlers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OutboundHandlersTableFilterComposer(
+            $db: $db,
+            $table: $db.outboundHandlers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
@@ -9628,45 +11669,53 @@ class $$SelectorHandlerRelationsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   $$HandlerSelectorsTableOrderingComposer get selectorName {
     final $$HandlerSelectorsTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.selectorName,
-        referencedTable: $db.handlerSelectors,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HandlerSelectorsTableOrderingComposer(
-              $db: $db,
-              $table: $db.handlerSelectors,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.selectorName,
+      referencedTable: $db.handlerSelectors,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HandlerSelectorsTableOrderingComposer(
+            $db: $db,
+            $table: $db.handlerSelectors,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 
   $$OutboundHandlersTableOrderingComposer get handlerId {
     final $$OutboundHandlersTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.handlerId,
-        referencedTable: $db.outboundHandlers,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$OutboundHandlersTableOrderingComposer(
-              $db: $db,
-              $table: $db.outboundHandlers,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.handlerId,
+      referencedTable: $db.outboundHandlers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OutboundHandlersTableOrderingComposer(
+            $db: $db,
+            $table: $db.outboundHandlers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
@@ -9685,103 +11734,123 @@ class $$SelectorHandlerRelationsTableAnnotationComposer
 
   $$HandlerSelectorsTableAnnotationComposer get selectorName {
     final $$HandlerSelectorsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.selectorName,
-        referencedTable: $db.handlerSelectors,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HandlerSelectorsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.handlerSelectors,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.selectorName,
+      referencedTable: $db.handlerSelectors,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HandlerSelectorsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.handlerSelectors,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 
   $$OutboundHandlersTableAnnotationComposer get handlerId {
     final $$OutboundHandlersTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.handlerId,
-        referencedTable: $db.outboundHandlers,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$OutboundHandlersTableAnnotationComposer(
-              $db: $db,
-              $table: $db.outboundHandlers,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.handlerId,
+      referencedTable: $db.outboundHandlers,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OutboundHandlersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.outboundHandlers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
 
-class $$SelectorHandlerRelationsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $SelectorHandlerRelationsTable,
-    SelectorHandlerRelation,
-    $$SelectorHandlerRelationsTableFilterComposer,
-    $$SelectorHandlerRelationsTableOrderingComposer,
-    $$SelectorHandlerRelationsTableAnnotationComposer,
-    $$SelectorHandlerRelationsTableCreateCompanionBuilder,
-    $$SelectorHandlerRelationsTableUpdateCompanionBuilder,
-    (SelectorHandlerRelation, $$SelectorHandlerRelationsTableReferences),
-    SelectorHandlerRelation,
-    PrefetchHooks Function({bool selectorName, bool handlerId})> {
+class $$SelectorHandlerRelationsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SelectorHandlerRelationsTable,
+          SelectorHandlerRelation,
+          $$SelectorHandlerRelationsTableFilterComposer,
+          $$SelectorHandlerRelationsTableOrderingComposer,
+          $$SelectorHandlerRelationsTableAnnotationComposer,
+          $$SelectorHandlerRelationsTableCreateCompanionBuilder,
+          $$SelectorHandlerRelationsTableUpdateCompanionBuilder,
+          (SelectorHandlerRelation, $$SelectorHandlerRelationsTableReferences),
+          SelectorHandlerRelation,
+          PrefetchHooks Function({bool selectorName, bool handlerId})
+        > {
   $$SelectorHandlerRelationsTableTableManager(
-      _$AppDatabase db, $SelectorHandlerRelationsTable table)
-      : super(TableManagerState(
+    _$AppDatabase db,
+    $SelectorHandlerRelationsTable table,
+  ) : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
               $$SelectorHandlerRelationsTableFilterComposer(
-                  $db: db, $table: table),
+                $db: db,
+                $table: table,
+              ),
           createOrderingComposer: () =>
               $$SelectorHandlerRelationsTableOrderingComposer(
-                  $db: db, $table: table),
+                $db: db,
+                $table: table,
+              ),
           createComputedFieldComposer: () =>
               $$SelectorHandlerRelationsTableAnnotationComposer(
-                  $db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> selectorName = const Value.absent(),
-            Value<int> handlerId = const Value.absent(),
-          }) =>
-              SelectorHandlerRelationsCompanion(
-            id: id,
-            selectorName: selectorName,
-            handlerId: handlerId,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required String selectorName,
-            required int handlerId,
-          }) =>
-              SelectorHandlerRelationsCompanion.insert(
-            id: id,
-            selectorName: selectorName,
-            handlerId: handlerId,
-          ),
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> selectorName = const Value.absent(),
+                Value<int> handlerId = const Value.absent(),
+              }) => SelectorHandlerRelationsCompanion(
+                id: id,
+                selectorName: selectorName,
+                handlerId: handlerId,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String selectorName,
+                required int handlerId,
+              }) => SelectorHandlerRelationsCompanion.insert(
+                id: id,
+                selectorName: selectorName,
+                handlerId: handlerId,
+              ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$SelectorHandlerRelationsTableReferences(db, table, e)
-                  ))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SelectorHandlerRelationsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: ({selectorName = false, handlerId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
-              addJoins: <
-                  T extends TableManagerState<
+              addJoins:
+                  <
+                    T extends TableManagerState<
                       dynamic,
                       dynamic,
                       dynamic,
@@ -9792,104 +11861,133 @@ class $$SelectorHandlerRelationsTableTableManager extends RootTableManager<
                       dynamic,
                       dynamic,
                       dynamic,
-                      dynamic>>(state) {
-                if (selectorName) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.selectorName,
-                    referencedTable: $$SelectorHandlerRelationsTableReferences
-                        ._selectorNameTable(db),
-                    referencedColumn: $$SelectorHandlerRelationsTableReferences
-                        ._selectorNameTable(db)
-                        .name,
-                  ) as T;
-                }
-                if (handlerId) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.handlerId,
-                    referencedTable: $$SelectorHandlerRelationsTableReferences
-                        ._handlerIdTable(db),
-                    referencedColumn: $$SelectorHandlerRelationsTableReferences
-                        ._handlerIdTable(db)
-                        .id,
-                  ) as T;
-                }
+                      dynamic
+                    >
+                  >(state) {
+                    if (selectorName) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.selectorName,
+                                referencedTable:
+                                    $$SelectorHandlerRelationsTableReferences
+                                        ._selectorNameTable(db),
+                                referencedColumn:
+                                    $$SelectorHandlerRelationsTableReferences
+                                        ._selectorNameTable(db)
+                                        .name,
+                              )
+                              as T;
+                    }
+                    if (handlerId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.handlerId,
+                                referencedTable:
+                                    $$SelectorHandlerRelationsTableReferences
+                                        ._handlerIdTable(db),
+                                referencedColumn:
+                                    $$SelectorHandlerRelationsTableReferences
+                                        ._handlerIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
 
-                return state;
-              },
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [];
               },
             );
           },
-        ));
+        ),
+      );
 }
 
-typedef $$SelectorHandlerRelationsTableProcessedTableManager
-    = ProcessedTableManager<
-        _$AppDatabase,
-        $SelectorHandlerRelationsTable,
-        SelectorHandlerRelation,
-        $$SelectorHandlerRelationsTableFilterComposer,
-        $$SelectorHandlerRelationsTableOrderingComposer,
-        $$SelectorHandlerRelationsTableAnnotationComposer,
-        $$SelectorHandlerRelationsTableCreateCompanionBuilder,
-        $$SelectorHandlerRelationsTableUpdateCompanionBuilder,
-        (SelectorHandlerRelation, $$SelectorHandlerRelationsTableReferences),
-        SelectorHandlerRelation,
-        PrefetchHooks Function({bool selectorName, bool handlerId})>;
-typedef $$SelectorHandlerGroupRelationsTableCreateCompanionBuilder
-    = SelectorHandlerGroupRelationsCompanion Function({
-  Value<int> id,
-  required String selectorName,
-  required String groupName,
-});
-typedef $$SelectorHandlerGroupRelationsTableUpdateCompanionBuilder
-    = SelectorHandlerGroupRelationsCompanion Function({
-  Value<int> id,
-  Value<String> selectorName,
-  Value<String> groupName,
-});
+typedef $$SelectorHandlerRelationsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SelectorHandlerRelationsTable,
+      SelectorHandlerRelation,
+      $$SelectorHandlerRelationsTableFilterComposer,
+      $$SelectorHandlerRelationsTableOrderingComposer,
+      $$SelectorHandlerRelationsTableAnnotationComposer,
+      $$SelectorHandlerRelationsTableCreateCompanionBuilder,
+      $$SelectorHandlerRelationsTableUpdateCompanionBuilder,
+      (SelectorHandlerRelation, $$SelectorHandlerRelationsTableReferences),
+      SelectorHandlerRelation,
+      PrefetchHooks Function({bool selectorName, bool handlerId})
+    >;
+typedef $$SelectorHandlerGroupRelationsTableCreateCompanionBuilder =
+    SelectorHandlerGroupRelationsCompanion Function({
+      Value<int> id,
+      required String selectorName,
+      required String groupName,
+    });
+typedef $$SelectorHandlerGroupRelationsTableUpdateCompanionBuilder =
+    SelectorHandlerGroupRelationsCompanion Function({
+      Value<int> id,
+      Value<String> selectorName,
+      Value<String> groupName,
+    });
 
 final class $$SelectorHandlerGroupRelationsTableReferences
-    extends BaseReferences<_$AppDatabase, $SelectorHandlerGroupRelationsTable,
-        SelectorHandlerGroupRelation> {
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $SelectorHandlerGroupRelationsTable,
+          SelectorHandlerGroupRelation
+        > {
   $$SelectorHandlerGroupRelationsTableReferences(
-      super.$_db, super.$_table, super.$_typedResult);
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
 
   static $HandlerSelectorsTable _selectorNameTable(_$AppDatabase db) =>
-      db.handlerSelectors.createAlias($_aliasNameGenerator(
+      db.handlerSelectors.createAlias(
+        $_aliasNameGenerator(
           db.selectorHandlerGroupRelations.selectorName,
-          db.handlerSelectors.name));
+          db.handlerSelectors.name,
+        ),
+      );
 
   $$HandlerSelectorsTableProcessedTableManager get selectorName {
     final $_column = $_itemColumn<String>('selector_name')!;
 
-    final manager =
-        $$HandlerSelectorsTableTableManager($_db, $_db.handlerSelectors)
-            .filter((f) => f.name.sqlEquals($_column));
+    final manager = $$HandlerSelectorsTableTableManager(
+      $_db,
+      $_db.handlerSelectors,
+    ).filter((f) => f.name.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_selectorNameTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
   }
 
   static $OutboundHandlerGroupsTable _groupNameTable(_$AppDatabase db) =>
-      db.outboundHandlerGroups.createAlias($_aliasNameGenerator(
+      db.outboundHandlerGroups.createAlias(
+        $_aliasNameGenerator(
           db.selectorHandlerGroupRelations.groupName,
-          db.outboundHandlerGroups.name));
+          db.outboundHandlerGroups.name,
+        ),
+      );
 
   $$OutboundHandlerGroupsTableProcessedTableManager get groupName {
     final $_column = $_itemColumn<String>('group_name')!;
 
     final manager = $$OutboundHandlerGroupsTableTableManager(
-            $_db, $_db.outboundHandlerGroups)
-        .filter((f) => f.name.sqlEquals($_column));
+      $_db,
+      $_db.outboundHandlerGroups,
+    ).filter((f) => f.name.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_groupNameTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
   }
 }
 
@@ -9903,46 +12001,54 @@ class $$SelectorHandlerGroupRelationsTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   $$HandlerSelectorsTableFilterComposer get selectorName {
     final $$HandlerSelectorsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.selectorName,
-        referencedTable: $db.handlerSelectors,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HandlerSelectorsTableFilterComposer(
-              $db: $db,
-              $table: $db.handlerSelectors,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.selectorName,
+      referencedTable: $db.handlerSelectors,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HandlerSelectorsTableFilterComposer(
+            $db: $db,
+            $table: $db.handlerSelectors,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 
   $$OutboundHandlerGroupsTableFilterComposer get groupName {
     final $$OutboundHandlerGroupsTableFilterComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.groupName,
-            referencedTable: $db.outboundHandlerGroups,
-            getReferencedColumn: (t) => t.name,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$OutboundHandlerGroupsTableFilterComposer(
-                  $db: $db,
-                  $table: $db.outboundHandlerGroups,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.groupName,
+          referencedTable: $db.outboundHandlerGroups,
+          getReferencedColumn: (t) => t.name,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$OutboundHandlerGroupsTableFilterComposer(
+                $db: $db,
+                $table: $db.outboundHandlerGroups,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return composer;
   }
 }
@@ -9957,46 +12063,54 @@ class $$SelectorHandlerGroupRelationsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   $$HandlerSelectorsTableOrderingComposer get selectorName {
     final $$HandlerSelectorsTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.selectorName,
-        referencedTable: $db.handlerSelectors,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HandlerSelectorsTableOrderingComposer(
-              $db: $db,
-              $table: $db.handlerSelectors,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.selectorName,
+      referencedTable: $db.handlerSelectors,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HandlerSelectorsTableOrderingComposer(
+            $db: $db,
+            $table: $db.handlerSelectors,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 
   $$OutboundHandlerGroupsTableOrderingComposer get groupName {
     final $$OutboundHandlerGroupsTableOrderingComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.groupName,
-            referencedTable: $db.outboundHandlerGroups,
-            getReferencedColumn: (t) => t.name,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$OutboundHandlerGroupsTableOrderingComposer(
-                  $db: $db,
-                  $table: $db.outboundHandlerGroups,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.groupName,
+          referencedTable: $db.outboundHandlerGroups,
+          getReferencedColumn: (t) => t.name,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$OutboundHandlerGroupsTableOrderingComposer(
+                $db: $db,
+                $table: $db.outboundHandlerGroups,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return composer;
   }
 }
@@ -10015,107 +12129,127 @@ class $$SelectorHandlerGroupRelationsTableAnnotationComposer
 
   $$HandlerSelectorsTableAnnotationComposer get selectorName {
     final $$HandlerSelectorsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.selectorName,
-        referencedTable: $db.handlerSelectors,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HandlerSelectorsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.handlerSelectors,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.selectorName,
+      referencedTable: $db.handlerSelectors,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HandlerSelectorsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.handlerSelectors,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 
   $$OutboundHandlerGroupsTableAnnotationComposer get groupName {
     final $$OutboundHandlerGroupsTableAnnotationComposer composer =
         $composerBuilder(
-            composer: this,
-            getCurrentColumn: (t) => t.groupName,
-            referencedTable: $db.outboundHandlerGroups,
-            getReferencedColumn: (t) => t.name,
-            builder: (joinBuilder,
-                    {$addJoinBuilderToRootComposer,
-                    $removeJoinBuilderFromRootComposer}) =>
-                $$OutboundHandlerGroupsTableAnnotationComposer(
-                  $db: $db,
-                  $table: $db.outboundHandlerGroups,
-                  $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-                  joinBuilder: joinBuilder,
-                  $removeJoinBuilderFromRootComposer:
-                      $removeJoinBuilderFromRootComposer,
-                ));
+          composer: this,
+          getCurrentColumn: (t) => t.groupName,
+          referencedTable: $db.outboundHandlerGroups,
+          getReferencedColumn: (t) => t.name,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$OutboundHandlerGroupsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.outboundHandlerGroups,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return composer;
   }
 }
 
-class $$SelectorHandlerGroupRelationsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $SelectorHandlerGroupRelationsTable,
-    SelectorHandlerGroupRelation,
-    $$SelectorHandlerGroupRelationsTableFilterComposer,
-    $$SelectorHandlerGroupRelationsTableOrderingComposer,
-    $$SelectorHandlerGroupRelationsTableAnnotationComposer,
-    $$SelectorHandlerGroupRelationsTableCreateCompanionBuilder,
-    $$SelectorHandlerGroupRelationsTableUpdateCompanionBuilder,
-    (
-      SelectorHandlerGroupRelation,
-      $$SelectorHandlerGroupRelationsTableReferences
-    ),
-    SelectorHandlerGroupRelation,
-    PrefetchHooks Function({bool selectorName, bool groupName})> {
+class $$SelectorHandlerGroupRelationsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SelectorHandlerGroupRelationsTable,
+          SelectorHandlerGroupRelation,
+          $$SelectorHandlerGroupRelationsTableFilterComposer,
+          $$SelectorHandlerGroupRelationsTableOrderingComposer,
+          $$SelectorHandlerGroupRelationsTableAnnotationComposer,
+          $$SelectorHandlerGroupRelationsTableCreateCompanionBuilder,
+          $$SelectorHandlerGroupRelationsTableUpdateCompanionBuilder,
+          (
+            SelectorHandlerGroupRelation,
+            $$SelectorHandlerGroupRelationsTableReferences,
+          ),
+          SelectorHandlerGroupRelation,
+          PrefetchHooks Function({bool selectorName, bool groupName})
+        > {
   $$SelectorHandlerGroupRelationsTableTableManager(
-      _$AppDatabase db, $SelectorHandlerGroupRelationsTable table)
-      : super(TableManagerState(
+    _$AppDatabase db,
+    $SelectorHandlerGroupRelationsTable table,
+  ) : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
               $$SelectorHandlerGroupRelationsTableFilterComposer(
-                  $db: db, $table: table),
+                $db: db,
+                $table: table,
+              ),
           createOrderingComposer: () =>
               $$SelectorHandlerGroupRelationsTableOrderingComposer(
-                  $db: db, $table: table),
+                $db: db,
+                $table: table,
+              ),
           createComputedFieldComposer: () =>
               $$SelectorHandlerGroupRelationsTableAnnotationComposer(
-                  $db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> selectorName = const Value.absent(),
-            Value<String> groupName = const Value.absent(),
-          }) =>
-              SelectorHandlerGroupRelationsCompanion(
-            id: id,
-            selectorName: selectorName,
-            groupName: groupName,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required String selectorName,
-            required String groupName,
-          }) =>
-              SelectorHandlerGroupRelationsCompanion.insert(
-            id: id,
-            selectorName: selectorName,
-            groupName: groupName,
-          ),
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> selectorName = const Value.absent(),
+                Value<String> groupName = const Value.absent(),
+              }) => SelectorHandlerGroupRelationsCompanion(
+                id: id,
+                selectorName: selectorName,
+                groupName: groupName,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String selectorName,
+                required String groupName,
+              }) => SelectorHandlerGroupRelationsCompanion.insert(
+                id: id,
+                selectorName: selectorName,
+                groupName: groupName,
+              ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$SelectorHandlerGroupRelationsTableReferences(db, table, e)
-                  ))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SelectorHandlerGroupRelationsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: ({selectorName = false, groupName = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
-              addJoins: <
-                  T extends TableManagerState<
+              addJoins:
+                  <
+                    T extends TableManagerState<
                       dynamic,
                       dynamic,
                       dynamic,
@@ -10126,110 +12260,136 @@ class $$SelectorHandlerGroupRelationsTableTableManager extends RootTableManager<
                       dynamic,
                       dynamic,
                       dynamic,
-                      dynamic>>(state) {
-                if (selectorName) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.selectorName,
-                    referencedTable:
-                        $$SelectorHandlerGroupRelationsTableReferences
-                            ._selectorNameTable(db),
-                    referencedColumn:
-                        $$SelectorHandlerGroupRelationsTableReferences
-                            ._selectorNameTable(db)
-                            .name,
-                  ) as T;
-                }
-                if (groupName) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.groupName,
-                    referencedTable:
-                        $$SelectorHandlerGroupRelationsTableReferences
-                            ._groupNameTable(db),
-                    referencedColumn:
-                        $$SelectorHandlerGroupRelationsTableReferences
-                            ._groupNameTable(db)
-                            .name,
-                  ) as T;
-                }
+                      dynamic
+                    >
+                  >(state) {
+                    if (selectorName) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.selectorName,
+                                referencedTable:
+                                    $$SelectorHandlerGroupRelationsTableReferences
+                                        ._selectorNameTable(db),
+                                referencedColumn:
+                                    $$SelectorHandlerGroupRelationsTableReferences
+                                        ._selectorNameTable(db)
+                                        .name,
+                              )
+                              as T;
+                    }
+                    if (groupName) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.groupName,
+                                referencedTable:
+                                    $$SelectorHandlerGroupRelationsTableReferences
+                                        ._groupNameTable(db),
+                                referencedColumn:
+                                    $$SelectorHandlerGroupRelationsTableReferences
+                                        ._groupNameTable(db)
+                                        .name,
+                              )
+                              as T;
+                    }
 
-                return state;
-              },
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [];
               },
             );
           },
-        ));
+        ),
+      );
 }
 
-typedef $$SelectorHandlerGroupRelationsTableProcessedTableManager
-    = ProcessedTableManager<
-        _$AppDatabase,
-        $SelectorHandlerGroupRelationsTable,
+typedef $$SelectorHandlerGroupRelationsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SelectorHandlerGroupRelationsTable,
+      SelectorHandlerGroupRelation,
+      $$SelectorHandlerGroupRelationsTableFilterComposer,
+      $$SelectorHandlerGroupRelationsTableOrderingComposer,
+      $$SelectorHandlerGroupRelationsTableAnnotationComposer,
+      $$SelectorHandlerGroupRelationsTableCreateCompanionBuilder,
+      $$SelectorHandlerGroupRelationsTableUpdateCompanionBuilder,
+      (
         SelectorHandlerGroupRelation,
-        $$SelectorHandlerGroupRelationsTableFilterComposer,
-        $$SelectorHandlerGroupRelationsTableOrderingComposer,
-        $$SelectorHandlerGroupRelationsTableAnnotationComposer,
-        $$SelectorHandlerGroupRelationsTableCreateCompanionBuilder,
-        $$SelectorHandlerGroupRelationsTableUpdateCompanionBuilder,
-        (
-          SelectorHandlerGroupRelation,
-          $$SelectorHandlerGroupRelationsTableReferences
-        ),
-        SelectorHandlerGroupRelation,
-        PrefetchHooks Function({bool selectorName, bool groupName})>;
-typedef $$SelectorSubscriptionRelationsTableCreateCompanionBuilder
-    = SelectorSubscriptionRelationsCompanion Function({
-  Value<int> id,
-  required String selectorName,
-  required int subscriptionId,
-});
-typedef $$SelectorSubscriptionRelationsTableUpdateCompanionBuilder
-    = SelectorSubscriptionRelationsCompanion Function({
-  Value<int> id,
-  Value<String> selectorName,
-  Value<int> subscriptionId,
-});
+        $$SelectorHandlerGroupRelationsTableReferences,
+      ),
+      SelectorHandlerGroupRelation,
+      PrefetchHooks Function({bool selectorName, bool groupName})
+    >;
+typedef $$SelectorSubscriptionRelationsTableCreateCompanionBuilder =
+    SelectorSubscriptionRelationsCompanion Function({
+      Value<int> id,
+      required String selectorName,
+      required int subscriptionId,
+    });
+typedef $$SelectorSubscriptionRelationsTableUpdateCompanionBuilder =
+    SelectorSubscriptionRelationsCompanion Function({
+      Value<int> id,
+      Value<String> selectorName,
+      Value<int> subscriptionId,
+    });
 
 final class $$SelectorSubscriptionRelationsTableReferences
-    extends BaseReferences<_$AppDatabase, $SelectorSubscriptionRelationsTable,
-        SelectorSubscriptionRelation> {
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $SelectorSubscriptionRelationsTable,
+          SelectorSubscriptionRelation
+        > {
   $$SelectorSubscriptionRelationsTableReferences(
-      super.$_db, super.$_table, super.$_typedResult);
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
 
   static $HandlerSelectorsTable _selectorNameTable(_$AppDatabase db) =>
-      db.handlerSelectors.createAlias($_aliasNameGenerator(
+      db.handlerSelectors.createAlias(
+        $_aliasNameGenerator(
           db.selectorSubscriptionRelations.selectorName,
-          db.handlerSelectors.name));
+          db.handlerSelectors.name,
+        ),
+      );
 
   $$HandlerSelectorsTableProcessedTableManager get selectorName {
     final $_column = $_itemColumn<String>('selector_name')!;
 
-    final manager =
-        $$HandlerSelectorsTableTableManager($_db, $_db.handlerSelectors)
-            .filter((f) => f.name.sqlEquals($_column));
+    final manager = $$HandlerSelectorsTableTableManager(
+      $_db,
+      $_db.handlerSelectors,
+    ).filter((f) => f.name.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_selectorNameTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
   }
 
   static $SubscriptionsTable _subscriptionIdTable(_$AppDatabase db) =>
-      db.subscriptions.createAlias($_aliasNameGenerator(
+      db.subscriptions.createAlias(
+        $_aliasNameGenerator(
           db.selectorSubscriptionRelations.subscriptionId,
-          db.subscriptions.id));
+          db.subscriptions.id,
+        ),
+      );
 
   $$SubscriptionsTableProcessedTableManager get subscriptionId {
     final $_column = $_itemColumn<int>('subscription_id')!;
 
-    final manager = $$SubscriptionsTableTableManager($_db, $_db.subscriptions)
-        .filter((f) => f.id.sqlEquals($_column));
+    final manager = $$SubscriptionsTableTableManager(
+      $_db,
+      $_db.subscriptions,
+    ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_subscriptionIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
-        manager.$state.copyWith(prefetchedData: [item]));
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
   }
 }
 
@@ -10243,45 +12403,53 @@ class $$SelectorSubscriptionRelationsTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   $$HandlerSelectorsTableFilterComposer get selectorName {
     final $$HandlerSelectorsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.selectorName,
-        referencedTable: $db.handlerSelectors,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HandlerSelectorsTableFilterComposer(
-              $db: $db,
-              $table: $db.handlerSelectors,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.selectorName,
+      referencedTable: $db.handlerSelectors,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HandlerSelectorsTableFilterComposer(
+            $db: $db,
+            $table: $db.handlerSelectors,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 
   $$SubscriptionsTableFilterComposer get subscriptionId {
     final $$SubscriptionsTableFilterComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.subscriptionId,
-        referencedTable: $db.subscriptions,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$SubscriptionsTableFilterComposer(
-              $db: $db,
-              $table: $db.subscriptions,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.subscriptionId,
+      referencedTable: $db.subscriptions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SubscriptionsTableFilterComposer(
+            $db: $db,
+            $table: $db.subscriptions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
@@ -10296,45 +12464,53 @@ class $$SelectorSubscriptionRelationsTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   $$HandlerSelectorsTableOrderingComposer get selectorName {
     final $$HandlerSelectorsTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.selectorName,
-        referencedTable: $db.handlerSelectors,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HandlerSelectorsTableOrderingComposer(
-              $db: $db,
-              $table: $db.handlerSelectors,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.selectorName,
+      referencedTable: $db.handlerSelectors,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HandlerSelectorsTableOrderingComposer(
+            $db: $db,
+            $table: $db.handlerSelectors,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 
   $$SubscriptionsTableOrderingComposer get subscriptionId {
     final $$SubscriptionsTableOrderingComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.subscriptionId,
-        referencedTable: $db.subscriptions,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$SubscriptionsTableOrderingComposer(
-              $db: $db,
-              $table: $db.subscriptions,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.subscriptionId,
+      referencedTable: $db.subscriptions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SubscriptionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.subscriptions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
@@ -10353,107 +12529,126 @@ class $$SelectorSubscriptionRelationsTableAnnotationComposer
 
   $$HandlerSelectorsTableAnnotationComposer get selectorName {
     final $$HandlerSelectorsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.selectorName,
-        referencedTable: $db.handlerSelectors,
-        getReferencedColumn: (t) => t.name,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$HandlerSelectorsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.handlerSelectors,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.selectorName,
+      referencedTable: $db.handlerSelectors,
+      getReferencedColumn: (t) => t.name,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$HandlerSelectorsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.handlerSelectors,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 
   $$SubscriptionsTableAnnotationComposer get subscriptionId {
     final $$SubscriptionsTableAnnotationComposer composer = $composerBuilder(
-        composer: this,
-        getCurrentColumn: (t) => t.subscriptionId,
-        referencedTable: $db.subscriptions,
-        getReferencedColumn: (t) => t.id,
-        builder: (joinBuilder,
-                {$addJoinBuilderToRootComposer,
-                $removeJoinBuilderFromRootComposer}) =>
-            $$SubscriptionsTableAnnotationComposer(
-              $db: $db,
-              $table: $db.subscriptions,
-              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-              joinBuilder: joinBuilder,
-              $removeJoinBuilderFromRootComposer:
-                  $removeJoinBuilderFromRootComposer,
-            ));
+      composer: this,
+      getCurrentColumn: (t) => t.subscriptionId,
+      referencedTable: $db.subscriptions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SubscriptionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.subscriptions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
     return composer;
   }
 }
 
-class $$SelectorSubscriptionRelationsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $SelectorSubscriptionRelationsTable,
-    SelectorSubscriptionRelation,
-    $$SelectorSubscriptionRelationsTableFilterComposer,
-    $$SelectorSubscriptionRelationsTableOrderingComposer,
-    $$SelectorSubscriptionRelationsTableAnnotationComposer,
-    $$SelectorSubscriptionRelationsTableCreateCompanionBuilder,
-    $$SelectorSubscriptionRelationsTableUpdateCompanionBuilder,
-    (
-      SelectorSubscriptionRelation,
-      $$SelectorSubscriptionRelationsTableReferences
-    ),
-    SelectorSubscriptionRelation,
-    PrefetchHooks Function({bool selectorName, bool subscriptionId})> {
+class $$SelectorSubscriptionRelationsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SelectorSubscriptionRelationsTable,
+          SelectorSubscriptionRelation,
+          $$SelectorSubscriptionRelationsTableFilterComposer,
+          $$SelectorSubscriptionRelationsTableOrderingComposer,
+          $$SelectorSubscriptionRelationsTableAnnotationComposer,
+          $$SelectorSubscriptionRelationsTableCreateCompanionBuilder,
+          $$SelectorSubscriptionRelationsTableUpdateCompanionBuilder,
+          (
+            SelectorSubscriptionRelation,
+            $$SelectorSubscriptionRelationsTableReferences,
+          ),
+          SelectorSubscriptionRelation,
+          PrefetchHooks Function({bool selectorName, bool subscriptionId})
+        > {
   $$SelectorSubscriptionRelationsTableTableManager(
-      _$AppDatabase db, $SelectorSubscriptionRelationsTable table)
-      : super(TableManagerState(
+    _$AppDatabase db,
+    $SelectorSubscriptionRelationsTable table,
+  ) : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
               $$SelectorSubscriptionRelationsTableFilterComposer(
-                  $db: db, $table: table),
+                $db: db,
+                $table: table,
+              ),
           createOrderingComposer: () =>
               $$SelectorSubscriptionRelationsTableOrderingComposer(
-                  $db: db, $table: table),
+                $db: db,
+                $table: table,
+              ),
           createComputedFieldComposer: () =>
               $$SelectorSubscriptionRelationsTableAnnotationComposer(
-                  $db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> selectorName = const Value.absent(),
-            Value<int> subscriptionId = const Value.absent(),
-          }) =>
-              SelectorSubscriptionRelationsCompanion(
-            id: id,
-            selectorName: selectorName,
-            subscriptionId: subscriptionId,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required String selectorName,
-            required int subscriptionId,
-          }) =>
-              SelectorSubscriptionRelationsCompanion.insert(
-            id: id,
-            selectorName: selectorName,
-            subscriptionId: subscriptionId,
-          ),
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> selectorName = const Value.absent(),
+                Value<int> subscriptionId = const Value.absent(),
+              }) => SelectorSubscriptionRelationsCompanion(
+                id: id,
+                selectorName: selectorName,
+                subscriptionId: subscriptionId,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String selectorName,
+                required int subscriptionId,
+              }) => SelectorSubscriptionRelationsCompanion.insert(
+                id: id,
+                selectorName: selectorName,
+                subscriptionId: subscriptionId,
+              ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (
-                    e.readTable(table),
-                    $$SelectorSubscriptionRelationsTableReferences(db, table, e)
-                  ))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SelectorSubscriptionRelationsTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: (
-              {selectorName = false, subscriptionId = false}) {
+          prefetchHooksCallback: ({selectorName = false, subscriptionId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
-              addJoins: <
-                  T extends TableManagerState<
+              addJoins:
+                  <
+                    T extends TableManagerState<
                       dynamic,
                       dynamic,
                       dynamic,
@@ -10464,72 +12659,82 @@ class $$SelectorSubscriptionRelationsTableTableManager extends RootTableManager<
                       dynamic,
                       dynamic,
                       dynamic,
-                      dynamic>>(state) {
-                if (selectorName) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.selectorName,
-                    referencedTable:
-                        $$SelectorSubscriptionRelationsTableReferences
-                            ._selectorNameTable(db),
-                    referencedColumn:
-                        $$SelectorSubscriptionRelationsTableReferences
-                            ._selectorNameTable(db)
-                            .name,
-                  ) as T;
-                }
-                if (subscriptionId) {
-                  state = state.withJoin(
-                    currentTable: table,
-                    currentColumn: table.subscriptionId,
-                    referencedTable:
-                        $$SelectorSubscriptionRelationsTableReferences
-                            ._subscriptionIdTable(db),
-                    referencedColumn:
-                        $$SelectorSubscriptionRelationsTableReferences
-                            ._subscriptionIdTable(db)
-                            .id,
-                  ) as T;
-                }
+                      dynamic
+                    >
+                  >(state) {
+                    if (selectorName) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.selectorName,
+                                referencedTable:
+                                    $$SelectorSubscriptionRelationsTableReferences
+                                        ._selectorNameTable(db),
+                                referencedColumn:
+                                    $$SelectorSubscriptionRelationsTableReferences
+                                        ._selectorNameTable(db)
+                                        .name,
+                              )
+                              as T;
+                    }
+                    if (subscriptionId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.subscriptionId,
+                                referencedTable:
+                                    $$SelectorSubscriptionRelationsTableReferences
+                                        ._subscriptionIdTable(db),
+                                referencedColumn:
+                                    $$SelectorSubscriptionRelationsTableReferences
+                                        ._subscriptionIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
 
-                return state;
-              },
+                    return state;
+                  },
               getPrefetchedDataCallback: (items) async {
                 return [];
               },
             );
           },
-        ));
+        ),
+      );
 }
 
-typedef $$SelectorSubscriptionRelationsTableProcessedTableManager
-    = ProcessedTableManager<
-        _$AppDatabase,
-        $SelectorSubscriptionRelationsTable,
+typedef $$SelectorSubscriptionRelationsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SelectorSubscriptionRelationsTable,
+      SelectorSubscriptionRelation,
+      $$SelectorSubscriptionRelationsTableFilterComposer,
+      $$SelectorSubscriptionRelationsTableOrderingComposer,
+      $$SelectorSubscriptionRelationsTableAnnotationComposer,
+      $$SelectorSubscriptionRelationsTableCreateCompanionBuilder,
+      $$SelectorSubscriptionRelationsTableUpdateCompanionBuilder,
+      (
         SelectorSubscriptionRelation,
-        $$SelectorSubscriptionRelationsTableFilterComposer,
-        $$SelectorSubscriptionRelationsTableOrderingComposer,
-        $$SelectorSubscriptionRelationsTableAnnotationComposer,
-        $$SelectorSubscriptionRelationsTableCreateCompanionBuilder,
-        $$SelectorSubscriptionRelationsTableUpdateCompanionBuilder,
-        (
-          SelectorSubscriptionRelation,
-          $$SelectorSubscriptionRelationsTableReferences
-        ),
-        SelectorSubscriptionRelation,
-        PrefetchHooks Function({bool selectorName, bool subscriptionId})>;
-typedef $$DnsServersTableCreateCompanionBuilder = DnsServersCompanion Function({
-  Value<DateTime?> updatedAt,
-  Value<int> id,
-  required String name,
-  required dns.DnsServerConfig dnsServer,
-});
-typedef $$DnsServersTableUpdateCompanionBuilder = DnsServersCompanion Function({
-  Value<DateTime?> updatedAt,
-  Value<int> id,
-  Value<String> name,
-  Value<dns.DnsServerConfig> dnsServer,
-});
+        $$SelectorSubscriptionRelationsTableReferences,
+      ),
+      SelectorSubscriptionRelation,
+      PrefetchHooks Function({bool selectorName, bool subscriptionId})
+    >;
+typedef $$DnsServersTableCreateCompanionBuilder =
+    DnsServersCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<int> id,
+      required String name,
+      required dns.DnsServerConfig dnsServer,
+    });
+typedef $$DnsServersTableUpdateCompanionBuilder =
+    DnsServersCompanion Function({
+      Value<DateTime?> updatedAt,
+      Value<int> id,
+      Value<String> name,
+      Value<dns.DnsServerConfig> dnsServer,
+    });
 
 class $$DnsServersTableFilterComposer
     extends Composer<_$AppDatabase, $DnsServersTable> {
@@ -10541,19 +12746,29 @@ class $$DnsServersTableFilterComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnFilters(column));
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
 
-  ColumnWithTypeConverterFilters<dns.DnsServerConfig, dns.DnsServerConfig,
-          Uint8List>
-      get dnsServer => $composableBuilder(
-          column: $table.dnsServer,
-          builder: (column) => ColumnWithTypeConverterFilters(column));
+  ColumnWithTypeConverterFilters<
+    dns.DnsServerConfig,
+    dns.DnsServerConfig,
+    Uint8List
+  >
+  get dnsServer => $composableBuilder(
+    column: $table.dnsServer,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
 }
 
 class $$DnsServersTableOrderingComposer
@@ -10566,16 +12781,24 @@ class $$DnsServersTableOrderingComposer
     super.$removeJoinBuilderFromRootComposer,
   });
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<int> get id => $composableBuilder(
-      column: $table.id, builder: (column) => ColumnOrderings(column));
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
 
   ColumnOrderings<Uint8List> get dnsServer => $composableBuilder(
-      column: $table.dnsServer, builder: (column) => ColumnOrderings(column));
+    column: $table.dnsServer,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$DnsServersTableAnnotationComposer
@@ -10597,24 +12820,31 @@ class $$DnsServersTableAnnotationComposer
       $composableBuilder(column: $table.name, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<dns.DnsServerConfig, Uint8List>
-      get dnsServer => $composableBuilder(
-          column: $table.dnsServer, builder: (column) => column);
+  get dnsServer =>
+      $composableBuilder(column: $table.dnsServer, builder: (column) => column);
 }
 
-class $$DnsServersTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $DnsServersTable,
-    DnsServer,
-    $$DnsServersTableFilterComposer,
-    $$DnsServersTableOrderingComposer,
-    $$DnsServersTableAnnotationComposer,
-    $$DnsServersTableCreateCompanionBuilder,
-    $$DnsServersTableUpdateCompanionBuilder,
-    (DnsServer, BaseReferences<_$AppDatabase, $DnsServersTable, DnsServer>),
-    DnsServer,
-    PrefetchHooks Function()> {
+class $$DnsServersTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DnsServersTable,
+          DnsServer,
+          $$DnsServersTableFilterComposer,
+          $$DnsServersTableOrderingComposer,
+          $$DnsServersTableAnnotationComposer,
+          $$DnsServersTableCreateCompanionBuilder,
+          $$DnsServersTableUpdateCompanionBuilder,
+          (
+            DnsServer,
+            BaseReferences<_$AppDatabase, $DnsServersTable, DnsServer>,
+          ),
+          DnsServer,
+          PrefetchHooks Function()
+        > {
   $$DnsServersTableTableManager(_$AppDatabase db, $DnsServersTable table)
-      : super(TableManagerState(
+    : super(
+        TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
@@ -10623,49 +12853,52 @@ class $$DnsServersTableTableManager extends RootTableManager<
               $$DnsServersTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
               $$DnsServersTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<int> id = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<dns.DnsServerConfig> dnsServer = const Value.absent(),
-          }) =>
-              DnsServersCompanion(
-            updatedAt: updatedAt,
-            id: id,
-            name: name,
-            dnsServer: dnsServer,
-          ),
-          createCompanionCallback: ({
-            Value<DateTime?> updatedAt = const Value.absent(),
-            Value<int> id = const Value.absent(),
-            required String name,
-            required dns.DnsServerConfig dnsServer,
-          }) =>
-              DnsServersCompanion.insert(
-            updatedAt: updatedAt,
-            id: id,
-            name: name,
-            dnsServer: dnsServer,
-          ),
+          updateCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<dns.DnsServerConfig> dnsServer = const Value.absent(),
+              }) => DnsServersCompanion(
+                updatedAt: updatedAt,
+                id: id,
+                name: name,
+                dnsServer: dnsServer,
+              ),
+          createCompanionCallback:
+              ({
+                Value<DateTime?> updatedAt = const Value.absent(),
+                Value<int> id = const Value.absent(),
+                required String name,
+                required dns.DnsServerConfig dnsServer,
+              }) => DnsServersCompanion.insert(
+                updatedAt: updatedAt,
+                id: id,
+                name: name,
+                dnsServer: dnsServer,
+              ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
               .toList(),
           prefetchHooksCallback: null,
-        ));
+        ),
+      );
 }
 
-typedef $$DnsServersTableProcessedTableManager = ProcessedTableManager<
-    _$AppDatabase,
-    $DnsServersTable,
-    DnsServer,
-    $$DnsServersTableFilterComposer,
-    $$DnsServersTableOrderingComposer,
-    $$DnsServersTableAnnotationComposer,
-    $$DnsServersTableCreateCompanionBuilder,
-    $$DnsServersTableUpdateCompanionBuilder,
-    (DnsServer, BaseReferences<_$AppDatabase, $DnsServersTable, DnsServer>),
-    DnsServer,
-    PrefetchHooks Function()>;
+typedef $$DnsServersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DnsServersTable,
+      DnsServer,
+      $$DnsServersTableFilterComposer,
+      $$DnsServersTableOrderingComposer,
+      $$DnsServersTableAnnotationComposer,
+      $$DnsServersTableCreateCompanionBuilder,
+      $$DnsServersTableUpdateCompanionBuilder,
+      (DnsServer, BaseReferences<_$AppDatabase, $DnsServersTable, DnsServer>),
+      DnsServer,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -10677,9 +12910,11 @@ class $AppDatabaseManager {
   $$OutboundHandlerGroupsTableTableManager get outboundHandlerGroups =>
       $$OutboundHandlerGroupsTableTableManager(_db, _db.outboundHandlerGroups);
   $$OutboundHandlerGroupRelationsTableTableManager
-      get outboundHandlerGroupRelations =>
-          $$OutboundHandlerGroupRelationsTableTableManager(
-              _db, _db.outboundHandlerGroupRelations);
+  get outboundHandlerGroupRelations =>
+      $$OutboundHandlerGroupRelationsTableTableManager(
+        _db,
+        _db.outboundHandlerGroupRelations,
+      );
   $$DnsRecordsTableTableManager get dnsRecords =>
       $$DnsRecordsTableTableManager(_db, _db.dnsRecords);
   $$AtomicDomainSetsTableTableManager get atomicDomainSets =>
@@ -10707,15 +12942,21 @@ class $AppDatabaseManager {
       $$HandlerSelectorsTableTableManager(_db, _db.handlerSelectors);
   $$SelectorHandlerRelationsTableTableManager get selectorHandlerRelations =>
       $$SelectorHandlerRelationsTableTableManager(
-          _db, _db.selectorHandlerRelations);
+        _db,
+        _db.selectorHandlerRelations,
+      );
   $$SelectorHandlerGroupRelationsTableTableManager
-      get selectorHandlerGroupRelations =>
-          $$SelectorHandlerGroupRelationsTableTableManager(
-              _db, _db.selectorHandlerGroupRelations);
+  get selectorHandlerGroupRelations =>
+      $$SelectorHandlerGroupRelationsTableTableManager(
+        _db,
+        _db.selectorHandlerGroupRelations,
+      );
   $$SelectorSubscriptionRelationsTableTableManager
-      get selectorSubscriptionRelations =>
-          $$SelectorSubscriptionRelationsTableTableManager(
-              _db, _db.selectorSubscriptionRelations);
+  get selectorSubscriptionRelations =>
+      $$SelectorSubscriptionRelationsTableTableManager(
+        _db,
+        _db.selectorSubscriptionRelations,
+      );
   $$DnsServersTableTableManager get dnsServers =>
       $$DnsServersTableTableManager(_db, _db.dnsServers);
 }

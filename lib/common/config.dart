@@ -33,33 +33,33 @@ ProxyProtocolLabel getProtocolTypeFromAny(Any any) {
   // unpack the any to the specific config type
   switch (any.typeUrl) {
     case 'type.googleapis.com/x.proxy.Shadowsocks2022ClientConfig' ||
-          'type.googleapis.com/x.proxy.Shadowsocks2022ServerConfig':
+        'type.googleapis.com/x.proxy.Shadowsocks2022ServerConfig':
       return ProxyProtocolLabel.shadowsocks2022;
     case 'type.googleapis.com/x.proxy.ShadowsocksClientConfig' ||
-          'type.googleapis.com/x.proxy.ShadowsocksServerConfig':
+        'type.googleapis.com/x.proxy.ShadowsocksServerConfig':
       return ProxyProtocolLabel.shadowsocks;
     case 'type.googleapis.com/x.proxy.VmessClientConfig' ||
-          'type.googleapis.com/x.proxy.VmessServerConfig':
+        'type.googleapis.com/x.proxy.VmessServerConfig':
       return ProxyProtocolLabel.vmess;
     case 'type.googleapis.com/x.proxy.TrojanClientConfig' ||
-          'type.googleapis.com/x.proxy.TrojanServerConfig':
+        'type.googleapis.com/x.proxy.TrojanServerConfig':
       return ProxyProtocolLabel.trojan;
     case 'type.googleapis.com/x.proxy.SocksClientConfig' ||
-          'type.googleapis.com/x.proxy.SocksServerConfig':
+        'type.googleapis.com/x.proxy.SocksServerConfig':
       return ProxyProtocolLabel.socks;
     case 'type.googleapis.com/x.proxy.VlessClientConfig' ||
-          'type.googleapis.com/x.proxy.VlessServerConfig':
+        'type.googleapis.com/x.proxy.VlessServerConfig':
       return ProxyProtocolLabel.vless;
     case 'type.googleapis.com/x.proxy.Hysteria2ClientConfig' ||
-          'type.googleapis.com/x.proxy.Hysteria2ServerConfig':
+        'type.googleapis.com/x.proxy.Hysteria2ServerConfig':
       return ProxyProtocolLabel.hysteria2;
     case 'type.googleapis.com/x.proxy.AnytlsClientConfig' ||
-          'type.googleapis.com/x.proxy.AnytlsServerConfig':
+        'type.googleapis.com/x.proxy.AnytlsServerConfig':
       return ProxyProtocolLabel.anytls;
     case 'type.googleapis.com/x.proxy.DokodemoConfig':
       return ProxyProtocolLabel.dokodemo;
     case 'type.googleapis.com/x.proxy.HttpClientConfig' ||
-          'type.googleapis.com/x.proxy.HttpServerConfig':
+        'type.googleapis.com/x.proxy.HttpServerConfig':
       return ProxyProtocolLabel.http;
     default:
       throw Exception('unknown protocol: ${any.typeUrl}');

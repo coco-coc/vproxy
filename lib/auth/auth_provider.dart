@@ -15,7 +15,6 @@
 
 // import 'package:firebase_auth/firebase_auth.dart' hide User;
 
-
 /// TODO: update the Web client ID with your own.
 ///
 /// Web Client ID that you registered with Google Cloud.

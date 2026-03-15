@@ -31,7 +31,9 @@ void main() {
 
         // Act & Assert: Check file existence logic
         final geoSiteExists = geoSiteFile.existsSync();
-        final geoIpExists = File(path.join(resourceDir.path, 'geoip.dat')).existsSync();
+        final geoIpExists = File(
+          path.join(resourceDir.path, 'geoip.dat'),
+        ).existsSync();
 
         expect(geoSiteExists, true);
         expect(geoIpExists, false);
@@ -54,7 +56,9 @@ void main() {
 
       test('should handle clash rules directory operations', () {
         // Arrange: Create clash rules directory
-        final clashRulesDir = Directory(path.join(resourceDir.path, 'clash_rules'));
+        final clashRulesDir = Directory(
+          path.join(resourceDir.path, 'clash_rules'),
+        );
         clashRulesDir.createSync(recursive: true);
 
         // Create some test files
@@ -74,7 +78,9 @@ void main() {
 
       test('should handle file deletion operations', () {
         // Arrange: Create clash rules directory with files
-        final clashRulesDir = Directory(path.join(resourceDir.path, 'clash_rules'));
+        final clashRulesDir = Directory(
+          path.join(resourceDir.path, 'clash_rules'),
+        );
         clashRulesDir.createSync(recursive: true);
 
         final file1 = File(path.join(clashRulesDir.path, 'rule1.yaml'));
@@ -93,7 +99,7 @@ void main() {
       test('should handle URL to file path mapping logic', () {
         // This test verifies the logic for mapping URLs to file paths
         // which is used in makeGeoDataAvailable for clash rules
-        
+
         final urls = <String>{
           'https://example.com/rules1.yaml',
           'https://example.com/rules2.yaml',
@@ -114,7 +120,9 @@ void main() {
 
       test('should handle file cleanup logic', () {
         // Arrange: Create clash rules directory with files
-        final clashRulesDir = Directory(path.join(resourceDir.path, 'clash_rules'));
+        final clashRulesDir = Directory(
+          path.join(resourceDir.path, 'clash_rules'),
+        );
         clashRulesDir.createSync(recursive: true);
 
         // Create test files
@@ -125,7 +133,7 @@ void main() {
 
         // Simulate the cleanup logic from makeGeoDataAvailable
         final validPaths = <String>{keepFile.path};
-        
+
         for (final file in clashRulesDir.listSync()) {
           if (!validPaths.contains(file.path)) {
             file.deleteSync();
@@ -139,7 +147,9 @@ void main() {
 
       test('should handle empty clash rules directory', () {
         // Arrange: Create empty clash rules directory
-        final clashRulesDir = Directory(path.join(resourceDir.path, 'clash_rules'));
+        final clashRulesDir = Directory(
+          path.join(resourceDir.path, 'clash_rules'),
+        );
         clashRulesDir.createSync(recursive: true);
 
         // Act: List files in empty directory
@@ -163,7 +173,7 @@ void main() {
         // Test the logic for handling empty URL sets
         final urls = <String>{};
         final paths = <String>{};
-        
+
         for (final url in urls) {
           final hash = url.hashCode.toString();
           paths.add(hash);
@@ -240,7 +250,10 @@ void main() {
 
         // Test the hasUpdated logic from geoFilesFridayUpdate
         expect(now.difference(oneHourAgo) < const Duration(days: 1), true);
-        expect(now.difference(oneDayAgo) < const Duration(days: 1), false); // Exactly 1 day ago
+        expect(
+          now.difference(oneDayAgo) < const Duration(days: 1),
+          false,
+        ); // Exactly 1 day ago
         expect(now.difference(twoDaysAgo) < const Duration(days: 1), false);
       });
 
@@ -249,7 +262,7 @@ void main() {
         final now = DateTime.now();
         final targetDate = now.add(const Duration(days: 1));
         final baseDelay = targetDate.difference(now);
-        
+
         // Test that random delay is within expected range (0-12 hours)
         for (int i = 0; i < 100; i++) {
           final randomDelay = Duration(hours: i % 12);
@@ -264,17 +277,17 @@ void main() {
       test('should handle completer state management', () {
         // Test the logic for managing concurrent access
         // This simulates the _completer logic in downloadAndProcessGeo
-        
+
         // Simulate the completer pattern
         Completer<void>? completer;
-        
+
         // First call - should create completer
         completer = Completer<void>();
         expect(completer, isNotNull);
-              
+
         // Second call - should return existing completer
         expect(completer, isNotNull);
-              
+
         // Complete and reset
         completer.complete();
         completer = null;

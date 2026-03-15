@@ -59,8 +59,9 @@ class _SshKeysState extends State<SshKeys> {
     super.didChangeDependencies();
     _subscription?.cancel();
     final database = context.watch<DatabaseProvider>().database;
-    _subscription =
-        database.select(database.commonSshKeys).watch().listen((event) {
+    _subscription = database.select(database.commonSshKeys).watch().listen((
+      event,
+    ) {
       setState(() {
         _keys = event;
       });
@@ -85,14 +86,19 @@ class _SshKeysState extends State<SshKeys> {
               final syncService = context.read<SyncService>();
               final database = context.read<DatabaseProvider>().database;
               final storage = context.read<FlutterSecureStorage>();
-              final fullScreen =
-                  Provider.of<MyLayout>(context, listen: false).isCompact;
+              final fullScreen = Provider.of<MyLayout>(
+                context,
+                listen: false,
+              ).isCompact;
               late final AddSshKeyForm? form;
               if (fullScreen) {
-                form = await Navigator.of(context, rootNavigator: true)
-                    .push(CupertinoPageRoute(builder: (ctx) {
-                  return const AddSshKeyDialog(fullScreen: true);
-                }));
+                form = await Navigator.of(context, rootNavigator: true).push(
+                  CupertinoPageRoute(
+                    builder: (ctx) {
+                      return const AddSshKeyDialog(fullScreen: true);
+                    },
+                  ),
+                );
               } else {
                 form = await showDialog<AddSshKeyForm>(
                   context: context,
@@ -103,14 +109,15 @@ class _SshKeysState extends State<SshKeys> {
                 return;
               }
               try {
-                final k =
-                    await database.into(database.commonSshKeys).insertReturning(
-                          CommonSshKeysCompanion(
-                            id: Value(SnowflakeId.generate()),
-                            name: Value(form.name),
-                            remark: Value(form.remark),
-                          ),
-                        );
+                final k = await database
+                    .into(database.commonSshKeys)
+                    .insertReturning(
+                      CommonSshKeysCompanion(
+                        id: Value(SnowflakeId.generate()),
+                        name: Value(form.name),
+                        remark: Value(form.remark),
+                      ),
+                    );
 
                 final sss = CommonSshKeySecureStorage(
                   sshKey: form.sshKey,
@@ -119,14 +126,18 @@ class _SshKeysState extends State<SshKeys> {
                 );
                 final sssName = "common_ssh_key_${form.name}";
                 await storage.write(
-                    key: sssName, value: jsonEncode(sss.toJson()));
+                  key: sssName,
+                  value: jsonEncode(sss.toJson()),
+                );
                 syncService.addCommonSshKeyOperation(k, sssName, sss);
               } on DriftRemoteException catch (e) {
                 if (e.remoteCause is SqliteException &&
                     (e.remoteCause as SqliteException).extendedResultCode ==
                         2067) {
-                  snack(rootLocalizations()
-                      ?.failedToAddCommonSshKeyDueToDuplicateName);
+                  snack(
+                    rootLocalizations()
+                        ?.failedToAddCommonSshKeyDueToDuplicateName,
+                  );
                 }
               } catch (e) {
                 logger.d('add common ssh key error', error: e);
@@ -148,73 +159,77 @@ class _SshKeysState extends State<SshKeys> {
                       children: _keys
                           .map(
                             (e) => MenuAnchor(
-                                menuChildren: [
-                                  MenuItemButton(
-                                    onPressed: () async {
-                                      final syncService =
-                                          context.read<SyncService>();
-                                      final database = context
-                                          .read<DatabaseProvider>()
-                                          .database;
-                                      await context
-                                          .read<FlutterSecureStorage>()
-                                          .delete(
-                                              key: "common_ssh_key_${e.name}");
-                                      (database.delete(database.commonSshKeys)
-                                            ..where((t) => t.id.equals(e.id)))
-                                          .go();
-                                      syncService
-                                          .removeCommonSshKeyOperation(e);
-                                    },
-                                    child: Text(
-                                        AppLocalizations.of(context)!.delete),
-                                  )
-                                ],
-                                builder: (context, controller, child) {
-                                  return GestureDetector(
-                                    onSecondaryTapDown: (details) {
-                                      controller.open(
-                                          position: details.localPosition);
-                                    },
-                                    onLongPressDown: (details) {
-                                      controller.open(
-                                          position: details.localPosition);
-                                    },
-                                    child: Chip(
-                                        label: Column(
+                              menuChildren: [
+                                MenuItemButton(
+                                  onPressed: () async {
+                                    final syncService = context
+                                        .read<SyncService>();
+                                    final database = context
+                                        .read<DatabaseProvider>()
+                                        .database;
+                                    await context
+                                        .read<FlutterSecureStorage>()
+                                        .delete(
+                                          key: "common_ssh_key_${e.name}",
+                                        );
+                                    (database.delete(
+                                      database.commonSshKeys,
+                                    )..where((t) => t.id.equals(e.id))).go();
+                                    syncService.removeCommonSshKeyOperation(e);
+                                  },
+                                  child: Text(
+                                    AppLocalizations.of(context)!.delete,
+                                  ),
+                                ),
+                              ],
+                              builder: (context, controller, child) {
+                                return GestureDetector(
+                                  onSecondaryTapDown: (details) {
+                                    controller.open(
+                                      position: details.localPosition,
+                                    );
+                                  },
+                                  onLongPressDown: (details) {
+                                    controller.open(
+                                      position: details.localPosition,
+                                    );
+                                  },
+                                  child: Chip(
+                                    label: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(e.name),
                                         if (e.remark != null &&
                                             e.remark!.isNotEmpty)
-                                          Text(e.remark!,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall
-                                                  ?.copyWith(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .outline)),
+                                          Text(
+                                            e.remark!,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall
+                                                ?.copyWith(
+                                                  color: Theme.of(
+                                                    context,
+                                                  ).colorScheme.outline,
+                                                ),
+                                          ),
                                       ],
-                                    )),
-                                  );
-                                }),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           )
                           .toList(),
                     ),
                   ),
-                  const SliverToBoxAdapter(
-                    child: SizedBox(height: 10),
-                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 10)),
                   if (!context.watch<AuthBloc>().state.pro) const Ads(),
-                  const SliverToBoxAdapter(
-                    child: SizedBox(height: 70),
-                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 70)),
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
