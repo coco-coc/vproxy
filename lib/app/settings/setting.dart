@@ -576,6 +576,8 @@ class CheckUpdateButton extends StatefulWidget {
 
 class _CheckUpdateButtonState extends State<CheckUpdateButton> {
   bool _checkingUpdate = false;
+  bool _downloadingUpdate = false;
+  String? _version;
 
   @override
   Widget build(BuildContext context) {
@@ -588,7 +590,12 @@ class _CheckUpdateButtonState extends State<CheckUpdateButton> {
           final autoUpdateService = context.read<AutoUpdateService>();
           final release = await autoUpdateService.getLatestRelease();
           if (release != null) {
-            autoUpdateService.updateToRelease(release);
+            setState(() {
+              _checkingUpdate = false;
+              _downloadingUpdate = true;
+              _version = release.version;
+            });
+            await autoUpdateService.updateToRelease(release);
           } else {
             snack(AppLocalizations.of(context)!.noNewVersion);
           }
@@ -597,13 +604,19 @@ class _CheckUpdateButtonState extends State<CheckUpdateButton> {
           snack(e.toString());
         } finally {
           setState(() {
+            _downloadingUpdate = false;
             _checkingUpdate = false;
+            _version = null;
           });
         }
       },
       child: _checkingUpdate
           ? smallCircularProgressIndicator
-          : Text(AppLocalizations.of(context)!.checkUpdate),
+          : Text(
+              _downloadingUpdate
+                  ? AppLocalizations.of(context)!.downloading(_version ?? '')
+                  : AppLocalizations.of(context)!.checkUpdate,
+            ),
     );
   }
 }
