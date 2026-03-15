@@ -3424,7 +3424,7 @@ abstract class AppLocalizations {
   /// No description provided for @internalDnsDesc.
   ///
   /// In en, this message translates to:
-  /// **'Internal DNS servers are used to resolve domains when outbounds are dialing. There are two of them, one is internal-dns-proxy, which uses the Proxy selector to connect to 1.1.1.1; the other is internal-dns-direct, which uses directly connect to 223.5.5.5 and 1.1.1.1. The internal-dns-direct is used first, if it failed, the internal-dns-proxy will be used.'**
+  /// **'Internal DNS servers are mainly used to resolve domains when outbounds are dialing. They will be used from left to right until one of them succeeds.'**
   String get internalDnsDesc;
 
   /// No description provided for @nodeSetDesc.
@@ -4180,7 +4180,7 @@ abstract class AppLocalizations {
   /// No description provided for @domainStrategyDesc.
   ///
   /// In en, this message translates to:
-  /// **'Determine how to connect to server. PreferIPv4: use IPv4, if failed, use IPv6; PreferIPv6: use IPv6, if failed, use IPv4; IPv4Only: only try IPv4; IPv6Only: only try IPv6'**
+  /// **'Determine how to resolve domains when dialing. PreferIPv4: lookup both IPv4 and IPv6(if default nic support 6), wait for the two queries to complete, then try IPv4s, if failed, try IPv6s; PreferIPv6: lookup both IPv4 and IPv6(if default nic support 6), wait for the two queries to complete, then try IPv6s first, if failed, use IPv4; IPv4Only: only lookup IPv4; IPv6Only: only lookup IPv6; Speed: lookup both A and AAAA(if default nic support 6), use the first returned result (might be IPv4s or IPv6s), if failed, use the other IPs.'**
   String get domainStrategyDesc;
 
   /// No description provided for @uotDesc.
@@ -4404,6 +4404,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add DNS Record'**
   String get addDnsRecord;
+
+  /// No description provided for @internalDns.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal DNS Servers'**
+  String get internalDns;
+
+  /// No description provided for @fallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Fallback'**
+  String get fallback;
+
+  /// No description provided for @fallbackDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'If the handler picked for this rule failed, use the following fallbacks. Each fallback has a list of conditions, the fallback will be used only if all conditions are true.'**
+  String get fallbackDesc;
+
+  /// No description provided for @rewriteIpToDomain.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewrite IP to Domain'**
+  String get rewriteIpToDomain;
+
+  /// No description provided for @rewriteIpToDomainDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'If the request address is IP, and there is sniffed domain, then use the sniffed domain as the request address. This is a measure for DNS pollution'**
+  String get rewriteIpToDomainDesc;
+
+  /// No description provided for @resultIpSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Result IP Set'**
+  String get resultIpSet;
+
+  /// No description provided for @resultIpSetDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'A/AAAA records whose IPs are not in the set will be dropped'**
+  String get resultIpSetDesc;
+
+  /// No description provided for @inverse.
+  ///
+  /// In en, this message translates to:
+  /// **'Inverse'**
+  String get inverse;
+
+  /// No description provided for @automaticallyAddFallbackDomain.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically Add Fallback Domain'**
+  String get automaticallyAddFallbackDomain;
+
+  /// No description provided for @automaticallyAddFallbackDomainDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'If a connection initially went direct but failed, then it fallbacked to proxy and succeeded, automatically add the domain into a domain set called \"Fallback\"'**
+  String get automaticallyAddFallbackDomainDesc;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -309,7 +309,6 @@ class LogBloc extends Bloc<LogEvent, LogState> {
           }
         }
       case UserLogMessage_Message.sessionEnd:
-        logger.d('session end: ${l.sessionEnd.sid}');
         final indexEnd = _findSessionIndexBackwards(l.sessionEnd.sid);
         if (indexEnd != -1) {
           final e = _logs[indexEnd];
@@ -347,9 +346,10 @@ class LogBloc extends Bloc<LogEvent, LogState> {
           emit(newLog);
         }
       case UserLogMessage_Message.fallback:
+        logger.d('fallback: ${l.fallback.tag}');
         final index = _logs.indexOfBackwardsFunction((e) {
           if (e is SessionInfo) {
-            return e.sessionId == l.sessionError.sid;
+            return e.sessionId == l.fallback.sid;
           }
           return false;
         });

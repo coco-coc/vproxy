@@ -57,7 +57,9 @@ Future<String> dbVacuumDest() async {
 
 Future<String> tempFilePath() async {
   return join(
-      await getCacheDir(), DateTime.now().microsecondsSinceEpoch.toString());
+    await getCacheDir(),
+    DateTime.now().microsecondsSinceEpoch.toString(),
+  );
 }
 
 Directory getFlutterLogDir() {
@@ -121,8 +123,9 @@ Future<String> getGeositePath() async {
 
 Future<String> getSimplifiedGeositePath() async {
   String path;
-  final geositeFile =
-      File(join((await resourceDir()).path, 'geosite_simplified.dat'));
+  final geositeFile = File(
+    join((await resourceDir()).path, 'geosite_simplified.dat'),
+  );
   path = geositeFile.path;
   return path;
 }
@@ -136,8 +139,9 @@ Future<String> getGeoIPPath() async {
 
 Future<String> getSimplifiedGeoIPPath() async {
   String path;
-  final geoIPFile =
-      File(join((resourceDirectory).path, 'geoip_simplified.dat'));
+  final geoIPFile = File(
+    join((resourceDirectory).path, 'geoip_simplified.dat'),
+  );
   path = geoIPFile.path;
   return path;
 }
@@ -153,9 +157,17 @@ Future<String> configFilePath() async {
 String getDllPath() {
   // if (kReleaseMode) {
   final String localLibPath = join(
-      'data', 'flutter_assets', 'packages', 'tm_windows', 'assets', 'x.dll');
-  String pathToLib =
-      join(Directory(Platform.resolvedExecutable).parent.path, localLibPath);
+    'data',
+    'flutter_assets',
+    'packages',
+    'tm_windows',
+    'assets',
+    'x.dll',
+  );
+  String pathToLib = join(
+    Directory(Platform.resolvedExecutable).parent.path,
+    localLibPath,
+  );
   logger.d('pathToLib: $pathToLib');
   return pathToLib;
   // } else {
@@ -165,10 +177,18 @@ String getDllPath() {
 }
 
 String getSoPath() {
-  final String localLibPath =
-      join('data', 'flutter_assets', 'packages', 'tm_linux', 'assets', 'x.so');
-  String pathToLib =
-      join(Directory(Platform.resolvedExecutable).parent.path, localLibPath);
+  final String localLibPath = join(
+    'data',
+    'flutter_assets',
+    'packages',
+    'tm_linux',
+    'assets',
+    'x.so',
+  );
+  String pathToLib = join(
+    Directory(Platform.resolvedExecutable).parent.path,
+    localLibPath,
+  );
   logger.d('pathToLib: $pathToLib');
   return pathToLib;
 }
@@ -190,8 +210,9 @@ Future<Directory> getGeoDir() async {
 }
 
 Future<String> getClashRulesPath(String url, {bool isPkg = false}) async {
-  final dir =
-      isPkg ? Directory('/tmp/com.5vnetwork.x/geo') : await getClashRulesDir();
+  final dir = isPkg
+      ? Directory('/tmp/com.5vnetwork.x/geo')
+      : await getClashRulesDir();
   if (!dir.existsSync()) {
     dir.createSync(recursive: true);
   }

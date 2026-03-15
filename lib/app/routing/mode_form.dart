@@ -36,19 +36,17 @@ import 'package:vx/widgets/form_dialog.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/widgets/text_divider.dart';
 
-enum OutboundType {
-  node,
-  selector,
-  block,
-}
+enum OutboundType { node, selector, block }
 
 final directHandler = OutboundHandler(
-    id: -1,
-    config:
-        HandlerConfig(outbound: OutboundHandlerConfig(tag: directHandlerTag)));
+  id: -1,
+  config: HandlerConfig(outbound: OutboundHandlerConfig(tag: directHandlerTag)),
+);
 
-final proxySelector =
-    HandlerSelector(name: defaultProxySelectorTag, config: SelectorConfig());
+final proxySelector = HandlerSelector(
+  name: defaultProxySelectorTag,
+  config: SelectorConfig(),
+);
 
 class RouteRuleForm extends StatefulWidget {
   const RouteRuleForm({super.key, this.ruleConfig});
@@ -58,23 +56,16 @@ class RouteRuleForm extends StatefulWidget {
   State<RouteRuleForm> createState() => _RouteRuleFormState();
 }
 
-enum Condition {
-  fake,
-  network,
-  inbound,
-  domain,
-  ip,
-  app,
-  all;
-}
+enum Condition { fake, network, inbound, domain, ip, app, all }
 
 class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _ruleConfig = RuleConfig();
   final List<bool> _isExpanded = List.filled(5, false);
-  final Map<Condition, bool> _nontrivial =
-      Map.fromEntries(Condition.values.map((e) => MapEntry(e, false)));
+  final Map<Condition, bool> _nontrivial = Map.fromEntries(
+    Condition.values.map((e) => MapEntry(e, false)),
+  );
   OutboundType _outboundType = OutboundType.node;
 
   List<OutboundHandler>? _outboundHandlers;
@@ -94,8 +85,9 @@ class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
           _ruleConfig.outboundTag = directHandlerTag;
         } else if (_selectedOutboundHandler == null) {
           setState(() {
-            nodeSelectError =
-                AppLocalizations.of(context)!.selectAtleastOneNode;
+            nodeSelectError = AppLocalizations.of(
+              context,
+            )!.selectAtleastOneNode;
           });
           return null;
         } else {
@@ -108,8 +100,9 @@ class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
         _ruleConfig.outboundTag = '';
         if (_selectedSelector == null) {
           setState(() {
-            selectorSelectError =
-                AppLocalizations.of(context)!.selectAtleastOneSelector;
+            selectorSelectError = AppLocalizations.of(
+              context,
+            )!.selectAtleastOneSelector;
           });
           return null;
         } else if (_selectedSelector == proxySelector) {
@@ -161,18 +154,20 @@ class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
         .handlerSelectors
         .get()
         .then((l) {
-      _selectors = l;
-      if (_outboundType == OutboundType.selector) {
-        setState(() {
-          _selectedSelector ??=
-              l.where((e) => e.name == _ruleConfig.selectorTag).firstOrNull;
+          _selectors = l;
+          if (_outboundType == OutboundType.selector) {
+            setState(() {
+              _selectedSelector ??= l
+                  .where((e) => e.name == _ruleConfig.selectorTag)
+                  .firstOrNull;
+            });
+          }
         });
-      }
-    });
   }
 
   void _updateNontrivial() {
-    _nontrivial[Condition.inbound] = _ruleConfig.inboundTags.isNotEmpty ||
+    _nontrivial[Condition.inbound] =
+        _ruleConfig.inboundTags.isNotEmpty ||
         _ruleConfig.inboundTags.isNotEmpty;
     _nontrivial[Condition.domain] =
         _ruleConfig.geoDomains.isNotEmpty || _ruleConfig.domainTags.isNotEmpty;
@@ -218,37 +213,40 @@ class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
                   Row(
                     children: [
                       ChoiceChip(
-                          label: Text(AppLocalizations.of(context)!.node),
-                          selected: _outboundType == OutboundType.node,
-                          onSelected: (value) {
-                            if (value) {
-                              setState(() {
-                                _outboundType = OutboundType.node;
-                              });
-                            }
-                          }),
+                        label: Text(AppLocalizations.of(context)!.node),
+                        selected: _outboundType == OutboundType.node,
+                        onSelected: (value) {
+                          if (value) {
+                            setState(() {
+                              _outboundType = OutboundType.node;
+                            });
+                          }
+                        },
+                      ),
                       const Gap(5),
                       ChoiceChip(
-                          label: Text(AppLocalizations.of(context)!.selector),
-                          selected: _outboundType == OutboundType.selector,
-                          onSelected: (value) {
-                            if (value) {
-                              setState(() {
-                                _outboundType = OutboundType.selector;
-                              });
-                            }
-                          }),
+                        label: Text(AppLocalizations.of(context)!.selector),
+                        selected: _outboundType == OutboundType.selector,
+                        onSelected: (value) {
+                          if (value) {
+                            setState(() {
+                              _outboundType = OutboundType.selector;
+                            });
+                          }
+                        },
+                      ),
                       const Gap(5),
                       ChoiceChip(
-                          label: Text(AppLocalizations.of(context)!.block),
-                          selected: _outboundType == OutboundType.block,
-                          onSelected: (value) {
-                            if (value) {
-                              setState(() {
-                                _outboundType = OutboundType.block;
-                              });
-                            }
-                          }),
+                        label: Text(AppLocalizations.of(context)!.block),
+                        selected: _outboundType == OutboundType.block,
+                        onSelected: (value) {
+                          if (value) {
+                            setState(() {
+                              _outboundType = OutboundType.block;
+                            });
+                          }
+                        },
+                      ),
                     ],
                   ),
                   const Gap(10),
@@ -265,11 +263,16 @@ class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
                       errorText: nodeSelectError,
                       dropdownMenuEntries: [
                         DropdownMenuEntry(
-                            label: AppLocalizations.of(context)!.direct,
-                            value: directHandler),
+                          label: AppLocalizations.of(context)!.direct,
+                          value: directHandler,
+                        ),
                         ..._outboundHandlers
-                                ?.map((e) =>
-                                    DropdownMenuEntry(label: e.name, value: e))
+                                ?.map(
+                                  (e) => DropdownMenuEntry(
+                                    label: e.name,
+                                    value: e,
+                                  ),
+                                )
                                 .toList() ??
                             [],
                       ],
@@ -287,13 +290,19 @@ class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
                       errorText: selectorSelectError,
                       dropdownMenuEntries: [
                         DropdownMenuEntry(
-                            label: AppLocalizations.of(context)!
-                                .defaultSelectorTag,
-                            value: proxySelector),
+                          label: AppLocalizations.of(
+                            context,
+                          )!.defaultSelectorTag,
+                          value: proxySelector,
+                        ),
                         ..._selectors
                                 ?.where((e) => e.name != proxySelector.name)
-                                .map((e) =>
-                                    DropdownMenuEntry(label: e.name, value: e))
+                                .map(
+                                  (e) => DropdownMenuEntry(
+                                    label: e.name,
+                                    value: e,
+                                  ),
+                                )
                                 .toList() ??
                             [],
                       ],
@@ -306,17 +315,18 @@ class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
                   Text(AppLocalizations.of(context)!.matchAll),
                   const Gap(5),
                   Switch(
-                      value: _ruleConfig.matchAll,
-                      onChanged: (value) {
-                        setState(() {
-                          _ruleConfig.matchAll = value;
-                          if (_ruleConfig.matchAll) {
-                            _ruleConfig.clear();
-                            _ruleConfig.matchAll = true;
-                            _updateNontrivial();
-                          }
-                        });
-                      }),
+                    value: _ruleConfig.matchAll,
+                    onChanged: (value) {
+                      setState(() {
+                        _ruleConfig.matchAll = value;
+                        if (_ruleConfig.matchAll) {
+                          _ruleConfig.clear();
+                          _ruleConfig.matchAll = true;
+                          _updateNontrivial();
+                        }
+                      });
+                    },
+                  ),
                 ],
               ),
               const Gap(10),
@@ -326,35 +336,30 @@ class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
                   children: [
                     TextDivider(text: AppLocalizations.of(context)!.condition),
                     const Gap(5),
-                    Text(AppLocalizations.of(context)!.ruleMatchCondition,
-                        style:
-                            Theme.of(context).textTheme.labelMedium!.copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
-                                )),
+                    Text(
+                      AppLocalizations.of(context)!.ruleMatchCondition,
+                      style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                     const Gap(5),
                     Text(
-                        AppLocalizations.of(context)!.enabledConditions(
-                            _nontrivial.values.where((e) => e).length),
-                        style:
-                            Theme.of(context).textTheme.labelMedium!.copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
-                                )),
+                      AppLocalizations.of(context)!.enabledConditions(
+                        _nontrivial.values.where((e) => e).length,
+                      ),
+                      style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                     if (_nontrivial[Condition.domain]! &&
                         _nontrivial[Condition.ip]!)
                       Padding(
                         padding: const EdgeInsets.only(top: 5.0),
                         child: Text(
-                            AppLocalizations.of(context)!.conditaionWarn1,
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelMedium!
-                                .copyWith(
-                                  color: Colors.deepOrange,
-                                )),
+                          AppLocalizations.of(context)!.conditaionWarn1,
+                          style: Theme.of(context).textTheme.labelMedium!
+                              .copyWith(color: Colors.deepOrange),
+                        ),
                       ),
                     Padding(
                       padding: const EdgeInsets.only(top: 5.0),
@@ -363,13 +368,14 @@ class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
                           const Text('Fake IP'),
                           const Gap(3),
                           Checkbox(
-                              value: _ruleConfig.fakeIp,
-                              onChanged: (value) {
-                                setState(() {
-                                  _ruleConfig.fakeIp = value ?? false;
-                                  _nontrivial[Condition.fake] = value ?? false;
-                                });
-                              }),
+                            value: _ruleConfig.fakeIp,
+                            onChanged: (value) {
+                              setState(() {
+                                _ruleConfig.fakeIp = value ?? false;
+                                _nontrivial[Condition.fake] = value ?? false;
+                              });
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -379,32 +385,32 @@ class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
                         const Text('Network'),
                         const Gap(10),
                         FilterChip(
-                            label: const Text('TCP'),
-                            selected:
-                                _ruleConfig.networks.contains(Network.TCP),
-                            onSelected: (value) {
-                              setState(() {
-                                value
-                                    ? _ruleConfig.networks.add(Network.TCP)
-                                    : _ruleConfig.networks.remove(Network.TCP);
-                                _nontrivial[Condition.network] =
-                                    _ruleConfig.networks.isNotEmpty;
-                              });
-                            }),
+                          label: const Text('TCP'),
+                          selected: _ruleConfig.networks.contains(Network.TCP),
+                          onSelected: (value) {
+                            setState(() {
+                              value
+                                  ? _ruleConfig.networks.add(Network.TCP)
+                                  : _ruleConfig.networks.remove(Network.TCP);
+                              _nontrivial[Condition.network] =
+                                  _ruleConfig.networks.isNotEmpty;
+                            });
+                          },
+                        ),
                         const Gap(10),
                         FilterChip(
-                            label: const Text('UDP'),
-                            selected:
-                                _ruleConfig.networks.contains(Network.UDP),
-                            onSelected: (value) {
-                              setState(() {
-                                value
-                                    ? _ruleConfig.networks.add(Network.UDP)
-                                    : _ruleConfig.networks.remove(Network.UDP);
-                                _nontrivial[Condition.network] =
-                                    _ruleConfig.networks.isNotEmpty;
-                              });
-                            }),
+                          label: const Text('UDP'),
+                          selected: _ruleConfig.networks.contains(Network.UDP),
+                          onSelected: (value) {
+                            setState(() {
+                              value
+                                  ? _ruleConfig.networks.add(Network.UDP)
+                                  : _ruleConfig.networks.remove(Network.UDP);
+                              _nontrivial[Condition.network] =
+                                  _ruleConfig.networks.isNotEmpty;
+                            });
+                          },
+                        ),
                       ],
                     ),
                     const Gap(10),
@@ -424,164 +430,574 @@ class _RouteRuleFormState extends State<RouteRuleForm> with FormDataGetter {
                         expandedHeaderPadding: const EdgeInsets.all(0),
                         children: [
                           ExpansionPanel(
-                              canTapOnHeader: true,
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerLow,
-                              headerBuilder: (context, isExpanded) {
-                                return Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0),
-                                    child: Text(
-                                        AppLocalizations.of(context)!.inbound,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium!
-                                            .copyWith(
-                                              color: _nontrivial[
-                                                          Condition.inbound] ??
-                                                      false
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .primary
-                                                  : null,
-                                            )),
+                            canTapOnHeader: true,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerLow,
+                            headerBuilder: (context, isExpanded) {
+                              return Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
                                   ),
-                                );
-                              },
-                              isExpanded: _isExpanded[0],
-                              body: InboundCondition(
-                                  rule: _ruleConfig,
-                                  onChanged: _updateNontrivial)),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.inbound,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                          color:
+                                              _nontrivial[Condition.inbound] ??
+                                                  false
+                                              ? Theme.of(
+                                                  context,
+                                                ).colorScheme.primary
+                                              : null,
+                                        ),
+                                  ),
+                                ),
+                              );
+                            },
+                            isExpanded: _isExpanded[0],
+                            body: InboundCondition(
+                              rule: _ruleConfig,
+                              onChanged: _updateNontrivial,
+                            ),
+                          ),
                           ExpansionPanel(
-                              canTapOnHeader: true,
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerLow,
-                              headerBuilder: (context, isExpanded) {
-                                return Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0),
-                                    child: Text(
-                                        AppLocalizations.of(context)!.domain,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium!
-                                            .copyWith(
-                                              color:
-                                                  _nontrivial[Condition.domain]!
-                                                      ? Theme.of(context)
-                                                          .colorScheme
-                                                          .primary
-                                                      : null,
-                                            )),
+                            canTapOnHeader: true,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerLow,
+                            headerBuilder: (context, isExpanded) {
+                              return Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
                                   ),
-                                );
-                              },
-                              isExpanded: _isExpanded[1],
-                              body: DomainCondition(
-                                  rule: _ruleConfig,
-                                  onChanged: _updateNontrivial)),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.domain,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                          color: _nontrivial[Condition.domain]!
+                                              ? Theme.of(
+                                                  context,
+                                                ).colorScheme.primary
+                                              : null,
+                                        ),
+                                  ),
+                                ),
+                              );
+                            },
+                            isExpanded: _isExpanded[1],
+                            body: DomainCondition(
+                              rule: _ruleConfig,
+                              onChanged: _updateNontrivial,
+                            ),
+                          ),
                           ExpansionPanel(
-                              canTapOnHeader: true,
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerLow,
-                              headerBuilder: (context, isExpanded) {
-                                return Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0),
-                                    child: Text('IP',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium!
-                                            .copyWith(
-                                              color: _nontrivial[Condition.ip]!
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .primary
-                                                  : null,
-                                            )),
+                            canTapOnHeader: true,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerLow,
+                            headerBuilder: (context, isExpanded) {
+                              return Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
                                   ),
-                                );
-                              },
-                              isExpanded: _isExpanded[2],
-                              body: IPCondition(
-                                  rule: _ruleConfig,
-                                  onChanged: _updateNontrivial)),
+                                  child: Text(
+                                    'IP',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                          color: _nontrivial[Condition.ip]!
+                                              ? Theme.of(
+                                                  context,
+                                                ).colorScheme.primary
+                                              : null,
+                                        ),
+                                  ),
+                                ),
+                              );
+                            },
+                            isExpanded: _isExpanded[2],
+                            body: IPCondition(
+                              rule: _ruleConfig,
+                              onChanged: _updateNontrivial,
+                            ),
+                          ),
                           ExpansionPanel(
-                              canTapOnHeader: true,
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerLow,
-                              headerBuilder: (context, isExpanded) {
-                                return Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0),
-                                    child: Text(
-                                        AppLocalizations.of(context)!.app,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium!
-                                            .copyWith(
-                                              color: _nontrivial[Condition.app]!
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .primary
-                                                  : null,
-                                            )),
+                            canTapOnHeader: true,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerLow,
+                            headerBuilder: (context, isExpanded) {
+                              return Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
                                   ),
-                                );
-                              },
-                              isExpanded: _isExpanded[3],
-                              body: AppCondition(
-                                  rule: _ruleConfig,
-                                  onChanged: _updateNontrivial)),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.app,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                          color: _nontrivial[Condition.app]!
+                                              ? Theme.of(
+                                                  context,
+                                                ).colorScheme.primary
+                                              : null,
+                                        ),
+                                  ),
+                                ),
+                              );
+                            },
+                            isExpanded: _isExpanded[3],
+                            body: AppCondition(
+                              rule: _ruleConfig,
+                              onChanged: _updateNontrivial,
+                            ),
+                          ),
                           ExpansionPanel(
-                              canTapOnHeader: true,
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerLow,
-                              headerBuilder: (context, isExpanded) {
-                                return Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0),
-                                    child: Text(
-                                        '${AppLocalizations.of(context)!.domain}/IP/${AppLocalizations.of(context)!.app}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium!
-                                            .copyWith(
-                                              color: _nontrivial[Condition.all]!
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .primary
-                                                  : null,
-                                            )),
+                            canTapOnHeader: true,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerLow,
+                            headerBuilder: (context, isExpanded) {
+                              return Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0,
                                   ),
-                                );
-                              },
-                              isExpanded: _isExpanded[4],
-                              body: AllCondition(
-                                  rule: _ruleConfig,
-                                  onChanged: _updateNontrivial)),
+                                  child: Text(
+                                    '${AppLocalizations.of(context)!.domain}/IP/${AppLocalizations.of(context)!.app}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                          color: _nontrivial[Condition.all]!
+                                              ? Theme.of(
+                                                  context,
+                                                ).colorScheme.primary
+                                              : null,
+                                        ),
+                                  ),
+                                ),
+                              );
+                            },
+                            isExpanded: _isExpanded[4],
+                            body: AllCondition(
+                              rule: _ruleConfig,
+                              onChanged: _updateNontrivial,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ],
-                )
+                ),
+              const Gap(10),
+              RetryList(
+                rule: _ruleConfig,
+                selectors: _selectors,
+                outboundHandlers: _outboundHandlers,
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class RetryList extends StatefulWidget {
+  const RetryList({
+    super.key,
+    required this.rule,
+    required this.selectors,
+    required this.outboundHandlers,
+  });
+
+  final RuleConfig rule;
+  final List<HandlerSelector>? selectors;
+  final List<OutboundHandler>? outboundHandlers;
+
+  @override
+  State<RetryList> createState() => _RetryListState();
+}
+
+class _RetryListState extends State<RetryList> {
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final fallbacks = widget.rule.fallbacks;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextDivider(text: l10n.fallback),
+        Gap(10),
+        Text(
+          l10n.fallbackDesc,
+          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const Gap(10),
+        Column(
+          children: [
+            for (final fallback in fallbacks)
+              _Retry(
+                fallback: fallback,
+                onDelete: () {
+                  setState(() {
+                    widget.rule.fallbacks.remove(fallback);
+                  });
+                },
+                selectors: widget.selectors,
+                outboundHandlers: widget.outboundHandlers,
+              ),
+          ],
+        ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: FilledButton.tonalIcon(
+            onPressed: () {
+              setState(() {
+                final fallback = RuleConfig_Fallback()..matchAll = true;
+                widget.rule.fallbacks.add(fallback);
+              });
+            },
+            icon: const Icon(Icons.add_rounded, size: 18),
+            label: Text(l10n.retry),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Retry extends StatefulWidget {
+  _Retry({
+    super.key,
+    required this.fallback,
+    this.selectors,
+    this.outboundHandlers,
+    required this.onDelete,
+  });
+  final RuleConfig_Fallback fallback;
+  final List<HandlerSelector>? selectors;
+  final List<OutboundHandler>? outboundHandlers;
+  Function onDelete;
+
+  @override
+  State<_Retry> createState() => __RetryState();
+}
+
+class __RetryState extends State<_Retry> {
+  final List<bool> _isExpanded = List.filled(2, false);
+  final Map<Condition, bool> _nontrivial = Map.fromEntries(
+    Condition.values.map((e) => MapEntry(e, false)),
+  );
+
+  @override
+  initState() {
+    super.initState();
+    if (widget.fallback.selectorTag.isEmpty &&
+        widget.fallback.outboundTag.isEmpty) {
+      widget.fallback.selectorTag = defaultProxySelectorTag;
+    }
+    _updateNontrivial();
+  }
+
+  void _updateNontrivial() {
+    _nontrivial[Condition.domain] = widget.fallback.domainTags.isNotEmpty;
+    _nontrivial[Condition.ip] = widget.fallback.dstIpTags.isNotEmpty;
+    setState(() {});
+  }
+
+  OutboundHandler? _getHandlerForFallback(RuleConfig_Fallback fallback) {
+    if (fallback.outboundTag.isEmpty) {
+      return null;
+    }
+    if (fallback.outboundTag == directHandlerTag) {
+      return directHandler;
+    }
+    return widget.outboundHandlers
+        ?.where((e) => e.id.toString() == fallback.outboundTag)
+        .firstOrNull;
+  }
+
+  HandlerSelector? _getSelectorForFallback(RuleConfig_Fallback fallback) {
+    if (fallback.selectorTag.isEmpty) {
+      return null;
+    }
+    if (fallback.selectorTag == defaultProxySelectorTag) {
+      return proxySelector;
+    }
+    return widget.selectors
+        ?.where((e) => e.name == fallback.selectorTag)
+        .firstOrNull;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                ChoiceChip(
+                  label: Text(l10n.node),
+                  selected: widget.fallback.outboundTag.isNotEmpty,
+                  onSelected: (selected) {
+                    if (!selected) return;
+                    setState(() {
+                      widget.fallback.selectorTag = '';
+                      if (widget.fallback.outboundTag.isEmpty) {
+                        widget.fallback.outboundTag = directHandlerTag;
+                      }
+                    });
+                  },
+                ),
+                const Gap(5),
+                ChoiceChip(
+                  label: Text(l10n.selector),
+                  selected: widget.fallback.selectorTag.isNotEmpty,
+                  onSelected: (selected) {
+                    if (!selected) return;
+                    setState(() {
+                      widget.fallback.outboundTag = '';
+                      if (widget.fallback.selectorTag.isEmpty) {
+                        widget.fallback.selectorTag = defaultProxySelectorTag;
+                      }
+                    });
+                  },
+                ),
+                const Spacer(),
+                IconButton(
+                  tooltip: l10n.delete,
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () {
+                    widget.onDelete();
+                  },
+                  icon: const Icon(Icons.delete_outline),
+                ),
+              ],
+            ),
+            const Gap(8),
+            if (widget.fallback.outboundTag.isNotEmpty)
+              DropdownMenu<OutboundHandler>(
+                label: Text(l10n.node),
+                initialSelection: _getHandlerForFallback(widget.fallback),
+                onSelected: (value) {
+                  setState(() {
+                    if (value == null) {
+                      widget.fallback.outboundTag = '';
+                    } else if (value == directHandler) {
+                      widget.fallback.outboundTag = directHandlerTag;
+                    } else {
+                      widget.fallback.outboundTag = value.id.toString();
+                    }
+                  });
+                },
+                dropdownMenuEntries: [
+                  DropdownMenuEntry(label: l10n.direct, value: directHandler),
+                  ...?widget.outboundHandlers
+                      ?.map((e) => DropdownMenuEntry(label: e.name, value: e))
+                      .toList(),
+                ],
+              ),
+            if (widget.fallback.selectorTag.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: DropdownMenu<HandlerSelector>(
+                  label: Text(l10n.selector),
+                  initialSelection: _getSelectorForFallback(widget.fallback),
+                  onSelected: (value) {
+                    setState(() {
+                      widget.fallback.selectorTag = '';
+                      if (value == proxySelector) {
+                        widget.fallback.selectorTag = defaultProxySelectorTag;
+                      } else if (value != null) {
+                        widget.fallback.selectorTag = value.name;
+                      }
+                    });
+                  },
+                  dropdownMenuEntries: [
+                    DropdownMenuEntry(
+                      label: l10n.defaultSelectorTag,
+                      value: proxySelector,
+                    ),
+                    ...?widget.selectors
+                        ?.where((e) => e.name != proxySelector.name)
+                        .map((e) => DropdownMenuEntry(label: e.name, value: e))
+                        .toList(),
+                  ],
+                ),
+              ),
+            const Gap(8),
+            SwitchListTile(
+              value: widget.fallback.hasAction()
+                  ? widget.fallback.action.ipToDomain
+                  : false,
+              title: Text(l10n.rewriteIpToDomain),
+              subtitle: Text(
+                l10n.rewriteIpToDomainDesc,
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  final action = widget.fallback.hasAction()
+                      ? widget.fallback.action
+                      : (widget.fallback.action = RuleConfig_Fallback_Action());
+                  action.ipToDomain = value;
+                });
+              },
+            ),
+            const Gap(8),
+            Row(
+              children: [
+                Text(AppLocalizations.of(context)!.matchAll),
+                const Gap(5),
+                Switch(
+                  value: widget.fallback.matchAll,
+                  onChanged: (value) {
+                    setState(() {
+                      widget.fallback.matchAll = value;
+                      if (widget.fallback.matchAll) {
+                        widget.fallback.clear();
+                        widget.fallback.matchAll = true;
+                        _updateNontrivial();
+                      }
+                    });
+                  },
+                ),
+              ],
+            ),
+            if (!widget.fallback.matchAll)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextDivider(text: AppLocalizations.of(context)!.condition),
+                  const Gap(5),
+                  Text(
+                    AppLocalizations.of(context)!.ruleMatchCondition,
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const Gap(5),
+                  Text(
+                    AppLocalizations.of(context)!.enabledConditions(
+                      _nontrivial.values.where((e) => e).length,
+                    ),
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const Gap(5),
+                  ExpansionPanelList(
+                    expansionCallback: (panelIndex, isExpanded) {
+                      setState(() {
+                        _isExpanded[panelIndex] = !_isExpanded[panelIndex];
+                      });
+                    },
+                    elevation: 0,
+                    materialGapSize: 1,
+                    expandedHeaderPadding: const EdgeInsets.all(0),
+                    children: [
+                      ExpansionPanel(
+                        canTapOnHeader: true,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerLow,
+                        headerBuilder: (context, isExpanded) {
+                          return Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!.domain,
+                                style: Theme.of(context).textTheme.titleMedium!
+                                    .copyWith(
+                                      color:
+                                          _nontrivial[Condition.domain] ?? false
+                                          ? Theme.of(
+                                              context,
+                                            ).colorScheme.primary
+                                          : null,
+                                    ),
+                              ),
+                            ),
+                          );
+                        },
+                        isExpanded: _isExpanded[0],
+                        body: _DomainSet(
+                          domainTags: widget.fallback.domainTags,
+                          onChanged: () {
+                            _updateNontrivial();
+                          },
+                        ),
+                      ),
+                      ExpansionPanel(
+                        canTapOnHeader: true,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.surfaceContainerLow,
+                        headerBuilder: (context, isExpanded) {
+                          return Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                              ),
+                              child: Text(
+                                'IP',
+                                style: Theme.of(context).textTheme.titleMedium!
+                                    .copyWith(
+                                      color: _nontrivial[Condition.ip]!
+                                          ? Theme.of(
+                                              context,
+                                            ).colorScheme.primary
+                                          : null,
+                                    ),
+                              ),
+                            ),
+                          );
+                        },
+                        isExpanded: _isExpanded[1],
+                        body: IPSet(
+                          dstIpTags: widget.fallback.dstIpTags,
+                          onChanged: () {
+                            _updateNontrivial();
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+          ],
         ),
       ),
     );
@@ -612,8 +1028,9 @@ class _DnsRuleFormState extends State<DnsRuleForm> with FormDataGetter {
     if (_formKey.currentState?.validate() ?? false) {
       if (_selectedDnsServer == null) {
         setState(() {
-          dnsServerSelectError =
-              AppLocalizations.of(context)!.selectAtleastOneDnsServer;
+          dnsServerSelectError = AppLocalizations.of(
+            context,
+          )!.selectAtleastOneDnsServer;
         });
         return null;
       }
@@ -635,17 +1052,14 @@ class _DnsRuleFormState extends State<DnsRuleForm> with FormDataGetter {
           .firstOrNull;
     }
     _updateNontrivial();
-    context
-        .read<DatabaseProvider>()
-        .database
-        .managers
-        .dnsServers
-        .get()
-        .then((l) {
+    context.read<DatabaseProvider>().database.managers.dnsServers.get().then((
+      l,
+    ) {
       _dnsServers = [/* ...defaultDnsServers */ ...l];
       setState(() {
-        _selectedDnsServer ??=
-            l.where((e) => e.name == _ruleConfig.dnsServerName).firstOrNull;
+        _selectedDnsServer ??= l
+            .where((e) => e.name == _ruleConfig.dnsServerName)
+            .firstOrNull;
       });
     });
   }
@@ -705,16 +1119,19 @@ class _DnsRuleFormState extends State<DnsRuleForm> with FormDataGetter {
                   TextDivider(text: AppLocalizations.of(context)!.condition),
                   const Gap(5),
                   Text(
-                      '${AppLocalizations.of(context)!.howDnsRuleMatch} ${AppLocalizations.of(context)!.enabledConditions(_nontrivial.where((e) => e).length)}',
-                      style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          )),
+                    '${AppLocalizations.of(context)!.howDnsRuleMatch} ${AppLocalizations.of(context)!.enabledConditions(_nontrivial.where((e) => e).length)}',
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                   const Gap(10),
                   Align(
-                      alignment: Alignment.centerLeft,
-                      child: DnsIncludedTypeCondition(
-                          dnsRule: _ruleConfig, onChanged: _updateNontrivial)),
+                    alignment: Alignment.centerLeft,
+                    child: DnsIncludedTypeCondition(
+                      dnsRule: _ruleConfig,
+                      onChanged: _updateNontrivial,
+                    ),
+                  ),
                   const Gap(10),
                   Container(
                     clipBehavior: Clip.hardEdge,
@@ -732,40 +1149,44 @@ class _DnsRuleFormState extends State<DnsRuleForm> with FormDataGetter {
                       expandedHeaderPadding: const EdgeInsets.all(0),
                       children: [
                         ExpansionPanel(
-                            canTapOnHeader: true,
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .surfaceContainerLow,
-                            headerBuilder: (context, isExpanded) {
-                              return Align(
-                                alignment: Alignment.centerLeft,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  child: Text(
-                                      AppLocalizations.of(context)!.domain,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium!
-                                          .copyWith(
-                                            color: _nontrivial[1]
-                                                ? Theme.of(context)
-                                                    .colorScheme
-                                                    .primary
-                                                : null,
-                                          )),
+                          canTapOnHeader: true,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerLow,
+                          headerBuilder: (context, isExpanded) {
+                            return Align(
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
                                 ),
-                              );
-                            },
-                            isExpanded: _isExpanded[0],
-                            body: DomainCondition(
-                                dnsRule: _ruleConfig,
-                                onChanged: _updateNontrivial)),
+                                child: Text(
+                                  AppLocalizations.of(context)!.domain,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                        color: _nontrivial[1]
+                                            ? Theme.of(
+                                                context,
+                                              ).colorScheme.primary
+                                            : null,
+                                      ),
+                                ),
+                              ),
+                            );
+                          },
+                          isExpanded: _isExpanded[0],
+                          body: DomainCondition(
+                            dnsRule: _ruleConfig,
+                            onChanged: _updateNontrivial,
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -775,28 +1196,34 @@ class _DnsRuleFormState extends State<DnsRuleForm> with FormDataGetter {
 }
 
 class DnsIncludedTypeCondition extends StatelessWidget {
-  const DnsIncludedTypeCondition(
-      {super.key, required this.dnsRule, required this.onChanged});
+  const DnsIncludedTypeCondition({
+    super.key,
+    required this.dnsRule,
+    required this.onChanged,
+  });
   final DnsRuleConfig dnsRule;
   final Function() onChanged;
   @override
   Widget build(BuildContext context) {
     return MenuAnchor(
       menuChildren: DnsType.values
-          .map((e) => StatefulBuilder(builder: (ctx, setState) {
+          .map(
+            (e) => StatefulBuilder(
+              builder: (ctx, setState) {
                 return MenuItemButton(
                   leadingIcon: Checkbox(
-                      value: dnsRule.includedTypes.contains(e),
-                      onChanged: (value) async {
-                        setState(() {
-                          if (value ?? false) {
-                            dnsRule.includedTypes.add(e);
-                          } else {
-                            dnsRule.includedTypes.remove(e);
-                          }
-                          onChanged();
-                        });
-                      }),
+                    value: dnsRule.includedTypes.contains(e),
+                    onChanged: (value) async {
+                      setState(() {
+                        if (value ?? false) {
+                          dnsRule.includedTypes.add(e);
+                        } else {
+                          dnsRule.includedTypes.remove(e);
+                        }
+                        onChanged();
+                      });
+                    },
+                  ),
                   closeOnActivate: false,
                   onPressed: () {
                     setState(() {
@@ -810,7 +1237,9 @@ class DnsIncludedTypeCondition extends StatelessWidget {
                   },
                   child: Text(e.name),
                 );
-              }))
+              },
+            ),
+          )
           .toList(),
       builder: (context, controller, child) {
         return Tooltip(
@@ -820,12 +1249,8 @@ class DnsIncludedTypeCondition extends StatelessWidget {
             label: Text(AppLocalizations.of(context)!.dnsType),
             labelPadding: const EdgeInsets.symmetric(horizontal: 6),
             avatar: dnsRule.includedTypes.isNotEmpty
-                ? const Icon(
-                    Icons.check_box_outlined,
-                  )
-                : const Icon(
-                    Icons.check_box_outline_blank_rounded,
-                  ),
+                ? const Icon(Icons.check_box_outlined)
+                : const Icon(Icons.check_box_outline_blank_rounded),
             onPressed: () {
               if (controller.isOpen) {
                 controller.close();
@@ -841,76 +1266,110 @@ class DnsIncludedTypeCondition extends StatelessWidget {
 }
 
 List<Widget> buildWrapChildrenForDomains(
-    BuildContext context, List<Domain> geoDomains, Function(Domain)? onDelete) {
+  BuildContext context,
+  List<Domain> geoDomains,
+  Function(Domain)? onDelete,
+) {
   final children = <Widget>[];
-  children.add(WrapChild(
-    shape: chipBorderRadius,
-    text: AppLocalizations.of(context)!.keyword,
-    backgroundColor: pinkColorTheme.secondaryContainer,
-    foregroundColor: pinkColorTheme.onSecondaryContainer,
-  ));
-  children.addAll(geoDomains
-      .where((domain) => domain.type == Domain_Type.Plain)
-      .map((domain) => WrapChild(
+  children.add(
+    WrapChild(
+      shape: chipBorderRadius,
+      text: AppLocalizations.of(context)!.keyword,
+      backgroundColor: pinkColorTheme.secondaryContainer,
+      foregroundColor: pinkColorTheme.onSecondaryContainer,
+    ),
+  );
+  children.addAll(
+    geoDomains
+        .where((domain) => domain.type == Domain_Type.Plain)
+        .map(
+          (domain) => WrapChild(
             shape: chipBorderRadius,
             text: domain.value,
-            backgroundColor:
-                Theme.of(context).colorScheme.surfaceContainerLowest,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerLowest,
             onDelete: onDelete != null ? () => onDelete(domain) : null,
-          )));
+          ),
+        ),
+  );
 
-  children.add(WrapChild(
-    shape: chipBorderRadius,
-    text: AppLocalizations.of(context)!.rootDomain,
-    backgroundColor: greenColorTheme.secondaryContainer,
-    foregroundColor: greenColorTheme.onSecondaryContainer,
-  ));
-  children.addAll(geoDomains
-      .where((domain) => domain.type == Domain_Type.RootDomain)
-      .map((domain) => WrapChild(
+  children.add(
+    WrapChild(
+      shape: chipBorderRadius,
+      text: AppLocalizations.of(context)!.rootDomain,
+      backgroundColor: greenColorTheme.secondaryContainer,
+      foregroundColor: greenColorTheme.onSecondaryContainer,
+    ),
+  );
+  children.addAll(
+    geoDomains
+        .where((domain) => domain.type == Domain_Type.RootDomain)
+        .map(
+          (domain) => WrapChild(
             shape: chipBorderRadius,
-            backgroundColor:
-                Theme.of(context).colorScheme.surfaceContainerLowest,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerLowest,
             text: domain.value,
             onDelete: onDelete != null ? () => onDelete(domain) : null,
-          )));
-  children.add(WrapChild(
-    shape: chipBorderRadius,
-    text: AppLocalizations.of(context)!.exact,
-    backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-    foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
-  ));
-  children.addAll(geoDomains
-      .where((domain) => domain.type == Domain_Type.Full)
-      .map((domain) => WrapChild(
+          ),
+        ),
+  );
+  children.add(
+    WrapChild(
+      shape: chipBorderRadius,
+      text: AppLocalizations.of(context)!.exact,
+      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+      foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+    ),
+  );
+  children.addAll(
+    geoDomains
+        .where((domain) => domain.type == Domain_Type.Full)
+        .map(
+          (domain) => WrapChild(
             shape: chipBorderRadius,
-            backgroundColor:
-                Theme.of(context).colorScheme.surfaceContainerLowest,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerLowest,
             text: domain.value,
             onDelete: onDelete != null ? () => onDelete(domain) : null,
-          )));
-  children.add(WrapChild(
-    shape: chipBorderRadius,
-    text: AppLocalizations.of(context)!.regularExpression,
-    backgroundColor: purpleColorTheme.secondaryContainer,
-    foregroundColor: purpleColorTheme.onSecondaryContainer,
-  ));
-  children.addAll(geoDomains
-      .where((domain) => domain.type == Domain_Type.Regex)
-      .map((domain) => WrapChild(
+          ),
+        ),
+  );
+  children.add(
+    WrapChild(
+      shape: chipBorderRadius,
+      text: AppLocalizations.of(context)!.regularExpression,
+      backgroundColor: purpleColorTheme.secondaryContainer,
+      foregroundColor: purpleColorTheme.onSecondaryContainer,
+    ),
+  );
+  children.addAll(
+    geoDomains
+        .where((domain) => domain.type == Domain_Type.Regex)
+        .map(
+          (domain) => WrapChild(
             shape: chipBorderRadius,
             text: domain.value,
-            backgroundColor:
-                Theme.of(context).colorScheme.surfaceContainerLowest,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerLowest,
             onDelete: onDelete != null ? () => onDelete(domain) : null,
-          )));
+          ),
+        ),
+  );
 
   return children;
 }
 
 class InboundCondition extends StatefulWidget {
-  const InboundCondition(
-      {super.key, required this.rule, required this.onChanged});
+  const InboundCondition({
+    super.key,
+    required this.rule,
+    required this.onChanged,
+  });
   final RuleConfig rule;
   final Function() onChanged;
   @override
@@ -929,28 +1388,37 @@ class _InboundConditionState extends State<InboundCondition> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-          left: 16.0, right: 16.0, bottom: 16.0, top: 5.0),
+        left: 16.0,
+        right: 16.0,
+        bottom: 16.0,
+        top: 5.0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context)!.inbound,
-              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
+          Text(
+            AppLocalizations.of(context)!.inbound,
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           const Gap(5),
           Wrap(
-              runSpacing: 10,
-              spacing: 10,
-              children: widget.rule.inboundTags
-                  .map((e) => WrapChild(
-                        shape: chipBorderRadius,
-                        text: e,
-                        onDelete: () => setState(() {
-                          widget.rule.inboundTags.remove(e);
-                          widget.onChanged();
-                        }),
-                      ))
-                  .toList()),
+            runSpacing: 10,
+            spacing: 10,
+            children: widget.rule.inboundTags
+                .map(
+                  (e) => WrapChild(
+                    shape: chipBorderRadius,
+                    text: e,
+                    onDelete: () => setState(() {
+                      widget.rule.inboundTags.remove(e);
+                      widget.onChanged();
+                    }),
+                  ),
+                )
+                .toList(),
+          ),
           const Gap(10),
           Row(
             children: [
@@ -977,18 +1445,19 @@ class _InboundConditionState extends State<InboundCondition> {
               ),
               const Gap(5),
               IconButton.filledTonal(
-                  onPressed: () {
-                    if (_inboundController.text.isNotEmpty) {
-                      widget.rule.inboundTags.add(_inboundController.text);
-                      _inboundController.clear();
-                      setState(() {
-                        widget.onChanged();
-                      });
-                    }
-                  },
-                  visualDensity: VisualDensity.compact,
-                  padding: const EdgeInsets.all(0),
-                  icon: const Icon(Icons.add_rounded, size: 18))
+                onPressed: () {
+                  if (_inboundController.text.isNotEmpty) {
+                    widget.rule.inboundTags.add(_inboundController.text);
+                    _inboundController.clear();
+                    setState(() {
+                      widget.onChanged();
+                    });
+                  }
+                },
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.all(0),
+                icon: const Icon(Icons.add_rounded, size: 18),
+              ),
             ],
           ),
         ],
@@ -998,8 +1467,12 @@ class _InboundConditionState extends State<InboundCondition> {
 }
 
 class DomainCondition extends StatefulWidget {
-  const DomainCondition(
-      {super.key, this.rule, this.dnsRule, required this.onChanged});
+  const DomainCondition({
+    super.key,
+    this.rule,
+    this.dnsRule,
+    required this.onChanged,
+  });
   final RuleConfig? rule;
   final DnsRuleConfig? dnsRule;
   final Function() onChanged;
@@ -1012,27 +1485,35 @@ class _DomainConditionState extends State<DomainCondition> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-          left: 16.0, right: 16.0, bottom: 16.0, top: 5.0),
+        left: 16.0,
+        right: 16.0,
+        bottom: 16.0,
+        top: 5.0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context)!.domain,
-              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
+          Text(
+            AppLocalizations.of(context)!.domain,
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           const Gap(5),
           Wrap(
             runSpacing: 10,
             spacing: 10,
             children: buildWrapChildrenForDomains(
-                context, widget.rule?.geoDomains ?? widget.dnsRule!.domains,
-                (domain) {
-              setState(() {
-                widget.rule?.geoDomains.remove(domain);
-                widget.dnsRule?.domains.remove(domain);
-                widget.onChanged();
-              });
-            }),
+              context,
+              widget.rule?.geoDomains ?? widget.dnsRule!.domains,
+              (domain) {
+                setState(() {
+                  widget.rule?.geoDomains.remove(domain);
+                  widget.dnsRule?.domains.remove(domain);
+                  widget.onChanged();
+                });
+              },
+            ),
           ),
           const Gap(10),
           DomainCollector(
@@ -1045,77 +1526,267 @@ class _DomainConditionState extends State<DomainCondition> {
             },
           ),
           const Gap(10),
-          Text(AppLocalizations.of(context)!.domainSet,
-              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
+          Text(
+            AppLocalizations.of(context)!.domainSet,
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           const Gap(5),
-          Wrap(
-              runSpacing: 10,
-              spacing: 10,
-              children: (widget.rule?.domainTags ?? widget.dnsRule!.domainTags)
-                  .map<Widget>((e) => MenuAnchor(
-                        menuChildren: [
-                          MenuItemButton(
-                            onPressed: () {
-                              widget.rule?.domainTags.remove(e);
-                              widget.dnsRule?.domainTags.remove(e);
-                              setState(() {
-                                widget.onChanged();
-                              });
-                            },
-                            child: Text(AppLocalizations.of(context)!.delete),
-                          ),
-                        ],
-                        builder: (context, controller, child) =>
-                            GestureDetector(
-                          onDoubleTap: () {
-                            widget.rule?.domainTags.remove(e);
-                            widget.dnsRule?.domainTags.remove(e);
-                            setState(() {
-                              widget.onChanged();
-                            });
-                          },
-                          onSecondaryTapDown: (details) {
-                            controller.open(
-                                position: Offset(details.localPosition.dx,
-                                    details.localPosition.dy));
-                          },
-                          onLongPress: () {
-                            controller.open();
-                          },
-                          child: Chip(
-                            label: Text(e),
-                          ),
-                        ),
-                      ))
-                  .toList()
-                ..add(DomainSetPicker(onChanged: (p0) {
-                  widget.rule?.domainTags.add(p0);
-                  widget.dnsRule?.domainTags.add(p0);
-                  setState(() {
-                    widget.onChanged();
-                  });
-                }))),
+          _DomainSet(
+            domainTags: widget.rule?.domainTags ?? widget.dnsRule!.domainTags,
+            onChanged: () {
+              widget.onChanged();
+            },
+          ),
           if (widget.rule != null)
             Padding(
               padding: const EdgeInsets.only(top: 10.0),
               child: CheckboxListTile(
-                  value: !widget.rule!.skipSniff,
-                  title: Text(
-                      AppLocalizations.of(context)!.sniffDomainForIpConnection,
-                      style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          )),
-                  onChanged: (v) {
-                    widget.rule!.skipSniff = !(v ?? false);
-                    setState(() {
-                      widget.onChanged();
-                    });
-                  }),
-            )
+                value: !widget.rule!.skipSniff,
+                title: Text(
+                  AppLocalizations.of(context)!.sniffDomainForIpConnection,
+                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                onChanged: (v) {
+                  widget.rule!.skipSniff = !(v ?? false);
+                  setState(() {
+                    widget.onChanged();
+                  });
+                },
+              ),
+            ),
         ],
+      ),
+    );
+  }
+}
+
+class IPSet extends StatefulWidget {
+  const IPSet({super.key, required this.dstIpTags, required this.onChanged});
+  final List<String> dstIpTags;
+  final Function() onChanged;
+
+  @override
+  State<IPSet> createState() => _IPSetState();
+}
+
+class _IPSetState extends State<IPSet> {
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      runSpacing: 10,
+      spacing: 10,
+      children:
+          widget.dstIpTags
+              .map<Widget>(
+                (e) => MenuAnchor(
+                  menuChildren: [
+                    MenuItemButton(
+                      onPressed: () {
+                        widget.dstIpTags.remove(e);
+                        setState(() {
+                          widget.onChanged();
+                        });
+                      },
+                      child: Text(AppLocalizations.of(context)!.delete),
+                    ),
+                  ],
+                  builder: (context, controller, child) => GestureDetector(
+                    onDoubleTap: () {
+                      widget.dstIpTags.remove(e);
+                      setState(() {
+                        widget.onChanged();
+                      });
+                    },
+                    onSecondaryTapDown: (details) {
+                      controller.open(
+                        position: Offset(
+                          details.localPosition.dx,
+                          details.localPosition.dy,
+                        ),
+                      );
+                    },
+                    onLongPress: () {
+                      controller.open();
+                    },
+                    child: Chip(label: Text(e)),
+                  ),
+                ),
+              )
+              .toList()
+            ..add(
+              IPSetPicker(
+                onChanged: (p0) {
+                  widget.dstIpTags.add(p0);
+                  setState(() {
+                    widget.onChanged();
+                  });
+                },
+              ),
+            ),
+    );
+  }
+}
+
+class _DomainSet extends StatefulWidget {
+  const _DomainSet({
+    super.key,
+    required this.domainTags,
+    required this.onChanged,
+  });
+  final List<String> domainTags;
+  final Function() onChanged;
+  @override
+  State<_DomainSet> createState() => __DomainSetState();
+}
+
+class __DomainSetState extends State<_DomainSet> {
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      runSpacing: 10,
+      spacing: 10,
+      children:
+          widget.domainTags
+              .map<Widget>(
+                (e) => MenuAnchor(
+                  menuChildren: [
+                    MenuItemButton(
+                      onPressed: () {
+                        widget.domainTags.remove(e);
+                        setState(() {
+                          widget.onChanged();
+                        });
+                      },
+                      child: Text(AppLocalizations.of(context)!.delete),
+                    ),
+                  ],
+                  builder: (context, controller, child) => GestureDetector(
+                    onDoubleTap: () {
+                      widget.domainTags.remove(e);
+                      setState(() {
+                        widget.onChanged();
+                      });
+                    },
+                    onSecondaryTapDown: (details) {
+                      controller.open(
+                        position: Offset(
+                          details.localPosition.dx,
+                          details.localPosition.dy,
+                        ),
+                      );
+                    },
+                    onLongPress: () {
+                      controller.open();
+                    },
+                    child: Chip(label: Text(e)),
+                  ),
+                ),
+              )
+              .toList()
+            ..add(
+              DomainSetPicker(
+                onChanged: (p0) {
+                  widget.domainTags.add(p0);
+                  setState(() {
+                    widget.onChanged();
+                  });
+                },
+              ),
+            ),
+    );
+  }
+}
+
+class IPSetPicker extends StatefulWidget {
+  const IPSetPicker({super.key, required this.onChanged});
+  final Function(String) onChanged;
+
+  @override
+  State<IPSetPicker> createState() => _IPSetPickerState();
+}
+
+class _IPSetPickerState extends State<IPSetPicker> {
+  Future<List<GreatIpSet>>? _getGreatIpSetsFuture;
+  Future<List<AtomicIpSet>>? _getAtomicIpSetsFuture;
+  @override
+  void initState() {
+    super.initState();
+    final database = context.read<DatabaseProvider>().database;
+    _getGreatIpSetsFuture = database.managers.greatIpSets.get();
+    _getAtomicIpSetsFuture = database.managers.atomicIpSets.get();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MenuAnchor(
+      menuChildren: [
+        FutureBuilder(
+          future: _getGreatIpSetsFuture,
+          builder: (ctx, snaoshot) {
+            if (!snaoshot.hasData) {
+              return const SizedBox.shrink();
+            }
+            final menuChildren = <Widget>[];
+            for (final e in snaoshot.data!) {
+              menuChildren.add(
+                MenuItemButton(
+                  onPressed: () {
+                    widget.onChanged(e.greatIpSetConfig.name);
+                  },
+                  child: Text(localizedSetName(context, e.greatIpSetConfig.name)),
+                ),
+              );
+              if (e.greatIpSetConfig.oppositeName.isNotEmpty) {
+                menuChildren.add(
+                  MenuItemButton(
+                    onPressed: () {
+                      widget.onChanged(e.greatIpSetConfig.oppositeName);
+                    },
+                    child: Text(
+                        localizedSetName(context, e.greatIpSetConfig.oppositeName)),
+                  ),
+                );
+              }
+            }
+            return SubmenuButton(
+              menuChildren: menuChildren,
+              child: Text(AppLocalizations.of(context)!.greatIpSet),
+            );
+          },
+        ),
+        FutureBuilder(
+          future: _getAtomicIpSetsFuture,
+          builder: (ctx, snaoshot) {
+            if (!snaoshot.hasData) {
+              return const SizedBox.shrink();
+            }
+            return SubmenuButton(
+              menuChildren: snaoshot.data!
+                  .map(
+                    (e) => MenuItemButton(
+                      onPressed: () {
+                        widget.onChanged(e.name);
+                      },
+                      child: Text(e.name),
+                    ),
+                  )
+                  .toList(),
+              child: Text(AppLocalizations.of(context)!.atmoicIpSet),
+            );
+          },
+        ),
+      ],
+      builder: (context, controller, child) => IconButton.filledTonal(
+        onPressed: () => controller.open(),
+        style: IconButton.styleFrom(
+          visualDensity: VisualDensity.compact,
+          padding: const EdgeInsets.all(0),
+        ),
+        icon: const Icon(Icons.add_rounded, size: 18),
       ),
     );
   }
@@ -1144,59 +1815,68 @@ class _DomainSetPickerState extends State<DomainSetPicker> {
     return MenuAnchor(
       menuChildren: [
         FutureBuilder(
-            future: _getGreatDomainSetsFuture,
-            builder: (ctx, snaoshot) {
-              if (!snaoshot.hasData) {
-                return const SizedBox.shrink();
-              }
-              final menuChildren = <Widget>[];
-              for (final e in snaoshot.data!) {
-                menuChildren.add(MenuItemButton(
+          future: _getGreatDomainSetsFuture,
+          builder: (ctx, snaoshot) {
+            if (!snaoshot.hasData) {
+              return const SizedBox.shrink();
+            }
+            final menuChildren = <Widget>[];
+            for (final e in snaoshot.data!) {
+              menuChildren.add(
+                MenuItemButton(
                   onPressed: () {
                     widget.onChanged(e.set.name);
                   },
                   child: Text(localizedSetName(context, e.set.name)),
-                ));
-                if (e.set.oppositeName.isNotEmpty) {
-                  menuChildren.add(MenuItemButton(
+                ),
+              );
+              if (e.set.oppositeName.isNotEmpty) {
+                menuChildren.add(
+                  MenuItemButton(
                     onPressed: () {
                       widget.onChanged(e.set.oppositeName);
                     },
                     child: Text(localizedSetName(context, e.set.oppositeName)),
-                  ));
-                }
+                  ),
+                );
               }
-              return SubmenuButton(
-                menuChildren: menuChildren,
-                child: Text(AppLocalizations.of(context)!.greatDomainSet),
-              );
-            }),
+            }
+            return SubmenuButton(
+              menuChildren: menuChildren,
+              child: Text(AppLocalizations.of(context)!.greatDomainSet),
+            );
+          },
+        ),
         FutureBuilder(
-            future: _getAtomicDomainSetsFuture,
-            builder: (ctx, snaoshot) {
-              if (!snaoshot.hasData) {
-                return const SizedBox.shrink();
-              }
-              return SubmenuButton(
-                menuChildren: snaoshot.data!
-                    .map((e) => MenuItemButton(
-                          onPressed: () {
-                            widget.onChanged(e.name);
-                          },
-                          child: Text(localizedSetName(context, e.name)),
-                        ))
-                    .toList(),
-                child: Text(AppLocalizations.of(context)!.atmoicDomainSet),
-              );
-            }),
+          future: _getAtomicDomainSetsFuture,
+          builder: (ctx, snaoshot) {
+            if (!snaoshot.hasData) {
+              return const SizedBox.shrink();
+            }
+            return SubmenuButton(
+              menuChildren: snaoshot.data!
+                  .map(
+                    (e) => MenuItemButton(
+                      onPressed: () {
+                        widget.onChanged(e.name);
+                      },
+                      child: Text(localizedSetName(context, e.name)),
+                    ),
+                  )
+                  .toList(),
+              child: Text(AppLocalizations.of(context)!.atmoicDomainSet),
+            );
+          },
+        ),
       ],
       builder: (context, controller, child) => IconButton.filledTonal(
-          onPressed: () => controller.open(),
-          style: IconButton.styleFrom(
-            visualDensity: VisualDensity.compact,
-            padding: const EdgeInsets.all(0),
-          ),
-          icon: const Icon(Icons.add_rounded, size: 18)),
+        onPressed: () => controller.open(),
+        style: IconButton.styleFrom(
+          visualDensity: VisualDensity.compact,
+          padding: const EdgeInsets.all(0),
+        ),
+        icon: const Icon(Icons.add_rounded, size: 18),
+      ),
     );
   }
 }
@@ -1232,28 +1912,37 @@ class _IPConditionState extends State<IPCondition> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-          left: 16.0, right: 16.0, bottom: 16.0, top: 5.0),
+        left: 16.0,
+        right: 16.0,
+        bottom: 16.0,
+        top: 5.0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('IP',
-              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
+          Text(
+            'IP',
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           const Gap(5),
           Wrap(
-              runSpacing: 10,
-              spacing: 10,
-              children: widget.rule.dstCidrs
-                  .map((e) => WrapChild(
-                        shape: chipBorderRadius,
-                        text: e,
-                        onDelete: () => setState(() {
-                          widget.rule.dstCidrs.remove(e);
-                          widget.onChanged();
-                        }),
-                      ))
-                  .toList()),
+            runSpacing: 10,
+            spacing: 10,
+            children: widget.rule.dstCidrs
+                .map(
+                  (e) => WrapChild(
+                    shape: chipBorderRadius,
+                    text: e,
+                    onDelete: () => setState(() {
+                      widget.rule.dstCidrs.remove(e);
+                      widget.onChanged();
+                    }),
+                  ),
+                )
+                .toList(),
+          ),
           const Gap(10),
           Row(
             children: [
@@ -1271,141 +1960,56 @@ class _IPConditionState extends State<IPCondition> {
               ),
               const Gap(5),
               IconButton.filledTonal(
-                  onPressed: () {
-                    if (_ipController.text.isNotEmpty) {
-                      if (!isValidCidr(_ipController.text)) {
-                        return;
-                      }
-                      widget.rule.dstCidrs.add(_ipController.text);
-                      _ipController.clear();
-                      setState(() {
-                        widget.onChanged();
-                      });
+                onPressed: () {
+                  if (_ipController.text.isNotEmpty) {
+                    if (!isValidCidr(_ipController.text)) {
+                      return;
                     }
-                  },
-                  visualDensity: VisualDensity.compact,
-                  padding: const EdgeInsets.all(0),
-                  icon: const Icon(Icons.add_rounded, size: 18))
+                    widget.rule.dstCidrs.add(_ipController.text);
+                    _ipController.clear();
+                    setState(() {
+                      widget.onChanged();
+                    });
+                  }
+                },
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.all(0),
+                icon: const Icon(Icons.add_rounded, size: 18),
+              ),
             ],
           ),
           const Gap(10),
-          Text(AppLocalizations.of(context)!.ipSet,
-              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
+          Text(
+            AppLocalizations.of(context)!.ipSet,
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           const Gap(5),
-          Wrap(
-              runSpacing: 10,
-              spacing: 10,
-              children: widget.rule.dstIpTags
-                  .map((e) => MenuAnchor(
-                        menuChildren: [
-                          MenuItemButton(
-                            onPressed: () {
-                              widget.rule.dstIpTags.remove(e);
-                              setState(() {
-                                widget.onChanged();
-                              });
-                            },
-                            child: const Text('删除'),
-                          ),
-                        ],
-                        builder: (context, controller, child) =>
-                            GestureDetector(
-                          onDoubleTap: () {
-                            widget.rule.dstIpTags.remove(e);
-                            setState(() {
-                              widget.onChanged();
-                            });
-                          },
-                          onSecondaryTapDown: (details) {
-                            controller.open(
-                                position: Offset(details.localPosition.dx,
-                                    details.localPosition.dy));
-                          },
-                          onLongPress: () {
-                            controller.open();
-                          },
-                          child: Chip(
-                            label: Text(e),
-                          ),
-                        ),
-                      ))
-                  .toList()
-                ..add(MenuAnchor(
-                  menuChildren: [
-                    FutureBuilder(
-                        future: _getGreatIpSetsFuture,
-                        builder: (ctx, snaoshot) {
-                          if (!snaoshot.hasData) {
-                            return const SizedBox.shrink();
-                          }
-                          return SubmenuButton(
-                            menuChildren: snaoshot.data!
-                                .map((e) => MenuItemButton(
-                                      onPressed: () {
-                                        widget.rule.dstIpTags
-                                            .add(e.greatIpSetConfig.name);
-                                        setState(() {
-                                          widget.onChanged();
-                                        });
-                                        widget.onChanged();
-                                      },
-                                      child: Text(e.greatIpSetConfig.name),
-                                    ))
-                                .toList(),
-                            child:
-                                Text(AppLocalizations.of(context)!.greatIpSet),
-                          );
-                        }),
-                    FutureBuilder(
-                        future: _getAtomicIpSetsFuture,
-                        builder: (ctx, snaoshot) {
-                          if (!snaoshot.hasData) {
-                            return const SizedBox.shrink();
-                          }
-                          return SubmenuButton(
-                            menuChildren: snaoshot.data!
-                                .map((e) => MenuItemButton(
-                                      onPressed: () {
-                                        widget.rule.dstIpTags.add(e.name);
-                                        setState(() {
-                                          widget.onChanged();
-                                        });
-                                        widget.onChanged();
-                                      },
-                                      child: Text(e.name),
-                                    ))
-                                .toList(),
-                            child:
-                                Text(AppLocalizations.of(context)!.atmoicIpSet),
-                          );
-                        }),
-                  ],
-                  builder: (context, controller, child) =>
-                      IconButton.filledTonal(
-                          onPressed: () => controller.open(),
-                          style: IconButton.styleFrom(
-                            visualDensity: VisualDensity.compact,
-                            padding: const EdgeInsets.all(0),
-                          ),
-                          icon: const Icon(Icons.add_rounded, size: 18)),
-                ))),
+          IPSet(
+            dstIpTags: widget.rule.dstIpTags,
+            onChanged: () {
+              widget.onChanged();
+            },
+          ),
           Padding(
             padding: const EdgeInsets.only(top: 10.0),
             child: CheckboxListTile(
-                value: widget.rule.resolveDomain,
-                title: Text(AppLocalizations.of(context)!.resolveDomain,
-                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        )),
-                onChanged: (v) {
-                  widget.rule.resolveDomain = v ?? false;
-                  setState(() {
-                    widget.onChanged();
-                  });
-                }),
-          )
+              value: widget.rule.resolveDomain,
+              title: Text(
+                AppLocalizations.of(context)!.resolveDomain,
+                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              onChanged: (v) {
+                widget.rule.resolveDomain = v ?? false;
+                setState(() {
+                  widget.onChanged();
+                });
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -1439,35 +2043,46 @@ class _AllConditionState extends State<AllCondition> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-          left: 16.0, right: 16.0, bottom: 16.0, top: 5.0),
+        left: 16.0,
+        right: 16.0,
+        bottom: 16.0,
+        top: 5.0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context)!.domainIpAppConditionDesc,
-              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
+          Text(
+            AppLocalizations.of(context)!.domainIpAppConditionDesc,
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           const Gap(5),
-          Text(AppLocalizations.of(context)!.setName,
-              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
+          Text(
+            AppLocalizations.of(context)!.setName,
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           const Gap(5),
           Wrap(
-              runSpacing: 10,
-              spacing: 10,
-              children: widget.rule.allTags
-                  .map((e) => WrapChild(
-                        shape: chipBorderRadius,
-                        text: e,
-                        onDelete: () {
-                          setState(() {
-                            widget.rule.allTags.remove(e);
-                            widget.onChanged();
-                          });
-                        },
-                      ))
-                  .toList()),
+            runSpacing: 10,
+            spacing: 10,
+            children: widget.rule.allTags
+                .map(
+                  (e) => WrapChild(
+                    shape: chipBorderRadius,
+                    text: e,
+                    onDelete: () {
+                      setState(() {
+                        widget.rule.allTags.remove(e);
+                        widget.onChanged();
+                      });
+                    },
+                  ),
+                )
+                .toList(),
+          ),
           const Gap(10),
           Row(
             children: [
@@ -1494,45 +2109,51 @@ class _AllConditionState extends State<AllCondition> {
               ),
               const Gap(5),
               IconButton.filledTonal(
-                  onPressed: () {
-                    setState(() {
-                      widget.rule.allTags.add(_controller.text);
-                      _controller.clear();
-                      widget.onChanged();
-                    });
-                  },
-                  visualDensity: VisualDensity.compact,
-                  padding: const EdgeInsets.all(0),
-                  icon: const Icon(Icons.add_rounded, size: 18))
+                onPressed: () {
+                  setState(() {
+                    widget.rule.allTags.add(_controller.text);
+                    _controller.clear();
+                    widget.onChanged();
+                  });
+                },
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.all(0),
+                icon: const Icon(Icons.add_rounded, size: 18),
+              ),
             ],
           ),
           const Gap(5),
           CheckboxListTile(
-              value: widget.rule.resolveDomain,
-              title: Text(AppLocalizations.of(context)!.resolveDomain,
-                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      )),
-              onChanged: (v) {
-                widget.rule.resolveDomain = v ?? false;
-                setState(() {
-                  widget.onChanged();
-                });
-              }),
+            value: widget.rule.resolveDomain,
+            title: Text(
+              AppLocalizations.of(context)!.resolveDomain,
+              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            onChanged: (v) {
+              widget.rule.resolveDomain = v ?? false;
+              setState(() {
+                widget.onChanged();
+              });
+            },
+          ),
           const Gap(5),
           CheckboxListTile(
-              value: !widget.rule.skipSniff,
-              title: Text(
-                  AppLocalizations.of(context)!.sniffDomainForIpConnection,
-                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      )),
-              onChanged: (v) {
-                widget.rule.skipSniff = !(v ?? false);
-                setState(() {
-                  widget.onChanged();
-                });
-              }),
+            value: !widget.rule.skipSniff,
+            title: Text(
+              AppLocalizations.of(context)!.sniffDomainForIpConnection,
+              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            onChanged: (v) {
+              widget.rule.skipSniff = !(v ?? false);
+              setState(() {
+                widget.onChanged();
+              });
+            },
+          ),
         ],
       ),
     );
@@ -1569,40 +2190,48 @@ class _AppConditionState extends State<AppCondition> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-          left: 16.0, right: 16.0, bottom: 16.0, top: 5.0),
+        left: 16.0,
+        right: 16.0,
+        bottom: 16.0,
+        top: 5.0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context)!.app,
-              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
+          Text(
+            AppLocalizations.of(context)!.app,
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           const Gap(5),
           Column(
             children: widget.rule.appIds
-                .map((e) => ListTile(
-                      title: Text(e.value),
-                      dense: true,
-                      visualDensity: VisualDensity.compact,
-                      shape: Border(
-                        bottom: BorderSide(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
+                .map(
+                  (e) => ListTile(
+                    title: Text(e.value),
+                    dense: true,
+                    visualDensity: VisualDensity.compact,
+                    shape: Border(
+                      bottom: BorderSide(
+                        color: Theme.of(context).colorScheme.outline,
                       ),
-                      tileColor: Theme.of(context).colorScheme.surfaceContainer,
-                      subtitle: Platform.isAndroid
-                          ? null
-                          : Text(e.type.toLocalString(context)),
-                      trailing: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            widget.rule.appIds.remove(e);
-                            widget.onChanged();
-                          });
-                        },
-                        icon: const Icon(Icons.delete_outline),
-                      ),
-                    ))
+                    ),
+                    tileColor: Theme.of(context).colorScheme.surfaceContainer,
+                    subtitle: Platform.isAndroid
+                        ? null
+                        : Text(e.type.toLocalString(context)),
+                    trailing: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          widget.rule.appIds.remove(e);
+                          widget.onChanged();
+                        });
+                      },
+                      icon: const Icon(Icons.delete_outline),
+                    ),
+                  ),
+                )
                 .toList(),
           ),
           const Gap(10),
@@ -1618,8 +2247,12 @@ class _AppConditionState extends State<AppCondition> {
               setState(() {});
             },
             dropdownMenuEntries: AppId_Type.values
-                .map((e) => DropdownMenuEntry(
-                    label: e.toLocalString(context), value: e))
+                .map(
+                  (e) => DropdownMenuEntry(
+                    label: e.toLocalString(context),
+                    value: e,
+                  ),
+                )
                 .toList(),
           ),
           const Gap(5),
@@ -1633,14 +2266,12 @@ class _AppConditionState extends State<AppCondition> {
                   decoration: InputDecoration(
                     labelText: AppLocalizations.of(context)!.app,
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5)),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                   ),
                   validator: (value) {
                     if (value != null && value.isNotEmpty) {
-                      widget.rule.appIds.add(AppId(
-                        value: value,
-                        type: _type,
-                      ));
+                      widget.rule.appIds.add(AppId(value: value, type: _type));
                       _appController.clear();
                     }
                     return null;
@@ -1649,32 +2280,36 @@ class _AppConditionState extends State<AppCondition> {
               ),
               const Gap(5),
               IconButton.filledTonal(
-                  onPressed: () {
-                    widget.rule.appIds.add(AppId(
-                      value: _appController.text,
-                      type: _type,
-                    ));
-                    _appController.clear();
-                    setState(() {
-                      widget.onChanged();
-                    });
-                  },
-                  visualDensity: VisualDensity.compact,
-                  padding: const EdgeInsets.all(0),
-                  icon: const Icon(Icons.add_rounded, size: 18))
+                onPressed: () {
+                  widget.rule.appIds.add(
+                    AppId(value: _appController.text, type: _type),
+                  );
+                  _appController.clear();
+                  setState(() {
+                    widget.onChanged();
+                  });
+                },
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.all(0),
+                icon: const Icon(Icons.add_rounded, size: 18),
+              ),
             ],
           ),
           const Gap(10),
-          Text(AppLocalizations.of(context)!.appSet,
-              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
+          Text(
+            AppLocalizations.of(context)!.appSet,
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           const Gap(5),
           Wrap(
-              runSpacing: 10,
-              spacing: 10,
-              children: widget.rule.appTags
-                  .map<Widget>((e) => MenuAnchor(
+            runSpacing: 10,
+            spacing: 10,
+            children:
+                widget.rule.appTags
+                    .map<Widget>(
+                      (e) => MenuAnchor(
                         menuChildren: [
                           MenuItemButton(
                             onPressed: () {
@@ -1688,28 +2323,30 @@ class _AppConditionState extends State<AppCondition> {
                         ],
                         builder: (context, controller, child) =>
                             GestureDetector(
-                          onDoubleTap: () {
-                            widget.rule.appTags.remove(e);
-                            setState(() {
-                              widget.onChanged();
-                            });
-                          },
-                          onSecondaryTapDown: (details) {
-                            controller.open(
-                                position: Offset(details.localPosition.dx,
-                                    details.localPosition.dy));
-                          },
-                          onLongPress: () {
-                            controller.open();
-                          },
-                          child: Chip(
-                            label: Text(e),
-                          ),
-                        ),
-                      ))
-                  .toList()
-                ..add(
-                  FutureBuilder(
+                              onDoubleTap: () {
+                                widget.rule.appTags.remove(e);
+                                setState(() {
+                                  widget.onChanged();
+                                });
+                              },
+                              onSecondaryTapDown: (details) {
+                                controller.open(
+                                  position: Offset(
+                                    details.localPosition.dx,
+                                    details.localPosition.dy,
+                                  ),
+                                );
+                              },
+                              onLongPress: () {
+                                controller.open();
+                              },
+                              child: Chip(label: Text(e)),
+                            ),
+                      ),
+                    )
+                    .toList()
+                  ..add(
+                    FutureBuilder(
                       future: _getAppSetsFuture,
                       builder: (ctx, snaoshot) {
                         if (!snaoshot.hasData) {
@@ -1717,28 +2354,32 @@ class _AppConditionState extends State<AppCondition> {
                         }
                         return MenuAnchor(
                           menuChildren: snaoshot.data!
-                              .map((e) => MenuItemButton(
-                                    onPressed: () {
-                                      widget.rule.appTags.add(e.name);
-                                      setState(() {
-                                        widget.onChanged();
-                                      });
-                                    },
-                                    child: Text(e.name),
-                                  ))
+                              .map(
+                                (e) => MenuItemButton(
+                                  onPressed: () {
+                                    widget.rule.appTags.add(e.name);
+                                    setState(() {
+                                      widget.onChanged();
+                                    });
+                                  },
+                                  child: Text(e.name),
+                                ),
+                              )
                               .toList(),
                           builder: (context, controller, child) =>
                               IconButton.filledTonal(
-                                  onPressed: () => controller.open(),
-                                  style: IconButton.styleFrom(
-                                    visualDensity: VisualDensity.compact,
-                                    padding: const EdgeInsets.all(0),
-                                  ),
-                                  icon:
-                                      const Icon(Icons.add_rounded, size: 18)),
+                                onPressed: () => controller.open(),
+                                style: IconButton.styleFrom(
+                                  visualDensity: VisualDensity.compact,
+                                  padding: const EdgeInsets.all(0),
+                                ),
+                                icon: const Icon(Icons.add_rounded, size: 18),
+                              ),
                         );
-                      }),
-                )),
+                      },
+                    ),
+                  ),
+          ),
         ],
       ),
     );
@@ -1767,26 +2408,31 @@ class _DomainCollectorState extends State<DomainCollector> {
     return Row(
       children: [
         DropdownMenu<Domain_Type>(
-            width: 120,
-            label: Text(
-              AppLocalizations.of(context)!.type,
-              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+          width: 120,
+          label: Text(
+            AppLocalizations.of(context)!.type,
+            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-            initialSelection: _type,
-            requestFocusOnTap: false,
-            onSelected: (Domain_Type? t) {
-              setState(() {
-                if (t != null) {
-                  _type = t;
-                }
-              });
-            },
-            dropdownMenuEntries: Domain_Type.values
-                .map((e) => DropdownMenuEntry(
-                    label: e.toLocalString(context), value: e))
-                .toList()),
+          ),
+          initialSelection: _type,
+          requestFocusOnTap: false,
+          onSelected: (Domain_Type? t) {
+            setState(() {
+              if (t != null) {
+                _type = t;
+              }
+            });
+          },
+          dropdownMenuEntries: Domain_Type.values
+              .map(
+                (e) => DropdownMenuEntry(
+                  label: e.toLocalString(context),
+                  value: e,
+                ),
+              )
+              .toList(),
+        ),
         const Gap(10),
         Expanded(
           child: TextFormField(
@@ -1801,16 +2447,14 @@ class _DomainCollectorState extends State<DomainCollector> {
         ),
         const Gap(5),
         IconButton.filledTonal(
-            onPressed: () {
-              widget.onAdd(Domain(
-                type: _type,
-                value: _domainController.text,
-              ));
-              _domainController.clear();
-            },
-            visualDensity: VisualDensity.compact,
-            padding: const EdgeInsets.all(0),
-            icon: const Icon(Icons.add_rounded, size: 18))
+          onPressed: () {
+            widget.onAdd(Domain(type: _type, value: _domainController.text));
+            _domainController.clear();
+          },
+          visualDensity: VisualDensity.compact,
+          padding: const EdgeInsets.all(0),
+          icon: const Icon(Icons.add_rounded, size: 18),
+        ),
       ],
     );
   }

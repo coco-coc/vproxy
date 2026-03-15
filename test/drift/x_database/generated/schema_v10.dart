@@ -11,16 +11,21 @@ class Subscriptions extends Table
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   Subscriptions(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    $customConstraints: 'NOT NULL',
   );
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
     'name',
@@ -28,6 +33,7 @@ class Subscriptions extends Table
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   late final GeneratedColumn<String> link = GeneratedColumn<String>(
     'link',
@@ -35,7 +41,7 @@ class Subscriptions extends Table
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+    $customConstraints: 'NOT NULL UNIQUE',
   );
   late final GeneratedColumn<double> remainingData = GeneratedColumn<double>(
     'remaining_data',
@@ -43,6 +49,7 @@ class Subscriptions extends Table
     true,
     type: DriftSqlType.double,
     requiredDuringInsert: false,
+    $customConstraints: 'NULL',
   );
   late final GeneratedColumn<int> endTime = GeneratedColumn<int>(
     'end_time',
@@ -50,6 +57,7 @@ class Subscriptions extends Table
     true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
+    $customConstraints: 'NULL',
   );
   late final GeneratedColumn<String> website = GeneratedColumn<String>(
     'website',
@@ -57,6 +65,7 @@ class Subscriptions extends Table
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT \'\'',
     defaultValue: const CustomExpression('\'\''),
   );
   late final GeneratedColumn<String> description = GeneratedColumn<String>(
@@ -65,6 +74,7 @@ class Subscriptions extends Table
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT \'\'',
     defaultValue: const CustomExpression('\'\''),
   );
   late final GeneratedColumn<int> lastUpdate = GeneratedColumn<int>(
@@ -73,6 +83,7 @@ class Subscriptions extends Table
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   late final GeneratedColumn<int> lastSuccessUpdate = GeneratedColumn<int>(
     'last_success_update',
@@ -80,9 +91,20 @@ class Subscriptions extends Table
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<int> placeOnTop = GeneratedColumn<int>(
+    'place_on_top',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0 CHECK (place_on_top IN (0, 1))',
+    defaultValue: const CustomExpression('0'),
   );
   @override
   List<GeneratedColumn> get $columns => [
+    updatedAt,
     id,
     name,
     link,
@@ -92,6 +114,7 @@ class Subscriptions extends Table
     description,
     lastUpdate,
     lastSuccessUpdate,
+    placeOnTop,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -104,6 +127,10 @@ class Subscriptions extends Table
   SubscriptionsData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return SubscriptionsData(
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_at'],
+      ),
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -140,6 +167,10 @@ class Subscriptions extends Table
         DriftSqlType.int,
         data['${effectivePrefix}last_success_update'],
       )!,
+      placeOnTop: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}place_on_top'],
+      )!,
     );
   }
 
@@ -147,10 +178,16 @@ class Subscriptions extends Table
   Subscriptions createAlias(String alias) {
     return Subscriptions(attachedDatabase, alias);
   }
+
+  @override
+  List<String> get customConstraints => const ['PRIMARY KEY(id)'];
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class SubscriptionsData extends DataClass
     implements Insertable<SubscriptionsData> {
+  final String? updatedAt;
   final int id;
   final String name;
   final String link;
@@ -160,7 +197,9 @@ class SubscriptionsData extends DataClass
   final String description;
   final int lastUpdate;
   final int lastSuccessUpdate;
+  final int placeOnTop;
   const SubscriptionsData({
+    this.updatedAt,
     required this.id,
     required this.name,
     required this.link,
@@ -170,10 +209,14 @@ class SubscriptionsData extends DataClass
     required this.description,
     required this.lastUpdate,
     required this.lastSuccessUpdate,
+    required this.placeOnTop,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<String>(updatedAt);
+    }
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
     map['link'] = Variable<String>(link);
@@ -187,11 +230,15 @@ class SubscriptionsData extends DataClass
     map['description'] = Variable<String>(description);
     map['last_update'] = Variable<int>(lastUpdate);
     map['last_success_update'] = Variable<int>(lastSuccessUpdate);
+    map['place_on_top'] = Variable<int>(placeOnTop);
     return map;
   }
 
   SubscriptionsCompanion toCompanion(bool nullToAbsent) {
     return SubscriptionsCompanion(
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
       id: Value(id),
       name: Value(name),
       link: Value(link),
@@ -205,6 +252,7 @@ class SubscriptionsData extends DataClass
       description: Value(description),
       lastUpdate: Value(lastUpdate),
       lastSuccessUpdate: Value(lastSuccessUpdate),
+      placeOnTop: Value(placeOnTop),
     );
   }
 
@@ -214,6 +262,7 @@ class SubscriptionsData extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return SubscriptionsData(
+      updatedAt: serializer.fromJson<String?>(json['updatedAt']),
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       link: serializer.fromJson<String>(json['link']),
@@ -223,12 +272,14 @@ class SubscriptionsData extends DataClass
       description: serializer.fromJson<String>(json['description']),
       lastUpdate: serializer.fromJson<int>(json['lastUpdate']),
       lastSuccessUpdate: serializer.fromJson<int>(json['lastSuccessUpdate']),
+      placeOnTop: serializer.fromJson<int>(json['placeOnTop']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'updatedAt': serializer.toJson<String?>(updatedAt),
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'link': serializer.toJson<String>(link),
@@ -238,10 +289,12 @@ class SubscriptionsData extends DataClass
       'description': serializer.toJson<String>(description),
       'lastUpdate': serializer.toJson<int>(lastUpdate),
       'lastSuccessUpdate': serializer.toJson<int>(lastSuccessUpdate),
+      'placeOnTop': serializer.toJson<int>(placeOnTop),
     };
   }
 
   SubscriptionsData copyWith({
+    Value<String?> updatedAt = const Value.absent(),
     int? id,
     String? name,
     String? link,
@@ -251,7 +304,9 @@ class SubscriptionsData extends DataClass
     String? description,
     int? lastUpdate,
     int? lastSuccessUpdate,
+    int? placeOnTop,
   }) => SubscriptionsData(
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
     id: id ?? this.id,
     name: name ?? this.name,
     link: link ?? this.link,
@@ -263,9 +318,11 @@ class SubscriptionsData extends DataClass
     description: description ?? this.description,
     lastUpdate: lastUpdate ?? this.lastUpdate,
     lastSuccessUpdate: lastSuccessUpdate ?? this.lastSuccessUpdate,
+    placeOnTop: placeOnTop ?? this.placeOnTop,
   );
   SubscriptionsData copyWithCompanion(SubscriptionsCompanion data) {
     return SubscriptionsData(
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       link: data.link.present ? data.link.value : this.link,
@@ -283,12 +340,16 @@ class SubscriptionsData extends DataClass
       lastSuccessUpdate: data.lastSuccessUpdate.present
           ? data.lastSuccessUpdate.value
           : this.lastSuccessUpdate,
+      placeOnTop: data.placeOnTop.present
+          ? data.placeOnTop.value
+          : this.placeOnTop,
     );
   }
 
   @override
   String toString() {
     return (StringBuffer('SubscriptionsData(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('link: $link, ')
@@ -297,13 +358,15 @@ class SubscriptionsData extends DataClass
           ..write('website: $website, ')
           ..write('description: $description, ')
           ..write('lastUpdate: $lastUpdate, ')
-          ..write('lastSuccessUpdate: $lastSuccessUpdate')
+          ..write('lastSuccessUpdate: $lastSuccessUpdate, ')
+          ..write('placeOnTop: $placeOnTop')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(
+    updatedAt,
     id,
     name,
     link,
@@ -313,11 +376,13 @@ class SubscriptionsData extends DataClass
     description,
     lastUpdate,
     lastSuccessUpdate,
+    placeOnTop,
   );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is SubscriptionsData &&
+          other.updatedAt == this.updatedAt &&
           other.id == this.id &&
           other.name == this.name &&
           other.link == this.link &&
@@ -326,10 +391,12 @@ class SubscriptionsData extends DataClass
           other.website == this.website &&
           other.description == this.description &&
           other.lastUpdate == this.lastUpdate &&
-          other.lastSuccessUpdate == this.lastSuccessUpdate);
+          other.lastSuccessUpdate == this.lastSuccessUpdate &&
+          other.placeOnTop == this.placeOnTop);
 }
 
 class SubscriptionsCompanion extends UpdateCompanion<SubscriptionsData> {
+  final Value<String?> updatedAt;
   final Value<int> id;
   final Value<String> name;
   final Value<String> link;
@@ -339,7 +406,9 @@ class SubscriptionsCompanion extends UpdateCompanion<SubscriptionsData> {
   final Value<String> description;
   final Value<int> lastUpdate;
   final Value<int> lastSuccessUpdate;
+  final Value<int> placeOnTop;
   const SubscriptionsCompanion({
+    this.updatedAt = const Value.absent(),
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.link = const Value.absent(),
@@ -349,8 +418,10 @@ class SubscriptionsCompanion extends UpdateCompanion<SubscriptionsData> {
     this.description = const Value.absent(),
     this.lastUpdate = const Value.absent(),
     this.lastSuccessUpdate = const Value.absent(),
+    this.placeOnTop = const Value.absent(),
   });
   SubscriptionsCompanion.insert({
+    this.updatedAt = const Value.absent(),
     this.id = const Value.absent(),
     required String name,
     required String link,
@@ -360,11 +431,13 @@ class SubscriptionsCompanion extends UpdateCompanion<SubscriptionsData> {
     this.description = const Value.absent(),
     required int lastUpdate,
     required int lastSuccessUpdate,
+    this.placeOnTop = const Value.absent(),
   }) : name = Value(name),
        link = Value(link),
        lastUpdate = Value(lastUpdate),
        lastSuccessUpdate = Value(lastSuccessUpdate);
   static Insertable<SubscriptionsData> custom({
+    Expression<String>? updatedAt,
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? link,
@@ -374,8 +447,10 @@ class SubscriptionsCompanion extends UpdateCompanion<SubscriptionsData> {
     Expression<String>? description,
     Expression<int>? lastUpdate,
     Expression<int>? lastSuccessUpdate,
+    Expression<int>? placeOnTop,
   }) {
     return RawValuesInsertable({
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (link != null) 'link': link,
@@ -385,10 +460,12 @@ class SubscriptionsCompanion extends UpdateCompanion<SubscriptionsData> {
       if (description != null) 'description': description,
       if (lastUpdate != null) 'last_update': lastUpdate,
       if (lastSuccessUpdate != null) 'last_success_update': lastSuccessUpdate,
+      if (placeOnTop != null) 'place_on_top': placeOnTop,
     });
   }
 
   SubscriptionsCompanion copyWith({
+    Value<String?>? updatedAt,
     Value<int>? id,
     Value<String>? name,
     Value<String>? link,
@@ -398,8 +475,10 @@ class SubscriptionsCompanion extends UpdateCompanion<SubscriptionsData> {
     Value<String>? description,
     Value<int>? lastUpdate,
     Value<int>? lastSuccessUpdate,
+    Value<int>? placeOnTop,
   }) {
     return SubscriptionsCompanion(
+      updatedAt: updatedAt ?? this.updatedAt,
       id: id ?? this.id,
       name: name ?? this.name,
       link: link ?? this.link,
@@ -409,12 +488,16 @@ class SubscriptionsCompanion extends UpdateCompanion<SubscriptionsData> {
       description: description ?? this.description,
       lastUpdate: lastUpdate ?? this.lastUpdate,
       lastSuccessUpdate: lastSuccessUpdate ?? this.lastSuccessUpdate,
+      placeOnTop: placeOnTop ?? this.placeOnTop,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
@@ -442,12 +525,16 @@ class SubscriptionsCompanion extends UpdateCompanion<SubscriptionsData> {
     if (lastSuccessUpdate.present) {
       map['last_success_update'] = Variable<int>(lastSuccessUpdate.value);
     }
+    if (placeOnTop.present) {
+      map['place_on_top'] = Variable<int>(placeOnTop.value);
+    }
     return map;
   }
 
   @override
   String toString() {
     return (StringBuffer('SubscriptionsCompanion(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('link: $link, ')
@@ -456,7 +543,8 @@ class SubscriptionsCompanion extends UpdateCompanion<SubscriptionsData> {
           ..write('website: $website, ')
           ..write('description: $description, ')
           ..write('lastUpdate: $lastUpdate, ')
-          ..write('lastSuccessUpdate: $lastSuccessUpdate')
+          ..write('lastSuccessUpdate: $lastSuccessUpdate, ')
+          ..write('placeOnTop: $placeOnTop')
           ..write(')'))
         .toString();
   }
@@ -468,26 +556,29 @@ class OutboundHandlers extends Table
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   OutboundHandlers(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    $customConstraints: 'NOT NULL',
   );
-  late final GeneratedColumn<bool> selected = GeneratedColumn<bool>(
+  late final GeneratedColumn<int> selected = GeneratedColumn<int>(
     'selected',
     aliasedName,
     false,
-    type: DriftSqlType.bool,
+    type: DriftSqlType.int,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("selected" IN (0, 1))',
-    ),
+    $customConstraints: 'NOT NULL CHECK (selected IN (0, 1))',
   );
   late final GeneratedColumn<String> countryCode = GeneratedColumn<String>(
     'country_code',
@@ -495,6 +586,7 @@ class OutboundHandlers extends Table
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   late final GeneratedColumn<String> sni = GeneratedColumn<String>(
     'sni',
@@ -502,6 +594,7 @@ class OutboundHandlers extends Table
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   late final GeneratedColumn<double> speed = GeneratedColumn<double>(
     'speed',
@@ -509,6 +602,7 @@ class OutboundHandlers extends Table
     false,
     type: DriftSqlType.double,
     requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0.0',
     defaultValue: const CustomExpression('0.0'),
   );
   late final GeneratedColumn<int> speedTestTime = GeneratedColumn<int>(
@@ -517,6 +611,7 @@ class OutboundHandlers extends Table
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0',
     defaultValue: const CustomExpression('0'),
   );
   late final GeneratedColumn<int> ping = GeneratedColumn<int>(
@@ -525,6 +620,7 @@ class OutboundHandlers extends Table
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0',
     defaultValue: const CustomExpression('0'),
   );
   late final GeneratedColumn<int> pingTestTime = GeneratedColumn<int>(
@@ -533,6 +629,7 @@ class OutboundHandlers extends Table
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0',
     defaultValue: const CustomExpression('0'),
   );
   late final GeneratedColumn<int> ok = GeneratedColumn<int>(
@@ -541,6 +638,7 @@ class OutboundHandlers extends Table
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0',
     defaultValue: const CustomExpression('0'),
   );
   late final GeneratedColumn<String> serverIp = GeneratedColumn<String>(
@@ -549,6 +647,7 @@ class OutboundHandlers extends Table
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   late final GeneratedColumn<i2.Uint8List> config =
       GeneratedColumn<i2.Uint8List>(
@@ -557,6 +656,7 @@ class OutboundHandlers extends Table
         false,
         type: DriftSqlType.blob,
         requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
       );
   late final GeneratedColumn<int> support6 = GeneratedColumn<int>(
     'support6',
@@ -564,6 +664,7 @@ class OutboundHandlers extends Table
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0',
     defaultValue: const CustomExpression('0'),
   );
   late final GeneratedColumn<int> support6TestTime = GeneratedColumn<int>(
@@ -572,6 +673,7 @@ class OutboundHandlers extends Table
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0',
     defaultValue: const CustomExpression('0'),
   );
   late final GeneratedColumn<int> subId = GeneratedColumn<int>(
@@ -580,12 +682,11 @@ class OutboundHandlers extends Table
     true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES subscriptions (id) ON DELETE CASCADE',
-    ),
+    $customConstraints: 'NULL REFERENCES subscriptions(id)ON DELETE CASCADE',
   );
   @override
   List<GeneratedColumn> get $columns => [
+    updatedAt,
     id,
     selected,
     countryCode,
@@ -612,12 +713,16 @@ class OutboundHandlers extends Table
   OutboundHandlersData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return OutboundHandlersData(
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_at'],
+      ),
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
       selected: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
+        DriftSqlType.int,
         data['${effectivePrefix}selected'],
       )!,
       countryCode: attachedDatabase.typeMapping.read(
@@ -675,12 +780,18 @@ class OutboundHandlers extends Table
   OutboundHandlers createAlias(String alias) {
     return OutboundHandlers(attachedDatabase, alias);
   }
+
+  @override
+  List<String> get customConstraints => const ['PRIMARY KEY(id)'];
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class OutboundHandlersData extends DataClass
     implements Insertable<OutboundHandlersData> {
+  final String? updatedAt;
   final int id;
-  final bool selected;
+  final int selected;
   final String countryCode;
   final String sni;
   final double speed;
@@ -694,6 +805,7 @@ class OutboundHandlersData extends DataClass
   final int support6TestTime;
   final int? subId;
   const OutboundHandlersData({
+    this.updatedAt,
     required this.id,
     required this.selected,
     required this.countryCode,
@@ -712,8 +824,11 @@ class OutboundHandlersData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<String>(updatedAt);
+    }
     map['id'] = Variable<int>(id);
-    map['selected'] = Variable<bool>(selected);
+    map['selected'] = Variable<int>(selected);
     map['country_code'] = Variable<String>(countryCode);
     map['sni'] = Variable<String>(sni);
     map['speed'] = Variable<double>(speed);
@@ -733,6 +848,9 @@ class OutboundHandlersData extends DataClass
 
   OutboundHandlersCompanion toCompanion(bool nullToAbsent) {
     return OutboundHandlersCompanion(
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
       id: Value(id),
       selected: Value(selected),
       countryCode: Value(countryCode),
@@ -758,8 +876,9 @@ class OutboundHandlersData extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return OutboundHandlersData(
+      updatedAt: serializer.fromJson<String?>(json['updatedAt']),
       id: serializer.fromJson<int>(json['id']),
-      selected: serializer.fromJson<bool>(json['selected']),
+      selected: serializer.fromJson<int>(json['selected']),
       countryCode: serializer.fromJson<String>(json['countryCode']),
       sni: serializer.fromJson<String>(json['sni']),
       speed: serializer.fromJson<double>(json['speed']),
@@ -778,8 +897,9 @@ class OutboundHandlersData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'updatedAt': serializer.toJson<String?>(updatedAt),
       'id': serializer.toJson<int>(id),
-      'selected': serializer.toJson<bool>(selected),
+      'selected': serializer.toJson<int>(selected),
       'countryCode': serializer.toJson<String>(countryCode),
       'sni': serializer.toJson<String>(sni),
       'speed': serializer.toJson<double>(speed),
@@ -796,8 +916,9 @@ class OutboundHandlersData extends DataClass
   }
 
   OutboundHandlersData copyWith({
+    Value<String?> updatedAt = const Value.absent(),
     int? id,
-    bool? selected,
+    int? selected,
     String? countryCode,
     String? sni,
     double? speed,
@@ -811,6 +932,7 @@ class OutboundHandlersData extends DataClass
     int? support6TestTime,
     Value<int?> subId = const Value.absent(),
   }) => OutboundHandlersData(
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
     id: id ?? this.id,
     selected: selected ?? this.selected,
     countryCode: countryCode ?? this.countryCode,
@@ -828,6 +950,7 @@ class OutboundHandlersData extends DataClass
   );
   OutboundHandlersData copyWithCompanion(OutboundHandlersCompanion data) {
     return OutboundHandlersData(
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       id: data.id.present ? data.id.value : this.id,
       selected: data.selected.present ? data.selected.value : this.selected,
       countryCode: data.countryCode.present
@@ -856,6 +979,7 @@ class OutboundHandlersData extends DataClass
   @override
   String toString() {
     return (StringBuffer('OutboundHandlersData(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('id: $id, ')
           ..write('selected: $selected, ')
           ..write('countryCode: $countryCode, ')
@@ -876,6 +1000,7 @@ class OutboundHandlersData extends DataClass
 
   @override
   int get hashCode => Object.hash(
+    updatedAt,
     id,
     selected,
     countryCode,
@@ -895,6 +1020,7 @@ class OutboundHandlersData extends DataClass
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is OutboundHandlersData &&
+          other.updatedAt == this.updatedAt &&
           other.id == this.id &&
           other.selected == this.selected &&
           other.countryCode == this.countryCode &&
@@ -912,8 +1038,9 @@ class OutboundHandlersData extends DataClass
 }
 
 class OutboundHandlersCompanion extends UpdateCompanion<OutboundHandlersData> {
+  final Value<String?> updatedAt;
   final Value<int> id;
-  final Value<bool> selected;
+  final Value<int> selected;
   final Value<String> countryCode;
   final Value<String> sni;
   final Value<double> speed;
@@ -927,6 +1054,7 @@ class OutboundHandlersCompanion extends UpdateCompanion<OutboundHandlersData> {
   final Value<int> support6TestTime;
   final Value<int?> subId;
   const OutboundHandlersCompanion({
+    this.updatedAt = const Value.absent(),
     this.id = const Value.absent(),
     this.selected = const Value.absent(),
     this.countryCode = const Value.absent(),
@@ -943,8 +1071,9 @@ class OutboundHandlersCompanion extends UpdateCompanion<OutboundHandlersData> {
     this.subId = const Value.absent(),
   });
   OutboundHandlersCompanion.insert({
+    this.updatedAt = const Value.absent(),
     this.id = const Value.absent(),
-    required bool selected,
+    required int selected,
     required String countryCode,
     required String sni,
     this.speed = const Value.absent(),
@@ -963,8 +1092,9 @@ class OutboundHandlersCompanion extends UpdateCompanion<OutboundHandlersData> {
        serverIp = Value(serverIp),
        config = Value(config);
   static Insertable<OutboundHandlersData> custom({
+    Expression<String>? updatedAt,
     Expression<int>? id,
-    Expression<bool>? selected,
+    Expression<int>? selected,
     Expression<String>? countryCode,
     Expression<String>? sni,
     Expression<double>? speed,
@@ -979,6 +1109,7 @@ class OutboundHandlersCompanion extends UpdateCompanion<OutboundHandlersData> {
     Expression<int>? subId,
   }) {
     return RawValuesInsertable({
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (id != null) 'id': id,
       if (selected != null) 'selected': selected,
       if (countryCode != null) 'country_code': countryCode,
@@ -997,8 +1128,9 @@ class OutboundHandlersCompanion extends UpdateCompanion<OutboundHandlersData> {
   }
 
   OutboundHandlersCompanion copyWith({
+    Value<String?>? updatedAt,
     Value<int>? id,
-    Value<bool>? selected,
+    Value<int>? selected,
     Value<String>? countryCode,
     Value<String>? sni,
     Value<double>? speed,
@@ -1013,6 +1145,7 @@ class OutboundHandlersCompanion extends UpdateCompanion<OutboundHandlersData> {
     Value<int?>? subId,
   }) {
     return OutboundHandlersCompanion(
+      updatedAt: updatedAt ?? this.updatedAt,
       id: id ?? this.id,
       selected: selected ?? this.selected,
       countryCode: countryCode ?? this.countryCode,
@@ -1033,11 +1166,14 @@ class OutboundHandlersCompanion extends UpdateCompanion<OutboundHandlersData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
     if (selected.present) {
-      map['selected'] = Variable<bool>(selected.value);
+      map['selected'] = Variable<int>(selected.value);
     }
     if (countryCode.present) {
       map['country_code'] = Variable<String>(countryCode.value);
@@ -1081,6 +1217,7 @@ class OutboundHandlersCompanion extends UpdateCompanion<OutboundHandlersData> {
   @override
   String toString() {
     return (StringBuffer('OutboundHandlersCompanion(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('id: $id, ')
           ..write('selected: $selected, ')
           ..write('countryCode: $countryCode, ')
@@ -1106,15 +1243,33 @@ class OutboundHandlerGroups extends Table
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   OutboundHandlerGroups(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
     'name',
     aliasedName,
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<int> placeOnTop = GeneratedColumn<int>(
+    'place_on_top',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0 CHECK (place_on_top IN (0, 1))',
+    defaultValue: const CustomExpression('0'),
   );
   @override
-  List<GeneratedColumn> get $columns => [name];
+  List<GeneratedColumn> get $columns => [updatedAt, name, placeOnTop];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1129,9 +1284,17 @@ class OutboundHandlerGroups extends Table
   }) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return OutboundHandlerGroupsData(
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_at'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
+      )!,
+      placeOnTop: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}place_on_top'],
       )!,
     );
   }
@@ -1140,21 +1303,42 @@ class OutboundHandlerGroups extends Table
   OutboundHandlerGroups createAlias(String alias) {
     return OutboundHandlerGroups(attachedDatabase, alias);
   }
+
+  @override
+  List<String> get customConstraints => const ['PRIMARY KEY(name)'];
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class OutboundHandlerGroupsData extends DataClass
     implements Insertable<OutboundHandlerGroupsData> {
+  final String? updatedAt;
   final String name;
-  const OutboundHandlerGroupsData({required this.name});
+  final int placeOnTop;
+  const OutboundHandlerGroupsData({
+    this.updatedAt,
+    required this.name,
+    required this.placeOnTop,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<String>(updatedAt);
+    }
     map['name'] = Variable<String>(name);
+    map['place_on_top'] = Variable<int>(placeOnTop);
     return map;
   }
 
   OutboundHandlerGroupsCompanion toCompanion(bool nullToAbsent) {
-    return OutboundHandlerGroupsCompanion(name: Value(name));
+    return OutboundHandlerGroupsCompanion(
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
+      name: Value(name),
+      placeOnTop: Value(placeOnTop),
+    );
   }
 
   factory OutboundHandlerGroupsData.fromJson(
@@ -1163,69 +1347,105 @@ class OutboundHandlerGroupsData extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return OutboundHandlerGroupsData(
+      updatedAt: serializer.fromJson<String?>(json['updatedAt']),
       name: serializer.fromJson<String>(json['name']),
+      placeOnTop: serializer.fromJson<int>(json['placeOnTop']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{'name': serializer.toJson<String>(name)};
+    return <String, dynamic>{
+      'updatedAt': serializer.toJson<String?>(updatedAt),
+      'name': serializer.toJson<String>(name),
+      'placeOnTop': serializer.toJson<int>(placeOnTop),
+    };
   }
 
-  OutboundHandlerGroupsData copyWith({String? name}) =>
-      OutboundHandlerGroupsData(name: name ?? this.name);
+  OutboundHandlerGroupsData copyWith({
+    Value<String?> updatedAt = const Value.absent(),
+    String? name,
+    int? placeOnTop,
+  }) => OutboundHandlerGroupsData(
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
+    name: name ?? this.name,
+    placeOnTop: placeOnTop ?? this.placeOnTop,
+  );
   OutboundHandlerGroupsData copyWithCompanion(
     OutboundHandlerGroupsCompanion data,
   ) {
     return OutboundHandlerGroupsData(
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       name: data.name.present ? data.name.value : this.name,
+      placeOnTop: data.placeOnTop.present
+          ? data.placeOnTop.value
+          : this.placeOnTop,
     );
   }
 
   @override
   String toString() {
     return (StringBuffer('OutboundHandlerGroupsData(')
-          ..write('name: $name')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('name: $name, ')
+          ..write('placeOnTop: $placeOnTop')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => name.hashCode;
+  int get hashCode => Object.hash(updatedAt, name, placeOnTop);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is OutboundHandlerGroupsData && other.name == this.name);
+      (other is OutboundHandlerGroupsData &&
+          other.updatedAt == this.updatedAt &&
+          other.name == this.name &&
+          other.placeOnTop == this.placeOnTop);
 }
 
 class OutboundHandlerGroupsCompanion
     extends UpdateCompanion<OutboundHandlerGroupsData> {
+  final Value<String?> updatedAt;
   final Value<String> name;
+  final Value<int> placeOnTop;
   final Value<int> rowid;
   const OutboundHandlerGroupsCompanion({
+    this.updatedAt = const Value.absent(),
     this.name = const Value.absent(),
+    this.placeOnTop = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   OutboundHandlerGroupsCompanion.insert({
+    this.updatedAt = const Value.absent(),
     required String name,
+    this.placeOnTop = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : name = Value(name);
   static Insertable<OutboundHandlerGroupsData> custom({
+    Expression<String>? updatedAt,
     Expression<String>? name,
+    Expression<int>? placeOnTop,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (name != null) 'name': name,
+      if (placeOnTop != null) 'place_on_top': placeOnTop,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   OutboundHandlerGroupsCompanion copyWith({
+    Value<String?>? updatedAt,
     Value<String>? name,
+    Value<int>? placeOnTop,
     Value<int>? rowid,
   }) {
     return OutboundHandlerGroupsCompanion(
+      updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
+      placeOnTop: placeOnTop ?? this.placeOnTop,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1233,8 +1453,14 @@ class OutboundHandlerGroupsCompanion
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
+    }
+    if (placeOnTop.present) {
+      map['place_on_top'] = Variable<int>(placeOnTop.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -1245,7 +1471,9 @@ class OutboundHandlerGroupsCompanion
   @override
   String toString() {
     return (StringBuffer('OutboundHandlerGroupsCompanion(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('name: $name, ')
+          ..write('placeOnTop: $placeOnTop, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1268,9 +1496,8 @@ class OutboundHandlerGroupRelations extends Table
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES outbound_handler_groups (name) ON DELETE CASCADE',
-    ),
+    $customConstraints:
+        'NOT NULL REFERENCES outbound_handler_groups(name)ON DELETE CASCADE',
   );
   late final GeneratedColumn<int> handlerId = GeneratedColumn<int>(
     'handler_id',
@@ -1278,9 +1505,8 @@ class OutboundHandlerGroupRelations extends Table
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES outbound_handlers (id) ON DELETE CASCADE',
-    ),
+    $customConstraints:
+        'NOT NULL REFERENCES outbound_handlers(id)ON DELETE CASCADE',
   );
   @override
   List<GeneratedColumn> get $columns => [groupName, handlerId];
@@ -1313,6 +1539,13 @@ class OutboundHandlerGroupRelations extends Table
   OutboundHandlerGroupRelations createAlias(String alias) {
     return OutboundHandlerGroupRelations(attachedDatabase, alias);
   }
+
+  @override
+  List<String> get customConstraints => const [
+    'PRIMARY KEY(group_name, handler_id)',
+  ];
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class OutboundHandlerGroupRelationsData extends DataClass
@@ -1470,9 +1703,7 @@ class DnsRecords extends Table with TableInfo<DnsRecords, DnsRecordsData> {
     hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT',
   );
   late final GeneratedColumn<i2.Uint8List> dnsRecord =
       GeneratedColumn<i2.Uint8List>(
@@ -1481,6 +1712,7 @@ class DnsRecords extends Table with TableInfo<DnsRecords, DnsRecordsData> {
         false,
         type: DriftSqlType.blob,
         requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
       );
   @override
   List<GeneratedColumn> get $columns => [id, dnsRecord];
@@ -1510,6 +1742,9 @@ class DnsRecords extends Table with TableInfo<DnsRecords, DnsRecordsData> {
   DnsRecords createAlias(String alias) {
     return DnsRecords(attachedDatabase, alias);
   }
+
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class DnsRecordsData extends DataClass implements Insertable<DnsRecordsData> {
@@ -1634,12 +1869,21 @@ class AtomicDomainSets extends Table
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   AtomicDomainSets(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
     'name',
     aliasedName,
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   late final GeneratedColumn<i2.Uint8List> geositeConfig =
       GeneratedColumn<i2.Uint8List>(
@@ -1648,20 +1892,42 @@ class AtomicDomainSets extends Table
         true,
         type: DriftSqlType.blob,
         requiredDuringInsert: false,
+        $customConstraints: 'NULL',
       );
-  late final GeneratedColumn<bool> useBloomFilter = GeneratedColumn<bool>(
+  late final GeneratedColumn<int> useBloomFilter = GeneratedColumn<int>(
     'use_bloom_filter',
     aliasedName,
     false,
-    type: DriftSqlType.bool,
+    type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("use_bloom_filter" IN (0, 1))',
-    ),
+    $customConstraints: 'NOT NULL DEFAULT 0 CHECK (use_bloom_filter IN (0, 1))',
     defaultValue: const CustomExpression('0'),
   );
+  late final GeneratedColumn<String> clashRuleUrls = GeneratedColumn<String>(
+    'clash_rule_urls',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
+  late final GeneratedColumn<String> geoUrl = GeneratedColumn<String>(
+    'geo_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
   @override
-  List<GeneratedColumn> get $columns => [name, geositeConfig, useBloomFilter];
+  List<GeneratedColumn> get $columns => [
+    updatedAt,
+    name,
+    geositeConfig,
+    useBloomFilter,
+    clashRuleUrls,
+    geoUrl,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1673,6 +1939,10 @@ class AtomicDomainSets extends Table
   AtomicDomainSetsData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return AtomicDomainSetsData(
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_at'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -1682,9 +1952,17 @@ class AtomicDomainSets extends Table
         data['${effectivePrefix}geosite_config'],
       ),
       useBloomFilter: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
+        DriftSqlType.int,
         data['${effectivePrefix}use_bloom_filter'],
       )!,
+      clashRuleUrls: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}clash_rule_urls'],
+      ),
+      geoUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}geo_url'],
+      ),
     );
   }
 
@@ -1692,36 +1970,65 @@ class AtomicDomainSets extends Table
   AtomicDomainSets createAlias(String alias) {
     return AtomicDomainSets(attachedDatabase, alias);
   }
+
+  @override
+  List<String> get customConstraints => const ['PRIMARY KEY(name)'];
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class AtomicDomainSetsData extends DataClass
     implements Insertable<AtomicDomainSetsData> {
+  final String? updatedAt;
   final String name;
   final i2.Uint8List? geositeConfig;
-  final bool useBloomFilter;
+  final int useBloomFilter;
+  final String? clashRuleUrls;
+  final String? geoUrl;
   const AtomicDomainSetsData({
+    this.updatedAt,
     required this.name,
     this.geositeConfig,
     required this.useBloomFilter,
+    this.clashRuleUrls,
+    this.geoUrl,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<String>(updatedAt);
+    }
     map['name'] = Variable<String>(name);
     if (!nullToAbsent || geositeConfig != null) {
       map['geosite_config'] = Variable<i2.Uint8List>(geositeConfig);
     }
-    map['use_bloom_filter'] = Variable<bool>(useBloomFilter);
+    map['use_bloom_filter'] = Variable<int>(useBloomFilter);
+    if (!nullToAbsent || clashRuleUrls != null) {
+      map['clash_rule_urls'] = Variable<String>(clashRuleUrls);
+    }
+    if (!nullToAbsent || geoUrl != null) {
+      map['geo_url'] = Variable<String>(geoUrl);
+    }
     return map;
   }
 
   AtomicDomainSetsCompanion toCompanion(bool nullToAbsent) {
     return AtomicDomainSetsCompanion(
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
       name: Value(name),
       geositeConfig: geositeConfig == null && nullToAbsent
           ? const Value.absent()
           : Value(geositeConfig),
       useBloomFilter: Value(useBloomFilter),
+      clashRuleUrls: clashRuleUrls == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clashRuleUrls),
+      geoUrl: geoUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(geoUrl),
     );
   }
 
@@ -1731,34 +2038,49 @@ class AtomicDomainSetsData extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return AtomicDomainSetsData(
+      updatedAt: serializer.fromJson<String?>(json['updatedAt']),
       name: serializer.fromJson<String>(json['name']),
       geositeConfig: serializer.fromJson<i2.Uint8List?>(json['geositeConfig']),
-      useBloomFilter: serializer.fromJson<bool>(json['useBloomFilter']),
+      useBloomFilter: serializer.fromJson<int>(json['useBloomFilter']),
+      clashRuleUrls: serializer.fromJson<String?>(json['clashRuleUrls']),
+      geoUrl: serializer.fromJson<String?>(json['geoUrl']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'updatedAt': serializer.toJson<String?>(updatedAt),
       'name': serializer.toJson<String>(name),
       'geositeConfig': serializer.toJson<i2.Uint8List?>(geositeConfig),
-      'useBloomFilter': serializer.toJson<bool>(useBloomFilter),
+      'useBloomFilter': serializer.toJson<int>(useBloomFilter),
+      'clashRuleUrls': serializer.toJson<String?>(clashRuleUrls),
+      'geoUrl': serializer.toJson<String?>(geoUrl),
     };
   }
 
   AtomicDomainSetsData copyWith({
+    Value<String?> updatedAt = const Value.absent(),
     String? name,
     Value<i2.Uint8List?> geositeConfig = const Value.absent(),
-    bool? useBloomFilter,
+    int? useBloomFilter,
+    Value<String?> clashRuleUrls = const Value.absent(),
+    Value<String?> geoUrl = const Value.absent(),
   }) => AtomicDomainSetsData(
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
     name: name ?? this.name,
     geositeConfig: geositeConfig.present
         ? geositeConfig.value
         : this.geositeConfig,
     useBloomFilter: useBloomFilter ?? this.useBloomFilter,
+    clashRuleUrls: clashRuleUrls.present
+        ? clashRuleUrls.value
+        : this.clashRuleUrls,
+    geoUrl: geoUrl.present ? geoUrl.value : this.geoUrl,
   );
   AtomicDomainSetsData copyWithCompanion(AtomicDomainSetsCompanion data) {
     return AtomicDomainSetsData(
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       name: data.name.present ? data.name.value : this.name,
       geositeConfig: data.geositeConfig.present
           ? data.geositeConfig.value
@@ -1766,72 +2088,109 @@ class AtomicDomainSetsData extends DataClass
       useBloomFilter: data.useBloomFilter.present
           ? data.useBloomFilter.value
           : this.useBloomFilter,
+      clashRuleUrls: data.clashRuleUrls.present
+          ? data.clashRuleUrls.value
+          : this.clashRuleUrls,
+      geoUrl: data.geoUrl.present ? data.geoUrl.value : this.geoUrl,
     );
   }
 
   @override
   String toString() {
     return (StringBuffer('AtomicDomainSetsData(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('name: $name, ')
           ..write('geositeConfig: $geositeConfig, ')
-          ..write('useBloomFilter: $useBloomFilter')
+          ..write('useBloomFilter: $useBloomFilter, ')
+          ..write('clashRuleUrls: $clashRuleUrls, ')
+          ..write('geoUrl: $geoUrl')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(name, $driftBlobEquality.hash(geositeConfig), useBloomFilter);
+  int get hashCode => Object.hash(
+    updatedAt,
+    name,
+    $driftBlobEquality.hash(geositeConfig),
+    useBloomFilter,
+    clashRuleUrls,
+    geoUrl,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is AtomicDomainSetsData &&
+          other.updatedAt == this.updatedAt &&
           other.name == this.name &&
           $driftBlobEquality.equals(other.geositeConfig, this.geositeConfig) &&
-          other.useBloomFilter == this.useBloomFilter);
+          other.useBloomFilter == this.useBloomFilter &&
+          other.clashRuleUrls == this.clashRuleUrls &&
+          other.geoUrl == this.geoUrl);
 }
 
 class AtomicDomainSetsCompanion extends UpdateCompanion<AtomicDomainSetsData> {
+  final Value<String?> updatedAt;
   final Value<String> name;
   final Value<i2.Uint8List?> geositeConfig;
-  final Value<bool> useBloomFilter;
+  final Value<int> useBloomFilter;
+  final Value<String?> clashRuleUrls;
+  final Value<String?> geoUrl;
   final Value<int> rowid;
   const AtomicDomainSetsCompanion({
+    this.updatedAt = const Value.absent(),
     this.name = const Value.absent(),
     this.geositeConfig = const Value.absent(),
     this.useBloomFilter = const Value.absent(),
+    this.clashRuleUrls = const Value.absent(),
+    this.geoUrl = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   AtomicDomainSetsCompanion.insert({
+    this.updatedAt = const Value.absent(),
     required String name,
     this.geositeConfig = const Value.absent(),
     this.useBloomFilter = const Value.absent(),
+    this.clashRuleUrls = const Value.absent(),
+    this.geoUrl = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : name = Value(name);
   static Insertable<AtomicDomainSetsData> custom({
+    Expression<String>? updatedAt,
     Expression<String>? name,
     Expression<i2.Uint8List>? geositeConfig,
-    Expression<bool>? useBloomFilter,
+    Expression<int>? useBloomFilter,
+    Expression<String>? clashRuleUrls,
+    Expression<String>? geoUrl,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (name != null) 'name': name,
       if (geositeConfig != null) 'geosite_config': geositeConfig,
       if (useBloomFilter != null) 'use_bloom_filter': useBloomFilter,
+      if (clashRuleUrls != null) 'clash_rule_urls': clashRuleUrls,
+      if (geoUrl != null) 'geo_url': geoUrl,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   AtomicDomainSetsCompanion copyWith({
+    Value<String?>? updatedAt,
     Value<String>? name,
     Value<i2.Uint8List?>? geositeConfig,
-    Value<bool>? useBloomFilter,
+    Value<int>? useBloomFilter,
+    Value<String?>? clashRuleUrls,
+    Value<String?>? geoUrl,
     Value<int>? rowid,
   }) {
     return AtomicDomainSetsCompanion(
+      updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
       geositeConfig: geositeConfig ?? this.geositeConfig,
       useBloomFilter: useBloomFilter ?? this.useBloomFilter,
+      clashRuleUrls: clashRuleUrls ?? this.clashRuleUrls,
+      geoUrl: geoUrl ?? this.geoUrl,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1839,6 +2198,9 @@ class AtomicDomainSetsCompanion extends UpdateCompanion<AtomicDomainSetsData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
@@ -1846,7 +2208,13 @@ class AtomicDomainSetsCompanion extends UpdateCompanion<AtomicDomainSetsData> {
       map['geosite_config'] = Variable<i2.Uint8List>(geositeConfig.value);
     }
     if (useBloomFilter.present) {
-      map['use_bloom_filter'] = Variable<bool>(useBloomFilter.value);
+      map['use_bloom_filter'] = Variable<int>(useBloomFilter.value);
+    }
+    if (clashRuleUrls.present) {
+      map['clash_rule_urls'] = Variable<String>(clashRuleUrls.value);
+    }
+    if (geoUrl.present) {
+      map['geo_url'] = Variable<String>(geoUrl.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -1857,9 +2225,12 @@ class AtomicDomainSetsCompanion extends UpdateCompanion<AtomicDomainSetsData> {
   @override
   String toString() {
     return (StringBuffer('AtomicDomainSetsCompanion(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('name: $name, ')
           ..write('geositeConfig: $geositeConfig, ')
           ..write('useBloomFilter: $useBloomFilter, ')
+          ..write('clashRuleUrls: $clashRuleUrls, ')
+          ..write('geoUrl: $geoUrl, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1878,9 +2249,7 @@ class GeoDomains extends Table with TableInfo<GeoDomains, GeoDomainsData> {
     hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT',
   );
   late final GeneratedColumn<i2.Uint8List> geoDomain =
       GeneratedColumn<i2.Uint8List>(
@@ -1889,6 +2258,7 @@ class GeoDomains extends Table with TableInfo<GeoDomains, GeoDomainsData> {
         false,
         type: DriftSqlType.blob,
         requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
       );
   late final GeneratedColumn<String> domainSetName = GeneratedColumn<String>(
     'domain_set_name',
@@ -1896,9 +2266,8 @@ class GeoDomains extends Table with TableInfo<GeoDomains, GeoDomainsData> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES atomic_domain_sets (name) ON UPDATE CASCADE ON DELETE CASCADE',
-    ),
+    $customConstraints:
+        'NOT NULL REFERENCES atomic_domain_sets(name)ON UPDATE CASCADE ON DELETE CASCADE',
   );
   @override
   List<GeneratedColumn> get $columns => [id, geoDomain, domainSetName];
@@ -1936,6 +2305,13 @@ class GeoDomains extends Table with TableInfo<GeoDomains, GeoDomainsData> {
   GeoDomains createAlias(String alias) {
     return GeoDomains(attachedDatabase, alias);
   }
+
+  @override
+  List<String> get customConstraints => const [
+    'UNIQUE(geo_domain, domain_set_name)',
+  ];
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class GeoDomainsData extends DataClass implements Insertable<GeoDomainsData> {
@@ -2097,12 +2473,29 @@ class GreatDomainSets extends Table
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   GreatDomainSets(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
     'name',
     aliasedName,
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> oppositeName = GeneratedColumn<String>(
+    'opposite_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
   );
   late final GeneratedColumn<i2.Uint8List> set = GeneratedColumn<i2.Uint8List>(
     'set',
@@ -2110,9 +2503,10 @@ class GreatDomainSets extends Table
     false,
     type: DriftSqlType.blob,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   @override
-  List<GeneratedColumn> get $columns => [name, set];
+  List<GeneratedColumn> get $columns => [updatedAt, name, oppositeName, set];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2124,10 +2518,18 @@ class GreatDomainSets extends Table
   GreatDomainSetsData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return GreatDomainSetsData(
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_at'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
       )!,
+      oppositeName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}opposite_name'],
+      ),
       set: attachedDatabase.typeMapping.read(
         DriftSqlType.blob,
         data['${effectivePrefix}set'],
@@ -2139,23 +2541,50 @@ class GreatDomainSets extends Table
   GreatDomainSets createAlias(String alias) {
     return GreatDomainSets(attachedDatabase, alias);
   }
+
+  @override
+  List<String> get customConstraints => const ['PRIMARY KEY(name)'];
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class GreatDomainSetsData extends DataClass
     implements Insertable<GreatDomainSetsData> {
+  final String? updatedAt;
   final String name;
+  final String? oppositeName;
   final i2.Uint8List set;
-  const GreatDomainSetsData({required this.name, required this.set});
+  const GreatDomainSetsData({
+    this.updatedAt,
+    required this.name,
+    this.oppositeName,
+    required this.set,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<String>(updatedAt);
+    }
     map['name'] = Variable<String>(name);
+    if (!nullToAbsent || oppositeName != null) {
+      map['opposite_name'] = Variable<String>(oppositeName);
+    }
     map['set'] = Variable<i2.Uint8List>(set);
     return map;
   }
 
   GreatDomainSetsCompanion toCompanion(bool nullToAbsent) {
-    return GreatDomainSetsCompanion(name: Value(name), set: Value(set));
+    return GreatDomainSetsCompanion(
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
+      name: Value(name),
+      oppositeName: oppositeName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(oppositeName),
+      set: Value(set),
+    );
   }
 
   factory GreatDomainSetsData.fromJson(
@@ -2164,7 +2593,9 @@ class GreatDomainSetsData extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return GreatDomainSetsData(
+      updatedAt: serializer.fromJson<String?>(json['updatedAt']),
       name: serializer.fromJson<String>(json['name']),
+      oppositeName: serializer.fromJson<String?>(json['oppositeName']),
       set: serializer.fromJson<i2.Uint8List>(json['set']),
     );
   }
@@ -2172,16 +2603,31 @@ class GreatDomainSetsData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'updatedAt': serializer.toJson<String?>(updatedAt),
       'name': serializer.toJson<String>(name),
+      'oppositeName': serializer.toJson<String?>(oppositeName),
       'set': serializer.toJson<i2.Uint8List>(set),
     };
   }
 
-  GreatDomainSetsData copyWith({String? name, i2.Uint8List? set}) =>
-      GreatDomainSetsData(name: name ?? this.name, set: set ?? this.set);
+  GreatDomainSetsData copyWith({
+    Value<String?> updatedAt = const Value.absent(),
+    String? name,
+    Value<String?> oppositeName = const Value.absent(),
+    i2.Uint8List? set,
+  }) => GreatDomainSetsData(
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
+    name: name ?? this.name,
+    oppositeName: oppositeName.present ? oppositeName.value : this.oppositeName,
+    set: set ?? this.set,
+  );
   GreatDomainSetsData copyWithCompanion(GreatDomainSetsCompanion data) {
     return GreatDomainSetsData(
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       name: data.name.present ? data.name.value : this.name,
+      oppositeName: data.oppositeName.present
+          ? data.oppositeName.value
+          : this.oppositeName,
       set: data.set.present ? data.set.value : this.set,
     );
   }
@@ -2189,56 +2635,75 @@ class GreatDomainSetsData extends DataClass
   @override
   String toString() {
     return (StringBuffer('GreatDomainSetsData(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('name: $name, ')
+          ..write('oppositeName: $oppositeName, ')
           ..write('set: $set')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(name, $driftBlobEquality.hash(set));
+  int get hashCode =>
+      Object.hash(updatedAt, name, oppositeName, $driftBlobEquality.hash(set));
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is GreatDomainSetsData &&
+          other.updatedAt == this.updatedAt &&
           other.name == this.name &&
+          other.oppositeName == this.oppositeName &&
           $driftBlobEquality.equals(other.set, this.set));
 }
 
 class GreatDomainSetsCompanion extends UpdateCompanion<GreatDomainSetsData> {
+  final Value<String?> updatedAt;
   final Value<String> name;
+  final Value<String?> oppositeName;
   final Value<i2.Uint8List> set;
   final Value<int> rowid;
   const GreatDomainSetsCompanion({
+    this.updatedAt = const Value.absent(),
     this.name = const Value.absent(),
+    this.oppositeName = const Value.absent(),
     this.set = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   GreatDomainSetsCompanion.insert({
+    this.updatedAt = const Value.absent(),
     required String name,
+    this.oppositeName = const Value.absent(),
     required i2.Uint8List set,
     this.rowid = const Value.absent(),
   }) : name = Value(name),
        set = Value(set);
   static Insertable<GreatDomainSetsData> custom({
+    Expression<String>? updatedAt,
     Expression<String>? name,
+    Expression<String>? oppositeName,
     Expression<i2.Uint8List>? set,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (name != null) 'name': name,
+      if (oppositeName != null) 'opposite_name': oppositeName,
       if (set != null) 'set': set,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   GreatDomainSetsCompanion copyWith({
+    Value<String?>? updatedAt,
     Value<String>? name,
+    Value<String?>? oppositeName,
     Value<i2.Uint8List>? set,
     Value<int>? rowid,
   }) {
     return GreatDomainSetsCompanion(
+      updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
+      oppositeName: oppositeName ?? this.oppositeName,
       set: set ?? this.set,
       rowid: rowid ?? this.rowid,
     );
@@ -2247,8 +2712,14 @@ class GreatDomainSetsCompanion extends UpdateCompanion<GreatDomainSetsData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
+    }
+    if (oppositeName.present) {
+      map['opposite_name'] = Variable<String>(oppositeName.value);
     }
     if (set.present) {
       map['set'] = Variable<i2.Uint8List>(set.value);
@@ -2262,7 +2733,9 @@ class GreatDomainSetsCompanion extends UpdateCompanion<GreatDomainSetsData> {
   @override
   String toString() {
     return (StringBuffer('GreatDomainSetsCompanion(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('name: $name, ')
+          ..write('oppositeName: $oppositeName, ')
           ..write('set: $set, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -2276,22 +2749,29 @@ class AtomicIpSets extends Table
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   AtomicIpSets(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
     'name',
     aliasedName,
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
-  late final GeneratedColumn<bool> inverse = GeneratedColumn<bool>(
+  late final GeneratedColumn<int> inverse = GeneratedColumn<int>(
     'inverse',
     aliasedName,
     false,
-    type: DriftSqlType.bool,
+    type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("inverse" IN (0, 1))',
-    ),
+    $customConstraints: 'NOT NULL DEFAULT 0 CHECK (inverse IN (0, 1))',
     defaultValue: const CustomExpression('0'),
   );
   late final GeneratedColumn<i2.Uint8List> geoIpConfig =
@@ -2301,9 +2781,33 @@ class AtomicIpSets extends Table
         true,
         type: DriftSqlType.blob,
         requiredDuringInsert: false,
+        $customConstraints: 'NULL',
       );
+  late final GeneratedColumn<String> clashRuleUrls = GeneratedColumn<String>(
+    'clash_rule_urls',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
+  late final GeneratedColumn<String> geoUrl = GeneratedColumn<String>(
+    'geo_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
   @override
-  List<GeneratedColumn> get $columns => [name, inverse, geoIpConfig];
+  List<GeneratedColumn> get $columns => [
+    updatedAt,
+    name,
+    inverse,
+    geoIpConfig,
+    clashRuleUrls,
+    geoUrl,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2315,17 +2819,29 @@ class AtomicIpSets extends Table
   AtomicIpSetsData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return AtomicIpSetsData(
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_at'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
       )!,
       inverse: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
+        DriftSqlType.int,
         data['${effectivePrefix}inverse'],
       )!,
       geoIpConfig: attachedDatabase.typeMapping.read(
         DriftSqlType.blob,
         data['${effectivePrefix}geo_ip_config'],
+      ),
+      clashRuleUrls: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}clash_rule_urls'],
+      ),
+      geoUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}geo_url'],
       ),
     );
   }
@@ -2334,36 +2850,65 @@ class AtomicIpSets extends Table
   AtomicIpSets createAlias(String alias) {
     return AtomicIpSets(attachedDatabase, alias);
   }
+
+  @override
+  List<String> get customConstraints => const ['PRIMARY KEY(name)'];
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class AtomicIpSetsData extends DataClass
     implements Insertable<AtomicIpSetsData> {
+  final String? updatedAt;
   final String name;
-  final bool inverse;
+  final int inverse;
   final i2.Uint8List? geoIpConfig;
+  final String? clashRuleUrls;
+  final String? geoUrl;
   const AtomicIpSetsData({
+    this.updatedAt,
     required this.name,
     required this.inverse,
     this.geoIpConfig,
+    this.clashRuleUrls,
+    this.geoUrl,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<String>(updatedAt);
+    }
     map['name'] = Variable<String>(name);
-    map['inverse'] = Variable<bool>(inverse);
+    map['inverse'] = Variable<int>(inverse);
     if (!nullToAbsent || geoIpConfig != null) {
       map['geo_ip_config'] = Variable<i2.Uint8List>(geoIpConfig);
+    }
+    if (!nullToAbsent || clashRuleUrls != null) {
+      map['clash_rule_urls'] = Variable<String>(clashRuleUrls);
+    }
+    if (!nullToAbsent || geoUrl != null) {
+      map['geo_url'] = Variable<String>(geoUrl);
     }
     return map;
   }
 
   AtomicIpSetsCompanion toCompanion(bool nullToAbsent) {
     return AtomicIpSetsCompanion(
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
       name: Value(name),
       inverse: Value(inverse),
       geoIpConfig: geoIpConfig == null && nullToAbsent
           ? const Value.absent()
           : Value(geoIpConfig),
+      clashRuleUrls: clashRuleUrls == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clashRuleUrls),
+      geoUrl: geoUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(geoUrl),
     );
   }
 
@@ -2373,103 +2918,155 @@ class AtomicIpSetsData extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return AtomicIpSetsData(
+      updatedAt: serializer.fromJson<String?>(json['updatedAt']),
       name: serializer.fromJson<String>(json['name']),
-      inverse: serializer.fromJson<bool>(json['inverse']),
+      inverse: serializer.fromJson<int>(json['inverse']),
       geoIpConfig: serializer.fromJson<i2.Uint8List?>(json['geoIpConfig']),
+      clashRuleUrls: serializer.fromJson<String?>(json['clashRuleUrls']),
+      geoUrl: serializer.fromJson<String?>(json['geoUrl']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'updatedAt': serializer.toJson<String?>(updatedAt),
       'name': serializer.toJson<String>(name),
-      'inverse': serializer.toJson<bool>(inverse),
+      'inverse': serializer.toJson<int>(inverse),
       'geoIpConfig': serializer.toJson<i2.Uint8List?>(geoIpConfig),
+      'clashRuleUrls': serializer.toJson<String?>(clashRuleUrls),
+      'geoUrl': serializer.toJson<String?>(geoUrl),
     };
   }
 
   AtomicIpSetsData copyWith({
+    Value<String?> updatedAt = const Value.absent(),
     String? name,
-    bool? inverse,
+    int? inverse,
     Value<i2.Uint8List?> geoIpConfig = const Value.absent(),
+    Value<String?> clashRuleUrls = const Value.absent(),
+    Value<String?> geoUrl = const Value.absent(),
   }) => AtomicIpSetsData(
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
     name: name ?? this.name,
     inverse: inverse ?? this.inverse,
     geoIpConfig: geoIpConfig.present ? geoIpConfig.value : this.geoIpConfig,
+    clashRuleUrls: clashRuleUrls.present
+        ? clashRuleUrls.value
+        : this.clashRuleUrls,
+    geoUrl: geoUrl.present ? geoUrl.value : this.geoUrl,
   );
   AtomicIpSetsData copyWithCompanion(AtomicIpSetsCompanion data) {
     return AtomicIpSetsData(
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       name: data.name.present ? data.name.value : this.name,
       inverse: data.inverse.present ? data.inverse.value : this.inverse,
       geoIpConfig: data.geoIpConfig.present
           ? data.geoIpConfig.value
           : this.geoIpConfig,
+      clashRuleUrls: data.clashRuleUrls.present
+          ? data.clashRuleUrls.value
+          : this.clashRuleUrls,
+      geoUrl: data.geoUrl.present ? data.geoUrl.value : this.geoUrl,
     );
   }
 
   @override
   String toString() {
     return (StringBuffer('AtomicIpSetsData(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('name: $name, ')
           ..write('inverse: $inverse, ')
-          ..write('geoIpConfig: $geoIpConfig')
+          ..write('geoIpConfig: $geoIpConfig, ')
+          ..write('clashRuleUrls: $clashRuleUrls, ')
+          ..write('geoUrl: $geoUrl')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(name, inverse, $driftBlobEquality.hash(geoIpConfig));
+  int get hashCode => Object.hash(
+    updatedAt,
+    name,
+    inverse,
+    $driftBlobEquality.hash(geoIpConfig),
+    clashRuleUrls,
+    geoUrl,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is AtomicIpSetsData &&
+          other.updatedAt == this.updatedAt &&
           other.name == this.name &&
           other.inverse == this.inverse &&
-          $driftBlobEquality.equals(other.geoIpConfig, this.geoIpConfig));
+          $driftBlobEquality.equals(other.geoIpConfig, this.geoIpConfig) &&
+          other.clashRuleUrls == this.clashRuleUrls &&
+          other.geoUrl == this.geoUrl);
 }
 
 class AtomicIpSetsCompanion extends UpdateCompanion<AtomicIpSetsData> {
+  final Value<String?> updatedAt;
   final Value<String> name;
-  final Value<bool> inverse;
+  final Value<int> inverse;
   final Value<i2.Uint8List?> geoIpConfig;
+  final Value<String?> clashRuleUrls;
+  final Value<String?> geoUrl;
   final Value<int> rowid;
   const AtomicIpSetsCompanion({
+    this.updatedAt = const Value.absent(),
     this.name = const Value.absent(),
     this.inverse = const Value.absent(),
     this.geoIpConfig = const Value.absent(),
+    this.clashRuleUrls = const Value.absent(),
+    this.geoUrl = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   AtomicIpSetsCompanion.insert({
+    this.updatedAt = const Value.absent(),
     required String name,
     this.inverse = const Value.absent(),
     this.geoIpConfig = const Value.absent(),
+    this.clashRuleUrls = const Value.absent(),
+    this.geoUrl = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : name = Value(name);
   static Insertable<AtomicIpSetsData> custom({
+    Expression<String>? updatedAt,
     Expression<String>? name,
-    Expression<bool>? inverse,
+    Expression<int>? inverse,
     Expression<i2.Uint8List>? geoIpConfig,
+    Expression<String>? clashRuleUrls,
+    Expression<String>? geoUrl,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (name != null) 'name': name,
       if (inverse != null) 'inverse': inverse,
       if (geoIpConfig != null) 'geo_ip_config': geoIpConfig,
+      if (clashRuleUrls != null) 'clash_rule_urls': clashRuleUrls,
+      if (geoUrl != null) 'geo_url': geoUrl,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   AtomicIpSetsCompanion copyWith({
+    Value<String?>? updatedAt,
     Value<String>? name,
-    Value<bool>? inverse,
+    Value<int>? inverse,
     Value<i2.Uint8List?>? geoIpConfig,
+    Value<String?>? clashRuleUrls,
+    Value<String?>? geoUrl,
     Value<int>? rowid,
   }) {
     return AtomicIpSetsCompanion(
+      updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
       inverse: inverse ?? this.inverse,
       geoIpConfig: geoIpConfig ?? this.geoIpConfig,
+      clashRuleUrls: clashRuleUrls ?? this.clashRuleUrls,
+      geoUrl: geoUrl ?? this.geoUrl,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2477,14 +3074,23 @@ class AtomicIpSetsCompanion extends UpdateCompanion<AtomicIpSetsData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
     if (inverse.present) {
-      map['inverse'] = Variable<bool>(inverse.value);
+      map['inverse'] = Variable<int>(inverse.value);
     }
     if (geoIpConfig.present) {
       map['geo_ip_config'] = Variable<i2.Uint8List>(geoIpConfig.value);
+    }
+    if (clashRuleUrls.present) {
+      map['clash_rule_urls'] = Variable<String>(clashRuleUrls.value);
+    }
+    if (geoUrl.present) {
+      map['geo_url'] = Variable<String>(geoUrl.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -2495,9 +3101,12 @@ class AtomicIpSetsCompanion extends UpdateCompanion<AtomicIpSetsData> {
   @override
   String toString() {
     return (StringBuffer('AtomicIpSetsCompanion(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('name: $name, ')
           ..write('inverse: $inverse, ')
           ..write('geoIpConfig: $geoIpConfig, ')
+          ..write('clashRuleUrls: $clashRuleUrls, ')
+          ..write('geoUrl: $geoUrl, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2509,12 +3118,21 @@ class GreatIpSets extends Table with TableInfo<GreatIpSets, GreatIpSetsData> {
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   GreatIpSets(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
     'name',
     aliasedName,
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   late final GeneratedColumn<i2.Uint8List> greatIpSetConfig =
       GeneratedColumn<i2.Uint8List>(
@@ -2523,9 +3141,23 @@ class GreatIpSets extends Table with TableInfo<GreatIpSets, GreatIpSetsData> {
         false,
         type: DriftSqlType.blob,
         requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
       );
+  late final GeneratedColumn<String> oppositeName = GeneratedColumn<String>(
+    'opposite_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
   @override
-  List<GeneratedColumn> get $columns => [name, greatIpSetConfig];
+  List<GeneratedColumn> get $columns => [
+    updatedAt,
+    name,
+    greatIpSetConfig,
+    oppositeName,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2537,6 +3169,10 @@ class GreatIpSets extends Table with TableInfo<GreatIpSets, GreatIpSetsData> {
   GreatIpSetsData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return GreatIpSetsData(
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_at'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -2545,6 +3181,10 @@ class GreatIpSets extends Table with TableInfo<GreatIpSets, GreatIpSetsData> {
         DriftSqlType.blob,
         data['${effectivePrefix}great_ip_set_config'],
       )!,
+      oppositeName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}opposite_name'],
+      ),
     );
   }
 
@@ -2552,24 +3192,48 @@ class GreatIpSets extends Table with TableInfo<GreatIpSets, GreatIpSetsData> {
   GreatIpSets createAlias(String alias) {
     return GreatIpSets(attachedDatabase, alias);
   }
+
+  @override
+  List<String> get customConstraints => const ['PRIMARY KEY(name)'];
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class GreatIpSetsData extends DataClass implements Insertable<GreatIpSetsData> {
+  final String? updatedAt;
   final String name;
   final i2.Uint8List greatIpSetConfig;
-  const GreatIpSetsData({required this.name, required this.greatIpSetConfig});
+  final String? oppositeName;
+  const GreatIpSetsData({
+    this.updatedAt,
+    required this.name,
+    required this.greatIpSetConfig,
+    this.oppositeName,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<String>(updatedAt);
+    }
     map['name'] = Variable<String>(name);
     map['great_ip_set_config'] = Variable<i2.Uint8List>(greatIpSetConfig);
+    if (!nullToAbsent || oppositeName != null) {
+      map['opposite_name'] = Variable<String>(oppositeName);
+    }
     return map;
   }
 
   GreatIpSetsCompanion toCompanion(bool nullToAbsent) {
     return GreatIpSetsCompanion(
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
       name: Value(name),
       greatIpSetConfig: Value(greatIpSetConfig),
+      oppositeName: oppositeName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(oppositeName),
     );
   }
 
@@ -2579,93 +3243,129 @@ class GreatIpSetsData extends DataClass implements Insertable<GreatIpSetsData> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return GreatIpSetsData(
+      updatedAt: serializer.fromJson<String?>(json['updatedAt']),
       name: serializer.fromJson<String>(json['name']),
       greatIpSetConfig: serializer.fromJson<i2.Uint8List>(
         json['greatIpSetConfig'],
       ),
+      oppositeName: serializer.fromJson<String?>(json['oppositeName']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'updatedAt': serializer.toJson<String?>(updatedAt),
       'name': serializer.toJson<String>(name),
       'greatIpSetConfig': serializer.toJson<i2.Uint8List>(greatIpSetConfig),
+      'oppositeName': serializer.toJson<String?>(oppositeName),
     };
   }
 
-  GreatIpSetsData copyWith({String? name, i2.Uint8List? greatIpSetConfig}) =>
-      GreatIpSetsData(
-        name: name ?? this.name,
-        greatIpSetConfig: greatIpSetConfig ?? this.greatIpSetConfig,
-      );
+  GreatIpSetsData copyWith({
+    Value<String?> updatedAt = const Value.absent(),
+    String? name,
+    i2.Uint8List? greatIpSetConfig,
+    Value<String?> oppositeName = const Value.absent(),
+  }) => GreatIpSetsData(
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
+    name: name ?? this.name,
+    greatIpSetConfig: greatIpSetConfig ?? this.greatIpSetConfig,
+    oppositeName: oppositeName.present ? oppositeName.value : this.oppositeName,
+  );
   GreatIpSetsData copyWithCompanion(GreatIpSetsCompanion data) {
     return GreatIpSetsData(
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       name: data.name.present ? data.name.value : this.name,
       greatIpSetConfig: data.greatIpSetConfig.present
           ? data.greatIpSetConfig.value
           : this.greatIpSetConfig,
+      oppositeName: data.oppositeName.present
+          ? data.oppositeName.value
+          : this.oppositeName,
     );
   }
 
   @override
   String toString() {
     return (StringBuffer('GreatIpSetsData(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('name: $name, ')
-          ..write('greatIpSetConfig: $greatIpSetConfig')
+          ..write('greatIpSetConfig: $greatIpSetConfig, ')
+          ..write('oppositeName: $oppositeName')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(name, $driftBlobEquality.hash(greatIpSetConfig));
+  int get hashCode => Object.hash(
+    updatedAt,
+    name,
+    $driftBlobEquality.hash(greatIpSetConfig),
+    oppositeName,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is GreatIpSetsData &&
+          other.updatedAt == this.updatedAt &&
           other.name == this.name &&
           $driftBlobEquality.equals(
             other.greatIpSetConfig,
             this.greatIpSetConfig,
-          ));
+          ) &&
+          other.oppositeName == this.oppositeName);
 }
 
 class GreatIpSetsCompanion extends UpdateCompanion<GreatIpSetsData> {
+  final Value<String?> updatedAt;
   final Value<String> name;
   final Value<i2.Uint8List> greatIpSetConfig;
+  final Value<String?> oppositeName;
   final Value<int> rowid;
   const GreatIpSetsCompanion({
+    this.updatedAt = const Value.absent(),
     this.name = const Value.absent(),
     this.greatIpSetConfig = const Value.absent(),
+    this.oppositeName = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   GreatIpSetsCompanion.insert({
+    this.updatedAt = const Value.absent(),
     required String name,
     required i2.Uint8List greatIpSetConfig,
+    this.oppositeName = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : name = Value(name),
        greatIpSetConfig = Value(greatIpSetConfig);
   static Insertable<GreatIpSetsData> custom({
+    Expression<String>? updatedAt,
     Expression<String>? name,
     Expression<i2.Uint8List>? greatIpSetConfig,
+    Expression<String>? oppositeName,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (name != null) 'name': name,
       if (greatIpSetConfig != null) 'great_ip_set_config': greatIpSetConfig,
+      if (oppositeName != null) 'opposite_name': oppositeName,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   GreatIpSetsCompanion copyWith({
+    Value<String?>? updatedAt,
     Value<String>? name,
     Value<i2.Uint8List>? greatIpSetConfig,
+    Value<String?>? oppositeName,
     Value<int>? rowid,
   }) {
     return GreatIpSetsCompanion(
+      updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
       greatIpSetConfig: greatIpSetConfig ?? this.greatIpSetConfig,
+      oppositeName: oppositeName ?? this.oppositeName,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2673,6 +3373,9 @@ class GreatIpSetsCompanion extends UpdateCompanion<GreatIpSetsData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
@@ -2680,6 +3383,9 @@ class GreatIpSetsCompanion extends UpdateCompanion<GreatIpSetsData> {
       map['great_ip_set_config'] = Variable<i2.Uint8List>(
         greatIpSetConfig.value,
       );
+    }
+    if (oppositeName.present) {
+      map['opposite_name'] = Variable<String>(oppositeName.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -2690,8 +3396,10 @@ class GreatIpSetsCompanion extends UpdateCompanion<GreatIpSetsData> {
   @override
   String toString() {
     return (StringBuffer('GreatIpSetsCompanion(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('name: $name, ')
           ..write('greatIpSetConfig: $greatIpSetConfig, ')
+          ..write('oppositeName: $oppositeName, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2703,15 +3411,32 @@ class AppSets extends Table with TableInfo<AppSets, AppSetsData> {
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   AppSets(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
     'name',
     aliasedName,
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> clashRuleUrls = GeneratedColumn<String>(
+    'clash_rule_urls',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
   );
   @override
-  List<GeneratedColumn> get $columns => [name];
+  List<GeneratedColumn> get $columns => [updatedAt, name, clashRuleUrls];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2723,10 +3448,18 @@ class AppSets extends Table with TableInfo<AppSets, AppSetsData> {
   AppSetsData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return AppSetsData(
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_at'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
       )!,
+      clashRuleUrls: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}clash_rule_urls'],
+      ),
     );
   }
 
@@ -2734,20 +3467,41 @@ class AppSets extends Table with TableInfo<AppSets, AppSetsData> {
   AppSets createAlias(String alias) {
     return AppSets(attachedDatabase, alias);
   }
+
+  @override
+  List<String> get customConstraints => const ['PRIMARY KEY(name)'];
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class AppSetsData extends DataClass implements Insertable<AppSetsData> {
+  final String? updatedAt;
   final String name;
-  const AppSetsData({required this.name});
+  final String? clashRuleUrls;
+  const AppSetsData({this.updatedAt, required this.name, this.clashRuleUrls});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<String>(updatedAt);
+    }
     map['name'] = Variable<String>(name);
+    if (!nullToAbsent || clashRuleUrls != null) {
+      map['clash_rule_urls'] = Variable<String>(clashRuleUrls);
+    }
     return map;
   }
 
   AppSetsCompanion toCompanion(bool nullToAbsent) {
-    return AppSetsCompanion(name: Value(name));
+    return AppSetsCompanion(
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
+      name: Value(name),
+      clashRuleUrls: clashRuleUrls == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clashRuleUrls),
+    );
   }
 
   factory AppSetsData.fromJson(
@@ -2755,59 +3509,105 @@ class AppSetsData extends DataClass implements Insertable<AppSetsData> {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return AppSetsData(name: serializer.fromJson<String>(json['name']));
+    return AppSetsData(
+      updatedAt: serializer.fromJson<String?>(json['updatedAt']),
+      name: serializer.fromJson<String>(json['name']),
+      clashRuleUrls: serializer.fromJson<String?>(json['clashRuleUrls']),
+    );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{'name': serializer.toJson<String>(name)};
+    return <String, dynamic>{
+      'updatedAt': serializer.toJson<String?>(updatedAt),
+      'name': serializer.toJson<String>(name),
+      'clashRuleUrls': serializer.toJson<String?>(clashRuleUrls),
+    };
   }
 
-  AppSetsData copyWith({String? name}) => AppSetsData(name: name ?? this.name);
+  AppSetsData copyWith({
+    Value<String?> updatedAt = const Value.absent(),
+    String? name,
+    Value<String?> clashRuleUrls = const Value.absent(),
+  }) => AppSetsData(
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
+    name: name ?? this.name,
+    clashRuleUrls: clashRuleUrls.present
+        ? clashRuleUrls.value
+        : this.clashRuleUrls,
+  );
   AppSetsData copyWithCompanion(AppSetsCompanion data) {
-    return AppSetsData(name: data.name.present ? data.name.value : this.name);
+    return AppSetsData(
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      name: data.name.present ? data.name.value : this.name,
+      clashRuleUrls: data.clashRuleUrls.present
+          ? data.clashRuleUrls.value
+          : this.clashRuleUrls,
+    );
   }
 
   @override
   String toString() {
     return (StringBuffer('AppSetsData(')
-          ..write('name: $name')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('name: $name, ')
+          ..write('clashRuleUrls: $clashRuleUrls')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => name.hashCode;
+  int get hashCode => Object.hash(updatedAt, name, clashRuleUrls);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is AppSetsData && other.name == this.name);
+      (other is AppSetsData &&
+          other.updatedAt == this.updatedAt &&
+          other.name == this.name &&
+          other.clashRuleUrls == this.clashRuleUrls);
 }
 
 class AppSetsCompanion extends UpdateCompanion<AppSetsData> {
+  final Value<String?> updatedAt;
   final Value<String> name;
+  final Value<String?> clashRuleUrls;
   final Value<int> rowid;
   const AppSetsCompanion({
+    this.updatedAt = const Value.absent(),
     this.name = const Value.absent(),
+    this.clashRuleUrls = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   AppSetsCompanion.insert({
+    this.updatedAt = const Value.absent(),
     required String name,
+    this.clashRuleUrls = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : name = Value(name);
   static Insertable<AppSetsData> custom({
+    Expression<String>? updatedAt,
     Expression<String>? name,
+    Expression<String>? clashRuleUrls,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (name != null) 'name': name,
+      if (clashRuleUrls != null) 'clash_rule_urls': clashRuleUrls,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
-  AppSetsCompanion copyWith({Value<String>? name, Value<int>? rowid}) {
+  AppSetsCompanion copyWith({
+    Value<String?>? updatedAt,
+    Value<String>? name,
+    Value<String?>? clashRuleUrls,
+    Value<int>? rowid,
+  }) {
     return AppSetsCompanion(
+      updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
+      clashRuleUrls: clashRuleUrls ?? this.clashRuleUrls,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2815,8 +3615,14 @@ class AppSetsCompanion extends UpdateCompanion<AppSetsData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
+    }
+    if (clashRuleUrls.present) {
+      map['clash_rule_urls'] = Variable<String>(clashRuleUrls.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -2827,7 +3633,9 @@ class AppSetsCompanion extends UpdateCompanion<AppSetsData> {
   @override
   String toString() {
     return (StringBuffer('AppSetsCompanion(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('name: $name, ')
+          ..write('clashRuleUrls: $clashRuleUrls, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2846,9 +3654,7 @@ class Apps extends Table with TableInfo<Apps, AppsData> {
     hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT',
   );
   late final GeneratedColumn<String> appSetName = GeneratedColumn<String>(
     'app_set_name',
@@ -2856,9 +3662,8 @@ class Apps extends Table with TableInfo<Apps, AppsData> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES app_sets (name) ON UPDATE CASCADE ON DELETE CASCADE',
-    ),
+    $customConstraints:
+        'NOT NULL REFERENCES app_sets(name)ON UPDATE CASCADE ON DELETE CASCADE',
   );
   late final GeneratedColumn<i2.Uint8List> appId =
       GeneratedColumn<i2.Uint8List>(
@@ -2867,6 +3672,7 @@ class Apps extends Table with TableInfo<Apps, AppsData> {
         false,
         type: DriftSqlType.blob,
         requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
       );
   late final GeneratedColumn<i2.Uint8List> icon = GeneratedColumn<i2.Uint8List>(
     'icon',
@@ -2874,6 +3680,7 @@ class Apps extends Table with TableInfo<Apps, AppsData> {
     true,
     type: DriftSqlType.blob,
     requiredDuringInsert: false,
+    $customConstraints: 'NULL',
   );
   @override
   List<GeneratedColumn> get $columns => [id, appSetName, appId, icon];
@@ -2915,6 +3722,11 @@ class Apps extends Table with TableInfo<Apps, AppsData> {
   Apps createAlias(String alias) {
     return Apps(attachedDatabase, alias);
   }
+
+  @override
+  List<String> get customConstraints => const ['UNIQUE(app_id, app_set_name)'];
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class AppsData extends DataClass implements Insertable<AppsData> {
@@ -3110,9 +3922,7 @@ class Cidrs extends Table with TableInfo<Cidrs, CidrsData> {
     hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT',
   );
   late final GeneratedColumn<String> ipSetName = GeneratedColumn<String>(
     'ip_set_name',
@@ -3120,9 +3930,8 @@ class Cidrs extends Table with TableInfo<Cidrs, CidrsData> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES atomic_ip_sets (name) ON UPDATE CASCADE ON DELETE CASCADE',
-    ),
+    $customConstraints:
+        'NOT NULL REFERENCES atomic_ip_sets(name)ON UPDATE CASCADE ON DELETE CASCADE',
   );
   late final GeneratedColumn<i2.Uint8List> cidr = GeneratedColumn<i2.Uint8List>(
     'cidr',
@@ -3130,6 +3939,7 @@ class Cidrs extends Table with TableInfo<Cidrs, CidrsData> {
     false,
     type: DriftSqlType.blob,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   @override
   List<GeneratedColumn> get $columns => [id, ipSetName, cidr];
@@ -3167,6 +3977,11 @@ class Cidrs extends Table with TableInfo<Cidrs, CidrsData> {
   Cidrs createAlias(String alias) {
     return Cidrs(attachedDatabase, alias);
   }
+
+  @override
+  List<String> get customConstraints => const ['UNIQUE(cidr, ip_set_name)'];
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class CidrsData extends DataClass implements Insertable<CidrsData> {
@@ -3321,6 +4136,14 @@ class SshServers extends Table with TableInfo<SshServers, SshServersData> {
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   SshServers(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
     'id',
     aliasedName,
@@ -3328,9 +4151,7 @@ class SshServers extends Table with TableInfo<SshServers, SshServersData> {
     hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT',
   );
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
     'name',
@@ -3338,6 +4159,7 @@ class SshServers extends Table with TableInfo<SshServers, SshServersData> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   late final GeneratedColumn<String> address = GeneratedColumn<String>(
     'address',
@@ -3345,6 +4167,7 @@ class SshServers extends Table with TableInfo<SshServers, SshServersData> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   late final GeneratedColumn<String> storageKey = GeneratedColumn<String>(
     'storage_key',
@@ -3352,6 +4175,7 @@ class SshServers extends Table with TableInfo<SshServers, SshServersData> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   late final GeneratedColumn<String> country = GeneratedColumn<String>(
     'country',
@@ -3359,6 +4183,7 @@ class SshServers extends Table with TableInfo<SshServers, SshServersData> {
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'NULL',
   );
   late final GeneratedColumn<int> authMethod = GeneratedColumn<int>(
     'auth_method',
@@ -3366,9 +4191,11 @@ class SshServers extends Table with TableInfo<SshServers, SshServersData> {
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   @override
   List<GeneratedColumn> get $columns => [
+    updatedAt,
     id,
     name,
     address,
@@ -3387,6 +4214,10 @@ class SshServers extends Table with TableInfo<SshServers, SshServersData> {
   SshServersData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return SshServersData(
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_at'],
+      ),
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -3418,9 +4249,13 @@ class SshServers extends Table with TableInfo<SshServers, SshServersData> {
   SshServers createAlias(String alias) {
     return SshServers(attachedDatabase, alias);
   }
+
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class SshServersData extends DataClass implements Insertable<SshServersData> {
+  final String? updatedAt;
   final int id;
   final String name;
   final String address;
@@ -3428,6 +4263,7 @@ class SshServersData extends DataClass implements Insertable<SshServersData> {
   final String? country;
   final int authMethod;
   const SshServersData({
+    this.updatedAt,
     required this.id,
     required this.name,
     required this.address,
@@ -3438,6 +4274,9 @@ class SshServersData extends DataClass implements Insertable<SshServersData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<String>(updatedAt);
+    }
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
     map['address'] = Variable<String>(address);
@@ -3451,6 +4290,9 @@ class SshServersData extends DataClass implements Insertable<SshServersData> {
 
   SshServersCompanion toCompanion(bool nullToAbsent) {
     return SshServersCompanion(
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
       id: Value(id),
       name: Value(name),
       address: Value(address),
@@ -3468,6 +4310,7 @@ class SshServersData extends DataClass implements Insertable<SshServersData> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return SshServersData(
+      updatedAt: serializer.fromJson<String?>(json['updatedAt']),
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       address: serializer.fromJson<String>(json['address']),
@@ -3480,6 +4323,7 @@ class SshServersData extends DataClass implements Insertable<SshServersData> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'updatedAt': serializer.toJson<String?>(updatedAt),
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'address': serializer.toJson<String>(address),
@@ -3490,6 +4334,7 @@ class SshServersData extends DataClass implements Insertable<SshServersData> {
   }
 
   SshServersData copyWith({
+    Value<String?> updatedAt = const Value.absent(),
     int? id,
     String? name,
     String? address,
@@ -3497,6 +4342,7 @@ class SshServersData extends DataClass implements Insertable<SshServersData> {
     Value<String?> country = const Value.absent(),
     int? authMethod,
   }) => SshServersData(
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
     id: id ?? this.id,
     name: name ?? this.name,
     address: address ?? this.address,
@@ -3506,6 +4352,7 @@ class SshServersData extends DataClass implements Insertable<SshServersData> {
   );
   SshServersData copyWithCompanion(SshServersCompanion data) {
     return SshServersData(
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       address: data.address.present ? data.address.value : this.address,
@@ -3522,6 +4369,7 @@ class SshServersData extends DataClass implements Insertable<SshServersData> {
   @override
   String toString() {
     return (StringBuffer('SshServersData(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('address: $address, ')
@@ -3533,12 +4381,20 @@ class SshServersData extends DataClass implements Insertable<SshServersData> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, name, address, storageKey, country, authMethod);
+  int get hashCode => Object.hash(
+    updatedAt,
+    id,
+    name,
+    address,
+    storageKey,
+    country,
+    authMethod,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is SshServersData &&
+          other.updatedAt == this.updatedAt &&
           other.id == this.id &&
           other.name == this.name &&
           other.address == this.address &&
@@ -3548,6 +4404,7 @@ class SshServersData extends DataClass implements Insertable<SshServersData> {
 }
 
 class SshServersCompanion extends UpdateCompanion<SshServersData> {
+  final Value<String?> updatedAt;
   final Value<int> id;
   final Value<String> name;
   final Value<String> address;
@@ -3555,6 +4412,7 @@ class SshServersCompanion extends UpdateCompanion<SshServersData> {
   final Value<String?> country;
   final Value<int> authMethod;
   const SshServersCompanion({
+    this.updatedAt = const Value.absent(),
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.address = const Value.absent(),
@@ -3563,6 +4421,7 @@ class SshServersCompanion extends UpdateCompanion<SshServersData> {
     this.authMethod = const Value.absent(),
   });
   SshServersCompanion.insert({
+    this.updatedAt = const Value.absent(),
     this.id = const Value.absent(),
     required String name,
     required String address,
@@ -3574,6 +4433,7 @@ class SshServersCompanion extends UpdateCompanion<SshServersData> {
        storageKey = Value(storageKey),
        authMethod = Value(authMethod);
   static Insertable<SshServersData> custom({
+    Expression<String>? updatedAt,
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? address,
@@ -3582,6 +4442,7 @@ class SshServersCompanion extends UpdateCompanion<SshServersData> {
     Expression<int>? authMethod,
   }) {
     return RawValuesInsertable({
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (address != null) 'address': address,
@@ -3592,6 +4453,7 @@ class SshServersCompanion extends UpdateCompanion<SshServersData> {
   }
 
   SshServersCompanion copyWith({
+    Value<String?>? updatedAt,
     Value<int>? id,
     Value<String>? name,
     Value<String>? address,
@@ -3600,6 +4462,7 @@ class SshServersCompanion extends UpdateCompanion<SshServersData> {
     Value<int>? authMethod,
   }) {
     return SshServersCompanion(
+      updatedAt: updatedAt ?? this.updatedAt,
       id: id ?? this.id,
       name: name ?? this.name,
       address: address ?? this.address,
@@ -3612,6 +4475,9 @@ class SshServersCompanion extends UpdateCompanion<SshServersData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
@@ -3636,6 +4502,7 @@ class SshServersCompanion extends UpdateCompanion<SshServersData> {
   @override
   String toString() {
     return (StringBuffer('SshServersCompanion(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('address: $address, ')
@@ -3660,9 +4527,7 @@ class CommonSshKeys extends Table
     hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT',
   );
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
     'name',
@@ -3670,7 +4535,7 @@ class CommonSshKeys extends Table
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+    $customConstraints: 'NOT NULL UNIQUE',
   );
   late final GeneratedColumn<String> remark = GeneratedColumn<String>(
     'remark',
@@ -3678,6 +4543,7 @@ class CommonSshKeys extends Table
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+    $customConstraints: 'NULL',
   );
   @override
   List<GeneratedColumn> get $columns => [id, name, remark];
@@ -3711,6 +4577,9 @@ class CommonSshKeys extends Table
   CommonSshKeys createAlias(String alias) {
     return CommonSshKeys(attachedDatabase, alias);
   }
+
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class CommonSshKeysData extends DataClass
@@ -3869,16 +4738,21 @@ class CustomRouteModes extends Table
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   CustomRouteModes(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
     'id',
     aliasedName,
     false,
-    hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
+    $customConstraints: 'NOT NULL',
   );
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
     'name',
@@ -3886,7 +4760,7 @@ class CustomRouteModes extends Table
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+    $customConstraints: 'NOT NULL UNIQUE',
   );
   late final GeneratedColumn<i2.Uint8List> routerConfig =
       GeneratedColumn<i2.Uint8List>(
@@ -3895,21 +4769,35 @@ class CustomRouteModes extends Table
         false,
         type: DriftSqlType.blob,
         requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
       );
-  late final GeneratedColumn<String> domainSetsProxyDns =
+  late final GeneratedColumn<i2.Uint8List> dnsRules =
+      GeneratedColumn<i2.Uint8List>(
+        'dns_rules',
+        aliasedName,
+        false,
+        type: DriftSqlType.blob,
+        requiredDuringInsert: false,
+        $customConstraints: 'NOT NULL DEFAULT X\'\'',
+        defaultValue: const CustomExpression('X\'\''),
+      );
+  late final GeneratedColumn<String> internalDnsServers =
       GeneratedColumn<String>(
-        'domain_sets_proxy_dns',
+        'internal_dns_servers',
         aliasedName,
         false,
         type: DriftSqlType.string,
         requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
       );
   @override
   List<GeneratedColumn> get $columns => [
+    updatedAt,
     id,
     name,
     routerConfig,
-    domainSetsProxyDns,
+    dnsRules,
+    internalDnsServers,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3922,6 +4810,10 @@ class CustomRouteModes extends Table
   CustomRouteModesData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return CustomRouteModesData(
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_at'],
+      ),
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -3934,9 +4826,13 @@ class CustomRouteModes extends Table
         DriftSqlType.blob,
         data['${effectivePrefix}router_config'],
       )!,
-      domainSetsProxyDns: attachedDatabase.typeMapping.read(
+      dnsRules: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}dns_rules'],
+      )!,
+      internalDnsServers: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}domain_sets_proxy_dns'],
+        data['${effectivePrefix}internal_dns_servers'],
       )!,
     );
   }
@@ -3945,36 +4841,53 @@ class CustomRouteModes extends Table
   CustomRouteModes createAlias(String alias) {
     return CustomRouteModes(attachedDatabase, alias);
   }
+
+  @override
+  List<String> get customConstraints => const ['PRIMARY KEY(id)'];
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class CustomRouteModesData extends DataClass
     implements Insertable<CustomRouteModesData> {
+  final String? updatedAt;
   final int id;
   final String name;
   final i2.Uint8List routerConfig;
-  final String domainSetsProxyDns;
+  final i2.Uint8List dnsRules;
+  final String internalDnsServers;
   const CustomRouteModesData({
+    this.updatedAt,
     required this.id,
     required this.name,
     required this.routerConfig,
-    required this.domainSetsProxyDns,
+    required this.dnsRules,
+    required this.internalDnsServers,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<String>(updatedAt);
+    }
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
     map['router_config'] = Variable<i2.Uint8List>(routerConfig);
-    map['domain_sets_proxy_dns'] = Variable<String>(domainSetsProxyDns);
+    map['dns_rules'] = Variable<i2.Uint8List>(dnsRules);
+    map['internal_dns_servers'] = Variable<String>(internalDnsServers);
     return map;
   }
 
   CustomRouteModesCompanion toCompanion(bool nullToAbsent) {
     return CustomRouteModesCompanion(
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
       id: Value(id),
       name: Value(name),
       routerConfig: Value(routerConfig),
-      domainSetsProxyDns: Value(domainSetsProxyDns),
+      dnsRules: Value(dnsRules),
+      internalDnsServers: Value(internalDnsServers),
     );
   }
 
@@ -3984,11 +4897,13 @@ class CustomRouteModesData extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return CustomRouteModesData(
+      updatedAt: serializer.fromJson<String?>(json['updatedAt']),
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       routerConfig: serializer.fromJson<i2.Uint8List>(json['routerConfig']),
-      domainSetsProxyDns: serializer.fromJson<String>(
-        json['domainSetsProxyDns'],
+      dnsRules: serializer.fromJson<i2.Uint8List>(json['dnsRules']),
+      internalDnsServers: serializer.fromJson<String>(
+        json['internalDnsServers'],
       ),
     );
   }
@@ -3996,116 +4911,147 @@ class CustomRouteModesData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'updatedAt': serializer.toJson<String?>(updatedAt),
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'routerConfig': serializer.toJson<i2.Uint8List>(routerConfig),
-      'domainSetsProxyDns': serializer.toJson<String>(domainSetsProxyDns),
+      'dnsRules': serializer.toJson<i2.Uint8List>(dnsRules),
+      'internalDnsServers': serializer.toJson<String>(internalDnsServers),
     };
   }
 
   CustomRouteModesData copyWith({
+    Value<String?> updatedAt = const Value.absent(),
     int? id,
     String? name,
     i2.Uint8List? routerConfig,
-    String? domainSetsProxyDns,
+    i2.Uint8List? dnsRules,
+    String? internalDnsServers,
   }) => CustomRouteModesData(
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
     id: id ?? this.id,
     name: name ?? this.name,
     routerConfig: routerConfig ?? this.routerConfig,
-    domainSetsProxyDns: domainSetsProxyDns ?? this.domainSetsProxyDns,
+    dnsRules: dnsRules ?? this.dnsRules,
+    internalDnsServers: internalDnsServers ?? this.internalDnsServers,
   );
   CustomRouteModesData copyWithCompanion(CustomRouteModesCompanion data) {
     return CustomRouteModesData(
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       routerConfig: data.routerConfig.present
           ? data.routerConfig.value
           : this.routerConfig,
-      domainSetsProxyDns: data.domainSetsProxyDns.present
-          ? data.domainSetsProxyDns.value
-          : this.domainSetsProxyDns,
+      dnsRules: data.dnsRules.present ? data.dnsRules.value : this.dnsRules,
+      internalDnsServers: data.internalDnsServers.present
+          ? data.internalDnsServers.value
+          : this.internalDnsServers,
     );
   }
 
   @override
   String toString() {
     return (StringBuffer('CustomRouteModesData(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('routerConfig: $routerConfig, ')
-          ..write('domainSetsProxyDns: $domainSetsProxyDns')
+          ..write('dnsRules: $dnsRules, ')
+          ..write('internalDnsServers: $internalDnsServers')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(
+    updatedAt,
     id,
     name,
     $driftBlobEquality.hash(routerConfig),
-    domainSetsProxyDns,
+    $driftBlobEquality.hash(dnsRules),
+    internalDnsServers,
   );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is CustomRouteModesData &&
+          other.updatedAt == this.updatedAt &&
           other.id == this.id &&
           other.name == this.name &&
           $driftBlobEquality.equals(other.routerConfig, this.routerConfig) &&
-          other.domainSetsProxyDns == this.domainSetsProxyDns);
+          $driftBlobEquality.equals(other.dnsRules, this.dnsRules) &&
+          other.internalDnsServers == this.internalDnsServers);
 }
 
 class CustomRouteModesCompanion extends UpdateCompanion<CustomRouteModesData> {
+  final Value<String?> updatedAt;
   final Value<int> id;
   final Value<String> name;
   final Value<i2.Uint8List> routerConfig;
-  final Value<String> domainSetsProxyDns;
+  final Value<i2.Uint8List> dnsRules;
+  final Value<String> internalDnsServers;
   const CustomRouteModesCompanion({
+    this.updatedAt = const Value.absent(),
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.routerConfig = const Value.absent(),
-    this.domainSetsProxyDns = const Value.absent(),
+    this.dnsRules = const Value.absent(),
+    this.internalDnsServers = const Value.absent(),
   });
   CustomRouteModesCompanion.insert({
+    this.updatedAt = const Value.absent(),
     this.id = const Value.absent(),
     required String name,
     required i2.Uint8List routerConfig,
-    required String domainSetsProxyDns,
+    this.dnsRules = const Value.absent(),
+    required String internalDnsServers,
   }) : name = Value(name),
        routerConfig = Value(routerConfig),
-       domainSetsProxyDns = Value(domainSetsProxyDns);
+       internalDnsServers = Value(internalDnsServers);
   static Insertable<CustomRouteModesData> custom({
+    Expression<String>? updatedAt,
     Expression<int>? id,
     Expression<String>? name,
     Expression<i2.Uint8List>? routerConfig,
-    Expression<String>? domainSetsProxyDns,
+    Expression<i2.Uint8List>? dnsRules,
+    Expression<String>? internalDnsServers,
   }) {
     return RawValuesInsertable({
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (routerConfig != null) 'router_config': routerConfig,
-      if (domainSetsProxyDns != null)
-        'domain_sets_proxy_dns': domainSetsProxyDns,
+      if (dnsRules != null) 'dns_rules': dnsRules,
+      if (internalDnsServers != null)
+        'internal_dns_servers': internalDnsServers,
     });
   }
 
   CustomRouteModesCompanion copyWith({
+    Value<String?>? updatedAt,
     Value<int>? id,
     Value<String>? name,
     Value<i2.Uint8List>? routerConfig,
-    Value<String>? domainSetsProxyDns,
+    Value<i2.Uint8List>? dnsRules,
+    Value<String>? internalDnsServers,
   }) {
     return CustomRouteModesCompanion(
+      updatedAt: updatedAt ?? this.updatedAt,
       id: id ?? this.id,
       name: name ?? this.name,
       routerConfig: routerConfig ?? this.routerConfig,
-      domainSetsProxyDns: domainSetsProxyDns ?? this.domainSetsProxyDns,
+      dnsRules: dnsRules ?? this.dnsRules,
+      internalDnsServers: internalDnsServers ?? this.internalDnsServers,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
@@ -4115,8 +5061,11 @@ class CustomRouteModesCompanion extends UpdateCompanion<CustomRouteModesData> {
     if (routerConfig.present) {
       map['router_config'] = Variable<i2.Uint8List>(routerConfig.value);
     }
-    if (domainSetsProxyDns.present) {
-      map['domain_sets_proxy_dns'] = Variable<String>(domainSetsProxyDns.value);
+    if (dnsRules.present) {
+      map['dns_rules'] = Variable<i2.Uint8List>(dnsRules.value);
+    }
+    if (internalDnsServers.present) {
+      map['internal_dns_servers'] = Variable<String>(internalDnsServers.value);
     }
     return map;
   }
@@ -4124,10 +5073,12 @@ class CustomRouteModesCompanion extends UpdateCompanion<CustomRouteModesData> {
   @override
   String toString() {
     return (StringBuffer('CustomRouteModesCompanion(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('routerConfig: $routerConfig, ')
-          ..write('domainSetsProxyDns: $domainSetsProxyDns')
+          ..write('dnsRules: $dnsRules, ')
+          ..write('internalDnsServers: $internalDnsServers')
           ..write(')'))
         .toString();
   }
@@ -4139,12 +5090,21 @@ class HandlerSelectors extends Table
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   HandlerSelectors(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
     'name',
     aliasedName,
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
   );
   late final GeneratedColumn<i2.Uint8List> config =
       GeneratedColumn<i2.Uint8List>(
@@ -4153,9 +5113,10 @@ class HandlerSelectors extends Table
         false,
         type: DriftSqlType.blob,
         requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
       );
   @override
-  List<GeneratedColumn> get $columns => [name, config];
+  List<GeneratedColumn> get $columns => [updatedAt, name, config];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -4167,6 +5128,10 @@ class HandlerSelectors extends Table
   HandlerSelectorsData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return HandlerSelectorsData(
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_at'],
+      ),
       name: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}name'],
@@ -4182,23 +5147,42 @@ class HandlerSelectors extends Table
   HandlerSelectors createAlias(String alias) {
     return HandlerSelectors(attachedDatabase, alias);
   }
+
+  @override
+  List<String> get customConstraints => const ['PRIMARY KEY(name)'];
+  @override
+  bool get dontWriteConstraints => true;
 }
 
 class HandlerSelectorsData extends DataClass
     implements Insertable<HandlerSelectorsData> {
+  final String? updatedAt;
   final String name;
   final i2.Uint8List config;
-  const HandlerSelectorsData({required this.name, required this.config});
+  const HandlerSelectorsData({
+    this.updatedAt,
+    required this.name,
+    required this.config,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<String>(updatedAt);
+    }
     map['name'] = Variable<String>(name);
     map['config'] = Variable<i2.Uint8List>(config);
     return map;
   }
 
   HandlerSelectorsCompanion toCompanion(bool nullToAbsent) {
-    return HandlerSelectorsCompanion(name: Value(name), config: Value(config));
+    return HandlerSelectorsCompanion(
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
+      name: Value(name),
+      config: Value(config),
+    );
   }
 
   factory HandlerSelectorsData.fromJson(
@@ -4207,6 +5191,7 @@ class HandlerSelectorsData extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return HandlerSelectorsData(
+      updatedAt: serializer.fromJson<String?>(json['updatedAt']),
       name: serializer.fromJson<String>(json['name']),
       config: serializer.fromJson<i2.Uint8List>(json['config']),
     );
@@ -4215,18 +5200,24 @@ class HandlerSelectorsData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'updatedAt': serializer.toJson<String?>(updatedAt),
       'name': serializer.toJson<String>(name),
       'config': serializer.toJson<i2.Uint8List>(config),
     };
   }
 
-  HandlerSelectorsData copyWith({String? name, i2.Uint8List? config}) =>
-      HandlerSelectorsData(
-        name: name ?? this.name,
-        config: config ?? this.config,
-      );
+  HandlerSelectorsData copyWith({
+    Value<String?> updatedAt = const Value.absent(),
+    String? name,
+    i2.Uint8List? config,
+  }) => HandlerSelectorsData(
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
+    name: name ?? this.name,
+    config: config ?? this.config,
+  );
   HandlerSelectorsData copyWithCompanion(HandlerSelectorsCompanion data) {
     return HandlerSelectorsData(
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       name: data.name.present ? data.name.value : this.name,
       config: data.config.present ? data.config.value : this.config,
     );
@@ -4235,6 +5226,7 @@ class HandlerSelectorsData extends DataClass
   @override
   String toString() {
     return (StringBuffer('HandlerSelectorsData(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('name: $name, ')
           ..write('config: $config')
           ..write(')'))
@@ -4242,36 +5234,43 @@ class HandlerSelectorsData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(name, $driftBlobEquality.hash(config));
+  int get hashCode =>
+      Object.hash(updatedAt, name, $driftBlobEquality.hash(config));
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is HandlerSelectorsData &&
+          other.updatedAt == this.updatedAt &&
           other.name == this.name &&
           $driftBlobEquality.equals(other.config, this.config));
 }
 
 class HandlerSelectorsCompanion extends UpdateCompanion<HandlerSelectorsData> {
+  final Value<String?> updatedAt;
   final Value<String> name;
   final Value<i2.Uint8List> config;
   final Value<int> rowid;
   const HandlerSelectorsCompanion({
+    this.updatedAt = const Value.absent(),
     this.name = const Value.absent(),
     this.config = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   HandlerSelectorsCompanion.insert({
+    this.updatedAt = const Value.absent(),
     required String name,
     required i2.Uint8List config,
     this.rowid = const Value.absent(),
   }) : name = Value(name),
        config = Value(config);
   static Insertable<HandlerSelectorsData> custom({
+    Expression<String>? updatedAt,
     Expression<String>? name,
     Expression<i2.Uint8List>? config,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (name != null) 'name': name,
       if (config != null) 'config': config,
       if (rowid != null) 'rowid': rowid,
@@ -4279,11 +5278,13 @@ class HandlerSelectorsCompanion extends UpdateCompanion<HandlerSelectorsData> {
   }
 
   HandlerSelectorsCompanion copyWith({
+    Value<String?>? updatedAt,
     Value<String>? name,
     Value<i2.Uint8List>? config,
     Value<int>? rowid,
   }) {
     return HandlerSelectorsCompanion(
+      updatedAt: updatedAt ?? this.updatedAt,
       name: name ?? this.name,
       config: config ?? this.config,
       rowid: rowid ?? this.rowid,
@@ -4293,6 +5294,9 @@ class HandlerSelectorsCompanion extends UpdateCompanion<HandlerSelectorsData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
@@ -4308,6 +5312,7 @@ class HandlerSelectorsCompanion extends UpdateCompanion<HandlerSelectorsData> {
   @override
   String toString() {
     return (StringBuffer('HandlerSelectorsCompanion(')
+          ..write('updatedAt: $updatedAt, ')
           ..write('name: $name, ')
           ..write('config: $config, ')
           ..write('rowid: $rowid')
@@ -4316,8 +5321,987 @@ class HandlerSelectorsCompanion extends UpdateCompanion<HandlerSelectorsData> {
   }
 }
 
-class DatabaseAtV3 extends GeneratedDatabase {
-  DatabaseAtV3(QueryExecutor e) : super(e);
+class SelectorHandlerRelations extends Table
+    with TableInfo<SelectorHandlerRelations, SelectorHandlerRelationsData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  SelectorHandlerRelations(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> selectorName = GeneratedColumn<String>(
+    'selector_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints:
+        'NOT NULL REFERENCES handler_selectors(name)ON DELETE CASCADE',
+  );
+  late final GeneratedColumn<int> handlerId = GeneratedColumn<int>(
+    'handler_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints:
+        'NOT NULL REFERENCES outbound_handlers(id)ON DELETE CASCADE',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, selectorName, handlerId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'selector_handler_relations';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {selectorName, handlerId},
+  ];
+  @override
+  SelectorHandlerRelationsData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SelectorHandlerRelationsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      selectorName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}selector_name'],
+      )!,
+      handlerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}handler_id'],
+      )!,
+    );
+  }
+
+  @override
+  SelectorHandlerRelations createAlias(String alias) {
+    return SelectorHandlerRelations(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints => const [
+    'PRIMARY KEY(id)',
+    'UNIQUE(selector_name, handler_id)',
+  ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class SelectorHandlerRelationsData extends DataClass
+    implements Insertable<SelectorHandlerRelationsData> {
+  final int id;
+  final String selectorName;
+  final int handlerId;
+  const SelectorHandlerRelationsData({
+    required this.id,
+    required this.selectorName,
+    required this.handlerId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['selector_name'] = Variable<String>(selectorName);
+    map['handler_id'] = Variable<int>(handlerId);
+    return map;
+  }
+
+  SelectorHandlerRelationsCompanion toCompanion(bool nullToAbsent) {
+    return SelectorHandlerRelationsCompanion(
+      id: Value(id),
+      selectorName: Value(selectorName),
+      handlerId: Value(handlerId),
+    );
+  }
+
+  factory SelectorHandlerRelationsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SelectorHandlerRelationsData(
+      id: serializer.fromJson<int>(json['id']),
+      selectorName: serializer.fromJson<String>(json['selectorName']),
+      handlerId: serializer.fromJson<int>(json['handlerId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'selectorName': serializer.toJson<String>(selectorName),
+      'handlerId': serializer.toJson<int>(handlerId),
+    };
+  }
+
+  SelectorHandlerRelationsData copyWith({
+    int? id,
+    String? selectorName,
+    int? handlerId,
+  }) => SelectorHandlerRelationsData(
+    id: id ?? this.id,
+    selectorName: selectorName ?? this.selectorName,
+    handlerId: handlerId ?? this.handlerId,
+  );
+  SelectorHandlerRelationsData copyWithCompanion(
+    SelectorHandlerRelationsCompanion data,
+  ) {
+    return SelectorHandlerRelationsData(
+      id: data.id.present ? data.id.value : this.id,
+      selectorName: data.selectorName.present
+          ? data.selectorName.value
+          : this.selectorName,
+      handlerId: data.handlerId.present ? data.handlerId.value : this.handlerId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SelectorHandlerRelationsData(')
+          ..write('id: $id, ')
+          ..write('selectorName: $selectorName, ')
+          ..write('handlerId: $handlerId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, selectorName, handlerId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SelectorHandlerRelationsData &&
+          other.id == this.id &&
+          other.selectorName == this.selectorName &&
+          other.handlerId == this.handlerId);
+}
+
+class SelectorHandlerRelationsCompanion
+    extends UpdateCompanion<SelectorHandlerRelationsData> {
+  final Value<int> id;
+  final Value<String> selectorName;
+  final Value<int> handlerId;
+  const SelectorHandlerRelationsCompanion({
+    this.id = const Value.absent(),
+    this.selectorName = const Value.absent(),
+    this.handlerId = const Value.absent(),
+  });
+  SelectorHandlerRelationsCompanion.insert({
+    this.id = const Value.absent(),
+    required String selectorName,
+    required int handlerId,
+  }) : selectorName = Value(selectorName),
+       handlerId = Value(handlerId);
+  static Insertable<SelectorHandlerRelationsData> custom({
+    Expression<int>? id,
+    Expression<String>? selectorName,
+    Expression<int>? handlerId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (selectorName != null) 'selector_name': selectorName,
+      if (handlerId != null) 'handler_id': handlerId,
+    });
+  }
+
+  SelectorHandlerRelationsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? selectorName,
+    Value<int>? handlerId,
+  }) {
+    return SelectorHandlerRelationsCompanion(
+      id: id ?? this.id,
+      selectorName: selectorName ?? this.selectorName,
+      handlerId: handlerId ?? this.handlerId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (selectorName.present) {
+      map['selector_name'] = Variable<String>(selectorName.value);
+    }
+    if (handlerId.present) {
+      map['handler_id'] = Variable<int>(handlerId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SelectorHandlerRelationsCompanion(')
+          ..write('id: $id, ')
+          ..write('selectorName: $selectorName, ')
+          ..write('handlerId: $handlerId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class SelectorHandlerGroupRelations extends Table
+    with
+        TableInfo<
+          SelectorHandlerGroupRelations,
+          SelectorHandlerGroupRelationsData
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  SelectorHandlerGroupRelations(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> selectorName = GeneratedColumn<String>(
+    'selector_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints:
+        'NOT NULL REFERENCES handler_selectors(name)ON DELETE CASCADE',
+  );
+  late final GeneratedColumn<String> groupName = GeneratedColumn<String>(
+    'group_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints:
+        'NOT NULL REFERENCES outbound_handler_groups(name)ON DELETE CASCADE',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, selectorName, groupName];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'selector_handler_group_relations';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {selectorName, groupName},
+  ];
+  @override
+  SelectorHandlerGroupRelationsData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SelectorHandlerGroupRelationsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      selectorName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}selector_name'],
+      )!,
+      groupName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}group_name'],
+      )!,
+    );
+  }
+
+  @override
+  SelectorHandlerGroupRelations createAlias(String alias) {
+    return SelectorHandlerGroupRelations(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints => const [
+    'PRIMARY KEY(id)',
+    'UNIQUE(selector_name, group_name)',
+  ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class SelectorHandlerGroupRelationsData extends DataClass
+    implements Insertable<SelectorHandlerGroupRelationsData> {
+  final int id;
+  final String selectorName;
+  final String groupName;
+  const SelectorHandlerGroupRelationsData({
+    required this.id,
+    required this.selectorName,
+    required this.groupName,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['selector_name'] = Variable<String>(selectorName);
+    map['group_name'] = Variable<String>(groupName);
+    return map;
+  }
+
+  SelectorHandlerGroupRelationsCompanion toCompanion(bool nullToAbsent) {
+    return SelectorHandlerGroupRelationsCompanion(
+      id: Value(id),
+      selectorName: Value(selectorName),
+      groupName: Value(groupName),
+    );
+  }
+
+  factory SelectorHandlerGroupRelationsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SelectorHandlerGroupRelationsData(
+      id: serializer.fromJson<int>(json['id']),
+      selectorName: serializer.fromJson<String>(json['selectorName']),
+      groupName: serializer.fromJson<String>(json['groupName']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'selectorName': serializer.toJson<String>(selectorName),
+      'groupName': serializer.toJson<String>(groupName),
+    };
+  }
+
+  SelectorHandlerGroupRelationsData copyWith({
+    int? id,
+    String? selectorName,
+    String? groupName,
+  }) => SelectorHandlerGroupRelationsData(
+    id: id ?? this.id,
+    selectorName: selectorName ?? this.selectorName,
+    groupName: groupName ?? this.groupName,
+  );
+  SelectorHandlerGroupRelationsData copyWithCompanion(
+    SelectorHandlerGroupRelationsCompanion data,
+  ) {
+    return SelectorHandlerGroupRelationsData(
+      id: data.id.present ? data.id.value : this.id,
+      selectorName: data.selectorName.present
+          ? data.selectorName.value
+          : this.selectorName,
+      groupName: data.groupName.present ? data.groupName.value : this.groupName,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SelectorHandlerGroupRelationsData(')
+          ..write('id: $id, ')
+          ..write('selectorName: $selectorName, ')
+          ..write('groupName: $groupName')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, selectorName, groupName);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SelectorHandlerGroupRelationsData &&
+          other.id == this.id &&
+          other.selectorName == this.selectorName &&
+          other.groupName == this.groupName);
+}
+
+class SelectorHandlerGroupRelationsCompanion
+    extends UpdateCompanion<SelectorHandlerGroupRelationsData> {
+  final Value<int> id;
+  final Value<String> selectorName;
+  final Value<String> groupName;
+  const SelectorHandlerGroupRelationsCompanion({
+    this.id = const Value.absent(),
+    this.selectorName = const Value.absent(),
+    this.groupName = const Value.absent(),
+  });
+  SelectorHandlerGroupRelationsCompanion.insert({
+    this.id = const Value.absent(),
+    required String selectorName,
+    required String groupName,
+  }) : selectorName = Value(selectorName),
+       groupName = Value(groupName);
+  static Insertable<SelectorHandlerGroupRelationsData> custom({
+    Expression<int>? id,
+    Expression<String>? selectorName,
+    Expression<String>? groupName,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (selectorName != null) 'selector_name': selectorName,
+      if (groupName != null) 'group_name': groupName,
+    });
+  }
+
+  SelectorHandlerGroupRelationsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? selectorName,
+    Value<String>? groupName,
+  }) {
+    return SelectorHandlerGroupRelationsCompanion(
+      id: id ?? this.id,
+      selectorName: selectorName ?? this.selectorName,
+      groupName: groupName ?? this.groupName,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (selectorName.present) {
+      map['selector_name'] = Variable<String>(selectorName.value);
+    }
+    if (groupName.present) {
+      map['group_name'] = Variable<String>(groupName.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SelectorHandlerGroupRelationsCompanion(')
+          ..write('id: $id, ')
+          ..write('selectorName: $selectorName, ')
+          ..write('groupName: $groupName')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class SelectorSubscriptionRelations extends Table
+    with
+        TableInfo<
+          SelectorSubscriptionRelations,
+          SelectorSubscriptionRelationsData
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  SelectorSubscriptionRelations(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> selectorName = GeneratedColumn<String>(
+    'selector_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints:
+        'NOT NULL REFERENCES handler_selectors(name)ON DELETE CASCADE',
+  );
+  late final GeneratedColumn<int> subscriptionId = GeneratedColumn<int>(
+    'subscription_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints:
+        'NOT NULL REFERENCES subscriptions(id)ON DELETE CASCADE',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, selectorName, subscriptionId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'selector_subscription_relations';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {selectorName, subscriptionId},
+  ];
+  @override
+  SelectorSubscriptionRelationsData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SelectorSubscriptionRelationsData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      selectorName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}selector_name'],
+      )!,
+      subscriptionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}subscription_id'],
+      )!,
+    );
+  }
+
+  @override
+  SelectorSubscriptionRelations createAlias(String alias) {
+    return SelectorSubscriptionRelations(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints => const [
+    'PRIMARY KEY(id)',
+    'UNIQUE(selector_name, subscription_id)',
+  ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class SelectorSubscriptionRelationsData extends DataClass
+    implements Insertable<SelectorSubscriptionRelationsData> {
+  final int id;
+  final String selectorName;
+  final int subscriptionId;
+  const SelectorSubscriptionRelationsData({
+    required this.id,
+    required this.selectorName,
+    required this.subscriptionId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['selector_name'] = Variable<String>(selectorName);
+    map['subscription_id'] = Variable<int>(subscriptionId);
+    return map;
+  }
+
+  SelectorSubscriptionRelationsCompanion toCompanion(bool nullToAbsent) {
+    return SelectorSubscriptionRelationsCompanion(
+      id: Value(id),
+      selectorName: Value(selectorName),
+      subscriptionId: Value(subscriptionId),
+    );
+  }
+
+  factory SelectorSubscriptionRelationsData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SelectorSubscriptionRelationsData(
+      id: serializer.fromJson<int>(json['id']),
+      selectorName: serializer.fromJson<String>(json['selectorName']),
+      subscriptionId: serializer.fromJson<int>(json['subscriptionId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'selectorName': serializer.toJson<String>(selectorName),
+      'subscriptionId': serializer.toJson<int>(subscriptionId),
+    };
+  }
+
+  SelectorSubscriptionRelationsData copyWith({
+    int? id,
+    String? selectorName,
+    int? subscriptionId,
+  }) => SelectorSubscriptionRelationsData(
+    id: id ?? this.id,
+    selectorName: selectorName ?? this.selectorName,
+    subscriptionId: subscriptionId ?? this.subscriptionId,
+  );
+  SelectorSubscriptionRelationsData copyWithCompanion(
+    SelectorSubscriptionRelationsCompanion data,
+  ) {
+    return SelectorSubscriptionRelationsData(
+      id: data.id.present ? data.id.value : this.id,
+      selectorName: data.selectorName.present
+          ? data.selectorName.value
+          : this.selectorName,
+      subscriptionId: data.subscriptionId.present
+          ? data.subscriptionId.value
+          : this.subscriptionId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SelectorSubscriptionRelationsData(')
+          ..write('id: $id, ')
+          ..write('selectorName: $selectorName, ')
+          ..write('subscriptionId: $subscriptionId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, selectorName, subscriptionId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SelectorSubscriptionRelationsData &&
+          other.id == this.id &&
+          other.selectorName == this.selectorName &&
+          other.subscriptionId == this.subscriptionId);
+}
+
+class SelectorSubscriptionRelationsCompanion
+    extends UpdateCompanion<SelectorSubscriptionRelationsData> {
+  final Value<int> id;
+  final Value<String> selectorName;
+  final Value<int> subscriptionId;
+  const SelectorSubscriptionRelationsCompanion({
+    this.id = const Value.absent(),
+    this.selectorName = const Value.absent(),
+    this.subscriptionId = const Value.absent(),
+  });
+  SelectorSubscriptionRelationsCompanion.insert({
+    this.id = const Value.absent(),
+    required String selectorName,
+    required int subscriptionId,
+  }) : selectorName = Value(selectorName),
+       subscriptionId = Value(subscriptionId);
+  static Insertable<SelectorSubscriptionRelationsData> custom({
+    Expression<int>? id,
+    Expression<String>? selectorName,
+    Expression<int>? subscriptionId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (selectorName != null) 'selector_name': selectorName,
+      if (subscriptionId != null) 'subscription_id': subscriptionId,
+    });
+  }
+
+  SelectorSubscriptionRelationsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? selectorName,
+    Value<int>? subscriptionId,
+  }) {
+    return SelectorSubscriptionRelationsCompanion(
+      id: id ?? this.id,
+      selectorName: selectorName ?? this.selectorName,
+      subscriptionId: subscriptionId ?? this.subscriptionId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (selectorName.present) {
+      map['selector_name'] = Variable<String>(selectorName.value);
+    }
+    if (subscriptionId.present) {
+      map['subscription_id'] = Variable<int>(subscriptionId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SelectorSubscriptionRelationsCompanion(')
+          ..write('id: $id, ')
+          ..write('selectorName: $selectorName, ')
+          ..write('subscriptionId: $subscriptionId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class DnsServers extends Table with TableInfo<DnsServers, DnsServersData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  DnsServers(this.attachedDatabase, [this._alias]);
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NULL',
+  );
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL',
+  );
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL UNIQUE',
+  );
+  late final GeneratedColumn<i2.Uint8List> dnsServer =
+      GeneratedColumn<i2.Uint8List>(
+        'dns_server',
+        aliasedName,
+        false,
+        type: DriftSqlType.blob,
+        requiredDuringInsert: true,
+        $customConstraints: 'NOT NULL',
+      );
+  @override
+  List<GeneratedColumn> get $columns => [updatedAt, id, name, dnsServer];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'dns_servers';
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  DnsServersData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DnsServersData(
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_at'],
+      ),
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      dnsServer: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}dns_server'],
+      )!,
+    );
+  }
+
+  @override
+  DnsServers createAlias(String alias) {
+    return DnsServers(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints => const ['PRIMARY KEY(id)'];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class DnsServersData extends DataClass implements Insertable<DnsServersData> {
+  final String? updatedAt;
+  final int id;
+  final String name;
+  final i2.Uint8List dnsServer;
+  const DnsServersData({
+    this.updatedAt,
+    required this.id,
+    required this.name,
+    required this.dnsServer,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<String>(updatedAt);
+    }
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['dns_server'] = Variable<i2.Uint8List>(dnsServer);
+    return map;
+  }
+
+  DnsServersCompanion toCompanion(bool nullToAbsent) {
+    return DnsServersCompanion(
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
+      id: Value(id),
+      name: Value(name),
+      dnsServer: Value(dnsServer),
+    );
+  }
+
+  factory DnsServersData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DnsServersData(
+      updatedAt: serializer.fromJson<String?>(json['updatedAt']),
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      dnsServer: serializer.fromJson<i2.Uint8List>(json['dnsServer']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'updatedAt': serializer.toJson<String?>(updatedAt),
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'dnsServer': serializer.toJson<i2.Uint8List>(dnsServer),
+    };
+  }
+
+  DnsServersData copyWith({
+    Value<String?> updatedAt = const Value.absent(),
+    int? id,
+    String? name,
+    i2.Uint8List? dnsServer,
+  }) => DnsServersData(
+    updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
+    id: id ?? this.id,
+    name: name ?? this.name,
+    dnsServer: dnsServer ?? this.dnsServer,
+  );
+  DnsServersData copyWithCompanion(DnsServersCompanion data) {
+    return DnsServersData(
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      dnsServer: data.dnsServer.present ? data.dnsServer.value : this.dnsServer,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DnsServersData(')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('dnsServer: $dnsServer')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(updatedAt, id, name, $driftBlobEquality.hash(dnsServer));
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DnsServersData &&
+          other.updatedAt == this.updatedAt &&
+          other.id == this.id &&
+          other.name == this.name &&
+          $driftBlobEquality.equals(other.dnsServer, this.dnsServer));
+}
+
+class DnsServersCompanion extends UpdateCompanion<DnsServersData> {
+  final Value<String?> updatedAt;
+  final Value<int> id;
+  final Value<String> name;
+  final Value<i2.Uint8List> dnsServer;
+  const DnsServersCompanion({
+    this.updatedAt = const Value.absent(),
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.dnsServer = const Value.absent(),
+  });
+  DnsServersCompanion.insert({
+    this.updatedAt = const Value.absent(),
+    this.id = const Value.absent(),
+    required String name,
+    required i2.Uint8List dnsServer,
+  }) : name = Value(name),
+       dnsServer = Value(dnsServer);
+  static Insertable<DnsServersData> custom({
+    Expression<String>? updatedAt,
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<i2.Uint8List>? dnsServer,
+  }) {
+    return RawValuesInsertable({
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (dnsServer != null) 'dns_server': dnsServer,
+    });
+  }
+
+  DnsServersCompanion copyWith({
+    Value<String?>? updatedAt,
+    Value<int>? id,
+    Value<String>? name,
+    Value<i2.Uint8List>? dnsServer,
+  }) {
+    return DnsServersCompanion(
+      updatedAt: updatedAt ?? this.updatedAt,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      dnsServer: dnsServer ?? this.dnsServer,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (dnsServer.present) {
+      map['dns_server'] = Variable<i2.Uint8List>(dnsServer.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DnsServersCompanion(')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('dnsServer: $dnsServer')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class DatabaseAtV10 extends GeneratedDatabase {
+  DatabaseAtV10(QueryExecutor e) : super(e);
   late final Subscriptions subscriptions = Subscriptions(this);
   late final OutboundHandlers outboundHandlers = OutboundHandlers(this);
   late final OutboundHandlerGroups outboundHandlerGroups =
@@ -4337,6 +6321,13 @@ class DatabaseAtV3 extends GeneratedDatabase {
   late final CommonSshKeys commonSshKeys = CommonSshKeys(this);
   late final CustomRouteModes customRouteModes = CustomRouteModes(this);
   late final HandlerSelectors handlerSelectors = HandlerSelectors(this);
+  late final SelectorHandlerRelations selectorHandlerRelations =
+      SelectorHandlerRelations(this);
+  late final SelectorHandlerGroupRelations selectorHandlerGroupRelations =
+      SelectorHandlerGroupRelations(this);
+  late final SelectorSubscriptionRelations selectorSubscriptionRelations =
+      SelectorSubscriptionRelations(this);
+  late final DnsServers dnsServers = DnsServers(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4359,7 +6350,150 @@ class DatabaseAtV3 extends GeneratedDatabase {
     commonSshKeys,
     customRouteModes,
     handlerSelectors,
+    selectorHandlerRelations,
+    selectorHandlerGroupRelations,
+    selectorSubscriptionRelations,
+    dnsServers,
   ];
   @override
-  int get schemaVersion => 3;
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'subscriptions',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('outbound_handlers', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'outbound_handler_groups',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate(
+          'outbound_handler_group_relations',
+          kind: UpdateKind.delete,
+        ),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'outbound_handlers',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate(
+          'outbound_handler_group_relations',
+          kind: UpdateKind.delete,
+        ),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'atomic_domain_sets',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('geo_domains', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'atomic_domain_sets',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [TableUpdate('geo_domains', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'app_sets',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('apps', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'app_sets',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [TableUpdate('apps', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'atomic_ip_sets',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('cidrs', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'atomic_ip_sets',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [TableUpdate('cidrs', kind: UpdateKind.update)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'handler_selectors',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate('selector_handler_relations', kind: UpdateKind.delete),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'outbound_handlers',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate('selector_handler_relations', kind: UpdateKind.delete),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'handler_selectors',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate(
+          'selector_handler_group_relations',
+          kind: UpdateKind.delete,
+        ),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'outbound_handler_groups',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate(
+          'selector_handler_group_relations',
+          kind: UpdateKind.delete,
+        ),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'handler_selectors',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate('selector_subscription_relations', kind: UpdateKind.delete),
+      ],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'subscriptions',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [
+        TableUpdate('selector_subscription_relations', kind: UpdateKind.delete),
+      ],
+    ),
+  ]);
+  @override
+  int get schemaVersion => 10;
+  @override
+  DriftDatabaseOptions get options =>
+      const DriftDatabaseOptions(storeDateTimeAsText: true);
 }

@@ -22,6 +22,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tm/protos/protos/dns.pb.dart';
 import 'package:vx/app/log/log_page.dart';
+import 'package:vx/app/routing/mode_form.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/data/database.dart';
@@ -31,10 +32,7 @@ import 'package:vx/widgets/form_dialog.dart';
 
 part 'dns_records.dart';
 
-enum _DnsSection {
-  servers,
-  records,
-}
+enum _DnsSection { servers, records }
 
 class DnsServersWidget extends StatefulWidget {
   const DnsServersWidget({super.key});
@@ -56,24 +54,26 @@ class _DnsServersWidgetState extends State<DnsServersWidget> {
             Padding(
               padding: const EdgeInsets.only(right: 5.0),
               child: ChoiceChip(
-                  label: Text(AppLocalizations.of(context)!.dnsServer),
-                  selected: _section == _DnsSection.servers,
-                  onSelected: (value) {
-                    setState(() {
-                      _section = _DnsSection.servers;
-                    });
-                  }),
+                label: Text(AppLocalizations.of(context)!.dnsServer),
+                selected: _section == _DnsSection.servers,
+                onSelected: (value) {
+                  setState(() {
+                    _section = _DnsSection.servers;
+                  });
+                },
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 5.0),
               child: ChoiceChip(
-                  label: Text(AppLocalizations.of(context)!.dnsRecord),
-                  selected: _section == _DnsSection.records,
-                  onSelected: (value) {
-                    setState(() {
-                      _section = _DnsSection.records;
-                    });
-                  }),
+                label: Text(AppLocalizations.of(context)!.dnsRecord),
+                selected: _section == _DnsSection.records,
+                onSelected: (value) {
+                  setState(() {
+                    _section = _DnsSection.records;
+                  });
+                },
+              ),
             ),
           ],
         ),
@@ -82,7 +82,7 @@ class _DnsServersWidgetState extends State<DnsServersWidget> {
           child: _section == _DnsSection.servers
               ? const DnsServers()
               : const _DnsRecords(),
-        )
+        ),
       ],
     );
   }
@@ -164,130 +164,144 @@ class _DnsServersState extends State<DnsServers>
       },
     );
     if (config != null) {
-      await _dnsRepo.updateDnsServer(_servers[index],
-          dnsServerName: config.name, dnsServer: config);
+      await _dnsRepo.updateDnsServer(
+        _servers[index],
+        dnsServerName: config.name,
+        dnsServer: config,
+      );
       setState(() {
         _servers[index] = DnsServer(
-            id: _servers[index].id, name: config.name, dnsServer: config);
+          id: _servers[index].id,
+          name: config.name,
+          dnsServer: config,
+        );
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      final count = constraints.maxWidth ~/ width;
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          FilledButton.tonal(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final count = constraints.maxWidth ~/ width;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FilledButton.tonal(
               onPressed: _onAdd,
-              child: Text(AppLocalizations.of(context)!.addDnsServer)),
-          const SizedBox(height: 5),
-          Expanded(
-            child: MasonryGridView.count(
-              padding: const EdgeInsets.only(bottom: 70),
-              crossAxisCount: count,
-              itemCount: _servers.length,
-              mainAxisSpacing: 4,
-              crossAxisSpacing: 4,
-              itemBuilder: (context, index) {
-                return Card(
-                  elevation: 0,
-                  color: Theme.of(context).colorScheme.surfaceContainer,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(10),
-                    onTap: () {
-                      _onEdit(index);
-                    },
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                _servers[index].name,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                _getDnsServerType(_servers[index]).name,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelMedium
-                                    ?.copyWith(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                              ),
-                              const SizedBox(height: 10),
-                              _getDnsServerWidget(context, _servers[index]),
-                              if (_servers[index].dnsServer.clientIp.isNotEmpty)
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 5),
-                                    Text(
-                                      'Client IP',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelMedium
-                                          ?.copyWith(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onSurfaceVariant),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Chip(
+              child: Text(AppLocalizations.of(context)!.addDnsServer),
+            ),
+            const SizedBox(height: 5),
+            Expanded(
+              child: MasonryGridView.count(
+                padding: const EdgeInsets.only(bottom: 70),
+                crossAxisCount: count,
+                itemCount: _servers.length,
+                mainAxisSpacing: 4,
+                crossAxisSpacing: 4,
+                itemBuilder: (context, index) {
+                  return Card(
+                    elevation: 0,
+                    color: Theme.of(context).colorScheme.surfaceContainer,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(10),
+                      onTap: () {
+                        _onEdit(index);
+                      },
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _servers[index].name,
+                                  style: Theme.of(context).textTheme.labelLarge
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                      ),
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  _getDnsServerType(_servers[index]).name,
+                                  style: Theme.of(context).textTheme.labelMedium
+                                      ?.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                      ),
+                                ),
+                                const SizedBox(height: 10),
+                                _getDnsServerWidget(context, _servers[index]),
+                                if (_servers[index]
+                                    .dnsServer
+                                    .clientIp
+                                    .isNotEmpty)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        'Client IP',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium
+                                            ?.copyWith(
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onSurfaceVariant,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Chip(
                                         shape: chipBorderRadius,
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .surfaceContainerLow,
-                                        label: Text(_servers[index]
-                                            .dnsServer
-                                            .clientIp)),
-                                    // Text(
-                                    //   _servers[index].dnsServer.clientIp,
-                                    //   style: Theme.of(context)
-                                    //       .textTheme
-                                    //       .bodyMedium,
-                                    // ),
-                                  ],
-                                )
-                            ],
+                                        backgroundColor: Theme.of(
+                                          context,
+                                        ).colorScheme.surfaceContainerLow,
+                                        label: Text(
+                                          _servers[index].dnsServer.clientIp,
+                                        ),
+                                      ),
+                                      // Text(
+                                      //   _servers[index].dnsServer.clientIp,
+                                      //   style: Theme.of(context)
+                                      //       .textTheme
+                                      //       .bodyMedium,
+                                      // ),
+                                    ],
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
-                        Positioned(
-                          right: 5,
-                          top: 5,
-                          child: IconButton(
+                          Positioned(
+                            right: 5,
+                            top: 5,
+                            child: IconButton(
                               onPressed: () async {
                                 await _dnsRepo.removeDnsServer(_servers[index]);
                                 _servers.removeAt(index);
                                 // xController.dnsServerChange(_servers[index].config);
                                 setState(() {});
                               },
-                              icon: const Icon(Icons.delete_outline)),
-                        )
-                      ],
+                              icon: const Icon(Icons.delete_outline),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
-      );
-    });
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -311,16 +325,15 @@ Widget _getDnsServerWidget(BuildContext context, DnsServer server) {
     return _FakeDns(fakeDnsServer: server.dnsServer.fakeDnsServer);
   } else if (server.dnsServer.hasPlainDnsServer()) {
     return _PlainTlsDnsServer(
-        addresses: server.dnsServer.plainDnsServer.addresses,
-        useDefaultDns: server.dnsServer.plainDnsServer.useDefaultDns);
+      addresses: server.dnsServer.plainDnsServer.addresses,
+      useDefaultDns: server.dnsServer.plainDnsServer.useDefaultDns,
+    );
   } else if (server.dnsServer.hasTlsDnsServer()) {
     return _PlainTlsDnsServer(
       addresses: server.dnsServer.tlsDnsServer.addresses,
     );
   } else if (server.dnsServer.hasDohDnsServer()) {
-    return _PlainTlsDnsServer(
-      addresses: [server.dnsServer.dohDnsServer.url],
-    );
+    return _PlainTlsDnsServer(addresses: [server.dnsServer.dohDnsServer.url]);
   } else if (server.dnsServer.hasQuicDnsServer()) {
     return _PlainTlsDnsServer(
       addresses: [server.dnsServer.quicDnsServer.address],
@@ -339,23 +352,26 @@ class _FakeDns extends StatelessWidget {
       children: [
         Text(
           'Pool',
-          style: Theme.of(context)
-              .textTheme
-              .labelMedium
-              ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: 5),
         Wrap(
           runSpacing: 5,
           spacing: 5,
           children: fakeDnsServer.poolConfigs
-              .map((e) => Chip(
+              .map(
+                (e) => Chip(
                   shape: chipBorderRadius,
-                  backgroundColor:
-                      Theme.of(context).colorScheme.surfaceContainerLow,
-                  label: Text(e.cidr)))
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerLow,
+                  label: Text(e.cidr),
+                ),
+              )
               .toList(),
-        )
+        ),
       ],
     );
   }
@@ -373,10 +389,9 @@ class _PlainTlsDnsServer extends StatelessWidget {
       children: [
         Text(
           AppLocalizations.of(context)!.address,
-          style: Theme.of(context)
-              .textTheme
-              .labelMedium
-              ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         if (useDefaultDns != null && useDefaultDns!)
           Padding(
@@ -391,13 +406,17 @@ class _PlainTlsDnsServer extends StatelessWidget {
           runSpacing: 5,
           spacing: 5,
           children: addresses
-              .map((e) => Chip(
+              .map(
+                (e) => Chip(
                   shape: chipBorderRadius,
-                  backgroundColor:
-                      Theme.of(context).colorScheme.surfaceContainerLow,
-                  label: Text(e)))
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerLow,
+                  label: Text(e),
+                ),
+              )
               .toList(),
-        )
+        ),
       ],
     );
   }
@@ -418,6 +437,7 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
   final _dnsServerAddressController = TextEditingController();
   final _clientIpController = TextEditingController();
   final _cacheDurationController = TextEditingController();
+  final List<String> _ipTags = [];
   bool _useDefaultDns = false;
   DnsServerType? _type = DnsServerType.plain;
 
@@ -431,45 +451,60 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
     }
     if (_type == DnsServerType.fake) {
       return DnsServerConfig(
-          name: _nameController.text,
-          fakeDnsServer: FakeDnsServer(
-              poolConfigs: _fakeDnsPoolController.text
-                  .split(',')
-                  .map((e) => FakeDnsServer_PoolConfig(
-                      cidr: e, lruSize: int.parse(_lruSizeController.text)))
-                  .toList()));
+        name: _nameController.text,
+        fakeDnsServer: FakeDnsServer(
+          poolConfigs: _fakeDnsPoolController.text
+              .split(',')
+              .map(
+                (e) => FakeDnsServer_PoolConfig(
+                  cidr: e,
+                  lruSize: int.parse(_lruSizeController.text),
+                ),
+              )
+              .toList(),
+        ),
+      );
     }
     if (_type == DnsServerType.plain) {
       return DnsServerConfig(
-          name: _nameController.text,
-          cacheDuration: int.tryParse(_cacheDurationController.text),
-          clientIp: _clientIpController.text,
-          plainDnsServer: PlainDnsServer(
-              useDefaultDns: _useDefaultDns,
-              addresses: _dnsServerAddressController.text.split(',').toList()));
+        name: _nameController.text,
+        ipTags: _ipTags,
+        cacheDuration: int.tryParse(_cacheDurationController.text),
+        clientIp: _clientIpController.text,
+        plainDnsServer: PlainDnsServer(
+          useDefaultDns: _useDefaultDns,
+          addresses: _dnsServerAddressController.text.split(',').toList(),
+        ),
+      );
     }
     if (_type == DnsServerType.tls) {
       return DnsServerConfig(
-          name: _nameController.text,
-          cacheDuration: int.tryParse(_cacheDurationController.text),
-          clientIp: _clientIpController.text,
-          tlsDnsServer: TlsDnsServer(
-              addresses: _dnsServerAddressController.text.split(',').toList()));
+        name: _nameController.text,
+        ipTags: _ipTags,
+        cacheDuration: int.tryParse(_cacheDurationController.text),
+        clientIp: _clientIpController.text,
+        tlsDnsServer: TlsDnsServer(
+          addresses: _dnsServerAddressController.text.split(',').toList(),
+        ),
+      );
     }
     if (_type == DnsServerType.doh) {
       return DnsServerConfig(
-          name: _nameController.text,
-          clientIp: _clientIpController.text,
-          cacheDuration: int.tryParse(_cacheDurationController.text),
-          dohDnsServer: DohDnsServer(url: _dnsServerAddressController.text));
+        name: _nameController.text,
+        clientIp: _clientIpController.text,
+        ipTags: _ipTags,
+        cacheDuration: int.tryParse(_cacheDurationController.text),
+        dohDnsServer: DohDnsServer(url: _dnsServerAddressController.text),
+      );
     }
     if (_type == DnsServerType.quic) {
       return DnsServerConfig(
-          name: _nameController.text,
-          clientIp: _clientIpController.text,
-          cacheDuration: int.tryParse(_cacheDurationController.text),
-          quicDnsServer:
-              QuicDnsServer(address: _dnsServerAddressController.text));
+        name: _nameController.text,
+        clientIp: _clientIpController.text,
+        ipTags: _ipTags,
+        cacheDuration: int.tryParse(_cacheDurationController.text),
+        quicDnsServer: QuicDnsServer(address: _dnsServerAddressController.text),
+      );
     }
     return null;
   }
@@ -480,31 +515,49 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
     if (widget.dnsServer != null) {
       _nameController.text = widget.dnsServer!.name;
       _type = _getDnsServerType(widget.dnsServer!);
+      _ipTags.addAll(widget.dnsServer!.dnsServer.ipTags);
       _clientIpController.text = widget.dnsServer!.dnsServer.clientIp;
       _cacheDurationController.text =
           widget.dnsServer!.dnsServer.cacheDuration != 0
-              ? widget.dnsServer!.dnsServer.cacheDuration.toString()
-              : '';
+          ? widget.dnsServer!.dnsServer.cacheDuration.toString()
+          : '';
       if (widget.dnsServer!.dnsServer.hasFakeDnsServer()) {
         _fakeDnsPoolController.text = widget
-            .dnsServer!.dnsServer.fakeDnsServer.poolConfigs
+            .dnsServer!
+            .dnsServer
+            .fakeDnsServer
+            .poolConfigs
             .map((e) => e.cidr)
             .join(',');
-        _lruSizeController.text = widget.dnsServer!.dnsServer.fakeDnsServer
-                .poolConfigs.firstOrNull?.lruSize
+        _lruSizeController.text =
+            widget
+                .dnsServer!
+                .dnsServer
+                .fakeDnsServer
+                .poolConfigs
+                .firstOrNull
+                ?.lruSize
                 .toString() ??
             '6666';
       } else if (widget.dnsServer!.dnsServer.hasPlainDnsServer()) {
         _useDefaultDns =
             widget.dnsServer!.dnsServer.plainDnsServer.useDefaultDns;
-        _dnsServerAddressController.text =
-            widget.dnsServer!.dnsServer.plainDnsServer.addresses.join(',');
+        _dnsServerAddressController.text = widget
+            .dnsServer!
+            .dnsServer
+            .plainDnsServer
+            .addresses
+            .join(',');
       } else if (widget.dnsServer!.dnsServer.hasDohDnsServer()) {
         _dnsServerAddressController.text =
             widget.dnsServer!.dnsServer.dohDnsServer.url;
       } else if (widget.dnsServer!.dnsServer.hasTlsDnsServer()) {
-        _dnsServerAddressController.text =
-            widget.dnsServer!.dnsServer.tlsDnsServer.addresses.join(',');
+        _dnsServerAddressController.text = widget
+            .dnsServer!
+            .dnsServer
+            .tlsDnsServer
+            .addresses
+            .join(',');
       } else if (widget.dnsServer!.dnsServer.hasQuicDnsServer()) {
         _dnsServerAddressController.text =
             widget.dnsServer!.dnsServer.quicDnsServer.address;
@@ -543,85 +596,93 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextFormField(
-              controller: _nameController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return AppLocalizations.of(context)!.empty;
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  labelText: AppLocalizations.of(context)!.name)),
+            controller: _nameController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return AppLocalizations.of(context)!.empty;
+              }
+              return null;
+            },
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+              labelText: AppLocalizations.of(context)!.name,
+            ),
+          ),
           const SizedBox(height: 10),
           DropdownMenu<DnsServerType>(
-              label: Text(AppLocalizations.of(context)!.type),
-              initialSelection: _type,
-              onSelected: (value) {
-                setState(() {
-                  _type = value;
-                });
-              },
-              dropdownMenuEntries: DnsServerType.values
-                  .map((e) => DropdownMenuEntry(value: e, label: e.name))
-                  .toList()),
+            label: Text(AppLocalizations.of(context)!.type),
+            initialSelection: _type,
+            onSelected: (value) {
+              setState(() {
+                _type = value;
+              });
+            },
+            dropdownMenuEntries: DnsServerType.values
+                .map((e) => DropdownMenuEntry(value: e, label: e.name))
+                .toList(),
+          ),
           const SizedBox(height: 10),
           if (_type == DnsServerType.fake)
             Column(
               children: [
                 TextFormField(
-                    controller: _fakeDnsPoolController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)!.empty;
+                  controller: _fakeDnsPoolController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return AppLocalizations.of(context)!.empty;
+                    }
+                    final cidrs = value.split(',');
+                    for (var cidr in cidrs) {
+                      if (!isValidCidr(cidr)) {
+                        return AppLocalizations.of(context)!.invalidCidr;
                       }
-                      final cidrs = value.split(',');
-                      for (var cidr in cidrs) {
-                        if (!isValidCidr(cidr)) {
-                          return AppLocalizations.of(context)!.invalidCidr;
-                        }
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                        hintText: '198.18.0.0/15,fc00::/18',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        labelText: 'Pools')),
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    hintText: '198.18.0.0/15,fc00::/18',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    labelText: 'Pools',
+                  ),
+                ),
                 const SizedBox(height: 10),
                 TextFormField(
-                    controller: _lruSizeController,
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)!.empty;
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'LRU Size',
-                        helperMaxLines: 2,
-                        helperText: AppLocalizations.of(context)!.lruSizeDesc)),
+                  controller: _lruSizeController,
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return AppLocalizations.of(context)!.empty;
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'LRU Size',
+                    helperMaxLines: 2,
+                    helperText: AppLocalizations.of(context)!.lruSizeDesc,
+                  ),
+                ),
               ],
             ),
           if (_type == DnsServerType.plain)
             Column(
               children: [
                 TextFormField(
-                    controller: _dnsServerAddressController,
-                    validator: validAddressPorts,
-                    decoration: InputDecoration(
-                        helperText:
-                            AppLocalizations.of(context)!.addDnsAddressHint,
-                        helperMaxLines: 5,
-                        hintText: '1.1.1.1:53,8.8.8.8:53',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        labelText: 'Addresses')),
+                  controller: _dnsServerAddressController,
+                  validator: validAddressPorts,
+                  decoration: InputDecoration(
+                    helperText: AppLocalizations.of(context)!.addDnsAddressHint,
+                    helperMaxLines: 5,
+                    hintText: '1.1.1.1:53,8.8.8.8:53',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    labelText: 'Addresses',
+                  ),
+                ),
                 const SizedBox(height: 10),
                 CheckboxListTile(
                   value: _useDefaultDns,
@@ -641,103 +702,114 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
             Column(
               children: [
                 TextFormField(
-                    controller: _dnsServerAddressController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)!.empty;
-                      }
-                      final uri = Uri.tryParse(value);
-                      if (uri == null) {
-                        return AppLocalizations.of(context)!.invalidUrl;
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                        hintText: 'https://1.1.1.1/dns-query',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        labelText: 'Address')),
+                  controller: _dnsServerAddressController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return AppLocalizations.of(context)!.empty;
+                    }
+                    final uri = Uri.tryParse(value);
+                    if (uri == null) {
+                      return AppLocalizations.of(context)!.invalidUrl;
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'https://1.1.1.1/dns-query',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    labelText: 'Address',
+                  ),
+                ),
               ],
             ),
           if (_type == DnsServerType.tls)
             Column(
               children: [
                 TextFormField(
-                    controller: _dnsServerAddressController,
-                    validator: validAddressPorts,
-                    decoration: InputDecoration(
-                        hintText: '1.1.1.1:853,8.8.8.8:853',
-                        helperText:
-                            AppLocalizations.of(context)!.addDnsAddressHint,
-                        helperMaxLines: 3,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        labelText: 'Addresses')),
+                  controller: _dnsServerAddressController,
+                  validator: validAddressPorts,
+                  decoration: InputDecoration(
+                    hintText: '1.1.1.1:853,8.8.8.8:853',
+                    helperText: AppLocalizations.of(context)!.addDnsAddressHint,
+                    helperMaxLines: 3,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    labelText: 'Addresses',
+                  ),
+                ),
               ],
             ),
           if (_type == DnsServerType.quic)
             Column(
               children: [
                 TextFormField(
-                    controller: _dnsServerAddressController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)!.empty;
-                      }
-                      if (!isValidAddressPort(value)) {
-                        return AppLocalizations.of(context)!.invalidAddress;
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                        hintText: 'dns.adguard.com:853',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        labelText: 'Address')),
+                  controller: _dnsServerAddressController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return AppLocalizations.of(context)!.empty;
+                    }
+                    if (!isValidAddressPort(value)) {
+                      return AppLocalizations.of(context)!.invalidAddress;
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'dns.adguard.com:853',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    labelText: 'Address',
+                  ),
+                ),
               ],
             ),
           if (_type != DnsServerType.fake)
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: TextFormField(
-                      controller: _clientIpController,
-                      validator: (value) {
-                        if (value?.isNotEmpty ?? false) {
-                          if (!isValidIp(value!)) {
-                            return AppLocalizations.of(context)!.invalidIp;
-                          }
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          hintText: '123.123.123.123',
-                          labelText: 'Client IP')),
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                    controller: _cacheDurationController,
-                    keyboardType: TextInputType.number,
+                    controller: _clientIpController,
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return AppLocalizations.of(context)!.empty;
+                      if (value?.isNotEmpty ?? false) {
+                        if (!isValidIp(value!)) {
+                          return AppLocalizations.of(context)!.invalidIp;
+                        }
                       }
                       return null;
                     },
                     decoration: InputDecoration(
-                        hintText: '3600',
-                        suffixText: 's',
-                        labelText: AppLocalizations.of(context)!.cacheDuration,
-                        helperText:
-                            AppLocalizations.of(context)!.cacheDurationDesc,
-                        helperMaxLines: 2)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      hintText: '123.123.123.123',
+                      labelText: 'Client IP',
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _cacheDurationController,
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return AppLocalizations.of(context)!.empty;
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    hintText: '3600',
+                    suffixText: 's',
+                    labelText: AppLocalizations.of(context)!.cacheDuration,
+                    helperText: AppLocalizations.of(context)!.cacheDurationDesc,
+                    helperMaxLines: 2,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                _IpTags(dstIpTags: _ipTags, onChanged: () {}),
               ],
             ),
         ],
@@ -746,22 +818,37 @@ class __DnsServerFormState extends State<_DnsServerForm> with FormDataGetter {
   }
 }
 
+class _IpTags extends StatelessWidget {
+  const _IpTags({super.key, required this.dstIpTags, required this.onChanged});
+  final List<String> dstIpTags;
+  final Function() onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(AppLocalizations.of(context)!.resultIpSet),
+        const SizedBox(height: 5),
+        Text(
+          AppLocalizations.of(context)!.resultIpSetDesc,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 10),
+        IPSet(dstIpTags: dstIpTags, onChanged: onChanged),
+      ],
+    );
+  }
+}
+
 enum DnsServerType {
-  fake(
-    'Fake',
-  ),
-  plain(
-    'UDP/TCP',
-  ),
-  doh(
-    'HTTPS',
-  ),
-  tls(
-    'TLS',
-  ),
-  quic(
-    'QUIC',
-  );
+  fake('Fake'),
+  plain('UDP/TCP'),
+  doh('HTTPS'),
+  tls('TLS'),
+  quic('QUIC');
 
   const DnsServerType(this.name);
 

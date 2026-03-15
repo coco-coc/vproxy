@@ -1821,7 +1821,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rpmTunNotice => 'When TUN is on, Reverse Path Forwarding mode will be set to Loose(2) and reset to what it was when disconnect. You can go to the following website to learn about Reverse Path Forwarding';
 
   @override
-  String get internalDnsDesc => 'Internal DNS servers are used to resolve domains when outbounds are dialing. There are two of them, one is internal-dns-proxy, which uses the Proxy selector to connect to 1.1.1.1; the other is internal-dns-direct, which uses directly connect to 223.5.5.5 and 1.1.1.1. The internal-dns-direct is used first, if it failed, the internal-dns-proxy will be used.';
+  String get internalDnsDesc => 'Internal DNS servers are mainly used to resolve domains when outbounds are dialing. They will be used from left to right until one of them succeeds.';
 
   @override
   String get nodeSetDesc => 'There is a small domain set named \"__node__\" which contains domains and SNIs of all nodes. There is also a small IP set named \"__node__\" which contains IPs of all nodes.';
@@ -2203,7 +2203,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeEditCustomizableLayout => 'Customizable';
 
   @override
-  String get domainStrategyDesc => 'Determine how to connect to server. PreferIPv4: use IPv4, if failed, use IPv6; PreferIPv6: use IPv6, if failed, use IPv4; IPv4Only: only try IPv4; IPv6Only: only try IPv6';
+  String get domainStrategyDesc => 'Determine how to resolve domains when dialing. PreferIPv4: lookup both IPv4 and IPv6(if default nic support 6), wait for the two queries to complete, then try IPv4s, if failed, try IPv6s; PreferIPv6: lookup both IPv4 and IPv6(if default nic support 6), wait for the two queries to complete, then try IPv6s first, if failed, use IPv4; IPv4Only: only lookup IPv4; IPv6Only: only lookup IPv6; Speed: lookup both A and AAAA(if default nic support 6), use the first returned result (might be IPv4s or IPv6s), if failed, use the other IPs.';
 
   @override
   String get uotDesc => 'Use TCP to transport UDP (Sagernet UDP over TCP v2 protocol). The server must also support it';
@@ -2317,4 +2317,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addDnsRecord => 'Add DNS Record';
+
+  @override
+  String get internalDns => 'Internal DNS Servers';
+
+  @override
+  String get fallback => 'Fallback';
+
+  @override
+  String get fallbackDesc => 'If the handler picked for this rule failed, use the following fallbacks. Each fallback has a list of conditions, the fallback will be used only if all conditions are true.';
+
+  @override
+  String get rewriteIpToDomain => 'Rewrite IP to Domain';
+
+  @override
+  String get rewriteIpToDomainDesc => 'If the request address is IP, and there is sniffed domain, then use the sniffed domain as the request address. This is a measure for DNS pollution';
+
+  @override
+  String get resultIpSet => 'Result IP Set';
+
+  @override
+  String get resultIpSetDesc => 'A/AAAA records whose IPs are not in the set will be dropped';
+
+  @override
+  String get inverse => 'Inverse';
+
+  @override
+  String get automaticallyAddFallbackDomain => 'Automatically Add Fallback Domain';
+
+  @override
+  String get automaticallyAddFallbackDomainDesc => 'If a connection initially went direct but failed, then it fallbacked to proxy and succeeded, automatically add the domain into a domain set called \"Fallback\"';
 }

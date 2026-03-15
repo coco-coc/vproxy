@@ -33,10 +33,7 @@ import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/utils/logger.dart';
 
-enum PingMode {
-  Real,
-  Rtt;
-}
+enum PingMode { Real, Rtt }
 
 enum Language {
   zh(Locale('zh', 'CN'), '简体中文(中国)', aiTranslated: false),
@@ -54,11 +51,7 @@ enum Language {
     return null;
   }
 
-  const Language(
-    this.locale,
-    this.localText, {
-    this.aiTranslated = true,
-  });
+  const Language(this.locale, this.localText, {this.aiTranslated = true});
 }
 
 extension PrefHelperExtension on SharedPreferences {
@@ -153,11 +146,9 @@ extension PrefHelperExtension on SharedPreferences {
       tag: defaultProxySelectorTag,
       balanceStrategy:
           proxySelectorManualMode == ProxySelectorManualNodeSelectionMode.single
-              ? SelectorConfig_BalanceStrategy.RANDOM
-              : proxySelectorManualMultipleBalanceStrategy,
-      filter: SelectorConfig_Filter(
-        selected: true,
-      ),
+          ? SelectorConfig_BalanceStrategy.RANDOM
+          : proxySelectorManualMultipleBalanceStrategy,
+      filter: SelectorConfig_Filter(selected: true),
       landHandlers: proxySelectorManualLandHandlers,
     );
   }
@@ -189,19 +180,22 @@ extension PrefHelperExtension on SharedPreferences {
   }
 
   void setProxySelectorLandHandlers(List<Int64> ids) {
-    setStringList('proxySelectorManualLandHandlers',
-        ids.map((e) => e.toString()).toList());
+    setStringList(
+      'proxySelectorManualLandHandlers',
+      ids.map((e) => e.toString()).toList(),
+    );
   }
 
   SelectorConfig_BalanceStrategy
-      get proxySelectorManualMultipleBalanceStrategy {
+  get proxySelectorManualMultipleBalanceStrategy {
     final strategy = getInt('proxySelectorManualMultipleBalanceStrategy');
     if (strategy == null) return SelectorConfig_BalanceStrategy.MEMORY;
     return SelectorConfig_BalanceStrategy.values[strategy];
   }
 
   void setProxySelectorManualMultipleBalanceStrategy(
-      SelectorConfig_BalanceStrategy strategy) {
+    SelectorConfig_BalanceStrategy strategy,
+  ) {
     setInt('proxySelectorManualMultipleBalanceStrategy', strategy.value);
   }
 
@@ -722,20 +716,12 @@ extension PrefHelperExtension on SharedPreferences {
     setBool('windowsServiceInstalled', installed);
   }
 
-  bool get fallbackToProxy {
-    return getBool('fallbackToProxy') ?? false;
+  bool get automaticallyAddFallbackDomain {
+    return getBool('automaticallyAddFallbackDomain') ?? true;
   }
 
-  void setFallbackToProxy(bool enable) {
-    setBool('fallbackToProxy', enable);
-  }
-
-  bool get fallbackRetryDomain {
-    return getBool('fallbackRetryDomain') ?? false;
-  }
-
-  void setFallbackRetryDomain(bool enable) {
-    setBool('fallbackRetryDomain', enable);
+  void setAutomaticallyAddFallbackDomain(bool enable) {
+    setBool('automaticallyAddFallbackDomain', enable);
   }
 
   bool get changeIpv6ToDomain {
@@ -975,7 +961,9 @@ extension PrefHelperExtension on SharedPreferences {
     final current = recentlyUsedNodeIds;
     final updated = [id, ...current.where((e) => e != id)].take(10).toList();
     setStringList(
-        'recentlyUsedNodeIds', updated.map((e) => e.toString()).toList());
+      'recentlyUsedNodeIds',
+      updated.map((e) => e.toString()).toList(),
+    );
   }
 
   List<String> getSelectorSubString() {
@@ -1034,10 +1022,7 @@ extension PrefHelperExtension on SharedPreferences {
   }
 
   void setHomeWidgetRows(HomeLayoutPreset preset, HomeLayout rows) {
-    setString(
-      'homeWidgetRows.${preset.storageKey}',
-      rows.toJson(),
-    );
+    setString('homeWidgetRows.${preset.storageKey}', rows.toJson());
   }
 
   void clearHomeWidgetRows(HomeLayoutPreset preset) {

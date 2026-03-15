@@ -49,6 +49,9 @@ const ruBlock = 'RU Block';
 const ruBlockAll = 'RU Block(All)';
 
 const dnsServerFake = 'Fake DNS Server';
+const internalDnsProxy = 'internal-dns-proxy';
+const internalDnsDirect = 'internal-dns-direct';
+const publicIpTag = 'Public';
 
 enum DefaultRouteMode {
   /// Only banned ip/domain will go through proxy
@@ -102,47 +105,43 @@ enum DefaultRouteMode {
     }
   }
 
-  static const _internalDnsProxy = 'internal-dns-proxy';
-  static const _internalDnsDirect = 'internal-dns-direct';
-
   List<DnsServerConfig> getDnsServerConfigs({required AppLocalizations al}) {
     final country = getUserCountryFromLocale();
     return [
       DnsServerConfig(
         name: dnsServerFake,
-        fakeDnsServer: FakeDnsServer(
-          poolConfigs: XConfigHelper.fakednsPools,
-        ),
+        fakeDnsServer: FakeDnsServer(poolConfigs: XConfigHelper.fakednsPools),
       ),
       DnsServerConfig(
         name: al.dnsServerProxy,
-        plainDnsServer: PlainDnsServer(
-          addresses: ['1.1.1.1:53'],
-        ),
+        plainDnsServer: PlainDnsServer(addresses: ['1.1.1.1:53']),
         cacheDuration: 3600,
+        ipTags: [publicIpTag],
       ),
       DnsServerConfig(
         name: al.dnsServerDirect,
         plainDnsServer: PlainDnsServer(
-            addresses: ['1.1.1.1:53', ...(countryDnsServers[country] ?? [])],
-            useDefaultDns: true),
-      )
+          addresses: ['1.1.1.1:53', ...(countryDnsServers[country] ?? [])],
+          useDefaultDns: true,
+        ),
+        ipTags: [publicIpTag],
+      ),
     ];
   }
 
   // this is for displaying to users. and for copying when creating a custom route mode
   List<RuleConfig> displayRouterRules({required AppLocalizations al}) {
     final commonRules = [
-      RuleConfig(
-        ruleName: al.ruleNameInternalDnsProxyGoProxy,
-        inboundTags: [_internalDnsProxy],
-        selectorTag: defaultProxySelectorTag,
-      ),
-      RuleConfig(
-        ruleName: al.ruleNameInternalDnsDirectGoDirect,
-        inboundTags: [_internalDnsDirect],
-        outboundTag: directHandlerTag,
-      ),
+      // RuleConfig(
+      //   ruleName: al.ruleNameInternalDnsProxyGoProxy,
+      //   inboundTags: [internalDnsProxy],
+      //   selectorTag: defaultProxySelectorTag,
+      // ),
+      // RuleConfig(
+      //   ruleName: al.ruleNameInternalDnsDirectGoDirect,
+      //   inboundTags: [internalDnsDirect],
+      //   outboundTag: directHandlerTag,
+      // ),
       RuleConfig(
         ruleName: al.ruleNameProxyDnsServerGoProxy,
         inboundTags: [al.dnsServerProxy],
@@ -189,9 +188,11 @@ enum DefaultRouteMode {
           customDirectSet,
           customProxySet,
           AtomicDomainSet(
-              name: gfw,
-              useBloomFilter: false,
-              geositeConfig: GeositeConfig(codes: ['gfw']))
+            name: gfw,
+            useBloomFilter: false,
+            geositeConfig: GeositeConfig(codes: ['gfw']),
+          ),
+          AtomicDomainSet(name: 'Fallback', useBloomFilter: false),
         ];
       case DefaultRouteMode.white:
         return [
@@ -200,19 +201,23 @@ enum DefaultRouteMode {
           privateSet,
           if (Platform.isIOS)
             AtomicDomainSet(
-                name: gfw,
-                useBloomFilter: false,
-                geositeConfig: GeositeConfig(codes: ['gfw'])),
-          AtomicDomainSet(
-              name: cn,
-              useBloomFilter: Platform.isIOS,
-              geositeConfig:
-                  GeositeConfig(codes: ['cn', 'apple-cn', 'tld-cn'])),
-          AtomicDomainSet(
-              name: al.cnGames,
+              name: gfw,
               useBloomFilter: false,
-              geositeConfig:
-                  GeositeConfig(codes: ['category-games'], attributes: ['cn'])),
+              geositeConfig: GeositeConfig(codes: ['gfw']),
+            ),
+          AtomicDomainSet(
+            name: cn,
+            useBloomFilter: Platform.isIOS,
+            geositeConfig: GeositeConfig(codes: ['cn', 'apple-cn', 'tld-cn']),
+          ),
+          AtomicDomainSet(
+            name: al.cnGames,
+            useBloomFilter: false,
+            geositeConfig: GeositeConfig(
+              codes: ['category-games'],
+              attributes: ['cn'],
+            ),
+          ),
         ];
       case DefaultRouteMode.proxyAll:
         return [privateSet, customDirectSet, customProxySet];
@@ -222,10 +227,11 @@ enum DefaultRouteMode {
           customProxySet,
           privateSet,
           AtomicDomainSet(
-              name: ruBlock,
-              useBloomFilter: false,
-              geoUrl: ruGeositeUrl,
-              geositeConfig: GeositeConfig(codes: ['ru-blocked']))
+            name: ruBlock,
+            useBloomFilter: false,
+            geoUrl: ruGeositeUrl,
+            geositeConfig: GeositeConfig(codes: ['ru-blocked']),
+          ),
         ];
       case DefaultRouteMode.ruBlockedAll:
         return [
@@ -233,10 +239,11 @@ enum DefaultRouteMode {
           customProxySet,
           privateSet,
           AtomicDomainSet(
-              name: ruBlockAll,
-              useBloomFilter: true,
-              geoUrl: ruGeositeUrl,
-              geositeConfig: GeositeConfig(codes: ['ru-blocked-all']))
+            name: ruBlockAll,
+            useBloomFilter: true,
+            geoUrl: ruGeositeUrl,
+            geositeConfig: GeositeConfig(codes: ['ru-blocked-all']),
+          ),
         ];
     }
   }
@@ -245,17 +252,26 @@ enum DefaultRouteMode {
     final customDirectSet = AtomicIpSet(name: al.customDirect, inverse: false);
     final customProxySet = AtomicIpSet(name: al.customProxy, inverse: false);
     final privateSet = AtomicIpSet(
-        name: al.private,
-        inverse: false,
-        geoIpConfig: GeoIPConfig(codes: ['private']));
+      name: al.private,
+      inverse: false,
+      geoIpConfig: GeoIPConfig(codes: ['private']),
+    );
+    final publicSet = AtomicIpSet(
+      name: 'Public',
+      inverse: true,
+      geoIpConfig: GeoIPConfig(codes: ['private']),
+    );
     switch (this) {
       case DefaultRouteMode.black:
         return [
           AtomicIpSet(
-              name: gfw,
-              inverse: false,
-              geoIpConfig: GeoIPConfig(
-                  codes: ['telegram', 'google', 'facebook', 'twitter', "tor"]))
+            name: gfw,
+            inverse: false,
+            geoIpConfig: GeoIPConfig(
+              codes: ['telegram', 'google', 'facebook', 'twitter', "tor"],
+            ),
+          ),
+          publicSet,
         ];
       case DefaultRouteMode.white:
         return [
@@ -263,35 +279,39 @@ enum DefaultRouteMode {
           customProxySet,
           privateSet,
           AtomicIpSet(
-              name: cn, inverse: false, geoIpConfig: GeoIPConfig(codes: ['cn']))
+            name: cn,
+            inverse: false,
+            geoIpConfig: GeoIPConfig(codes: ['cn']),
+          ),
+          publicSet,
         ];
       case DefaultRouteMode.proxyAll:
-        return [
-          privateSet,
-          customDirectSet,
-          customProxySet,
-        ];
+        return [privateSet, customDirectSet, customProxySet, publicSet];
       case DefaultRouteMode.ruBlocked:
         return [
           customDirectSet,
           customProxySet,
           privateSet,
+          publicSet,
           AtomicIpSet(
-              name: ruBlock,
-              inverse: false,
-              geoUrl: ruGeoIpUrl,
-              geoIpConfig: GeoIPConfig(codes: ['ru-blocked']))
+            name: ruBlock,
+            inverse: false,
+            geoUrl: ruGeoIpUrl,
+            geoIpConfig: GeoIPConfig(codes: ['ru-blocked']),
+          ),
         ];
       case DefaultRouteMode.ruBlockedAll:
         return [
           customDirectSet,
           customProxySet,
           privateSet,
+          publicSet,
           AtomicIpSet(
-              name: ruBlockAll,
-              inverse: false,
-              geoUrl: ruGeoIpUrl,
-              geoIpConfig: GeoIPConfig(codes: ['ru-blocked']))
+            name: ruBlockAll,
+            inverse: false,
+            geoUrl: ruGeoIpUrl,
+            geoIpConfig: GeoIPConfig(codes: ['ru-blocked']),
+          ),
         ];
     }
   }
@@ -301,66 +321,73 @@ enum DefaultRouteMode {
       case DefaultRouteMode.black:
         return [
           GreatDomainSet(
+            name: al.gfwModeProxyDomains,
+            set: GreatDomainSetConfig(
               name: al.gfwModeProxyDomains,
-              set: GreatDomainSetConfig(
-                  name: al.gfwModeProxyDomains,
-                  inNames: [gfw, al.customProxy],
-                  exNames: [al.customDirect]))
+              inNames: [gfw, al.customProxy, 'Fallback'],
+              exNames: [al.customDirect],
+            ),
+          ),
         ];
       case DefaultRouteMode.ruBlocked:
         return [
           GreatDomainSet(
+            name: al.ruBlockModeProxyDomains,
+            set: GreatDomainSetConfig(
               name: al.ruBlockModeProxyDomains,
-              set: GreatDomainSetConfig(
-                  name: al.ruBlockModeProxyDomains,
-                  inNames: [al.customProxy, ruBlock],
-                  exNames: [al.customDirect]))
+              inNames: [al.customProxy, ruBlock],
+              exNames: [al.customDirect],
+            ),
+          ),
         ];
       case DefaultRouteMode.ruBlockedAll:
         return [
           GreatDomainSet(
+            name: al.ruBlockAllModeProxyDomains,
+            set: GreatDomainSetConfig(
               name: al.ruBlockAllModeProxyDomains,
-              set: GreatDomainSetConfig(
-                  name: al.ruBlockAllModeProxyDomains,
-                  inNames: [al.customProxy, ruBlockAll],
-                  exNames: [al.customDirect]))
+              inNames: [al.customProxy, ruBlockAll],
+              exNames: [al.customDirect],
+            ),
+          ),
         ];
       case DefaultRouteMode.white:
         return [
           GreatDomainSet(
+            name: al.cnModeDirectDomains,
+            oppositeName: al.cnModeProxyDomains,
+            set: GreatDomainSetConfig(
               name: al.cnModeDirectDomains,
               oppositeName: al.cnModeProxyDomains,
-              set: GreatDomainSetConfig(
-                  name: al.cnModeDirectDomains,
-                  oppositeName: al.cnModeProxyDomains,
-                  inNames: [
-                    al.private,
-                    cn,
-                    al.cnGames,
-                    al.customDirect
-                  ],
-                  exNames: [
-                    al.customProxy,
-                    if (Platform.isIOS) al.gfwWithoutCustomDirect
-                  ])),
+              inNames: [al.private, cn, al.cnGames, al.customDirect],
+              exNames: [
+                al.customProxy,
+                if (Platform.isIOS) al.gfwWithoutCustomDirect,
+              ],
+            ),
+          ),
           if (Platform.isIOS)
             GreatDomainSet(
+              name: al.gfwWithoutCustomDirect,
+              set: GreatDomainSetConfig(
                 name: al.gfwWithoutCustomDirect,
-                set: GreatDomainSetConfig(
-                    name: al.gfwWithoutCustomDirect,
-                    inNames: [gfw],
-                    exNames: [al.customDirect]))
+                inNames: [gfw],
+                exNames: [al.customDirect],
+              ),
+            ),
         ];
       case DefaultRouteMode.proxyAll:
         return [
           GreatDomainSet(
+            name: al.proxyAllModeDirectDomains,
+            oppositeName: al.proxyAllModeProxyDomains,
+            set: GreatDomainSetConfig(
               name: al.proxyAllModeDirectDomains,
               oppositeName: al.proxyAllModeProxyDomains,
-              set: GreatDomainSetConfig(
-                  name: al.proxyAllModeDirectDomains,
-                  oppositeName: al.proxyAllModeProxyDomains,
-                  inNames: [al.private, al.customDirect],
-                  exNames: [al.customProxy]))
+              inNames: [al.private, al.customDirect],
+              exNames: [al.customProxy],
+            ),
+          ),
         ];
     }
   }
@@ -370,51 +397,57 @@ enum DefaultRouteMode {
       case DefaultRouteMode.black:
         return [
           GreatIpSet(
+            name: al.gfwModeProxyIps,
+            greatIpSetConfig: GreatIPSetConfig(
               name: al.gfwModeProxyIps,
-              greatIpSetConfig: GreatIPSetConfig(
-                  name: al.gfwModeProxyIps,
-                  inNames: [gfw, al.customProxy],
-                  exNames: [al.customDirect]))
+              inNames: [gfw, al.customProxy],
+              exNames: [al.customDirect],
+            ),
+          ),
         ];
       case DefaultRouteMode.ruBlocked:
         return [
           GreatIpSet(
+            name: al.ruBlockModeProxyIps,
+            greatIpSetConfig: GreatIPSetConfig(
               name: al.ruBlockModeProxyIps,
-              greatIpSetConfig: GreatIPSetConfig(
-                  name: al.ruBlockModeProxyIps,
-                  inNames: [al.customProxy, ruBlock],
-                  exNames: [al.customDirect]))
+              inNames: [al.customProxy, ruBlock],
+              exNames: [al.customDirect],
+            ),
+          ),
         ];
       case DefaultRouteMode.ruBlockedAll:
         return [
           GreatIpSet(
+            name: al.ruBlockAllModeProxyIps,
+            greatIpSetConfig: GreatIPSetConfig(
               name: al.ruBlockAllModeProxyIps,
-              greatIpSetConfig: GreatIPSetConfig(
-                  name: al.ruBlockAllModeProxyIps,
-                  inNames: [al.customProxy, ruBlock],
-                  exNames: [al.customDirect]))
+              inNames: [al.customProxy, ruBlock],
+              exNames: [al.customDirect],
+            ),
+          ),
         ];
       case DefaultRouteMode.white:
         return [
           GreatIpSet(
+            name: al.cnModeDirectIps,
+            greatIpSetConfig: GreatIPSetConfig(
               name: al.cnModeDirectIps,
-              greatIpSetConfig:
-                  GreatIPSetConfig(name: al.cnModeDirectIps, inNames: [
-                al.private,
-                cn,
-                al.customDirect
-              ], exNames: [
-                al.customProxy,
-              ]))
+              inNames: [al.private, cn, al.customDirect],
+              exNames: [al.customProxy],
+            ),
+          ),
         ];
       case DefaultRouteMode.proxyAll:
         return [
           GreatIpSet(
+            name: al.proxyAllModeDirectIps,
+            greatIpSetConfig: GreatIPSetConfig(
               name: al.proxyAllModeDirectIps,
-              greatIpSetConfig: GreatIPSetConfig(
-                  name: al.proxyAllModeDirectIps,
-                  inNames: [al.private, al.customDirect],
-                  exNames: [al.customProxy]))
+              inNames: [al.private, al.customDirect],
+              exNames: [al.customProxy],
+            ),
+          ),
         ];
     }
   }
@@ -438,7 +471,7 @@ enum DefaultRouteMode {
     return [
       directIpGoDirectRule,
       directDomainGoDirectRule, //TODO: This can be deleted
-      goProxyRule
+      goProxyRule,
     ];
   }
 
@@ -474,7 +507,7 @@ enum DefaultRouteMode {
       customProxyIpGoProxyRule,
       directIpGoDirectRule,
       directDomainGoDirectRule, //TODO: This can be deleted
-      goProxyRule
+      goProxyRule,
     ];
   }
 
@@ -493,6 +526,12 @@ enum DefaultRouteMode {
       ruleName: al.ruleNameDefaultDirect,
       outboundTag: directHandlerTag,
       matchAll: true,
+      fallbacks: [
+        RuleConfig_Fallback(
+          selectorTag: defaultProxySelectorTag,
+          matchAll: true,
+        ),
+      ],
     );
     final customDirectDomainGoDirectRule = RuleConfig(
       ruleName: al.ruleNameCustomDirectDomain,
@@ -509,7 +548,7 @@ enum DefaultRouteMode {
       customDirectDomainGoDirectRule,
       proxyIpGoProxyRule,
       proxyDomainGoProxyRule,
-      goDirectRule
+      goDirectRule,
     ];
   }
 
@@ -544,7 +583,7 @@ enum DefaultRouteMode {
       customDirectDomainGoDirectRule,
       proxyIpGoProxyRule,
       proxyDomainGoProxyRule,
-      goDirectRule
+      goDirectRule,
     ];
   }
 
@@ -579,36 +618,46 @@ enum DefaultRouteMode {
       customDirectDomainGoDirectRule,
       proxyIpGoProxyRule,
       proxyDomainGoProxyRule,
-      goDirectRule
+      goDirectRule,
     ];
   }
 
   List<RuleConfig> getCommonAppRules({required AppLocalizations al}) {
     final appRules = <RuleConfig>[];
     if (Platform.isAndroid || Platform.isWindows) {
-      appRules.add(RuleConfig(
-        ruleName: al.ruleNameVXTestNodes,
-        allTags: [node],
-        appIds: [
-          if (Platform.isAndroid)
-            AppId(type: AppId_Type.Exact, value: androidPackageNme),
-          if (Platform.isWindows)
-            AppId(type: AppId_Type.Keyword, value: 'vx.exe')
-        ],
-        outboundTag: directHandlerTag,
-      ));
+      appRules.add(
+        RuleConfig(
+          ruleName: al.ruleNameVXTestNodes,
+          allTags: [node],
+          appIds: [
+            if (Platform.isAndroid)
+              AppId(type: AppId_Type.Exact, value: androidPackageNme),
+            if (Platform.isWindows)
+              AppId(type: AppId_Type.Keyword, value: 'vx.exe'),
+          ],
+          outboundTag: directHandlerTag,
+        ),
+      );
     }
-    appRules.add(RuleConfig(
-      ruleName: al.ruleNameProxyApp,
-      appTags: [al.proxy],
-      selectorTag: defaultProxySelectorTag,
-    ));
-    appRules.add(RuleConfig(
-      ruleName: al.ruleNameDirectApp,
-      appTags: [al.direct],
-      outboundTag: directHandlerTag,
-    ));
+    appRules.add(
+      RuleConfig(
+        ruleName: al.ruleNameProxyApp,
+        appTags: [al.proxy],
+        selectorTag: defaultProxySelectorTag,
+      ),
+    );
+    appRules.add(
+      RuleConfig(
+        ruleName: al.ruleNameDirectApp,
+        appTags: [al.direct],
+        outboundTag: directHandlerTag,
+      ),
+    );
     return appRules;
+  }
+
+  List<String> internalDnsServers({required AppLocalizations al}) {
+    return [al.dnsServerDirect, al.dnsServerProxy];
   }
 
   List<DnsRuleConfig> dnsRules({required AppLocalizations al}) {
@@ -616,77 +665,92 @@ enum DefaultRouteMode {
       case DefaultRouteMode.black:
         return [
           DnsRuleConfig(
-              dnsServerName: dnsServerFake,
-              ruleName: al.dnsRuleNameGfwProxyFake,
-              includedTypes: [DnsType.DnsType_A, DnsType.DnsType_AAAA],
-              domainTags: [al.gfwModeProxyDomains]),
+            dnsServerName: dnsServerFake,
+            ruleName: /* al.dnsRuleNameGfwProxyFake */ 'A/AAAA',
+            includedTypes: [DnsType.DnsType_A, DnsType.DnsType_AAAA],
+            domainTags: [/* al.gfwModeProxyDomains */],
+          ),
           DnsRuleConfig(
-              ruleName: al.dnsRuleNameGfwProxy,
-              domainTags: [al.gfwModeProxyDomains],
-              dnsServerName: al.dnsServerProxy),
+            ruleName: al.dnsRuleNameGfwProxy,
+            domainTags: [al.gfwModeProxyDomains],
+            dnsServerName: al.dnsServerProxy,
+          ),
           DnsRuleConfig(
-              ruleName: al.dnsRuleNameDefaultDirect,
-              dnsServerName: al.dnsServerDirect),
+            ruleName: al.dnsRuleNameDefaultDirect,
+            dnsServerName: al.dnsServerDirect,
+          ),
         ];
       case DefaultRouteMode.ruBlocked:
         return [
           DnsRuleConfig(
-              dnsServerName: dnsServerFake,
-              ruleName: al.dnsRuleNameRuBlockProxyFake,
-              includedTypes: [DnsType.DnsType_A, DnsType.DnsType_AAAA],
-              domainTags: [al.ruBlockModeProxyDomains]),
+            dnsServerName: dnsServerFake,
+            ruleName: /* al.dnsRuleNameRuBlockProxyFake */ 'A/AAAA',
+            includedTypes: [DnsType.DnsType_A, DnsType.DnsType_AAAA],
+            domainTags: [/* al.ruBlockModeProxyDomains */],
+          ),
           DnsRuleConfig(
-              ruleName: al.dnsRuleNameRuBlockProxy,
-              domainTags: [al.ruBlockModeProxyDomains],
-              dnsServerName: al.dnsServerProxy),
+            ruleName: al.dnsRuleNameRuBlockProxy,
+            domainTags: [al.ruBlockModeProxyDomains],
+            dnsServerName: al.dnsServerProxy,
+          ),
           DnsRuleConfig(
-              ruleName: al.dnsRuleNameDefaultDirect,
-              dnsServerName: al.dnsServerDirect),
+            ruleName: al.dnsRuleNameDefaultDirect,
+            dnsServerName: al.dnsServerDirect,
+          ),
         ];
       case DefaultRouteMode.ruBlockedAll:
         return [
           DnsRuleConfig(
-              dnsServerName: dnsServerFake,
-              ruleName: al.dnsRuleNameRuBlockAllProxyFake,
-              includedTypes: [DnsType.DnsType_A, DnsType.DnsType_AAAA],
-              domainTags: [al.ruBlockAllModeProxyDomains]),
+            dnsServerName: dnsServerFake,
+            ruleName: /* al.dnsRuleNameRuBlockAllProxyFake */ 'A/AAAA',
+            includedTypes: [DnsType.DnsType_A, DnsType.DnsType_AAAA],
+            domainTags: [/* al.ruBlockAllModeProxyDomains */],
+          ),
           DnsRuleConfig(
-              ruleName: al.dnsRuleNameRuBlockAllProxy,
-              domainTags: [al.ruBlockAllModeProxyDomains],
-              dnsServerName: al.dnsServerProxy),
+            ruleName: al.dnsRuleNameRuBlockAllProxy,
+            domainTags: [al.ruBlockAllModeProxyDomains],
+            dnsServerName: al.dnsServerProxy,
+          ),
           DnsRuleConfig(
-              ruleName: al.dnsRuleNameDefaultDirect,
-              dnsServerName: al.dnsServerDirect),
+            ruleName: al.dnsRuleNameDefaultDirect,
+            dnsServerName: al.dnsServerDirect,
+          ),
         ];
       case DefaultRouteMode.white:
         return [
           DnsRuleConfig(
-              dnsServerName: dnsServerFake,
-              ruleName: al.dnsRuleNameCnProxyFake,
-              includedTypes: [DnsType.DnsType_A, DnsType.DnsType_AAAA],
-              domainTags: [al.cnModeProxyDomains]),
+            dnsServerName: dnsServerFake,
+            ruleName: /* al.dnsRuleNameCnProxyFake */ 'A/AAAA',
+            includedTypes: [DnsType.DnsType_A, DnsType.DnsType_AAAA],
+            domainTags: [/* al.cnModeProxyDomains */],
+          ),
           DnsRuleConfig(
-              ruleName: al.dnsRuleNameCnProxy,
-              domainTags: [al.cnModeProxyDomains],
-              dnsServerName: al.dnsServerProxy),
+            ruleName: al.dnsRuleNameCnProxy,
+            domainTags: [al.cnModeProxyDomains],
+            dnsServerName: al.dnsServerProxy,
+          ),
           DnsRuleConfig(
-              ruleName: al.dnsRuleNameDefaultDirect,
-              dnsServerName: al.dnsServerDirect),
+            ruleName: al.dnsRuleNameDefaultDirect,
+            dnsServerName: al.dnsServerDirect,
+          ),
         ];
       case DefaultRouteMode.proxyAll:
         return [
           DnsRuleConfig(
-              dnsServerName: dnsServerFake,
-              ruleName: al.dnsRuleNameProxyAllProxyFake,
-              includedTypes: [DnsType.DnsType_A, DnsType.DnsType_AAAA],
-              domainTags: [al.proxyAllModeProxyDomains]),
+            dnsServerName: dnsServerFake,
+            ruleName: /* al.dnsRuleNameProxyAllProxyFake */ 'A/AAAA',
+            includedTypes: [DnsType.DnsType_A, DnsType.DnsType_AAAA],
+            domainTags: [/* al.proxyAllModeProxyDomains */],
+          ),
           DnsRuleConfig(
-              ruleName: al.dnsRuleNameProxyAllProxy,
-              domainTags: [al.proxyAllModeProxyDomains],
-              dnsServerName: al.dnsServerProxy),
+            ruleName: al.dnsRuleNameProxyAllProxy,
+            domainTags: [al.proxyAllModeProxyDomains],
+            dnsServerName: al.dnsServerProxy,
+          ),
           DnsRuleConfig(
-              ruleName: al.dnsRuleNameDefaultDirect,
-              dnsServerName: al.dnsServerDirect),
+            ruleName: al.dnsRuleNameDefaultDirect,
+            dnsServerName: al.dnsServerDirect,
+          ),
         ];
     }
   }
@@ -719,5 +783,5 @@ String getDirectSetName(BuildContext ctx) {
 
 const countryDnsServers = {
   'CN': ['223.5.5.5:53'],
-  'RU': ['77.88.8.8:53']
+  'RU': ['77.88.8.8:53'],
 };

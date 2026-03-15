@@ -18,8 +18,10 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/protos/tun.pb.dart';
+import 'package:vx/app/routing/repo.dart';
 import 'package:vx/app/settings/advanced/system_proxy.dart';
 import 'package:vx/app/x_controller.dart';
+import 'package:vx/data/database.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:vx/app/settings/advanced/proxy_share.dart';
@@ -55,9 +57,7 @@ class AdvancedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: showAppBar
-          ? AppBar(
-              title: Text(AppLocalizations.of(context)!.advanced),
-            )
+          ? AppBar(title: Text(AppLocalizations.of(context)!.advanced))
           : null,
       body: Padding(
         padding: const EdgeInsets.only(top: 8, right: 8),
@@ -67,15 +67,19 @@ class AdvancedScreen extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              title: Text(AppLocalizations.of(context)!.proxyShare,
-                  style: Theme.of(context).textTheme.bodyLarge),
+              title: Text(
+                AppLocalizations.of(context)!.proxyShare,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
               trailing: const Icon(Icons.keyboard_arrow_right_rounded),
               onTap: () {
-                Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) {
-                  return ProxyShareSettingScreen(
-                    fullscreen: showAppBar,
-                  );
-                }));
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (ctx) {
+                      return ProxyShareSettingScreen(fullscreen: showAppBar);
+                    },
+                  ),
+                );
               },
             ),
             const Divider(),
@@ -88,8 +92,9 @@ class AdvancedScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               title: Text(
-                  AppLocalizations.of(context)!.tunIpv6Settings,
-                  style: Theme.of(context).textTheme.bodyLarge),
+                AppLocalizations.of(context)!.tunIpv6Settings,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
               trailing: const Icon(Icons.keyboard_arrow_right_rounded),
               onTap: () => _showTunDialog(context),
             ),
@@ -139,12 +144,11 @@ class _SniffSettingState extends State<SniffSetting> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(AppLocalizations.of(context)!.sniff,
-                  style: Theme.of(context).textTheme.bodyLarge),
-              Switch(
-                value: _sniffing,
-                onChanged: _toggleSniffing,
+              Text(
+                AppLocalizations.of(context)!.sniff,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
+              Switch(value: _sniffing, onChanged: _toggleSniffing),
             ],
           ),
         ],
@@ -161,32 +165,29 @@ class FallbackSetting extends StatefulWidget {
 }
 
 class _FallbackSettingState extends State<FallbackSetting> {
-  bool _fallbackToProxy = false;
-  bool _fallbackRetryDomain = false;
   bool _changeIpv6ToDomain = false;
+  bool _automaticallyAddFallbackDomain = false;
 
   @override
   void initState() {
     super.initState();
     final pref = context.read<SharedPreferences>();
-    _fallbackToProxy = pref.fallbackToProxy;
-    _fallbackRetryDomain = pref.fallbackRetryDomain;
     _changeIpv6ToDomain = pref.changeIpv6ToDomain;
+    _automaticallyAddFallbackDomain = pref.automaticallyAddFallbackDomain;
   }
 
-  void _toggleFallbackToProxy(bool value) {
-    context.read<SharedPreferences>().setFallbackToProxy(value);
+  void _toggleAutomaticallyAddFallbackDomain(bool value) async {
     setState(() {
-      _fallbackToProxy = value;
+      _automaticallyAddFallbackDomain = value;
     });
-    context.read<XController>().restart();
-  }
-
-  void _toggleFallbackRetryDomain(bool value) {
-    context.read<SharedPreferences>().setFallbackRetryDomain(value);
-    setState(() {
-      _fallbackRetryDomain = value;
-    });
+    context.read<SharedPreferences>().setAutomaticallyAddFallbackDomain(value);
+    // update database
+    final setRepo = context.read<SetRepo>();
+    if (await setRepo.getAtomicDomainSet('Fallback') == null) {
+      setRepo.addAtomicDomainSet(
+        AtomicDomainSet(name: 'Fallback', useBloomFilter: false),
+      );
+    }
     context.read<XController>().restart();
   }
 
@@ -208,42 +209,10 @@ class _FallbackSettingState extends State<FallbackSetting> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(AppLocalizations.of(context)!.fallbackToProxy,
-                  style: Theme.of(context).textTheme.bodyLarge),
-              Switch(
-                value: _fallbackToProxy,
-                onChanged: _toggleFallbackToProxy,
+              Text(
+                AppLocalizations.of(context)!.changeIpv6ToDomain,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
-            ],
-          ),
-          const Gap(5),
-          Text(AppLocalizations.of(context)!.fallbackToProxySetting,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
-          const Gap(10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(AppLocalizations.of(context)!.fallbackRetryDomain,
-                  style: Theme.of(context).textTheme.bodyLarge),
-              Switch(
-                value: _fallbackRetryDomain,
-                onChanged: _toggleFallbackRetryDomain,
-              ),
-            ],
-          ),
-          const Gap(5),
-          Text(AppLocalizations.of(context)!.fallbackRetryDomainDesc,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
-          const Gap(10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(AppLocalizations.of(context)!.changeIpv6ToDomain,
-                  style: Theme.of(context).textTheme.bodyLarge),
               Switch(
                 value: _changeIpv6ToDomain,
                 onChanged: _toggleChangeIpv6ToDomain,
@@ -251,10 +220,33 @@ class _FallbackSettingState extends State<FallbackSetting> {
             ],
           ),
           const Gap(5),
-          Text(AppLocalizations.of(context)!.changeIpv6ToDomainDesc,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
+          Text(
+            AppLocalizations.of(context)!.changeIpv6ToDomainDesc,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const Gap(10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.automaticallyAddFallbackDomain,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              Switch(
+                value: _automaticallyAddFallbackDomain,
+                onChanged: _toggleAutomaticallyAddFallbackDomain,
+              ),
+            ],
+          ),
+          const Gap(5),
+          Text(
+            AppLocalizations.of(context)!.automaticallyAddFallbackDomainDesc,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
@@ -311,13 +303,13 @@ class _TunSettingState extends State<TunSetting> {
   void _applyAll() {
     final pref = context.read<SharedPreferences>();
     pref.setTunCidr4(
-        _cidr4Controller.text.isEmpty ? null : _cidr4Controller.text);
+      _cidr4Controller.text.isEmpty ? null : _cidr4Controller.text,
+    );
     pref.setTunCidr6(
-        _cidr6Controller.text.isEmpty ? null : _cidr6Controller.text);
-    pref.setTunDns4(
-        _dns4Controller.text.isEmpty ? null : _dns4Controller.text);
-    pref.setTunDns6(
-        _dns6Controller.text.isEmpty ? null : _dns6Controller.text);
+      _cidr6Controller.text.isEmpty ? null : _cidr6Controller.text,
+    );
+    pref.setTunDns4(_dns4Controller.text.isEmpty ? null : _dns4Controller.text);
+    pref.setTunDns6(_dns6Controller.text.isEmpty ? null : _dns6Controller.text);
     final mtuStr = _mtuController.text.trim();
     final mtu = mtuStr.isEmpty ? null : int.tryParse(mtuStr);
     pref.setTunMtu(mtu != null && mtu > 0 ? mtu : null);
@@ -349,9 +341,9 @@ class _TunSettingState extends State<TunSetting> {
   void _saveMtu(String value) {
     final v = value.trim();
     final parsed = v.isEmpty ? null : int.tryParse(v);
-    context
-        .read<SharedPreferences>()
-        .setTunMtu(parsed != null && parsed > 0 ? parsed : null);
+    context.read<SharedPreferences>().setTunMtu(
+      parsed != null && parsed > 0 ? parsed : null,
+    );
     context.read<XController>().restart();
   }
 
@@ -362,22 +354,27 @@ class _TunSettingState extends State<TunSetting> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(l10n.tunIpv6Settings,
-            style: Theme.of(context).textTheme.bodyLarge),
+        Text(
+          l10n.tunIpv6Settings,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
         const Gap(10),
         DropdownMenu<TunConfig_TUN46Setting>(
           initialSelection: _tun46Setting,
           requestFocusOnTap: false,
           dropdownMenuEntries: [
             DropdownMenuEntry(
-                value: TunConfig_TUN46Setting.FOUR_ONLY,
-                label: l10n.tun46SettingIpv4Only),
+              value: TunConfig_TUN46Setting.FOUR_ONLY,
+              label: l10n.tun46SettingIpv4Only,
+            ),
             DropdownMenuEntry(
-                value: TunConfig_TUN46Setting.BOTH,
-                label: l10n.tun46SettingIpv4AndIpv6),
+              value: TunConfig_TUN46Setting.BOTH,
+              label: l10n.tun46SettingIpv4AndIpv6,
+            ),
             DropdownMenuEntry(
-                value: TunConfig_TUN46Setting.DYNAMIC,
-                label: l10n.dependsOnDefaultNic),
+              value: TunConfig_TUN46Setting.DYNAMIC,
+              label: l10n.dependsOnDefaultNic,
+            ),
           ],
           onSelected: (value) {
             if (value != null) setState(() => _tun46Setting = value);
@@ -385,15 +382,19 @@ class _TunSettingState extends State<TunSetting> {
         ),
         const Gap(10),
         if (_tun46Setting == TunConfig_TUN46Setting.DYNAMIC)
-          Text(l10n.dependsOnDefaultNicDesc,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ))
+          Text(
+            l10n.dependsOnDefaultNicDesc,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          )
         else if (_tun46Setting == TunConfig_TUN46Setting.FOUR_ONLY)
-          Text(l10n.tunIpv4Desc,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
+          Text(
+            l10n.tunIpv4Desc,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
         const Gap(16),
         TextField(
           controller: _cidr4Controller,
@@ -405,8 +406,9 @@ class _TunSettingState extends State<TunSetting> {
           ),
           textInputAction: TextInputAction.next,
           onSubmitted: _inDialog ? null : _saveCidr4,
-          onEditingComplete:
-              _inDialog ? null : () => _saveCidr4(_cidr4Controller.text),
+          onEditingComplete: _inDialog
+              ? null
+              : () => _saveCidr4(_cidr4Controller.text),
         ),
         const Gap(10),
         TextField(
@@ -419,8 +421,9 @@ class _TunSettingState extends State<TunSetting> {
           ),
           textInputAction: TextInputAction.next,
           onSubmitted: _inDialog ? null : _saveCidr6,
-          onEditingComplete:
-              _inDialog ? null : () => _saveCidr6(_cidr6Controller.text),
+          onEditingComplete: _inDialog
+              ? null
+              : () => _saveCidr6(_cidr6Controller.text),
         ),
         const Gap(10),
         TextField(
@@ -433,8 +436,9 @@ class _TunSettingState extends State<TunSetting> {
           ),
           textInputAction: TextInputAction.next,
           onSubmitted: _inDialog ? null : _saveDns4,
-          onEditingComplete:
-              _inDialog ? null : () => _saveDns4(_dns4Controller.text),
+          onEditingComplete: _inDialog
+              ? null
+              : () => _saveDns4(_dns4Controller.text),
         ),
         const Gap(10),
         TextField(
@@ -447,8 +451,9 @@ class _TunSettingState extends State<TunSetting> {
           ),
           textInputAction: TextInputAction.next,
           onSubmitted: _inDialog ? null : _saveDns6,
-          onEditingComplete:
-              _inDialog ? null : () => _saveDns6(_dns6Controller.text),
+          onEditingComplete: _inDialog
+              ? null
+              : () => _saveDns6(_dns6Controller.text),
         ),
         const Gap(10),
         TextField(
@@ -462,17 +467,22 @@ class _TunSettingState extends State<TunSetting> {
           keyboardType: TextInputType.number,
           textInputAction: TextInputAction.done,
           onSubmitted: _inDialog ? null : _saveMtu,
-          onEditingComplete:
-              _inDialog ? null : () => _saveMtu(_mtuController.text),
+          onEditingComplete: _inDialog
+              ? null
+              : () => _saveMtu(_mtuController.text),
         ),
         const Gap(16),
         SwitchListTile(
-          title: Text(l10n.tunRejectIpv6,
-              style: Theme.of(context).textTheme.bodyLarge),
-          subtitle: Text(l10n.tunRejectIpv6Desc,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
+          title: Text(
+            l10n.tunRejectIpv6,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          subtitle: Text(
+            l10n.tunRejectIpv6Desc,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           value: _rejectIpv6,
           onChanged: (value) {
             if (_inDialog) {
@@ -524,43 +534,53 @@ class _TunIpv6SettingsState extends State<TunIpv6Settings> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(AppLocalizations.of(context)!.tunIpv6Settings,
-            style: Theme.of(context).textTheme.bodyLarge),
+        Text(
+          AppLocalizations.of(context)!.tunIpv6Settings,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
         const Gap(10),
         DropdownMenu<TunConfig_TUN46Setting>(
-            initialSelection: _tun46Setting,
-            requestFocusOnTap: false,
-            dropdownMenuEntries: [
-              DropdownMenuEntry(
-                  value: TunConfig_TUN46Setting.FOUR_ONLY,
-                  label: AppLocalizations.of(context)!.tun46SettingIpv4Only),
-              DropdownMenuEntry(
-                  value: TunConfig_TUN46Setting.BOTH,
-                  label: AppLocalizations.of(context)!.tun46SettingIpv4AndIpv6),
-              DropdownMenuEntry(
-                  value: TunConfig_TUN46Setting.DYNAMIC,
-                  label: AppLocalizations.of(context)!.dependsOnDefaultNic),
-            ],
-            onSelected: (value) {
-              context
-                  .read<SharedPreferences>()
-                  .setTun46Setting(value ?? TunConfig_TUN46Setting.DYNAMIC);
-              setState(() {
-                _tun46Setting = value ?? TunConfig_TUN46Setting.DYNAMIC;
-              });
-              context.read<XController>().restart();
-            }),
+          initialSelection: _tun46Setting,
+          requestFocusOnTap: false,
+          dropdownMenuEntries: [
+            DropdownMenuEntry(
+              value: TunConfig_TUN46Setting.FOUR_ONLY,
+              label: AppLocalizations.of(context)!.tun46SettingIpv4Only,
+            ),
+            DropdownMenuEntry(
+              value: TunConfig_TUN46Setting.BOTH,
+              label: AppLocalizations.of(context)!.tun46SettingIpv4AndIpv6,
+            ),
+            DropdownMenuEntry(
+              value: TunConfig_TUN46Setting.DYNAMIC,
+              label: AppLocalizations.of(context)!.dependsOnDefaultNic,
+            ),
+          ],
+          onSelected: (value) {
+            context.read<SharedPreferences>().setTun46Setting(
+              value ?? TunConfig_TUN46Setting.DYNAMIC,
+            );
+            setState(() {
+              _tun46Setting = value ?? TunConfig_TUN46Setting.DYNAMIC;
+            });
+            context.read<XController>().restart();
+          },
+        ),
         const Gap(10),
         if (_tun46Setting == TunConfig_TUN46Setting.DYNAMIC)
-          Text(AppLocalizations.of(context)!.dependsOnDefaultNicDesc,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ))
+          Text(
+            AppLocalizations.of(context)!.dependsOnDefaultNicDesc,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          )
         else if (_tun46Setting == TunConfig_TUN46Setting.FOUR_ONLY)
-          Text(AppLocalizations.of(context)!.tunIpv4Desc,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ))
+          Text(
+            AppLocalizations.of(context)!.tunIpv4Desc,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
       ],
     );
   }
@@ -590,8 +610,10 @@ class _RejectQuicHysteriaSettingState extends State<RejectQuicHysteriaSetting> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(AppLocalizations.of(context)!.hysteriaRejectQuic,
-              style: Theme.of(context).textTheme.bodyLarge),
+          Text(
+            AppLocalizations.of(context)!.hysteriaRejectQuic,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
           const Gap(10),
           Switch(
             value: _rejectQuicHysteria,

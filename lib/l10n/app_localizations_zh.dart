@@ -1771,7 +1771,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get rpmTunNotice => 'When TUN is on, Reverse Path Forwarding mode will be set to Loose(2) and reset to what it was when disconnect. You can go to the following website to learn about Reverse Path Forwarding';
 
   @override
-  String get internalDnsDesc => '内部DNS服务器用于在出站拨号时解析域名。有两个，一个叫“internal-dns-proxy”，默认模式下它使用代理选择器连接到1.1.1.1；另一个叫“internal-dns-direct”，默认模式下直连223.5.5.5和1.1.1.1。解析域名时会先使用internal-dns-direct，如果失败，则使用internal-dns-proxy，如果它也没有返回结果，那么就使用系统DNS';
+  String get internalDnsDesc => '内部DNS服务器主要用于在出站拨号时解析域名，它们会从左到右依次被使用，直到解析成功为止';
 
   @override
   String get nodeSetDesc => '\"__node__\"为包含所有节点域名/IP的域名小集合/IP小集合。它主要被用于让VX节点测试走直连。节点域名包括它的地址和SNI';
@@ -2153,7 +2153,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeEditCustomizableLayout => '可自定义主页';
 
   @override
-  String get domainStrategyDesc => '影响如何连接服务器。PreferIPv4: 优先使用IPv4，如果失败，使用IPv6。PreferIPv6: 优先使用IPv6，如果失败，使用IPv4。IPv4Only: 只尝试IPv4。IPv6Only: 只尝试IPv6。';
+  String get domainStrategyDesc => '影响拨号时如何解析域名。PreferIPv4: 同时查寻A和AAAA，然后尝试先IPv4，如果失败，尝试IPv6。PreferIPv6: 同时查寻A和AAAA，然后尝试先IPv6，如果失败，尝试IPv4。IPv4Only: 只查寻IPv4。IPv6Only: 只查寻IPv6。Speed: 同时查寻A和AAAA，哪个先返回结果就用哪个（可能是IPv4s或IPv6s），如果失败，则使用另一个组结果。';
 
   @override
   String get uotDesc => '使用TCP传输UDP（Sagernet UDP over TCP v2 协议）。服务端也必须支持它';
@@ -2267,4 +2267,34 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get addDnsRecord => '添加本地DNS记录';
+
+  @override
+  String get internalDns => '内部DNS服务器';
+
+  @override
+  String get fallback => '回退';
+
+  @override
+  String get fallbackDesc => '如果此规则所使用的节点失败，使用以下回退。每个回退都有一些条件，只有当所有条件都成立时，回退才会被使用。';
+
+  @override
+  String get rewriteIpToDomain => '将IP重写为域名';
+
+  @override
+  String get rewriteIpToDomainDesc => '如果请求地址是IP，并且有嗅探域名，则使用嗅探域名作为请求地址。为了应对由DNS污染而导致的失败';
+
+  @override
+  String get resultIpSet => '结果IP集合';
+
+  @override
+  String get resultIpSetDesc => 'A/AAAA记录的IP不在集合内时将被丢弃';
+
+  @override
+  String get inverse => '反向';
+
+  @override
+  String get automaticallyAddFallbackDomain => '自动添加回退域名';
+
+  @override
+  String get automaticallyAddFallbackDomainDesc => '如果一个连接最初是直连的，但失败了，然后它回退到代理并成功了，自动将域名添加到名为“Fallback”的域名集合中。该集合在GFW模式中被使用';
 }
