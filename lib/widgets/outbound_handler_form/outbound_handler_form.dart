@@ -135,8 +135,7 @@ class OutboundHandlerFormState extends State<OutboundHandlerForm>
     // }
     _enableMux = widget.config?.enableMux ?? false;
     _enableUdpOverTcp = widget.config?.uot ?? false;
-    _domainStrategy =
-        widget.config?.domainStrategy ?? DomainStrategy.PreferIPv4;
+    _domainStrategy = widget.config?.domainStrategy ?? DomainStrategy.Speed;
     if (widget.config?.muxConfig != null) {
       _muxConcurrencyController.text =
           (widget.config!.muxConfig.maxConcurrency == 0
