@@ -80,15 +80,19 @@ class HomeLayout {
   // to json
   String toJson() {
     return jsonEncode(
-        _layout.map((key, value) => MapEntry(key.toString(), value)));
+      _layout.map((key, value) => MapEntry(key.toString(), value)),
+    );
   }
 
   // from json
   static HomeLayout fromJson(String json) {
     final decoded = jsonDecode(json);
     if (decoded is Map<String, dynamic>) {
-      return HomeLayout(decoded.map((key, value) =>
-          MapEntry(int.parse(key), value as List<List<String>>)));
+      return HomeLayout(
+        decoded.map(
+          (key, value) => MapEntry(int.parse(key), value as List<List<String>>),
+        ),
+      );
     }
     throw Exception('Invalid JSON');
   }
@@ -122,8 +126,7 @@ class HomeLayout {
   HomeLayout copyAppendingToColumn(int columnIndex, List<String> row) {
     final newMap = <int, List<List<String>>>{};
     for (final e in _layout.entries) {
-      newMap[e.key] =
-          e.value.map((r) => List<String>.from(r)).toList();
+      newMap[e.key] = e.value.map((r) => List<String>.from(r)).toList();
     }
     final col = newMap[columnIndex] ?? [];
     newMap[columnIndex] = [...col, List<String>.from(row)];
@@ -134,18 +137,18 @@ class HomeLayout {
 class CustomizableHomePage extends StatelessWidget {
   const CustomizableHomePage({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     final preset = MediaQuery.sizeOf(context).homeLayoutPreset;
-    final visibility =
-        context.watch<CustomHomePageLayoutProvider>().getHomeWidgets(preset);
+    final visibility = context
+        .watch<CustomHomePageLayoutProvider>()
+        .getHomeWidgets(preset);
     // when no stats component is visible, stop RealtimeSpeedNotifier
     final all = visibility.allIds();
     final anyStatsVisible = _statsWidgetIds.any((id) => all.contains(id));
-    context
-        .read<RealtimeSpeedNotifier>()
-        .setStatsWidgetsVisible(anyStatsVisible);
+    context.read<RealtimeSpeedNotifier>().setStatsWidgetsVisible(
+      anyStatsVisible,
+    );
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -159,26 +162,32 @@ class CustomizableHomePage extends StatelessWidget {
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.only(
-                        right: column == preset.columns - 1 ? 0 : 10),
+                      right: column == preset.columns - 1 ? 0 : 10,
+                    ),
                     child: Column(
-                        children: visibility.getColumn(column).map((item) {
-                      if (item.length == 2) {
+                      children: visibility.getColumn(column).map((item) {
+                        if (item.length == 2) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: _getWidget(context, item[0], preset),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: _getWidget(context, item[1], preset),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 10),
-                          child: Row(
-                            children: [
-                              Expanded(child: _getWidget(context, item[0], preset)),
-                              const SizedBox(width: 10),
-                              Expanded(child: _getWidget(context, item[1], preset)),
-                            ],
-                          ),
+                          child: _getWidget(context, item.single, preset),
                         );
-                      }
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: _getWidget(context, item.single, preset),
-                      );
-                    }).toList()),
+                      }).toList(),
+                    ),
                   ),
                 ),
             ],
@@ -189,21 +198,20 @@ class CustomizableHomePage extends StatelessWidget {
   }
 }
 
-  Widget _getWidget(BuildContext context, String id, HomeLayoutPreset preset) {
-    if (HomeWidgetId.fromId(id) != null) {
-      return HomeWidgetId.fromId(id)!.buildWidget(context, preset);
-    }
-    // custom subscriptions
-    if (id.startsWith('SUBSCRIPTION_')) {
-      final int? subId = int.tryParse(id.substring(13));
-      if (subId == null) {
-        return const SizedBox();
-      }
-      return _SubScriptionById(id: subId);
-    }
-    return const SizedBox();
+Widget _getWidget(BuildContext context, String id, HomeLayoutPreset preset) {
+  if (HomeWidgetId.fromId(id) != null) {
+    return HomeWidgetId.fromId(id)!.buildWidget(context, preset);
   }
-
+  // custom subscriptions
+  if (id.startsWith('SUBSCRIPTION_')) {
+    final int? subId = int.tryParse(id.substring(13));
+    if (subId == null) {
+      return const SizedBox();
+    }
+    return _SubScriptionById(id: subId);
+  }
+  return const SizedBox();
+}
 
 class _HomeEditDialog extends StatefulWidget {
   const _HomeEditDialog();
@@ -286,74 +294,81 @@ class _HomeEditDialogState extends State<_HomeEditDialog> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                      child: SingleChildScrollView(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        for (var column = 0; column < layout.columns; column++)
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                right: column == layout.columns - 1 ? 0 : 10,
-                              ),
-                              child: Column(
-                                children: [
-                                  ...layout.getColumn(column).map((item) {
-                                    if (item.length == 2) {
-                                      return Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 10),
-                                        child: _GroupedEditableHomeWidgetTile(
-                                          widgetIds: item,
-                                          preset: _selectedPreset,
-                                          visibility: visibility,
-                                        ),
-                                      );
-                                    }
-                                    final rawId = item.single;
-                                    final enumId =
-                                        HomeWidgetId.fromId(rawId);
-                                    // Never show the built-in subscription tile
-                                    // in the customizable home editor.
-                                    if (enumId == HomeWidgetId.subscription) {
-                                      return const SizedBox.shrink();
-                                    }
-                                    if (enumId != null) {
+                    child: SingleChildScrollView(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (
+                            var column = 0;
+                            column < layout.columns;
+                            column++
+                          )
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  right: column == layout.columns - 1 ? 0 : 10,
+                                ),
+                                child: Column(
+                                  children: [
+                                    ...layout.getColumn(column).map((item) {
+                                      if (item.length == 2) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 10,
+                                          ),
+                                          child: _GroupedEditableHomeWidgetTile(
+                                            widgetIds: item,
+                                            preset: _selectedPreset,
+                                            visibility: visibility,
+                                          ),
+                                        );
+                                      }
+                                      final rawId = item.single;
+                                      final enumId = HomeWidgetId.fromId(rawId);
+                                      // Never show the built-in subscription tile
+                                      // in the customizable home editor.
+                                      if (enumId == HomeWidgetId.subscription) {
+                                        return const SizedBox.shrink();
+                                      }
+                                      if (enumId != null) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 10,
+                                          ),
+                                          child: _EditableHomeWidgetTile(
+                                            widgetId: enumId,
+                                            preset: _selectedPreset,
+                                            hidden: false,
+                                            visibility: visibility,
+                                          ),
+                                        );
+                                      }
+                                      // Generic editable tile for any custom widget id
                                       return Padding(
                                         padding: const EdgeInsets.only(
-                                            bottom: 10),
-                                        child: _EditableHomeWidgetTile(
-                                          widgetId: enumId,
+                                          bottom: 10,
+                                        ),
+                                        child: _EditableCustomHomeWidgetTile(
+                                          id: rawId,
                                           preset: _selectedPreset,
-                                          hidden: false,
                                           visibility: visibility,
                                         ),
                                       );
-                                    }
-                                    // Generic editable tile for any custom widget id
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                          bottom: 10),
-                                      child: _EditableCustomHomeWidgetTile(
-                                        id: rawId,
-                                        preset: _selectedPreset,
-                                        visibility: visibility,
-                                      ),
-                                    );
-                                  }),
-                                  const SizedBox(height: 4),
-                                  _ColumnBottomDropTarget(
-                                    preset: _selectedPreset,
-                                    columnIndex: column,
-                                    visibility: visibility,
-                                  ),
-                                ],
+                                    }),
+                                    const SizedBox(height: 4),
+                                    _ColumnBottomDropTarget(
+                                      preset: _selectedPreset,
+                                      columnIndex: column,
+                                      visibility: visibility,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ),
@@ -376,18 +391,18 @@ class _HomeEditDialogState extends State<_HomeEditDialog> {
                         // Also hide the built-in subscription tile from the
                         // hidden section when editing the customizable home.
                         .where((id) => id != HomeWidgetId.subscription)
-                        .map((id) => SizedBox(
-                              width: _previewWidthForPreset(
-                                _selectedPreset,
-                              ),
-                              child: _EditableHomeWidgetTile(
-                                widgetId: id,
-                                preset: _selectedPreset,
-                                hidden: true,
-                                canAcceptDrop: false,
-                                visibility: visibility,
-                              ),
-                            ))
+                        .map(
+                          (id) => SizedBox(
+                            width: _previewWidthForPreset(_selectedPreset),
+                            child: _EditableHomeWidgetTile(
+                              widgetId: id,
+                              preset: _selectedPreset,
+                              hidden: true,
+                              canAcceptDrop: false,
+                              visibility: visibility,
+                            ),
+                          ),
+                        )
                         .toList(),
                   ),
                 ),
@@ -401,10 +416,7 @@ class _HomeEditDialogState extends State<_HomeEditDialog> {
 }
 
 class _EditDragData {
-  const _EditDragData({
-    required this.widgetIds,
-    required this.hidden,
-  });
+  const _EditDragData({required this.widgetIds, required this.hidden});
 
   final List<String> widgetIds;
   final bool hidden;
@@ -432,10 +444,9 @@ class _ColumnBottomDropTarget extends StatelessWidget {
       onAcceptWithDetails: (details) {
         final layout = visibility.layoutFor(preset);
         final layoutMap = Map<int, List<List<String>>>.from(layout._layout);
-        final column =
-            List<List<String>>.from(layoutMap[columnIndex] ?? const [])
-                .map((row) => List<String>.from(row))
-                .toList();
+        final column = List<List<String>>.from(
+          layoutMap[columnIndex] ?? const [],
+        ).map((row) => List<String>.from(row)).toList();
 
         // Drop adds each widget as its own row at the bottom of this column.
         for (final id in details.data.widgetIds) {
@@ -454,10 +465,7 @@ class _ColumnBottomDropTarget extends StatelessWidget {
         }
 
         layoutMap[columnIndex] = column;
-        visibility.setLayout(
-          preset: preset,
-          layout: HomeLayout(layoutMap),
-        );
+        visibility.setLayout(preset: preset, layout: HomeLayout(layoutMap));
       },
       builder: (context, candidateData, rejectedData) {
         final isActive = candidateData.isNotEmpty;
@@ -502,16 +510,15 @@ class _GroupedEditableHomeWidgetTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ids =
-        widgetIds.map(HomeWidgetId.fromId).whereType<HomeWidgetId>().toList();
+    final ids = widgetIds
+        .map(HomeWidgetId.fromId)
+        .whereType<HomeWidgetId>()
+        .toList();
     if (ids.length != 2) {
       return const SizedBox.shrink();
     }
 
-    final payload = _EditDragData(
-      widgetIds: widgetIds,
-      hidden: false,
-    );
+    final payload = _EditDragData(widgetIds: widgetIds, hidden: false);
     final child = _GroupedHomeWidgetPreviewCard(
       widgetIds: ids,
       preset: preset,
@@ -530,12 +537,10 @@ class _GroupedEditableHomeWidgetTile extends StatelessWidget {
         ),
       ),
     );
-    final childWhenDragging = Opacity(
-      opacity: 0.35,
-      child: child,
-    );
+    final childWhenDragging = Opacity(opacity: 0.35, child: child);
     final platform = Theme.of(context).platform;
-    final desktopDrag = platform == TargetPlatform.windows ||
+    final desktopDrag =
+        platform == TargetPlatform.windows ||
         platform == TargetPlatform.linux ||
         platform == TargetPlatform.macOS;
 
@@ -615,10 +620,7 @@ class _EditableHomeWidgetTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final payload = _EditDragData(
-      widgetIds: [widgetId.id],
-      hidden: hidden,
-    );
+    final payload = _EditDragData(widgetIds: [widgetId.id], hidden: hidden);
     final child = _HomeWidgetPreviewCard(
       widgetId: widgetId,
       preset: preset,
@@ -640,12 +642,10 @@ class _EditableHomeWidgetTile extends StatelessWidget {
         ),
       ),
     );
-    final childWhenDragging = Opacity(
-      opacity: 0.35,
-      child: child,
-    );
+    final childWhenDragging = Opacity(opacity: 0.35, child: child);
     final platform = Theme.of(context).platform;
-    final desktopDrag = platform == TargetPlatform.windows ||
+    final desktopDrag =
+        platform == TargetPlatform.windows ||
         platform == TargetPlatform.linux ||
         platform == TargetPlatform.macOS;
 
@@ -775,14 +775,12 @@ class _EditableCustomHomeWidgetTile extends StatelessWidget {
     );
     final feedback = Material(
       color: Colors.transparent,
-      child: SizedBox(
-        width: _previewWidthForPreset(preset),
-        child: child,
-      ),
+      child: SizedBox(width: _previewWidthForPreset(preset), child: child),
     );
     final childWhenDragging = Opacity(opacity: 0.35, child: child);
     final platform = Theme.of(context).platform;
-    final desktopDrag = platform == TargetPlatform.windows ||
+    final desktopDrag =
+        platform == TargetPlatform.windows ||
         platform == TargetPlatform.linux ||
         platform == TargetPlatform.macOS;
     Widget buildDraggable(Widget w) {
@@ -803,6 +801,7 @@ class _EditableCustomHomeWidgetTile extends StatelessWidget {
         child: w,
       );
     }
+
     return DragTarget<_EditDragData>(
       onWillAcceptWithDetails: (d) => !d.data.widgetIds.contains(id),
       onAcceptWithDetails: (details) {
@@ -828,10 +827,7 @@ class _EditableCustomHomeWidgetTile extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(18),
               border: isTargeted
-                  ? Border.all(
-                      color: theme.colorScheme.primary,
-                      width: 2,
-                    )
+                  ? Border.all(color: theme.colorScheme.primary, width: 2)
                   : null,
             ),
             child: child,
@@ -933,8 +929,9 @@ class _GroupedHomeWidgetPart extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       decoration: BoxDecoration(
-        color:
-            theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.45),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(
+          alpha: 0.45,
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -948,10 +945,8 @@ class _GroupedHomeWidgetPart extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () => visibility.hide(
-              preset: preset,
-              widgetId: widgetId.id,
-            ),
+            onPressed: () =>
+                visibility.hide(preset: preset, widgetId: widgetId.id),
             visualDensity: VisualDensity.compact,
             icon: const Icon(Icons.visibility_off_rounded, size: 18),
           ),
@@ -1016,10 +1011,8 @@ class _HomeWidgetPreviewCard extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () => visibility.toggle(
-                    preset: preset,
-                    widgetId: widgetId.id,
-                  ),
+                  onPressed: () =>
+                      visibility.toggle(preset: preset, widgetId: widgetId.id),
                   visualDensity: VisualDensity.compact,
                   icon: Icon(
                     hidden
@@ -1186,62 +1179,44 @@ Map<int, List<List<String>>> defaultHomeWidgetOrder(HomeLayoutPreset preset) {
     case HomeLayoutPreset.compact:
       return {
         0: [
-          [
-            'upload',
-            'download',
-          ],
-          [
-            'memory',
-            'connections',
-          ],
+          ['upload', 'download'],
+          ['memory', 'connections'],
           ['nodes'],
           ['nodesHelper'],
           ['route'],
           ['proxySelector'],
           ['inbound'],
-        ]
+        ],
       };
     case HomeLayoutPreset.medium:
       return {
         0: [
-          [
-            'upload',
-            'download',
-          ],
+          ['upload', 'download'],
           ['route'],
           ['proxySelector'],
           ['inbound'],
         ],
         1: [
-          [
-            'memory',
-            'connections',
-          ],
+          ['memory', 'connections'],
           ['nodes'],
           ['nodesHelper'],
-        ]
+        ],
       };
     case HomeLayoutPreset.large:
       return {
         0: [
-          [
-            'upload',
-            'download',
-          ],
+          ['upload', 'download'],
           ['route'],
           ['inbound'],
         ],
         1: [
-          [
-            'memory',
-            'connections',
-          ],
+          ['memory', 'connections'],
           ['proxySelector'],
         ],
         2: [
           ['nodes'],
           ['nodesHelper'],
-        ]
+        ],
       };
   }
 }
@@ -1309,41 +1284,23 @@ class CustomizeHomeWidgetNotifier extends ChangeNotifier {
     return set;
   }
 
-  void hide({
-    required HomeLayoutPreset preset,
-    required String widgetId,
-  }) {
+  void hide({required HomeLayoutPreset preset, required String widgetId}) {
     final rows = rowsFor(preset).map((row) => [...row]).toList();
     final movedRows = _extractRows(rows, [widgetId]);
     if (movedRows.isEmpty) return;
     _saveRows(preset, rows);
   }
 
-  void show({
-    required HomeLayoutPreset preset,
-    required String widgetId,
-  }) {
+  void show({required HomeLayoutPreset preset, required String widgetId}) {
     if (!hiddenIdsFor(preset).contains(widgetId)) return;
-    showItemsAtStart(
-      preset: preset,
-      widgetIds: [widgetId],
-    );
+    showItemsAtStart(preset: preset, widgetIds: [widgetId]);
   }
 
-  void toggle({
-    required HomeLayoutPreset preset,
-    required String widgetId,
-  }) {
+  void toggle({required HomeLayoutPreset preset, required String widgetId}) {
     if (hiddenIdsFor(preset).contains(widgetId)) {
-      show(
-        preset: preset,
-        widgetId: widgetId,
-      );
+      show(preset: preset, widgetId: widgetId);
     } else {
-      hide(
-        preset: preset,
-        widgetId: widgetId,
-      );
+      hide(preset: preset, widgetId: widgetId);
     }
   }
 
@@ -1352,11 +1309,7 @@ class CustomizeHomeWidgetNotifier extends ChangeNotifier {
     required String widgetId,
     required String targetId,
   }) {
-    moveItemsBefore(
-      preset: preset,
-      widgetIds: [widgetId],
-      targetId: targetId,
-    );
+    moveItemsBefore(preset: preset, widgetIds: [widgetId], targetId: targetId);
   }
 
   void showAndMoveBefore({
@@ -1364,21 +1317,14 @@ class CustomizeHomeWidgetNotifier extends ChangeNotifier {
     required String widgetId,
     required String targetId,
   }) {
-    showItemsBefore(
-      preset: preset,
-      widgetIds: [widgetId],
-      targetId: targetId,
-    );
+    showItemsBefore(preset: preset, widgetIds: [widgetId], targetId: targetId);
   }
 
   void showAtStart({
     required HomeLayoutPreset preset,
     required String widgetId,
   }) {
-    showItemsAtStart(
-      preset: preset,
-      widgetIds: [widgetId],
-    );
+    showItemsAtStart(preset: preset, widgetIds: [widgetId]);
   }
 
   void moveItemsBefore({
@@ -1509,7 +1455,9 @@ class CustomizeHomeWidgetNotifier extends ChangeNotifier {
   }
 
   List<List<String>> _extractRows(
-      List<List<String>> rows, List<String> widgetIds) {
+    List<List<String>> rows,
+    List<String> widgetIds,
+  ) {
     final widgetIdSet = widgetIds.toSet();
     final movedRows = <List<String>>[];
     for (var i = 0; i < rows.length; i++) {
@@ -1535,7 +1483,9 @@ class CustomizeHomeWidgetNotifier extends ChangeNotifier {
   }
 
   _WidgetLocation? _findAnyWidget(
-      List<List<String>> rows, List<String> widgetIds) {
+    List<List<String>> rows,
+    List<String> widgetIds,
+  ) {
     for (final widgetId in widgetIds) {
       final location = _findWidget(rows, widgetId);
       if (location != null) return location;

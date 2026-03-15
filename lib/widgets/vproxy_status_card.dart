@@ -21,11 +21,7 @@ class VproxyStatusCard extends StatelessWidget {
   final VproxyStatusResponse status;
   final VoidCallback? onRefresh;
 
-  const VproxyStatusCard({
-    super.key,
-    required this.status,
-    this.onRefresh,
-  });
+  const VproxyStatusCard({super.key, required this.status, this.onRefresh});
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +30,7 @@ class VproxyStatusCard extends StatelessWidget {
 
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
@@ -97,8 +91,9 @@ class VproxyStatusCard extends StatelessWidget {
                       onPressed: onRefresh,
                       tooltip: 'Refresh',
                       style: IconButton.styleFrom(
-                        backgroundColor:
-                            theme.colorScheme.surface.withValues(alpha: 0.5),
+                        backgroundColor: theme.colorScheme.surface.withValues(
+                          alpha: 0.5,
+                        ),
                       ),
                     ),
                 ],
@@ -281,11 +276,7 @@ class _InfoRow extends StatelessWidget {
             color: iconColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
-            icon,
-            size: 18,
-            color: iconColor,
-          ),
+          child: Icon(icon, size: 18, color: iconColor),
         ),
         const SizedBox(width: 12),
         Expanded(

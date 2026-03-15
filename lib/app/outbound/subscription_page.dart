@@ -80,7 +80,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     1260,
     1320,
     1380,
-    1440
+    1440,
   ];
   int _selectedIndex = 7; // Default to 30 minutes
   bool _autoUpdate = true;
@@ -101,34 +101,34 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   @override
   void initState() {
     _autoUpdate = context.read<SharedPreferences>().autoUpdate;
-    _selectedIndex =
-        _intervals.indexOf(context.read<SharedPreferences>().updateInterval);
+    _selectedIndex = _intervals.indexOf(
+      context.read<SharedPreferences>().updateInterval,
+    );
     _updateAllButton = BlocSelector<SubscriptionBloc, SubscriptionState, bool>(
-        selector: (state) => state.updatingAll,
-        builder: (ctx, updating) {
-          return FilledButton.tonalIcon(
-            onPressed: updating
-                ? null
-                : () async {
-                    context
-                        .read<SubscriptionBloc>()
-                        .add(UpdateSubscriptionsButtonClickedEvent());
-                  },
-            icon: updating
-                ? const Padding(
-                    padding: EdgeInsets.all(2.0),
-                    child: SizedBox(
-                      width: 12,
-                      height: 12,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                      ),
-                    ),
-                  )
-                : const Icon(Icons.refresh_rounded),
-            label: Text(AppLocalizations.of(context)!.update),
-          );
-        });
+      selector: (state) => state.updatingAll,
+      builder: (ctx, updating) {
+        return FilledButton.tonalIcon(
+          onPressed: updating
+              ? null
+              : () async {
+                  context.read<SubscriptionBloc>().add(
+                    UpdateSubscriptionsButtonClickedEvent(),
+                  );
+                },
+          icon: updating
+              ? const Padding(
+                  padding: EdgeInsets.all(2.0),
+                  child: SizedBox(
+                    width: 12,
+                    height: 12,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                )
+              : const Icon(Icons.refresh_rounded),
+          label: Text(AppLocalizations.of(context)!.update),
+        );
+      },
+    );
     super.initState();
   }
 
@@ -136,45 +136,42 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _cache = StreamBuilder<List<Subscription>>(
-        stream: context.watch<OutboundRepo>().getStreamOfSubs(),
-        builder: (ctx, snap) {
-          if (!snap.hasData) {
-            return const SizedBox();
-          }
-          final showAd = !ctx.watch<AuthBloc>().state.pro;
-          snap.data!.sort((a, b) => a.placeOnTop ? -1 : 1);
-          return Material(
-              child: CustomScrollView(
+      stream: context.watch<OutboundRepo>().getStreamOfSubs(),
+      builder: (ctx, snap) {
+        if (!snap.hasData) {
+          return const SizedBox();
+        }
+        final showAd = !ctx.watch<AuthBloc>().state.pro;
+        snap.data!.sort((a, b) => a.placeOnTop ? -1 : 1);
+        return Material(
+          child: CustomScrollView(
             slivers: [
               SliverPadding(
                 padding: const EdgeInsets.only(bottom: 10, top: 8),
                 sliver: SliverGrid(
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 400,
-                    mainAxisExtent:
-                        Platform.isAndroid || Platform.isIOS ? 145 : 130,
+                    mainAxisExtent: Platform.isAndroid || Platform.isIOS
+                        ? 145
+                        : 130,
                     crossAxisSpacing: 8,
                     mainAxisSpacing: 8,
                   ),
-                  delegate: SliverChildBuilderDelegate(
-                    (ctx, index) {
-                      // if (index == 0 && showAd) {
-                      //   return const _AdCard();
-                      // }
-                      // if ((index - (showAd ? 1 : 0)) >= snap.data!.length) {
-                      //   return null;
-                      // }
-                      return SubScriptionListTile(
-                          group: snap.data![index /* - (showAd ? 1 : 0) */]);
-                    },
-                    childCount: snap.data!.length,
-                  ),
+                  delegate: SliverChildBuilderDelegate((ctx, index) {
+                    // if (index == 0 && showAd) {
+                    //   return const _AdCard();
+                    // }
+                    // if ((index - (showAd ? 1 : 0)) >= snap.data!.length) {
+                    //   return null;
+                    // }
+                    return SubScriptionListTile(
+                      group: snap.data![index /* - (showAd ? 1 : 0) */],
+                    );
+                  }, childCount: snap.data!.length),
                 ),
               ),
               if (showAd) const Ads(),
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 60),
-              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 60)),
               // if (showAd)
               //   SliverToBoxAdapter(
               //     child: LayoutBuilder(builder: (ctx, constraints) {
@@ -185,35 +182,36 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               //     }),
               //   )
             ],
-          )
-              // Column(
-              //   children: [
-              //     ListView(
-              //       clipBehavior: Clip.hardEdge,
-              //       shrinkWrap: true,
-              //       padding: EdgeInsets.only(bottom: showAd ? 0 : 60),
-              //       // gridDelegate:
-              //       //     SliverGridDelegateWithFixedCrossAxisCount(
-              //       //   crossAxisCount: count,
-              //       //   childAspectRatio: width / 98,
-              //       //   crossAxisSpacing: 10,
-              //       //   mainAxisSpacing: 10,
-              //       // ),
-              //       children: snap.data!.map<Widget>((group) {
-              //         return _SubScriptionListTile(group: group, mode: mode);
-              //       }).toList(),
-              //     ),
-              //     if (showAd)
-              //       Expanded(child: LayoutBuilder(builder: (ctx, constraints) {
-              //         return MyScrollingAdWidget(
-              //           width: constraints.maxWidth,
-              //           height: constraints.maxHeight,
-              //         );
-              //       }))
-              //   ],
-              // ),
-              );
-        });
+          ),
+          // Column(
+          //   children: [
+          //     ListView(
+          //       clipBehavior: Clip.hardEdge,
+          //       shrinkWrap: true,
+          //       padding: EdgeInsets.only(bottom: showAd ? 0 : 60),
+          //       // gridDelegate:
+          //       //     SliverGridDelegateWithFixedCrossAxisCount(
+          //       //   crossAxisCount: count,
+          //       //   childAspectRatio: width / 98,
+          //       //   crossAxisSpacing: 10,
+          //       //   mainAxisSpacing: 10,
+          //       // ),
+          //       children: snap.data!.map<Widget>((group) {
+          //         return _SubScriptionListTile(group: group, mode: mode);
+          //       }).toList(),
+          //     ),
+          //     if (showAd)
+          //       Expanded(child: LayoutBuilder(builder: (ctx, constraints) {
+          //         return MyScrollingAdWidget(
+          //           width: constraints.maxWidth,
+          //           height: constraints.maxHeight,
+          //         );
+          //       }))
+          //   ],
+          // ),
+        );
+      },
+    );
   }
 
   @override
@@ -246,15 +244,15 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         });
       },
       onChangeEnd: (value) async {
-        context
-            .read<SharedPreferences>()
-            .setUpdateInterval(_intervals[_selectedIndex]);
-        context
-            .read<XController>()
-            .setSubscriptionInterval(_intervals[_selectedIndex]);
-        context
-            .read<AutoSubscriptionUpdater>()
-            .onIntervalChange(_intervals[_selectedIndex]);
+        context.read<SharedPreferences>().setUpdateInterval(
+          _intervals[_selectedIndex],
+        );
+        context.read<XController>().setSubscriptionInterval(
+          _intervals[_selectedIndex],
+        );
+        context.read<AutoSubscriptionUpdater>().onIntervalChange(
+          _intervals[_selectedIndex],
+        );
       },
     );
     final sliderValue = SizedBox(
@@ -290,11 +288,10 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                           child: Row(
                             children: [
                               Text(
-                                  AppLocalizations.of(context)!.updateInterval),
-                              const Gap(10),
-                              Expanded(
-                                child: slider,
+                                AppLocalizations.of(context)!.updateInterval,
                               ),
+                              const Gap(10),
+                              Expanded(child: slider),
                               sliderValue,
                             ],
                           ),
@@ -342,7 +339,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               //     ),
               //   ),
               const Expanded(child: SizedBox()),
-              const AddMenuAnchor(colored: true)
+              const AddMenuAnchor(colored: true),
             ],
           ),
           const Gap(10),
@@ -389,17 +386,17 @@ class SubscriptionData {
       if (description.contains('剩余流量')) {
         // Try Chinese format first: "剩余流量: 12.165GB。到期: 2025年11月20日 15时。"
         final chineseRemainingMatch = RegExp(
-                r'剩余流量[：:]\s*(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)',
-                caseSensitive: false)
-            .firstMatch(description);
+          r'剩余流量[：:]\s*(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)',
+          caseSensitive: false,
+        ).firstMatch(description);
         if (chineseRemainingMatch != null) {
           remainingData =
               '${chineseRemainingMatch.group(1)}${chineseRemainingMatch.group(2)}';
         }
         // Extract Chinese expiration date: "到期: 2025年11月20日 15时" or "到期: 不过期"
-        final chineseExpirationMatch =
-            RegExp(r'到期[：:]\s*(?:不过期|(\d{4})年(\d{1,2})月(\d{1,2})日)')
-                .firstMatch(description);
+        final chineseExpirationMatch = RegExp(
+          r'到期[：:]\s*(?:不过期|(\d{4})年(\d{1,2})月(\d{1,2})日)',
+        ).firstMatch(description);
         if (chineseExpirationMatch != null) {
           // Check if it's "不过期" (no expiration) - group 1 will be null
           if (chineseExpirationMatch.group(1) != null) {
@@ -415,9 +412,9 @@ class SubscriptionData {
       } else {
         // If Chinese format didn't match, try key-value format: "upload=1234; download=2234; total=1024000; expire=2218532293"
         final keyValueMatch = RegExp(
-                r'upload\s*=\s*(\d+)\s*;\s*download\s*=\s*(\d+)\s*;\s*total\s*=\s*(\d+)\s*;\s*expire\s*=\s*(\d+)',
-                caseSensitive: false)
-            .firstMatch(description);
+          r'upload\s*=\s*(\d+)\s*;\s*download\s*=\s*(\d+)\s*;\s*total\s*=\s*(\d+)\s*;\s*expire\s*=\s*(\d+)',
+          caseSensitive: false,
+        ).firstMatch(description);
 
         if (keyValueMatch != null) {
           // Parse values (they're in bytes)
@@ -447,34 +444,39 @@ class SubscriptionData {
           usedData = formatBytes(usedBytes);
           final remainingBytes = totalBytes - usedBytes;
           remainingData = formatBytes(remainingBytes);
-          usagePercentage =
-              totalBytes > 0 ? (usedBytes / totalBytes).clamp(0.0, 1.0) : 0.0;
+          usagePercentage = totalBytes > 0
+              ? (usedBytes / totalBytes).clamp(0.0, 1.0)
+              : 0.0;
 
           // Convert Unix timestamp to DateTime
           if (expireTimestamp > 0) {
             expirationDate = DateTime.fromMillisecondsSinceEpoch(
-                expireTimestamp * 1000,
-                isUtc: true);
+              expireTimestamp * 1000,
+              isUtc: true,
+            );
           }
         } else {
           // Try standard format
           // Extract total data
-          final totMatch = RegExp(r'TOT:(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)',
-                  caseSensitive: false)
-              .firstMatch(description);
+          final totMatch = RegExp(
+            r'TOT:(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)',
+            caseSensitive: false,
+          ).firstMatch(description);
           if (totMatch != null) {
             totalData = '${totMatch.group(1)}${totMatch.group(2)}';
           }
 
           // Extract upload data
-          final uploadMatch =
-              RegExp(r'↑:(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)', caseSensitive: false)
-                  .firstMatch(description);
+          final uploadMatch = RegExp(
+            r'↑:(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)',
+            caseSensitive: false,
+          ).firstMatch(description);
 
           // Extract download data
-          final downloadMatch =
-              RegExp(r'↓:(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)', caseSensitive: false)
-                  .firstMatch(description);
+          final downloadMatch = RegExp(
+            r'↓:(\d+(?:\.\d+)?)\s*(GB|MB|KB|TB)',
+            caseSensitive: false,
+          ).firstMatch(description);
 
           // Calculate used data
           if (uploadMatch != null && downloadMatch != null) {
@@ -490,16 +492,18 @@ class SubscriptionData {
             final totalValue = double.tryParse(totMatch!.group(1) ?? '0') ?? 0;
             final usedValue =
                 double.tryParse(usedData.replaceAll(RegExp(r'[^\d.]'), '')) ??
-                    0;
+                0;
             final remaining = totalValue - usedValue;
             remainingData = '${remaining.toStringAsFixed(2)}GB';
-            usagePercentage =
-                totalValue > 0 ? (usedValue / totalValue).clamp(0.0, 1.0) : 0.0;
+            usagePercentage = totalValue > 0
+                ? (usedValue / totalValue).clamp(0.0, 1.0)
+                : 0.0;
           }
 
           // Extract expiration date
-          final expiresMatch = RegExp(r'Expires?:\s*(\d{4}-\d{2}-\d{2})')
-              .firstMatch(description);
+          final expiresMatch = RegExp(
+            r'Expires?:\s*(\d{4}-\d{2}-\d{2})',
+          ).firstMatch(description);
           if (expiresMatch != null) {
             expirationDate = DateTime.tryParse(expiresMatch.group(1)!);
           }
@@ -529,20 +533,27 @@ class _SubScriptionListTileState extends State<SubScriptionListTile> {
     SubscriptionFormData? subscriptiopnFormData;
     if (fullScreen) {
       subscriptiopnFormData = await Navigator.of(context, rootNavigator: true)
-          .push<SubscriptionFormData>(CupertinoPageRoute(
-              builder: (ctx) => EditSubscriptionFullScreen(group: group)));
+          .push<SubscriptionFormData>(
+            CupertinoPageRoute(
+              builder: (ctx) => EditSubscriptionFullScreen(group: group),
+            ),
+          );
     } else {
       subscriptiopnFormData = await showDialog<SubscriptionFormData>(
-          context: context,
-          builder: (ctx) => EditSubscriptionDialog(group: group));
+        context: context,
+        builder: (ctx) => EditSubscriptionDialog(group: group),
+      );
     }
     if (subscriptiopnFormData != null &&
         (subscriptiopnFormData.link != group.link ||
             subscriptiopnFormData.name != group.name)) {
-      outboundBloc.add(SubscriptionEditedEvent(
+      outboundBloc.add(
+        SubscriptionEditedEvent(
           id: group.id,
           name: subscriptiopnFormData.name,
-          link: subscriptiopnFormData.link));
+          link: subscriptiopnFormData.link,
+        ),
+      );
     }
   }
 
@@ -554,21 +565,24 @@ class _SubScriptionListTileState extends State<SubScriptionListTile> {
     final colorScheme = Theme.of(context).colorScheme;
 
     // Check if subscription is expiring soon (within 7 days)
-    final isExpiringSoon = parsedData?.expirationDate != null &&
+    final isExpiringSoon =
+        parsedData?.expirationDate != null &&
         parsedData!.expirationDate!.difference(DateTime.now()).inDays <= 7 &&
         parsedData.expirationDate!.isAfter(DateTime.now());
 
     // Check if expired
-    final isExpired = parsedData?.expirationDate != null &&
+    final isExpired =
+        parsedData?.expirationDate != null &&
         parsedData!.expirationDate!.isBefore(DateTime.now());
 
     final isPro = context.read<AuthBloc>().state.pro;
     return MenuAnchor(
       menuChildren: [
         MenuItemButton(
-            leadingIcon: const Icon(Icons.edit_rounded),
-            child: Text(AppLocalizations.of(context)!.edit),
-            onPressed: () => _onTap(context, widget.group)),
+          leadingIcon: const Icon(Icons.edit_rounded),
+          child: Text(AppLocalizations.of(context)!.edit),
+          onPressed: () => _onTap(context, widget.group),
+        ),
         MenuItemButton(
           leadingIcon: const Icon(Icons.add_home_rounded),
           trailingIcon: isPro ? null : proIcon,
@@ -578,29 +592,34 @@ class _SubScriptionListTileState extends State<SubScriptionListTile> {
               showProPromotionDialog(context);
             }
             context.read<HomeLayoutRepo>().addWidgetIdToHome(
-                  'SUBSCRIPTION_${widget.group.id}',
-                );
+              'SUBSCRIPTION_${widget.group.id}',
+            );
           },
         ),
         MenuItemButton(
-            leadingIcon: const Icon(Icons.arrow_upward_rounded),
-            child: Text(widget.group.placeOnTop
+          leadingIcon: const Icon(Icons.arrow_upward_rounded),
+          child: Text(
+            widget.group.placeOnTop
                 ? AppLocalizations.of(context)!.stopPlaceOnTop
-                : AppLocalizations.of(context)!.placeOnTop),
-            onPressed: () => context
-                .read<OutboundBloc>()
-                .add(SubscriptionPlaceOnTopEvent(widget.group))),
+                : AppLocalizations.of(context)!.placeOnTop,
+          ),
+          onPressed: () => context.read<OutboundBloc>().add(
+            SubscriptionPlaceOnTopEvent(widget.group),
+          ),
+        ),
         MenuItemButton(
-            leadingIcon: const Icon(Icons.share_rounded),
-            child: Text(AppLocalizations.of(context)!.share),
-            onPressed: () => shareQrCode(context, widget.group.link)),
+          leadingIcon: const Icon(Icons.share_rounded),
+          child: Text(AppLocalizations.of(context)!.share),
+          onPressed: () => shareQrCode(context, widget.group.link),
+        ),
         const Divider(),
         MenuItemButton(
-            leadingIcon: const Icon(Icons.delete_rounded),
-            child: Text(AppLocalizations.of(context)!.delete),
-            onPressed: () => context
-                .read<OutboundBloc>()
-                .add(SubscriptionDeleteEvent(widget.group))),
+          leadingIcon: const Icon(Icons.delete_rounded),
+          child: Text(AppLocalizations.of(context)!.delete),
+          onPressed: () => context.read<OutboundBloc>().add(
+            SubscriptionDeleteEvent(widget.group),
+          ),
+        ),
       ],
       controller: _menuController,
       child: GestureDetector(
@@ -613,8 +632,11 @@ class _SubScriptionListTileState extends State<SubScriptionListTile> {
           borderRadius: BorderRadius.circular(16),
           onSecondaryTapDown: (TapDownDetails details) {
             _menuController.open(
-                position:
-                    Offset(details.localPosition.dx, details.localPosition.dy));
+              position: Offset(
+                details.localPosition.dx,
+                details.localPosition.dy,
+              ),
+            );
           },
           onTap: () => _onTap(context, widget.group),
           child: Card(
@@ -639,10 +661,8 @@ class _SubScriptionListTileState extends State<SubScriptionListTile> {
                       Expanded(
                         child: Text(
                           widget.group.name,
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w600),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -671,11 +691,11 @@ class _SubScriptionListTileState extends State<SubScriptionListTile> {
                             parsedData!.totalData != null
                                 ? '${parsedData.remainingData} / ${parsedData.totalData}'
                                 : parsedData.remainingData!,
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: colorScheme.onSurface,
-                                    ),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: colorScheme.onSurface,
+                                ),
                           ),
                           const Spacer(),
                           if (parsedData.expirationDate != null)
@@ -686,8 +706,8 @@ class _SubScriptionListTileState extends State<SubScriptionListTile> {
                                   isExpired
                                       ? Icons.error
                                       : isExpiringSoon
-                                          ? Icons.warning_amber_rounded
-                                          : Icons.calendar_month,
+                                      ? Icons.warning_amber_rounded
+                                      : Icons.calendar_month,
                                   size: 16,
                                   color: isExpired
                                       ? colorScheme.error
@@ -695,11 +715,10 @@ class _SubScriptionListTileState extends State<SubScriptionListTile> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  DateFormat('yyyy-MM-dd')
-                                      .format(parsedData.expirationDate!),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
+                                  DateFormat(
+                                    'yyyy-MM-dd',
+                                  ).format(parsedData.expirationDate!),
+                                  style: Theme.of(context).textTheme.bodySmall
                                       ?.copyWith(
                                         fontWeight: FontWeight.w600,
                                         color: colorScheme.onSurface,
@@ -716,8 +735,8 @@ class _SubScriptionListTileState extends State<SubScriptionListTile> {
                     AutoSizeText(
                       widget.group.description,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                       maxLines: 1,
                       minFontSize: 10,
                     ),
@@ -738,18 +757,16 @@ class _SubScriptionListTileState extends State<SubScriptionListTile> {
                         child: Text(
                           hasUpdateError
                               ? AppLocalizations.of(context)!.failure
-                              : '${AppLocalizations.of(context)!.updatedAt} ${DateFormat(
-                                  'MM-dd HH:mm',
-                                  Localizations.localeOf(context).toString(),
-                                ).format(DateTime.fromMillisecondsSinceEpoch(widget.group.lastSuccessUpdate))}',
-                          style:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    fontSize: 10,
-                                    color: hasUpdateError
-                                        ? colorScheme.error
-                                        : colorScheme.onSurfaceVariant
-                                            .withOpacity(0.7),
-                                  ),
+                              : '${AppLocalizations.of(context)!.updatedAt} ${DateFormat('MM-dd HH:mm', Localizations.localeOf(context).toString()).format(DateTime.fromMillisecondsSinceEpoch(widget.group.lastSuccessUpdate))}',
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                fontSize: 10,
+                                color: hasUpdateError
+                                    ? colorScheme.error
+                                    : colorScheme.onSurfaceVariant.withOpacity(
+                                        0.7,
+                                      ),
+                              ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -773,24 +790,23 @@ class UpdateSubButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SubscriptionBloc, SubscriptionState>(
-        builder: (ctx, satte) {
-      return IconButton(
-        onPressed: satte.updatingAll || satte.updatingSubs.contains(sub.id)
-            ? null
-            : () => context
-                .read<SubscriptionBloc>()
-                .add(UpdateSubscriptionEvent(sub)),
-        icon: satte.updatingSubs.contains(sub.id)
-            ? const SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
+      builder: (ctx, satte) {
+        return IconButton(
+          onPressed: satte.updatingAll || satte.updatingSubs.contains(sub.id)
+              ? null
+              : () => context.read<SubscriptionBloc>().add(
+                  UpdateSubscriptionEvent(sub),
                 ),
-              )
-            : const Icon(Icons.refresh_rounded),
-      );
-    });
+          icon: satte.updatingSubs.contains(sub.id)
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.refresh_rounded),
+        );
+      },
+    );
   }
 }
 
@@ -801,8 +817,11 @@ class SubscriptionFormData {
 }
 
 class SubscriptionForm extends StatefulWidget {
-  const SubscriptionForm(
-      {super.key, required this.data, required this.formKey});
+  const SubscriptionForm({
+    super.key,
+    required this.data,
+    required this.formKey,
+  });
   final SubscriptionFormData data;
   final GlobalKey<FormState> formKey;
 
@@ -840,18 +859,21 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
           TextFormField(
             controller: _nameController,
             onChanged: (value) => widget.data.name = value,
-            decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.name,
-            ).applyDefaults(
-                const InputDecorationTheme(border: OutlineInputBorder())),
+            decoration:
+                InputDecoration(
+                  labelText: AppLocalizations.of(context)!.name,
+                ).applyDefaults(
+                  const InputDecorationTheme(border: OutlineInputBorder()),
+                ),
           ),
           const Gap(10),
           TextFormField(
             controller: _linkController,
             maxLines: 2,
             decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.subscriptionAddress,
-                border: const OutlineInputBorder()),
+              labelText: AppLocalizations.of(context)!.subscriptionAddress,
+              border: const OutlineInputBorder(),
+            ),
             onChanged: (value) => widget.data.link = value,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -863,9 +885,7 @@ class _SubscriptionFormState extends State<SubscriptionForm> {
               widget.data.link = value;
               return null;
             },
-            style: const TextStyle(
-              letterSpacing: 0,
-            ),
+            style: const TextStyle(letterSpacing: 0),
           ),
         ],
       ),
@@ -916,10 +936,7 @@ class _EditSubscriptionFullScreenState
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        child: SubscriptionForm(
-          data: _formData,
-          formKey: formKey,
-        ),
+        child: SubscriptionForm(data: _formData, formKey: formKey),
       ),
     );
   }

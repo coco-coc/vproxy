@@ -89,7 +89,8 @@ class _RoutePageState extends State<RoutePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _advancedMode = context.read<AuthBloc>().state.pro &&
+    _advancedMode =
+        context.read<AuthBloc>().state.pro &&
         context.read<SharedPreferences>().advanceRouteMode;
     _tabController = TabController(length: 4, vsync: this);
   }
@@ -124,45 +125,55 @@ class _RoutePageState extends State<RoutePage> with TickerProviderStateMixin {
 
     final size = MediaQuery.of(context).size;
     final switchModeButton = Align(
-        alignment: Alignment.centerRight,
-        child: TextButton.icon(
-          label: Text(_advancedMode
+      alignment: Alignment.centerRight,
+      child: TextButton.icon(
+        label: Text(
+          _advancedMode
               ? AppLocalizations.of(context)!.simple
-              : AppLocalizations.of(context)!.advanced),
-          onPressed: () => _onTap(),
-        ));
+              : AppLocalizations.of(context)!.advanced,
+        ),
+        onPressed: () => _onTap(),
+      ),
+    );
 
     if (_advancedMode) {
       if (!desktopPlatforms) {
         return Scaffold(
           body: Column(
             children: [
-              TabBar(controller: _tabController, tabs: [
-                Tab(text: AppLocalizations.of(context)!.mode),
-                Tab(text: AppLocalizations.of(context)!.set),
-                Tab(text: AppLocalizations.of(context)!.selector),
-                const Tab(text: 'DNS'),
-              ]),
+              TabBar(
+                controller: _tabController,
+                tabs: [
+                  Tab(text: AppLocalizations.of(context)!.mode),
+                  Tab(text: AppLocalizations.of(context)!.set),
+                  Tab(text: AppLocalizations.of(context)!.selector),
+                  const Tab(text: 'DNS'),
+                ],
+              ),
               const Gap(10),
               Expanded(
-                  child: TabBarView(controller: _tabController, children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ModeWidget(switchModeButton: switchModeButton),
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: ModeWidget(switchModeButton: switchModeButton),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: SetWidget(switchModeButton: switchModeButton),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: SelectorWidget(),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: DnsServersWidget(),
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: SetWidget(switchModeButton: switchModeButton),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                  child: SelectorWidget(),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
-                  child: DnsServersWidget(),
-                ),
-              ])),
+              ),
             ],
           ),
         );
@@ -171,48 +182,59 @@ class _RoutePageState extends State<RoutePage> with TickerProviderStateMixin {
         body: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(children: [
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                const Expanded(child: SizedBox()),
-                SegmentedButton<AdvancedRoutePageSegment>(
-                  style: SegmentedButton.styleFrom(
-                    visualDensity:
-                        desktopPlatforms ? VisualDensity.compact : null,
-                  ),
-                  segments: [
-                    ButtonSegment(
-                      value: AdvancedRoutePageSegment.mode,
-                      label: Text(AppLocalizations.of(context)!.mode),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Expanded(child: SizedBox()),
+                    SegmentedButton<AdvancedRoutePageSegment>(
+                      style: SegmentedButton.styleFrom(
+                        visualDensity: desktopPlatforms
+                            ? VisualDensity.compact
+                            : null,
+                      ),
+                      segments: [
+                        ButtonSegment(
+                          value: AdvancedRoutePageSegment.mode,
+                          label: Text(AppLocalizations.of(context)!.mode),
+                        ),
+                        ButtonSegment(
+                          value: AdvancedRoutePageSegment.set,
+                          label: Text(AppLocalizations.of(context)!.set),
+                        ),
+                        ButtonSegment(
+                          value: AdvancedRoutePageSegment.selector,
+                          label: Text(AppLocalizations.of(context)!.selector),
+                        ),
+                        const ButtonSegment(
+                          value: AdvancedRoutePageSegment.dns,
+                          label: Text('DNS'),
+                        ),
+                      ],
+                      selected: {_advancedSegment},
+                      onSelectionChanged: (Set<AdvancedRoutePageSegment> set) =>
+                          setState(() {
+                            _advancedSegment = set.first;
+                          }),
                     ),
-                    ButtonSegment(
-                        value: AdvancedRoutePageSegment.set,
-                        label: Text(AppLocalizations.of(context)!.set)),
-                    ButtonSegment(
-                        value: AdvancedRoutePageSegment.selector,
-                        label: Text(AppLocalizations.of(context)!.selector)),
-                    const ButtonSegment(
-                        value: AdvancedRoutePageSegment.dns, label: Text('DNS'))
+                    Expanded(child: switchModeButton),
                   ],
-                  selected: {_advancedSegment},
-                  onSelectionChanged: (Set<AdvancedRoutePageSegment> set) =>
-                      setState(() {
-                    _advancedSegment = set.first;
-                  }),
                 ),
-                Expanded(child: switchModeButton)
-              ]),
-              const Gap(15),
-              Expanded(
+                const Gap(15),
+                Expanded(
                   child: IndexedStack(
-                index: _advancedSegment.index,
-                children: const [
-                  ModeWidget(),
-                  SetWidget(),
-                  SelectorWidget(),
-                  DnsServersWidget()
-                ],
-              ))
-            ]),
+                    index: _advancedSegment.index,
+                    children: const [
+                      ModeWidget(),
+                      SetWidget(),
+                      SelectorWidget(),
+                      DnsServersWidget(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -224,23 +246,30 @@ class _RoutePageState extends State<RoutePage> with TickerProviderStateMixin {
         child: Scaffold(
           body: Column(
             children: [
-              TabBar(tabs: [
-                Tab(text: AppLocalizations.of(context)!.proxy),
-                Tab(text: AppLocalizations.of(context)!.direct),
-              ]),
+              TabBar(
+                tabs: [
+                  Tab(text: AppLocalizations.of(context)!.proxy),
+                  Tab(text: AppLocalizations.of(context)!.direct),
+                ],
+              ),
               const Gap(10),
               Expanded(
-                  child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: TabBarView(children: [
-                  _TabView(
-                      segment: SimpleRoutePageSegment.proxy,
-                      switchModeButton: switchModeButton),
-                  _TabView(
-                      segment: SimpleRoutePageSegment.direct,
-                      switchModeButton: switchModeButton)
-                ]),
-              )),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: TabBarView(
+                    children: [
+                      _TabView(
+                        segment: SimpleRoutePageSegment.proxy,
+                        switchModeButton: switchModeButton,
+                      ),
+                      _TabView(
+                        segment: SimpleRoutePageSegment.direct,
+                        switchModeButton: switchModeButton,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -259,8 +288,9 @@ class _RoutePageState extends State<RoutePage> with TickerProviderStateMixin {
                   const Expanded(child: SizedBox()),
                   SegmentedButton<SimpleRoutePageSegment>(
                     style: SegmentedButton.styleFrom(
-                      visualDensity:
-                          desktopPlatforms ? VisualDensity.compact : null,
+                      visualDensity: desktopPlatforms
+                          ? VisualDensity.compact
+                          : null,
                     ),
                     segments: [
                       ButtonSegment(
@@ -268,53 +298,61 @@ class _RoutePageState extends State<RoutePage> with TickerProviderStateMixin {
                         label: Text(AppLocalizations.of(context)!.proxy),
                       ),
                       ButtonSegment(
-                          value: SimpleRoutePageSegment.direct,
-                          label: Text(AppLocalizations.of(context)!.direct))
+                        value: SimpleRoutePageSegment.direct,
+                        label: Text(AppLocalizations.of(context)!.direct),
+                      ),
                     ],
                     selected: {_segment},
                     onSelectionChanged: (Set<SimpleRoutePageSegment> set) =>
                         setState(() {
-                      _segment = set.first;
-                    }),
+                          _segment = set.first;
+                        }),
                   ),
-                  Expanded(child: switchModeButton)
+                  Expanded(child: switchModeButton),
                 ],
               ),
               const Gap(15),
               Expanded(
                 child: size.isCompact
                     ? _TabView(
-                        segment: _segment, switchModeButton: switchModeButton)
+                        segment: _segment,
+                        switchModeButton: switchModeButton,
+                      )
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Flexible(
                             flex: 2,
                             child: AtomicDomainSetWidget(
-                                domainSetName:
-                                    _segment == SimpleRoutePageSegment.proxy
-                                        ? getCustomProxy(context)
-                                        : getCustomDirect(context)),
+                              domainSetName:
+                                  _segment == SimpleRoutePageSegment.proxy
+                                  ? getCustomProxy(context)
+                                  : getCustomDirect(context),
+                            ),
                           ),
                           const Gap(10),
                           if (desktopPlatforms || Platform.isAndroid)
                             Flexible(
-                                flex: 2,
-                                child: AppWidget(
-                                    appSetName:
-                                        _segment == SimpleRoutePageSegment.proxy
-                                            ? getProxySetName(context)
-                                            : getDirectSetName(context))),
+                              flex: 2,
+                              child: AppWidget(
+                                appSetName:
+                                    _segment == SimpleRoutePageSegment.proxy
+                                    ? getProxySetName(context)
+                                    : getDirectSetName(context),
+                              ),
+                            ),
                           const Gap(10),
                           Expanded(
-                              child: IPWidget(
-                                  ipSetName:
-                                      _segment == SimpleRoutePageSegment.proxy
-                                          ? getCustomProxy(context)
-                                          : getCustomDirect(context))),
+                            child: IPWidget(
+                              ipSetName:
+                                  _segment == SimpleRoutePageSegment.proxy
+                                  ? getCustomProxy(context)
+                                  : getCustomDirect(context),
+                            ),
+                          ),
                         ],
                       ),
-              )
+              ),
             ],
           ),
         ),
@@ -351,39 +389,44 @@ class __TabViewState extends State<_TabView> with TickerProviderStateMixin {
             Padding(
               padding: const EdgeInsets.only(right: 5.0),
               child: ChoiceChip(
-                  label: Text(AppLocalizations.of(context)!.domain),
-                  selected: _category == RouteCategory.domain,
-                  onSelected: (value) {
-                    setState(() {
-                      _category = RouteCategory.domain;
-                    });
-                  }),
+                label: Text(AppLocalizations.of(context)!.domain),
+                selected: _category == RouteCategory.domain,
+                onSelected: (value) {
+                  setState(() {
+                    _category = RouteCategory.domain;
+                  });
+                },
+              ),
             ),
             if (showApp)
               Padding(
                 padding: const EdgeInsets.only(right: 5.0),
                 child: ChoiceChip(
-                    label: Text(AppLocalizations.of(context)!.app),
-                    selected: _category == RouteCategory.app,
-                    onSelected: (value) {
-                      setState(() {
-                        _category = RouteCategory.app;
-                      });
-                    }),
+                  label: Text(AppLocalizations.of(context)!.app),
+                  selected: _category == RouteCategory.app,
+                  onSelected: (value) {
+                    setState(() {
+                      _category = RouteCategory.app;
+                    });
+                  },
+                ),
               ),
             ChoiceChip(
-                label: const Text('IP'),
-                selected: _category == RouteCategory.ip,
-                onSelected: (value) {
-                  setState(() {
-                    _category = RouteCategory.ip;
-                  });
-                }),
+              label: const Text('IP'),
+              selected: _category == RouteCategory.ip,
+              onSelected: (value) {
+                setState(() {
+                  _category = RouteCategory.ip;
+                });
+              },
+            ),
             if (!desktopPlatforms)
               Expanded(
-                  child: Align(
-                      alignment: Alignment.centerRight,
-                      child: widget.switchModeButton)),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: widget.switchModeButton,
+                ),
+              ),
           ],
         ),
         const Gap(10),
@@ -439,44 +482,52 @@ class WrapChild extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chip = MenuAnchor(
-        menuChildren: [
-          if (onDelete != null)
-            MenuItemButton(
-              onPressed: onDelete,
-              child: Text(AppLocalizations.of(context)!.delete),
+      menuChildren: [
+        if (onDelete != null)
+          MenuItemButton(
+            onPressed: onDelete,
+            child: Text(AppLocalizations.of(context)!.delete),
+          ),
+      ],
+      builder: (context, controller, child) {
+        return GestureDetector(
+          onDoubleTap: onDelete,
+          onLongPressStart: (details) {
+            controller.open(
+              position: Offset(
+                details.localPosition.dx,
+                details.localPosition.dy,
+              ),
+            );
+          },
+          onSecondaryTapDown: (details) {
+            controller.open(
+              position: Offset(
+                details.localPosition.dx,
+                details.localPosition.dy,
+              ),
+            );
+          },
+          child: Chip(
+            side: BorderSide(
+              color: outline
+                  ? Theme.of(context).colorScheme.outlineVariant
+                  : Colors.transparent,
             ),
-        ],
-        builder: (context, controller, child) {
-          return GestureDetector(
-            onDoubleTap: onDelete,
-            onLongPressStart: (details) {
-              controller.open(
-                  position: Offset(
-                      details.localPosition.dx, details.localPosition.dy));
-            },
-            onSecondaryTapDown: (details) {
-              controller.open(
-                position:
-                    Offset(details.localPosition.dx, details.localPosition.dy),
-              );
-            },
-            child: Chip(
-              side: BorderSide(
-                  color: outline
-                      ? Theme.of(context).colorScheme.outlineVariant
-                      : Colors.transparent),
-              shape: shape,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              padding: const EdgeInsets.symmetric(horizontal: 0),
-              backgroundColor: backgroundColor,
-              label: Text(text,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: foregroundColor)),
+            shape: shape,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            padding: const EdgeInsets.symmetric(horizontal: 0),
+            backgroundColor: backgroundColor,
+            label: Text(
+              text,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium!.copyWith(color: foregroundColor),
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
     return chip;
   }
 }

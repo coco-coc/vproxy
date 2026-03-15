@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 import 'package:json_annotation/json_annotation.dart';
 
 part 'ssh_server.g.dart';
@@ -55,11 +54,7 @@ class CommonSshKeySecureStorage {
   String? sshKeyPath;
   String? passphrase;
 
-  CommonSshKeySecureStorage({
-    this.sshKey,
-    this.sshKeyPath,
-    this.passphrase,
-  });
+  CommonSshKeySecureStorage({this.sshKey, this.sshKeyPath, this.passphrase});
 
   factory CommonSshKeySecureStorage.fromJson(Map<String, dynamic> json) =>
       _$CommonSshKeySecureStorageFromJson(json);

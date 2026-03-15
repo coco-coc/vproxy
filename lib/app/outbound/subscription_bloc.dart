@@ -58,10 +58,7 @@ class SubscriptionState extends Equatable {
     this.updatingSubs = const {},
   });
 
-  SubscriptionState copyWith({
-    bool? updatingAll,
-    Set<int>? updatingSubs,
-  }) {
+  SubscriptionState copyWith({bool? updatingAll, Set<int>? updatingSubs}) {
     return SubscriptionState(
       updatingAll: updatingAll ?? this.updatingAll,
       updatingSubs: updatingSubs ?? this.updatingSubs,
@@ -77,7 +74,7 @@ class SubscriptionState extends Equatable {
 
 class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
   SubscriptionBloc(this._outboundRepo, this._subscriptionUpdater)
-      : super(const SubscriptionState()) {
+    : super(const SubscriptionState()) {
     on<AddSubscriptionEvent>(_addSubscirption);
     on<SubscriptionEditedEvent>(_subEditted);
     on<UpdateSubscriptionsButtonClickedEvent>(_updateAllSubs);
@@ -88,9 +85,14 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
   final AutoSubscriptionUpdater _subscriptionUpdater;
 
   Future<void> _subEditted(
-      SubscriptionEditedEvent e, Emitter<SubscriptionState> emit) async {
-    final newSub = await _outboundRepo.updateSubscription(e.id,
-        name: e.name, link: e.link);
+    SubscriptionEditedEvent e,
+    Emitter<SubscriptionState> emit,
+  ) async {
+    final newSub = await _outboundRepo.updateSubscription(
+      e.id,
+      name: e.name,
+      link: e.link,
+    );
     if (e.link != null) {
       final newSet = Set<int>.from(state.updatingSubs);
       emit(state.copyWith(updatingSubs: newSet..add(e.id)));
@@ -104,7 +106,9 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
   }
 
   Future<void> _updateSub(
-      UpdateSubscriptionEvent e, Emitter<SubscriptionState> emit) async {
+    UpdateSubscriptionEvent e,
+    Emitter<SubscriptionState> emit,
+  ) async {
     final newSet = Set<int>.from(state.updatingSubs);
     emit(state.copyWith(updatingSubs: newSet..add(e.sub.id)));
     try {
@@ -115,8 +119,10 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
     }
   }
 
-  Future<void> _updateAllSubs(UpdateSubscriptionsButtonClickedEvent e,
-      Emitter<SubscriptionState> emit) async {
+  Future<void> _updateAllSubs(
+    UpdateSubscriptionsButtonClickedEvent e,
+    Emitter<SubscriptionState> emit,
+  ) async {
     emit(state.copyWith(updatingAll: true));
     try {
       await _subscriptionUpdater.updateAllSubs();
@@ -126,7 +132,9 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
   }
 
   Future<void> _addSubscirption(
-      AddSubscriptionEvent e, Emitter<SubscriptionState> emit) async {
+    AddSubscriptionEvent e,
+    Emitter<SubscriptionState> emit,
+  ) async {
     final s = SubscriptionsCompanion(
       id: Value(SnowflakeId.generate()),
       name: Value(e.name),

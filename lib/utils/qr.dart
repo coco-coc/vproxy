@@ -68,21 +68,22 @@ void shareQrCode(BuildContext context, String qrCodeData) async {
     ),
   );
   if (Provider.of<MyLayout>(context, listen: false).fullScreen()) {
-    Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
+    Navigator.of(context, rootNavigator: true).push(
+      CupertinoPageRoute(
         builder: (ctx) => Scaffold(
-              appBar: AppBar(
-                automaticallyImplyLeading: false,
-                leading: !Platform.isMacOS
-                    ? IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => ctx.pop(),
-                      )
-                    : null,
-              ),
-              body: SafeArea(
-                child: qrCode,
-              ),
-            )));
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            leading: !Platform.isMacOS
+                ? IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => ctx.pop(),
+                  )
+                : null,
+          ),
+          body: SafeArea(child: qrCode),
+        ),
+      ),
+    );
   } else {
     showDialog(context: context, builder: (ctx) => qrCode);
   }

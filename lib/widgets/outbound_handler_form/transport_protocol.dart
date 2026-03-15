@@ -52,9 +52,7 @@ class _TransportProtocolTcpState extends State<_TransportProtocolTcp>
       headerSettings = Any.pack(tls_header.PacketConfig());
     }
 
-    return TcpConfig(
-      headerSettings: headerSettings,
-    );
+    return TcpConfig(headerSettings: headerSettings);
   }
 
   @override
@@ -108,9 +106,11 @@ class _TransportProtocolTcpState extends State<_TransportProtocolTcp>
         if (_headerType == 'http')
           _TcpHeaderHttp(
             key: _httpHeaderKey,
-            initialConfig: widget.initialConfig?.hasHeaderSettings() == true &&
-                    widget.initialConfig!.headerSettings.typeUrl
-                        .contains('headers.http')
+            initialConfig:
+                widget.initialConfig?.hasHeaderSettings() == true &&
+                    widget.initialConfig!.headerSettings.typeUrl.contains(
+                      'headers.http',
+                    )
                 ? widget.initialConfig!.headerSettings
                 : null,
           ),
@@ -127,18 +127,22 @@ class _TransportProtocolTcpState extends State<_TransportProtocolTcp>
         if (_headerType == 'utp')
           _TcpHeaderUtp(
             key: _utpHeaderKey,
-            initialConfig: widget.initialConfig?.hasHeaderSettings() == true &&
-                    widget.initialConfig!.headerSettings.typeUrl
-                        .contains('headers.utp')
+            initialConfig:
+                widget.initialConfig?.hasHeaderSettings() == true &&
+                    widget.initialConfig!.headerSettings.typeUrl.contains(
+                      'headers.utp',
+                    )
                 ? widget.initialConfig!.headerSettings
                 : null,
           ),
         if (_headerType == 'srtp')
           _TcpHeaderSrtp(
             key: _srtpHeaderKey,
-            initialConfig: widget.initialConfig?.hasHeaderSettings() == true &&
-                    widget.initialConfig!.headerSettings.typeUrl
-                        .contains('headers.srtp')
+            initialConfig:
+                widget.initialConfig?.hasHeaderSettings() == true &&
+                    widget.initialConfig!.headerSettings.typeUrl.contains(
+                      'headers.srtp',
+                    )
                 ? widget.initialConfig!.headerSettings
                 : null,
           ),
@@ -173,8 +177,9 @@ class _TcpHeaderHttpState extends State<_TcpHeaderHttp> {
     super.initState();
     if (widget.initialConfig != null) {
       try {
-        final config =
-            http_header.Config.fromBuffer(widget.initialConfig!.value);
+        final config = http_header.Config.fromBuffer(
+          widget.initialConfig!.value,
+        );
         if (config.hasRequest()) {
           if (config.request.hasVersion()) {
             _versionController.text = config.request.version.value;
@@ -189,7 +194,8 @@ class _TcpHeaderHttpState extends State<_TcpHeaderHttp> {
             _headers.add({
               'name': TextEditingController(text: header.name),
               'value': TextEditingController(
-                  text: header.value.isNotEmpty ? header.value.first : ''),
+                text: header.value.isNotEmpty ? header.value.first : '',
+              ),
             });
           }
         }
@@ -227,10 +233,12 @@ class _TcpHeaderHttpState extends State<_TcpHeaderHttp> {
       final name = header['name']!.text;
       final value = header['value']!.text;
       if (name.isNotEmpty) {
-        headers.add(http_header.Header(
-          name: name,
-          value: value.isNotEmpty ? [value] : [],
-        ));
+        headers.add(
+          http_header.Header(
+            name: name,
+            value: value.isNotEmpty ? [value] : [],
+          ),
+        );
       }
     }
 
@@ -264,8 +272,10 @@ class _TcpHeaderHttpState extends State<_TcpHeaderHttp> {
   Widget build(BuildContext context) {
     return FormContainer(
       children: [
-        Text('HTTP Header Configuration',
-            style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          'HTTP Header Configuration',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         const Gap(10),
         TextFormField(
           controller: _versionController,
@@ -369,8 +379,9 @@ class _TcpHeaderSrtpState extends State<_TcpHeaderSrtp> {
     super.initState();
     if (widget.initialConfig != null) {
       try {
-        final config =
-            srtp_header.Config.fromBuffer(widget.initialConfig!.value);
+        final config = srtp_header.Config.fromBuffer(
+          widget.initialConfig!.value,
+        );
         if (config.hasVersion()) {
           _versionController.text = config.version.toString();
         }
@@ -418,8 +429,10 @@ class _TcpHeaderSrtpState extends State<_TcpHeaderSrtp> {
   Widget build(BuildContext context) {
     return FormContainer(
       children: [
-        Text('SRTP Header Configuration',
-            style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          'SRTP Header Configuration',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         const Gap(10),
         TextFormField(
           controller: _versionController,
@@ -513,8 +526,9 @@ class _TcpHeaderUtpState extends State<_TcpHeaderUtp> {
     super.initState();
     if (widget.initialConfig != null) {
       try {
-        final config =
-            utp_header.Config.fromBuffer(widget.initialConfig!.value);
+        final config = utp_header.Config.fromBuffer(
+          widget.initialConfig!.value,
+        );
         if (config.hasVersion()) {
           _versionController.text = config.version.toString();
         }
@@ -542,8 +556,10 @@ class _TcpHeaderUtpState extends State<_TcpHeaderUtp> {
   Widget build(BuildContext context) {
     return FormContainer(
       children: [
-        Text('uTP Header Configuration',
-            style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          'uTP Header Configuration',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         const Gap(10),
         TextFormField(
           controller: _versionController,
@@ -569,10 +585,7 @@ class _TcpHeaderUtpState extends State<_TcpHeaderUtp> {
 class _TransportProtocolKcp extends StatefulWidget {
   final KcpConfig? initialConfig;
 
-  const _TransportProtocolKcp({
-    required this.initialConfig,
-    super.key,
-  });
+  const _TransportProtocolKcp({required this.initialConfig, super.key});
 
   @override
   _TransportProtocolKcpState createState() => _TransportProtocolKcpState();
@@ -632,8 +645,8 @@ class _TransportProtocolKcpState extends State<_TransportProtocolKcp>
           : '';
       _downlinkCapacityController.text =
           widget.initialConfig!.downlinkCapacity != 0
-              ? widget.initialConfig!.downlinkCapacity.toString()
-              : '';
+          ? widget.initialConfig!.downlinkCapacity.toString()
+          : '';
       _readBufferSizeController.text = widget.initialConfig!.readBuffer != 0
           ? widget.initialConfig!.readBuffer.toString()
           : '';
@@ -712,8 +725,9 @@ class _TransportProtocolKcpState extends State<_TransportProtocolKcp>
             Expanded(
               child: TextFormField(
                 controller: _downlinkCapacityController,
-                decoration:
-                    const InputDecoration(labelText: 'Downlink Capacity'),
+                decoration: const InputDecoration(
+                  labelText: 'Downlink Capacity',
+                ),
                 keyboardType: TextInputType.number,
                 validator: (String? value) {
                   if (value != null && value.isNotEmpty) {
@@ -734,8 +748,9 @@ class _TransportProtocolKcpState extends State<_TransportProtocolKcp>
             Expanded(
               child: TextFormField(
                 controller: _readBufferSizeController,
-                decoration:
-                    const InputDecoration(labelText: 'Read Buffer Size'),
+                decoration: const InputDecoration(
+                  labelText: 'Read Buffer Size',
+                ),
                 keyboardType: TextInputType.number,
                 validator: (String? value) {
                   if (value != null && value.isNotEmpty) {
@@ -752,8 +767,9 @@ class _TransportProtocolKcpState extends State<_TransportProtocolKcp>
             Expanded(
               child: TextFormField(
                 controller: _writeBufferSizeController,
-                decoration:
-                    const InputDecoration(labelText: 'Write Buffer Size'),
+                decoration: const InputDecoration(
+                  labelText: 'Write Buffer Size',
+                ),
                 keyboardType: TextInputType.number,
                 validator: (String? value) {
                   if (value != null && value.isNotEmpty) {
@@ -786,10 +802,7 @@ class _TransportProtocolKcpState extends State<_TransportProtocolKcp>
 }
 
 class _TransportProtocolWebsocket extends StatefulWidget {
-  const _TransportProtocolWebsocket({
-    required this.initialConfig,
-    super.key,
-  });
+  const _TransportProtocolWebsocket({required this.initialConfig, super.key});
   final WebsocketConfig? initialConfig;
   @override
   _TransportProtocolWebsocketState createState() =>
@@ -811,8 +824,12 @@ class _TransportProtocolWebsocketState
   @override
   Object get transportProtocolConfig {
     if (_headerKeyController.text.isNotEmpty) {
-      _headers.add(Header(
-          key: _headerKeyController.text, value: _headerValueControllr.text));
+      _headers.add(
+        Header(
+          key: _headerKeyController.text,
+          value: _headerValueControllr.text,
+        ),
+      );
     }
     return WebsocketConfig(
       path: _pathController.text,
@@ -878,8 +895,9 @@ class _TransportProtocolWebsocketState
         const Gap(10),
         TextFormField(
           controller: _earlyDataHeaderNameController,
-          decoration:
-              const InputDecoration(labelText: 'Early Data Header Name'),
+          decoration: const InputDecoration(
+            labelText: 'Early Data Header Name',
+          ),
           validator: (value) {
             return null;
           },
@@ -889,8 +907,9 @@ class _TransportProtocolWebsocketState
           children: [
             Text('Headers', style: Theme.of(context).textTheme.titleMedium),
             IconButton(
-                onPressed: _addNewHeader,
-                icon: const Icon(Icons.add_box_outlined))
+              onPressed: _addNewHeader,
+              icon: const Icon(Icons.add_box_outlined),
+            ),
           ],
         ),
         ..._buildHeaderFields(),
@@ -911,7 +930,7 @@ class _TransportProtocolWebsocketState
                 controller: _headerValueControllr,
                 decoration: const InputDecoration(labelText: 'Value'),
               ),
-            )
+            ),
           ],
         ),
         const Gap(10),
@@ -962,8 +981,12 @@ class _TransportProtocolWebsocketState
       return;
     }
     setState(() {
-      _headers.add(Header(
-          key: _headerKeyController.text, value: _headerValueControllr.text));
+      _headers.add(
+        Header(
+          key: _headerKeyController.text,
+          value: _headerValueControllr.text,
+        ),
+      );
       _headerKeyController.clear();
       _headerValueControllr.clear();
     });
@@ -1069,8 +1092,9 @@ class _HeadersFormState extends State<HeadersForm> {
           children: [
             Text('Headers', style: Theme.of(context).textTheme.titleSmall),
             IconButton(
-                onPressed: _addNewHeader,
-                icon: const Icon(Icons.add_box_outlined))
+              onPressed: _addNewHeader,
+              icon: const Icon(Icons.add_box_outlined),
+            ),
           ],
         ),
         ..._buildHeaderFields(),
@@ -1095,7 +1119,7 @@ class _HeadersFormState extends State<HeadersForm> {
                 controller: _headerValueControllr,
                 decoration: const InputDecoration(labelText: 'Value'),
               ),
-            )
+            ),
           ],
         ),
       ],
@@ -1151,17 +1175,21 @@ class __TransportProtocolGrpcState extends State<_TransportProtocolGrpc>
       _serviceNameController.text = widget.initialConfig!.serviceName;
       _multiMode = widget.initialConfig!.multiMode;
       if (widget.initialConfig!.idleTimeout != 0) {
-        _idleTimeoutController.text =
-            widget.initialConfig!.idleTimeout.toString();
+        _idleTimeoutController.text = widget.initialConfig!.idleTimeout
+            .toString();
       }
       if (widget.initialConfig!.healthCheckTimeout != 0) {
-        _healthCheckTimeoutController.text =
-            widget.initialConfig!.healthCheckTimeout.toString();
+        _healthCheckTimeoutController.text = widget
+            .initialConfig!
+            .healthCheckTimeout
+            .toString();
       }
       _permitWithoutStream = widget.initialConfig!.permitWithoutStream;
       if (widget.initialConfig!.initialWindowsSize != 0) {
-        _initialWindowsSizeController.text =
-            widget.initialConfig!.initialWindowsSize.toString();
+        _initialWindowsSizeController.text = widget
+            .initialConfig!
+            .initialWindowsSize
+            .toString();
       }
       _userAgentController.text = widget.initialConfig!.userAgent;
     }
@@ -1271,11 +1299,12 @@ class __TransportProtocolGrpcState extends State<_TransportProtocolGrpc>
 }
 
 class _TransportProtocolSplitHttp extends StatefulWidget {
-  const _TransportProtocolSplitHttp(
-      {required this.config,
-      this.inDownConfig = false,
-      this.server = false,
-      super.key});
+  const _TransportProtocolSplitHttp({
+    required this.config,
+    this.inDownConfig = false,
+    this.server = false,
+    super.key,
+  });
   final SplitHttpConfig? config;
   final bool inDownConfig;
   final bool server;
@@ -1364,12 +1393,13 @@ class __TransportProtocolSplitHttpState
       _xPaddingBytes.from = widget.config!.xPaddingBytes.from;
       _xPaddingBytes.to = widget.config!.xPaddingBytes.to;
       _scMaxEachPostBytes.mergeFromMessage(widget.config!.scMaxEachPostBytes);
-      _scMinPostsIntervalMs
-          .mergeFromMessage(widget.config!.scMinPostsIntervalMs);
+      _scMinPostsIntervalMs.mergeFromMessage(
+        widget.config!.scMinPostsIntervalMs,
+      );
       _xmux.mergeFromMessage(widget.config!.xmux);
       if (widget.config!.xmux.hKeepAlivePeriod != 0) {
-        _hKeepAlivePeriod.text =
-            widget.config!.xmux.hKeepAlivePeriod.toString();
+        _hKeepAlivePeriod.text = widget.config!.xmux.hKeepAlivePeriod
+            .toString();
       }
       if (!widget.inDownConfig && widget.config!.mode.isNotEmpty) {
         _mode = SplitHttpMode.fromName(widget.config!.mode);
@@ -1379,8 +1409,9 @@ class __TransportProtocolSplitHttpState
       if (widget.config!.scMaxBufferedPosts != 0) {
         _scMaxBufferedPosts.text = widget.config!.scMaxBufferedPosts.toString();
       }
-      _scStreamUpServerSecs
-          .mergeFromMessage(widget.config!.scStreamUpServerSecs);
+      _scStreamUpServerSecs.mergeFromMessage(
+        widget.config!.scStreamUpServerSecs,
+      );
     }
   }
 
@@ -1425,38 +1456,45 @@ class __TransportProtocolSplitHttpState
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: DropdownMenu<SplitHttpMode>(
-                      requestFocusOnTap: false,
-                      initialSelection: _mode,
-                      label: const Text('Mode'),
-                      onSelected: (SplitHttpMode? m) {
-                        if (m != null) {
-                          setState(() {
-                            _mode = m;
-                          });
-                        }
-                      },
-                      dropdownMenuEntries: SplitHttpMode.values
-                          .map<DropdownMenuEntry<SplitHttpMode>>(
-                              (SplitHttpMode m) {
-                        return DropdownMenuEntry<SplitHttpMode>(
-                            value: m, label: m.display);
-                      }).toList()),
+                    requestFocusOnTap: false,
+                    initialSelection: _mode,
+                    label: const Text('Mode'),
+                    onSelected: (SplitHttpMode? m) {
+                      if (m != null) {
+                        setState(() {
+                          _mode = m;
+                        });
+                      }
+                    },
+                    dropdownMenuEntries: SplitHttpMode.values
+                        .map<DropdownMenuEntry<SplitHttpMode>>((
+                          SplitHttpMode m,
+                        ) {
+                          return DropdownMenuEntry<SplitHttpMode>(
+                            value: m,
+                            label: m.display,
+                          );
+                        })
+                        .toList(),
+                  ),
                 ),
                 if (_mode == SplitHttpMode.packetUp ||
                     _mode == SplitHttpMode.auto)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     child: RangeConfigCollect(
-                        config: _scMaxEachPostBytes,
-                        label: 'scMaxEachPostBytes'),
+                      config: _scMaxEachPostBytes,
+                      label: 'scMaxEachPostBytes',
+                    ),
                   ),
                 if (_mode == SplitHttpMode.packetUp ||
                     _mode == SplitHttpMode.auto)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     child: RangeConfigCollect(
-                        config: _scMinPostsIntervalMs,
-                        label: 'scMinPostsIntervalMs'),
+                      config: _scMinPostsIntervalMs,
+                      label: 'scMinPostsIntervalMs',
+                    ),
                   ),
                 if ((_mode == SplitHttpMode.packetUp ||
                         _mode == SplitHttpMode.auto) &&
@@ -1464,8 +1502,9 @@ class __TransportProtocolSplitHttpState
                   TextFormField(
                     controller: _scMaxBufferedPosts,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration:
-                        const InputDecoration(labelText: 'scMaxBufferedPosts'),
+                    decoration: const InputDecoration(
+                      labelText: 'scMaxBufferedPosts',
+                    ),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       return null;
@@ -1477,8 +1516,9 @@ class __TransportProtocolSplitHttpState
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     child: RangeConfigCollect(
-                        config: _scStreamUpServerSecs,
-                        label: 'scStreamUpServerSecs'),
+                      config: _scStreamUpServerSecs,
+                      label: 'scStreamUpServerSecs',
+                    ),
                   ),
                 if (_mode != SplitHttpMode.packetUp ||
                     _mode == SplitHttpMode.auto)
@@ -1489,12 +1529,13 @@ class __TransportProtocolSplitHttpState
                         const Text('noGRPCHeader'),
                         const Gap(10),
                         Switch(
-                            value: _noGRPCHeader,
-                            onChanged: (value) {
-                              setState(() {
-                                _noGRPCHeader = value;
-                              });
-                            })
+                          value: _noGRPCHeader,
+                          onChanged: (value) {
+                            setState(() {
+                              _noGRPCHeader = value;
+                            });
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -1506,20 +1547,22 @@ class __TransportProtocolSplitHttpState
                         const Text('noSSEHeader'),
                         const Gap(10),
                         Switch(
-                            value: _noSSEHeader,
-                            onChanged: (value) {
-                              setState(() {
-                                _noSSEHeader = value;
-                              });
-                            })
+                          value: _noSSEHeader,
+                          onChanged: (value) {
+                            setState(() {
+                              _noSSEHeader = value;
+                            });
+                          },
+                        ),
                       ],
                     ),
                   ),
                 if (_mode == SplitHttpMode.streamUp ||
                     _mode == SplitHttpMode.auto)
                   _SplitHttpDownConfig(
-                      key: _downConfigKey,
-                      config: widget.config?.downloadSettings),
+                    key: _downConfigKey,
+                    config: widget.config?.downloadSettings,
+                  ),
               ],
             ),
           ),
@@ -1528,10 +1571,11 @@ class __TransportProtocolSplitHttpState
           children: [
             Text('Xmux', style: Theme.of(context).textTheme.titleSmall),
             TextButton(
-                onPressed: () => setState(() {
-                      _showXmux = !_showXmux;
-                    }),
-                child: Text(_showXmux ? '隐藏' : '显示'))
+              onPressed: () => setState(() {
+                _showXmux = !_showXmux;
+              }),
+              child: Text(_showXmux ? '隐藏' : '显示'),
+            ),
           ],
         ),
         const Gap(10),
@@ -1539,25 +1583,36 @@ class __TransportProtocolSplitHttpState
           Column(
             children: [
               RangeConfigCollect(
-                  config: _xmux.maxConcurrency, label: 'maxConcurrency'),
+                config: _xmux.maxConcurrency,
+                label: 'maxConcurrency',
+              ),
               const Gap(10),
               RangeConfigCollect(
-                  config: _xmux.maxConnections, label: 'maxConnections'),
+                config: _xmux.maxConnections,
+                label: 'maxConnections',
+              ),
               const Gap(10),
               RangeConfigCollect(
-                  config: _xmux.cMaxReuseTimes, label: 'cMaxReuseTimes'),
+                config: _xmux.cMaxReuseTimes,
+                label: 'cMaxReuseTimes',
+              ),
               const Gap(10),
               RangeConfigCollect(
-                  config: _xmux.hMaxRequestTimes, label: 'hMaxRequestTimes'),
+                config: _xmux.hMaxRequestTimes,
+                label: 'hMaxRequestTimes',
+              ),
               const Gap(10),
               RangeConfigCollect(
-                  config: _xmux.hMaxReusableSecs, label: 'hMaxReusableSecs'),
+                config: _xmux.hMaxReusableSecs,
+                label: 'hMaxReusableSecs',
+              ),
               const Gap(10),
               TextFormField(
                 controller: _hKeepAlivePeriod,
                 keyboardType: TextInputType.number,
-                decoration:
-                    const InputDecoration(labelText: 'hKeepAlivePeriod'),
+                decoration: const InputDecoration(
+                  labelText: 'hKeepAlivePeriod',
+                ),
                 validator: (value) {
                   if (value != null && value.isNotEmpty) {
                     final parsed = int.tryParse(value);
@@ -1570,7 +1625,7 @@ class __TransportProtocolSplitHttpState
               ),
               const Gap(10),
             ],
-          )
+          ),
       ],
     );
   }
@@ -1595,8 +1650,9 @@ class __SplitHttpDownConfigState extends State<_SplitHttpDownConfig> {
     return DownConfig(
       address: _address.text,
       port: int.parse(_port.text),
-      xhttpConfig: _splitHttpConfigKey.currentState?.transportProtocolConfig
-          as SplitHttpConfig,
+      xhttpConfig:
+          _splitHttpConfigKey.currentState?.transportProtocolConfig
+              as SplitHttpConfig,
       tls: _security == DownConfig_Security.tls ? _tls : null,
       reality: _security == DownConfig_Security.reality ? _reality : null,
     );
@@ -1646,8 +1702,10 @@ class __SplitHttpDownConfigState extends State<_SplitHttpDownConfig> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Download Settings',
-              style: Theme.of(context).textTheme.titleSmall),
+          Text(
+            'Download Settings',
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
           const Gap(10),
           TextFormField(
             controller: _address,
@@ -1676,18 +1734,21 @@ class __SplitHttpDownConfigState extends State<_SplitHttpDownConfig> {
           ),
           const Gap(10),
           DropdownMenu<DownConfig_Security>(
-              requestFocusOnTap: false,
-              initialSelection: _security,
-              dropdownMenuEntries: DownConfig_Security.values
-                  .map<DropdownMenuEntry<DownConfig_Security>>(
-                      (DownConfig_Security s) {
-                return DropdownMenuEntry<DownConfig_Security>(
-                  label: s.label,
-                  value: s,
-                );
-              }).toList(),
-              onSelected: (DownConfig_Security? s) => _setSecurity(s),
-              label: const Text('Download Security')),
+            requestFocusOnTap: false,
+            initialSelection: _security,
+            dropdownMenuEntries: DownConfig_Security.values
+                .map<DropdownMenuEntry<DownConfig_Security>>((
+                  DownConfig_Security s,
+                ) {
+                  return DropdownMenuEntry<DownConfig_Security>(
+                    label: s.label,
+                    value: s,
+                  );
+                })
+                .toList(),
+            onSelected: (DownConfig_Security? s) => _setSecurity(s),
+            label: const Text('Download Security'),
+          ),
           const Gap(10),
           if (_security == DownConfig_Security.tls)
             Padding(
@@ -1706,8 +1767,12 @@ class __SplitHttpDownConfigState extends State<_SplitHttpDownConfig> {
 }
 
 class RangeConfigCollect extends StatefulWidget {
-  const RangeConfigCollect(
-      {super.key, required this.config, required this.label, this.fromMin});
+  const RangeConfigCollect({
+    super.key,
+    required this.config,
+    required this.label,
+    this.fromMin,
+  });
   final RangeConfig config;
   final String label;
   final int? fromMin;
@@ -1801,9 +1866,9 @@ class _RangeConfigCollectState extends State<RangeConfigCollect> {
                 },
                 decoration: const InputDecoration(labelText: 'To'),
               ),
-            )
+            ),
           ],
-        )
+        ),
       ],
     );
   }
@@ -1826,14 +1891,17 @@ class _TransportProtocolHttpUpgradeState
   @override
   Object get transportProtocolConfig {
     return HttpUpgradeConfig(
-      config: _websocketConfigKey.currentState?.transportProtocolConfig
-          as WebsocketConfig,
+      config:
+          _websocketConfigKey.currentState?.transportProtocolConfig
+              as WebsocketConfig,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return _TransportProtocolWebsocket(
-        initialConfig: widget.initialConfig?.config, key: _websocketConfigKey);
+      initialConfig: widget.initialConfig?.config,
+      key: _websocketConfigKey,
+    );
   }
 }

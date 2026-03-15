@@ -27,7 +27,7 @@ class MyLayout {
   bool get isDesktop => width == null ? false : width! >= 1200;
   bool get isCompact => width == null ? true : width! < 600;
   bool get compactOrMedium => width == null ? true : width! < 840;
-  
+
   bool fullScreen() {
     if (desktopPlatforms && isCompact) {
       return true;

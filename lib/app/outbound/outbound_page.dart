@@ -82,10 +82,7 @@ class _OutboundPageState extends State<OutboundPage> {
               const Gap(5),
               const Expanded(
                 child: TabBarView(
-                  children: [
-                    OutboundTable(),
-                    SubscriptionPage(),
-                  ],
+                  children: [OutboundTable(), SubscriptionPage()],
                 ),
               ),
             ],
@@ -104,19 +101,21 @@ class _OutboundPageState extends State<OutboundPage> {
                   label: Text(AppLocalizations.of(context)!.node),
                 ),
                 ButtonSegment(
-                    value: OutboundPageSegment.subscriptions,
-                    label: Text(AppLocalizations.of(context)!.subscription))
+                  value: OutboundPageSegment.subscriptions,
+                  label: Text(AppLocalizations.of(context)!.subscription),
+                ),
               ],
               selected: {_segment},
               onSelectionChanged: (Set<OutboundPageSegment> set) =>
                   setState(() {
-                _segment = set.first;
-              }),
+                    _segment = set.first;
+                  }),
             ),
             Expanded(
-                child: _segment == OutboundPageSegment.nodes
-                    ? OutboundTable(key: outboundTableKey)
-                    : const SubscriptionPage())
+              child: _segment == OutboundPageSegment.nodes
+                  ? OutboundTable(key: outboundTableKey)
+                  : const SubscriptionPage(),
+            ),
           ],
         ),
       ),
@@ -148,8 +147,11 @@ class OutboundTableState extends State<OutboundTable> {
   }
 
   void scrollToTop() {
-    _scrollController.animateTo(0,
-        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    _scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   void scrollToHandler(int handlerId) {
@@ -184,35 +186,40 @@ class OutboundTableState extends State<OutboundTable> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Material(
-          child: Column(
-        children: [
-          Row(
-            children: [
-              const Expanded(
-                child: GroupSelector(),
-              ),
-              BlocSelector<OutboundBloc, OutboundState, NodeGroup?>(
+        child: Column(
+          children: [
+            Row(
+              children: [
+                const Expanded(child: GroupSelector()),
+                BlocSelector<OutboundBloc, OutboundState, NodeGroup?>(
                   selector: (state) {
-                return state.selected;
-              }, builder: (ctx, selected) {
-                if (selected == null ||
-                    selected is OutboundHandlerGroup ||
-                    selected.name == allGroup.name) {
-                  return const SizedBox();
-                }
-                final sub = selected as Subscription;
-                return UpdateSubButton(sub: sub);
-              }),
-              IconButton(
+                    return state.selected;
+                  },
+                  builder: (ctx, selected) {
+                    if (selected == null ||
+                        selected is OutboundHandlerGroup ||
+                        selected.name == allGroup.name) {
+                      return const SizedBox();
+                    }
+                    final sub = selected as Subscription;
+                    return UpdateSubButton(sub: sub);
+                  },
+                ),
+                IconButton(
                   onPressed: () =>
                       context.read<OutboundBloc>().add(const StatusTestEvent()),
-                  icon: const Icon(Icons.check_circle_outline_rounded)),
-              IconButton(
+                  icon: const Icon(Icons.check_circle_outline_rounded),
+                ),
+                IconButton(
                   onPressed: () =>
                       context.read<OutboundBloc>().add(const SpeedTestEvent()),
-                  icon: const Icon(Icons.arrow_circle_down_rounded)),
-              BlocSelector<OutboundBloc, OutboundState,
-                      (OutboundViewMode, (Col, SortOrder)?)>(
+                  icon: const Icon(Icons.arrow_circle_down_rounded),
+                ),
+                BlocSelector<
+                  OutboundBloc,
+                  OutboundState,
+                  (OutboundViewMode, (Col, SortOrder)?)
+                >(
                   selector: (state) => (state.viewMode, state.sortCol),
                   builder: (ctx, data) {
                     final viewMode = data.$1;
@@ -222,194 +229,217 @@ class OutboundTableState extends State<OutboundTable> {
                       return _GridSortButton(sortCol: sortCol);
                     }
                     return const SizedBox.shrink();
-                  }),
-              const AddMenuAnchor(),
-              // Gap(5),
-              const ActionMenuAnchor(),
-            ],
-          ),
-          const Gap(5),
-          Expanded(
+                  },
+                ),
+                const AddMenuAnchor(),
+                // Gap(5),
+                const ActionMenuAnchor(),
+              ],
+            ),
+            const Gap(5),
+            Expanded(
               child: BlocBuilder<ProxySelectorBloc, ProxySelectorState>(
-                  buildWhen: (previous, current) =>
-                      previous.showProxySelector != current.showProxySelector ||
-                      previous.proxySelectorMode != current.proxySelectorMode,
-                  builder: (ctx, xstate) => BlocSelector<
-                          OutboundBloc,
-                          OutboundState,
-                          (
-                            bool,
-                            OutboundTableSmallScreenPreference,
-                            OutboundViewMode
-                          )>(
+                buildWhen: (previous, current) =>
+                    previous.showProxySelector != current.showProxySelector ||
+                    previous.proxySelectorMode != current.proxySelectorMode,
+                builder: (ctx, xstate) =>
+                    BlocSelector<
+                      OutboundBloc,
+                      OutboundState,
+                      (
+                        bool,
+                        OutboundTableSmallScreenPreference,
+                        OutboundViewMode,
+                      )
+                    >(
                       selector: (state) => (
-                            state.multiSelect,
-                            state.smallScreenPreference,
-                            state.viewMode
-                          ),
+                        state.multiSelect,
+                        state.smallScreenPreference,
+                        state.viewMode,
+                      ),
                       builder: (context, multiSelectAndPrefs) {
-                        final startCloseCubit =
-                            context.watch<StartCloseCubit>();
+                        final startCloseCubit = context
+                            .watch<StartCloseCubit>();
                         final authState = context.watch<AuthBloc>().state;
                         final multiSelect = multiSelectAndPrefs.$1;
                         final smallScreenPref = multiSelectAndPrefs.$2;
                         final viewMode = multiSelectAndPrefs.$3;
-                        final cols = getCols(MediaQuery.sizeOf(context), xstate,
-                            multiSelect, smallScreenPref, authState.pro);
+                        final cols = getCols(
+                          MediaQuery.sizeOf(context),
+                          xstate,
+                          multiSelect,
+                          smallScreenPref,
+                          authState.pro,
+                        );
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (viewMode == OutboundViewMode.list)
-                              _HeaderRow(
-                                cols: cols,
-                              ),
+                              _HeaderRow(cols: cols),
                             Expanded(
-                              child: LayoutBuilder(builder: (ctx, c) {
-                                return BlocListener<OutboundBloc,
-                                    OutboundState>(
-                                  listenWhen: (previous, current) =>
-                                      previous.sortCol != current.sortCol ||
-                                      previous.selected != current.selected,
-                                  listener: (ctx, state) {
-                                    if (_scrollController.hasClients) {
-                                      _scrollController.animateTo(
-                                        0,
-                                        duration:
-                                            const Duration(milliseconds: 300),
-                                        curve: Curves.easeInOut,
-                                      );
-                                    }
-                                  },
-                                  child: BlocSelector<
+                              child: LayoutBuilder(
+                                builder: (ctx, c) {
+                                  return BlocListener<
+                                    OutboundBloc,
+                                    OutboundState
+                                  >(
+                                    listenWhen: (previous, current) =>
+                                        previous.sortCol != current.sortCol ||
+                                        previous.selected != current.selected,
+                                    listener: (ctx, state) {
+                                      if (_scrollController.hasClients) {
+                                        _scrollController.animateTo(
+                                          0,
+                                          duration: const Duration(
+                                            milliseconds: 300,
+                                          ),
+                                          curve: Curves.easeInOut,
+                                        );
+                                      }
+                                    },
+                                    child:
+                                        BlocSelector<
                                           OutboundBloc,
                                           OutboundState,
-                                          (int, List<OutboundHandler>)>(
-                                      selector: (state) =>
-                                          (state.using4, state.handlers),
-                                      builder: (ctx, r) {
-                                        if (r.$2.isEmpty) {
-                                          return const Center(
-                                            child: AddMenuAnchor(
-                                              elevatedButton: true,
-                                            ),
-                                          );
-                                        }
-
-                                        final handlers = r.$2;
-                                        final showAd = !context
-                                            .watch<AuthBloc>()
-                                            .state
-                                            .pro;
-                                        if (viewMode == OutboundViewMode.grid) {
-                                          // Grid View
-                                          return CustomScrollView(
-                                            controller: _scrollController,
-                                            physics:
-                                                const ClampingScrollPhysics(),
-                                            slivers: [
-                                              SliverPadding(
-                                                padding:
-                                                    const EdgeInsets.all(8),
-                                                sliver: SliverGrid(
-                                                  gridDelegate:
-                                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount:
-                                                        _getGridCrossAxisCount(
-                                                            MediaQuery.sizeOf(
-                                                                    context)
-                                                                .width),
-                                                    mainAxisSpacing: 12,
-                                                    crossAxisSpacing: 12,
-                                                    mainAxisExtent: 150,
-                                                  ),
-                                                  delegate:
-                                                      SliverChildBuilderDelegate(
-                                                    (ctx, index) {
-                                                      assert(index <
-                                                          handlers.length);
-                                                      return OutboundMenuAnchor(
-                                                        handler:
-                                                            handlers[index],
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(16),
-                                                        child:
-                                                            OutboundHandlerCard(
-                                                          key: ValueKey(
-                                                              handlers[index]
-                                                                  .id),
-                                                          handler:
-                                                              handlers[index],
-                                                          selectedAs4: r.$1 !=
-                                                                  0 &&
-                                                              startCloseCubit
-                                                                      .state ==
-                                                                  XStatus
-                                                                      .connected &&
-                                                              xstate.proxySelectorMode ==
-                                                                  ProxySelectorMode
-                                                                      .auto &&
-                                                              r.$1 ==
-                                                                  handlers[
-                                                                          index]
-                                                                      .id,
-                                                          proxySelectorMode: xstate
-                                                              .proxySelectorMode,
-                                                          showAddress:
-                                                              smallScreenPref
-                                                                  .showAddress,
-                                                        ),
-                                                      );
-                                                    },
-                                                    childCount: handlers.length,
-                                                    findChildIndexCallback:
-                                                        (key) {
-                                                      final index = handlers
-                                                          .indexWhere((e) =>
-                                                              e.id ==
-                                                              (key as ValueKey)
-                                                                  .value);
-                                                      return index == -1
-                                                          ? null
-                                                          : index;
-                                                    },
-                                                  ),
+                                          (int, List<OutboundHandler>)
+                                        >(
+                                          selector: (state) =>
+                                              (state.using4, state.handlers),
+                                          builder: (ctx, r) {
+                                            if (r.$2.isEmpty) {
+                                              return const Center(
+                                                child: AddMenuAnchor(
+                                                  elevatedButton: true,
                                                 ),
-                                              ),
-                                              if (showAd) const Ads(),
-                                              const SliverToBoxAdapter(
-                                                child: SizedBox(height: 70),
-                                              ),
-                                            ],
-                                          );
-                                        } else {
-                                          print(
-                                              'handler being used list view ${r.$1}');
-                                          // List View
-                                          return CustomScrollView(
-                                            controller: _scrollController,
-                                            physics:
-                                                const ClampingScrollPhysics(),
-                                            slivers: [
-                                              SliverFixedExtentList(
-                                                itemExtent: 50,
-                                                delegate:
-                                                    SliverChildBuilderDelegate(
-                                                  (ctx, index) {
-                                                    assert(index <
-                                                        handlers.length);
-                                                    final selectedInAutoBestMode = (r
-                                                                .$1 !=
-                                                            0 &&
-                                                        startCloseCubit.state ==
-                                                            XStatus.connected &&
-                                                        xstate.proxySelectorMode ==
-                                                            ProxySelectorMode
-                                                                .auto &&
-                                                        r.$1 ==
-                                                            handlers[index].id);
-                                                    final showDot =
-                                                        selectedInAutoBestMode ||
+                                              );
+                                            }
+
+                                            final handlers = r.$2;
+                                            final showAd = !context
+                                                .watch<AuthBloc>()
+                                                .state
+                                                .pro;
+                                            if (viewMode ==
+                                                OutboundViewMode.grid) {
+                                              // Grid View
+                                              return CustomScrollView(
+                                                controller: _scrollController,
+                                                physics:
+                                                    const ClampingScrollPhysics(),
+                                                slivers: [
+                                                  SliverPadding(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    sliver: SliverGrid(
+                                                      gridDelegate:
+                                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                                            crossAxisCount:
+                                                                _getGridCrossAxisCount(
+                                                                  MediaQuery.sizeOf(
+                                                                    context,
+                                                                  ).width,
+                                                                ),
+                                                            mainAxisSpacing: 12,
+                                                            crossAxisSpacing:
+                                                                12,
+                                                            mainAxisExtent: 150,
+                                                          ),
+                                                      delegate: SliverChildBuilderDelegate(
+                                                        (ctx, index) {
+                                                          assert(
+                                                            index <
+                                                                handlers.length,
+                                                          );
+                                                          return OutboundMenuAnchor(
+                                                            handler:
+                                                                handlers[index],
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  16,
+                                                                ),
+                                                            child: OutboundHandlerCard(
+                                                              key: ValueKey(
+                                                                handlers[index]
+                                                                    .id,
+                                                              ),
+                                                              handler:
+                                                                  handlers[index],
+                                                              selectedAs4:
+                                                                  r.$1 != 0 &&
+                                                                  startCloseCubit
+                                                                          .state ==
+                                                                      XStatus
+                                                                          .connected &&
+                                                                  xstate.proxySelectorMode ==
+                                                                      ProxySelectorMode
+                                                                          .auto &&
+                                                                  r.$1 ==
+                                                                      handlers[index]
+                                                                          .id,
+                                                              proxySelectorMode:
+                                                                  xstate
+                                                                      .proxySelectorMode,
+                                                              showAddress:
+                                                                  smallScreenPref
+                                                                      .showAddress,
+                                                            ),
+                                                          );
+                                                        },
+                                                        childCount:
+                                                            handlers.length,
+                                                        findChildIndexCallback: (key) {
+                                                          final index = handlers
+                                                              .indexWhere(
+                                                                (e) =>
+                                                                    e.id ==
+                                                                    (key as ValueKey)
+                                                                        .value,
+                                                              );
+                                                          return index == -1
+                                                              ? null
+                                                              : index;
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  if (showAd) const Ads(),
+                                                  const SliverToBoxAdapter(
+                                                    child: SizedBox(height: 70),
+                                                  ),
+                                                ],
+                                              );
+                                            } else {
+                                              print(
+                                                'handler being used list view ${r.$1}',
+                                              );
+                                              // List View
+                                              return CustomScrollView(
+                                                controller: _scrollController,
+                                                physics:
+                                                    const ClampingScrollPhysics(),
+                                                slivers: [
+                                                  SliverFixedExtentList(
+                                                    itemExtent: 50,
+                                                    delegate: SliverChildBuilderDelegate(
+                                                      (ctx, index) {
+                                                        assert(
+                                                          index <
+                                                              handlers.length,
+                                                        );
+                                                        final selectedInAutoBestMode =
+                                                            (r.$1 != 0 &&
+                                                            startCloseCubit
+                                                                    .state ==
+                                                                XStatus
+                                                                    .connected &&
+                                                            xstate.proxySelectorMode ==
+                                                                ProxySelectorMode
+                                                                    .auto &&
+                                                            r.$1 ==
+                                                                handlers[index]
+                                                                    .id);
+                                                        final showDot =
+                                                            selectedInAutoBestMode ||
                                                             (!smallScreenPref
                                                                     .showActive &&
                                                                 xstate.proxySelectorMode ==
@@ -417,46 +447,55 @@ class OutboundTableState extends State<OutboundTable> {
                                                                         .manual &&
                                                                 handlers[index]
                                                                     .selected &&
-                                                                Provider.of<MyLayout>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
+                                                                Provider.of<
+                                                                      MyLayout
+                                                                    >(
+                                                                      context,
+                                                                      listen:
+                                                                          false,
+                                                                    )
                                                                     .isCompact);
-                                                    return HandlerRow(
-                                                      key: ValueKey(
-                                                          handlers[index].id),
-                                                      cols: cols,
-                                                      handler: handlers[index],
-                                                      showDot: showDot,
-                                                    );
-                                                  },
-                                                  childCount: handlers.length,
-                                                  findChildIndexCallback:
-                                                      (key) {
-                                                    final index = handlers
-                                                        .indexWhere((e) =>
-                                                            e.id ==
-                                                            (key as ValueKey)
-                                                                .value);
-                                                    return index == -1
-                                                        ? null
-                                                        : index;
-                                                  },
-                                                ),
-                                              ),
-                                              const SliverToBoxAdapter(
-                                                child: SizedBox(height: 10),
-                                              ),
-                                              if (showAd) const Ads(),
-                                              const SliverToBoxAdapter(
-                                                child: SizedBox(height: 70),
-                                              ),
-                                            ],
-                                          );
-                                        }
-                                      }),
-                                );
-                              }),
+                                                        return HandlerRow(
+                                                          key: ValueKey(
+                                                            handlers[index].id,
+                                                          ),
+                                                          cols: cols,
+                                                          handler:
+                                                              handlers[index],
+                                                          showDot: showDot,
+                                                        );
+                                                      },
+                                                      childCount:
+                                                          handlers.length,
+                                                      findChildIndexCallback: (key) {
+                                                        final index = handlers
+                                                            .indexWhere(
+                                                              (e) =>
+                                                                  e.id ==
+                                                                  (key as ValueKey)
+                                                                      .value,
+                                                            );
+                                                        return index == -1
+                                                            ? null
+                                                            : index;
+                                                      },
+                                                    ),
+                                                  ),
+                                                  const SliverToBoxAdapter(
+                                                    child: SizedBox(height: 10),
+                                                  ),
+                                                  if (showAd) const Ads(),
+                                                  const SliverToBoxAdapter(
+                                                    child: SizedBox(height: 70),
+                                                  ),
+                                                ],
+                                              );
+                                            }
+                                          },
+                                        ),
+                                  );
+                                },
+                              ),
                             ),
                             if (multiSelect)
                               SingleChildScrollView(
@@ -466,29 +505,36 @@ class OutboundTableState extends State<OutboundTable> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     FilledButton.tonalIcon(
-                                        style: FilledButton.styleFrom(
-                                          backgroundColor: Theme.of(context)
-                                              .colorScheme
-                                              .errorContainer,
-                                          foregroundColor: Theme.of(context)
-                                              .colorScheme
-                                              .onErrorContainer,
-                                        ),
-                                        icon: const Icon(
-                                            Icons.delete_forever_outlined),
-                                        onPressed: () {
-                                          final bloc =
-                                              context.read<OutboundBloc>();
-                                          bloc.add(HandlersDeleteEvent(bloc
-                                              .state.handlers
-                                              .where((e) =>
-                                                  e.selectedInMultipleSelect)
-                                              .map((e) => e.id)
-                                              .toList()));
-                                        },
-                                        label: Text(
-                                            AppLocalizations.of(context)!
-                                                .delete)),
+                                      style: FilledButton.styleFrom(
+                                        backgroundColor: Theme.of(
+                                          context,
+                                        ).colorScheme.errorContainer,
+                                        foregroundColor: Theme.of(
+                                          context,
+                                        ).colorScheme.onErrorContainer,
+                                      ),
+                                      icon: const Icon(
+                                        Icons.delete_forever_outlined,
+                                      ),
+                                      onPressed: () {
+                                        final bloc = context
+                                            .read<OutboundBloc>();
+                                        bloc.add(
+                                          HandlersDeleteEvent(
+                                            bloc.state.handlers
+                                                .where(
+                                                  (e) => e
+                                                      .selectedInMultipleSelect,
+                                                )
+                                                .map((e) => e.id)
+                                                .toList(),
+                                          ),
+                                        );
+                                      },
+                                      label: Text(
+                                        AppLocalizations.of(context)!.delete,
+                                      ),
+                                    ),
                                     const Gap(10),
                                     MenuAnchor(
                                       menuChildren: context
@@ -496,59 +542,77 @@ class OutboundTableState extends State<OutboundTable> {
                                           .state
                                           .groups
                                           .whereType<OutboundHandlerGroup>()
-                                          .map((e) => MenuItemButton(
-                                                child: Text(
-                                                    groupNametoLocalizedName(
-                                                        context, e.name)),
-                                                onPressed: () {
-                                                  context.read<OutboundBloc>().add(
-                                                      AddSelectedHandlersToGroupEvent(
-                                                          e.name));
-                                                },
-                                              ))
+                                          .map(
+                                            (e) => MenuItemButton(
+                                              child: Text(
+                                                groupNametoLocalizedName(
+                                                  context,
+                                                  e.name,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                context.read<OutboundBloc>().add(
+                                                  AddSelectedHandlersToGroupEvent(
+                                                    e.name,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          )
                                           .toList(),
                                       builder: (context, controller, child) {
                                         return FilledButton.icon(
-                                            icon: const Icon(
-                                                Icons.group_work_outlined),
-                                            onPressed: () {
-                                              controller.open();
-                                            },
-                                            label: Text(
-                                                AppLocalizations.of(context)!
-                                                    .addToGroup));
+                                          icon: const Icon(
+                                            Icons.group_work_outlined,
+                                          ),
+                                          onPressed: () {
+                                            controller.open();
+                                          },
+                                          label: Text(
+                                            AppLocalizations.of(
+                                              context,
+                                            )!.addToGroup,
+                                          ),
+                                        );
                                       },
                                     ),
                                     const Gap(10),
                                     OutlinedButton(
-                                        onPressed: () {
-                                          context.read<OutboundBloc>().add(
-                                              const MultiSelectEvent(false));
-                                        },
-                                        child: Text(
-                                            AppLocalizations.of(context)!
-                                                .cancel))
+                                      onPressed: () {
+                                        context.read<OutboundBloc>().add(
+                                          const MultiSelectEvent(false),
+                                        );
+                                      },
+                                      child: Text(
+                                        AppLocalizations.of(context)!.cancel,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
                           ],
                         );
-                      })))
-        ],
-      )),
+                      },
+                    ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
 class HandlerRow extends StatefulWidget {
-  const HandlerRow(
-      {super.key,
-      required this.handler,
-      required this.cols,
-      this.showBorder = true,
-      this.showDot = false,
-      this.clickable = true,
-      this.color});
+  const HandlerRow({
+    super.key,
+    required this.handler,
+    required this.cols,
+    this.showBorder = true,
+    this.showDot = false,
+    this.clickable = true,
+    this.color,
+  });
 
   final OutboundHandler handler;
   final List<Col> cols;
@@ -588,9 +652,7 @@ class _HandlerRowState extends State<HandlerRow> {
     List<Col> cols,
     OutboundHandler handler,
   ) {
-    final cells = <Widget>[
-      const Gap(8),
-    ];
+    final cells = <Widget>[const Gap(8)];
     for (var col in cols) {
       cells.add(col.getBodyCell(context, handler));
     }
@@ -607,40 +669,39 @@ class _HandlerRowState extends State<HandlerRow> {
     // print('build ${widget.handler.id}');
     _shouldRebuild = false;
     _cache = Container(
-        decoration: BoxDecoration(
-            border: widget.showBorder
-                ? Border(
-                    bottom: BorderSide(
-                        color: Theme.of(context).colorScheme.outline),
-                  )
-                : null),
-        child: OutboundMenuAnchor(
-            color: widget.color,
-            handler: widget.handler,
-            clickable: widget.clickable,
-            child: Row(
-              children: _getCells(context, widget.cols, widget.handler),
-            )));
+      decoration: BoxDecoration(
+        border: widget.showBorder
+            ? Border(
+                bottom: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+              )
+            : null,
+      ),
+      child: OutboundMenuAnchor(
+        color: widget.color,
+        handler: widget.handler,
+        clickable: widget.clickable,
+        child: Row(children: _getCells(context, widget.cols, widget.handler)),
+      ),
+    );
     if (widget.showDot) {
       _cache = Stack(
         children: [
           _cache!,
           const Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: EdgeInsets.only(left: 4),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.circle,
-                      size: 8,
-                      color: XBlue,
-                    ),
-                    Gap(2),
-                  ],
-                ),
-              ))
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.only(left: 4),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.circle, size: 8, color: XBlue),
+                  Gap(2),
+                ],
+              ),
+            ),
+          ),
         ],
       );
     }
@@ -649,17 +710,24 @@ class _HandlerRowState extends State<HandlerRow> {
 }
 
 Future<String> getQrCodeData(
-    XApiClient xapiClient, List<OutboundHandler> handlers, bool isVX) async {
+  XApiClient xapiClient,
+  List<OutboundHandler> handlers,
+  bool isVX,
+) async {
   late String qrCodeData;
   if (isVX) {
     qrCodeData = base64UrlEncode(
-        HandlerConfigs(configs: handlers.map((e) => e.config).toList())
-            .writeToBuffer());
+      HandlerConfigs(
+        configs: handlers.map((e) => e.config).toList(),
+      ).writeToBuffer(),
+    );
   } else {
-    final resposne = await xapiClient.toUrl(handlers
-        .where((e) => e.config.hasOutbound())
-        .map((e) => e.config.outbound)
-        .toList());
+    final resposne = await xapiClient.toUrl(
+      handlers
+          .where((e) => e.config.hasOutbound())
+          .map((e) => e.config.outbound)
+          .toList(),
+    );
     qrCodeData = resposne.urls.join('\r\n');
   }
   return qrCodeData;
@@ -671,46 +739,59 @@ void _editHandler(BuildContext context, OutboundHandler handler) async {
   if (Provider.of<MyLayout>(context, listen: false).fullScreen()) {
     // TODO: move window in desktop
     if (handler.config.hasOutbound()) {
-      newHandler = await Navigator.of(context, rootNavigator: true)
-          .push(CupertinoPageRoute(builder: (ctx) {
-        return EditFullScreenDialog(handler: handler);
-      }));
+      newHandler = await Navigator.of(context, rootNavigator: true).push(
+        CupertinoPageRoute(
+          builder: (ctx) {
+            return EditFullScreenDialog(handler: handler);
+          },
+        ),
+      );
     } else {
       final config = await Navigator.of(context, rootNavigator: true)
-          .push<ChainHandlerConfig?>(CupertinoPageRoute(builder: (ctx) {
-        return AddEditChainHandlerDialog(
-            fullScreen: true, config: handler.config.chain);
-      }));
+          .push<ChainHandlerConfig?>(
+            CupertinoPageRoute(
+              builder: (ctx) {
+                return AddEditChainHandlerDialog(
+                  fullScreen: true,
+                  config: handler.config.chain,
+                );
+              },
+            ),
+          );
       if (config != null) {
         newHandler = OutboundHandler(
-            config: HandlerConfig(chain: config),
-            id: handler.id,
-            selected: handler.selected);
+          config: HandlerConfig(chain: config),
+          id: handler.id,
+          selected: handler.selected,
+        );
       }
     }
   } else {
     if (handler.config.hasOutbound()) {
       newHandler = await showGeneralDialog<OutboundHandler>(
-          context: context,
-          barrierDismissible: false,
-          barrierLabel: AppLocalizations.of(context)!.edit,
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              EditOutboundDialog(handler: handler));
+        context: context,
+        barrierDismissible: false,
+        barrierLabel: AppLocalizations.of(context)!.edit,
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            EditOutboundDialog(handler: handler),
+      );
     } else {
       final config = await showGeneralDialog<ChainHandlerConfig?>(
-          context: context,
-          barrierDismissible: false,
-          barrierLabel: AppLocalizations.of(context)!.edit,
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              AddEditChainHandlerDialog(
-                  fullScreen: false, config: handler.config.chain));
+        context: context,
+        barrierDismissible: false,
+        barrierLabel: AppLocalizations.of(context)!.edit,
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            AddEditChainHandlerDialog(
+              fullScreen: false,
+              config: handler.config.chain,
+            ),
+      );
       if (config != null) {
         newHandler = OutboundHandler(
-            config: HandlerConfig(
-              chain: config,
-            ),
-            id: handler.id,
-            selected: handler.selected);
+          config: HandlerConfig(chain: config),
+          id: handler.id,
+          selected: handler.selected,
+        );
       }
     }
   }
@@ -720,13 +801,14 @@ void _editHandler(BuildContext context, OutboundHandler handler) async {
 }
 
 class OutboundMenuAnchor extends StatelessWidget {
-  const OutboundMenuAnchor(
-      {super.key,
-      required this.handler,
-      this.borderRadius,
-      required this.child,
-      this.color,
-      this.clickable = true});
+  const OutboundMenuAnchor({
+    super.key,
+    required this.handler,
+    this.borderRadius,
+    required this.child,
+    this.color,
+    this.clickable = true,
+  });
   final OutboundHandler handler;
   final Widget child;
   final bool clickable;
@@ -736,147 +818,171 @@ class OutboundMenuAnchor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MenuAnchor(
-        menuChildren: [
-          MenuItemButton(
-              leadingIcon: const Icon(Icons.edit_rounded),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Text(AppLocalizations.of(context)!.edit),
+      menuChildren: [
+        MenuItemButton(
+          leadingIcon: const Icon(Icons.edit_rounded),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: Text(AppLocalizations.of(context)!.edit),
+          ),
+          onPressed: () => _editHandler(context, handler),
+        ),
+        MenuItemButton(
+          leadingIcon: const Icon(Icons.copy),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: Text(AppLocalizations.of(context)!.copy),
+          ),
+          onPressed: () =>
+              context.read<OutboundBloc>().add(HandlersCopyEvent(handler)),
+        ),
+        SubmenuButton(
+          leadingIcon: const Icon(Icons.group_work_outlined),
+          menuChildren: context
+              .read<OutboundBloc>()
+              .state
+              .groups
+              .whereType<OutboundHandlerGroup>()
+              .map(
+                (e) => MenuItemButton(
+                  child: Text(groupNametoLocalizedName(context, e.name)),
+                  onPressed: () {
+                    context.read<OutboundBloc>().add(
+                      AddHandlerToGroupEvent(handler, e.name),
+                    );
+                  },
+                ),
+              )
+              .toList(),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: Text(AppLocalizations.of(context)!.addToGroup),
+          ),
+        ),
+        SubmenuButton(
+          leadingIcon: const Icon(Icons.share_rounded),
+          menuChildren: [
+            MenuItemButton(
+              leadingIcon: SizedBox(
+                width: 24,
+                height: 24,
+                child: Center(
+                  child: Image.asset(
+                    'assets/icons/V.png',
+                    width: 16,
+                    height: 16,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
               ),
-              onPressed: () => _editHandler(context, handler)),
-          MenuItemButton(
-              leadingIcon: const Icon(Icons.copy),
               child: Padding(
                 padding: const EdgeInsets.only(left: 4),
-                child: Text(AppLocalizations.of(context)!.copy),
+                child: Text(AppLocalizations.of(context)!.shareWithVXclient),
               ),
-              onPressed: () =>
-                  context.read<OutboundBloc>().add(HandlersCopyEvent(handler))),
-          SubmenuButton(
-              leadingIcon: const Icon(Icons.group_work_outlined),
-              menuChildren: context
-                  .read<OutboundBloc>()
-                  .state
-                  .groups
-                  .whereType<OutboundHandlerGroup>()
-                  .map((e) => MenuItemButton(
-                        child: Text(groupNametoLocalizedName(context, e.name)),
-                        onPressed: () {
-                          context
-                              .read<OutboundBloc>()
-                              .add(AddHandlerToGroupEvent(handler, e.name));
-                        },
-                      ))
-                  .toList(),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Text(AppLocalizations.of(context)!.addToGroup),
-              )),
-          SubmenuButton(
-              leadingIcon: const Icon(Icons.share_rounded),
-              menuChildren: [
-                MenuItemButton(
-                    leadingIcon: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: Center(
-                        child: Image.asset(
-                          'assets/icons/V.png',
-                          width: 16,
-                          height: 16,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 4),
-                      child:
-                          Text(AppLocalizations.of(context)!.shareWithVXclient),
-                    ),
-                    onPressed: () async {
-                      final xapiClient = context.read<XApiClient>();
-                      final qrCodeData =
-                          await getQrCodeData(xapiClient, [handler], true);
-                      shareQrCode(context, qrCodeData);
-                    }),
-                MenuItemButton(
-                    leadingIcon: const Icon(Icons.category_rounded),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 4),
-                      child: Text(
-                          AppLocalizations.of(context)!.shareWithOtherClients),
-                    ),
-                    onPressed: () async {
-                      final xapiClient = context.read<XApiClient>();
-                      final qrCodeData =
-                          await getQrCodeData(xapiClient, [handler], false);
-                      shareQrCode(context, qrCodeData);
-                    }),
-              ],
-              child: Text(AppLocalizations.of(context)!.share)),
-          const Divider(),
-          MenuItemButton(
-              leadingIcon: const Icon(Icons.delete_outline_rounded),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Text(AppLocalizations.of(context)!.delete),
-              ),
-              onPressed: () => context
-                  .read<OutboundBloc>()
-                  .add(HandlersDeleteEvent([handler.id]))),
-        ],
-        builder: (context, menuController, child) {
-          return Material(
-            color: color,
-            child: GestureDetector(
-              onLongPressStart: (details) {
-                if (!desktopPlatforms) {
-                  menuController.open(
-                      position: Offset(
-                          details.localPosition.dx, details.localPosition.dy));
-                }
+              onPressed: () async {
+                final xapiClient = context.read<XApiClient>();
+                final qrCodeData = await getQrCodeData(xapiClient, [
+                  handler,
+                ], true);
+                shareQrCode(context, qrCodeData);
               },
-              child: InkWell(
-                borderRadius: borderRadius,
-                onTap: clickable
-                    ? () {
-                        if (menuController.isOpen) {
-                          menuController.close();
+            ),
+            MenuItemButton(
+              leadingIcon: const Icon(Icons.category_rounded),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 4),
+                child: Text(
+                  AppLocalizations.of(context)!.shareWithOtherClients,
+                ),
+              ),
+              onPressed: () async {
+                final xapiClient = context.read<XApiClient>();
+                final qrCodeData = await getQrCodeData(xapiClient, [
+                  handler,
+                ], false);
+                shareQrCode(context, qrCodeData);
+              },
+            ),
+          ],
+          child: Text(AppLocalizations.of(context)!.share),
+        ),
+        const Divider(),
+        MenuItemButton(
+          leadingIcon: const Icon(Icons.delete_outline_rounded),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: Text(AppLocalizations.of(context)!.delete),
+          ),
+          onPressed: () => context.read<OutboundBloc>().add(
+            HandlersDeleteEvent([handler.id]),
+          ),
+        ),
+      ],
+      builder: (context, menuController, child) {
+        return Material(
+          color: color,
+          child: GestureDetector(
+            onLongPressStart: (details) {
+              if (!desktopPlatforms) {
+                menuController.open(
+                  position: Offset(
+                    details.localPosition.dx,
+                    details.localPosition.dy,
+                  ),
+                );
+              }
+            },
+            child: InkWell(
+              borderRadius: borderRadius,
+              onTap: clickable
+                  ? () {
+                      if (menuController.isOpen) {
+                        menuController.close();
+                      } else {
+                        final bloc = context.read<OutboundBloc>();
+                        if (bloc.state.multiSelect) {
+                          bloc.add(MultiSelectToggleEvent(handler));
                         } else {
-                          final bloc = context.read<OutboundBloc>();
-                          if (bloc.state.multiSelect) {
-                            bloc.add(MultiSelectToggleEvent(handler));
-                          } else {
-                            if (!context.read<AuthBloc>().state.pro ||
-                                context
-                                    .read<ProxySelectorBloc>()
-                                    .state
-                                    .enableManualSelect) {
-                              bloc.add(SwitchHandlerEvent(
-                                  handler, !handler.selected));
-                            }
+                          if (!context.read<AuthBloc>().state.pro ||
+                              context
+                                  .read<ProxySelectorBloc>()
+                                  .state
+                                  .enableManualSelect) {
+                            bloc.add(
+                              SwitchHandlerEvent(handler, !handler.selected),
+                            );
                           }
                         }
                       }
-                    : null,
-                onSecondaryTapDown: desktopPlatforms
-                    ? (TapDownDetails details) {
-                        menuController.open(
-                            position: Offset(details.localPosition.dx,
-                                details.localPosition.dy));
-                      }
-                    : null,
-                child: child,
-              ),
+                    }
+                  : null,
+              onSecondaryTapDown: desktopPlatforms
+                  ? (TapDownDetails details) {
+                      menuController.open(
+                        position: Offset(
+                          details.localPosition.dx,
+                          details.localPosition.dy,
+                        ),
+                      );
+                    }
+                  : null,
+              child: child,
             ),
-          );
-        },
-        child: child);
+          ),
+        );
+      },
+      child: child,
+    );
   }
 }
 
-List<Col> getCols(Size size, ProxySelectorState xstate, bool multiSelect,
-    OutboundTableSmallScreenPreference smallScreenPreference, bool isPro) {
+List<Col> getCols(
+  Size size,
+  ProxySelectorState xstate,
+  bool multiSelect,
+  OutboundTableSmallScreenPreference smallScreenPreference,
+  bool isPro,
+) {
   final cols = <Col>[if (multiSelect) Col.select, Col.countryIcon];
 
   if (size.width <= 900) {
@@ -918,13 +1024,14 @@ List<Col> getCols(Size size, ProxySelectorState xstate, bool multiSelect,
 }
 
 class SortableHeaderCell extends StatelessWidget {
-  const SortableHeaderCell(
-      {super.key,
-      required this.col,
-      this.loading = false,
-      this.center = true,
-      this.sortCol,
-      this.padding = EdgeInsets.zero});
+  const SortableHeaderCell({
+    super.key,
+    required this.col,
+    this.loading = false,
+    this.center = true,
+    this.sortCol,
+    this.padding = EdgeInsets.zero,
+  });
 
   final Col col;
   final bool loading;
@@ -968,11 +1075,7 @@ class SortableHeaderCell extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             col.headerWidget(context, sorting: true),
-            const Icon(
-              size: 10,
-              Icons.north,
-              color: XBlue,
-            )
+            const Icon(size: 10, Icons.north, color: XBlue),
           ],
         );
       } else {
@@ -981,11 +1084,7 @@ class SortableHeaderCell extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             col.headerWidget(context, sorting: true),
-            const Icon(
-              size: 10,
-              Icons.south,
-              color: XBlue,
-            )
+            const Icon(size: 10, Icons.south, color: XBlue),
           ],
         );
       }
@@ -996,34 +1095,34 @@ class SortableHeaderCell extends StatelessWidget {
       child: InkWell(
         onTap: loading
             ? null
-            : () =>
-                context.read<OutboundBloc>().add(SortHandlersEvent(newColSort)),
+            : () => context.read<OutboundBloc>().add(
+                SortHandlersEvent(newColSort),
+              ),
         child: Padding(
           padding: padding,
           child: SizedBox(
-              width: col.getWidth(context),
-              child: center
-                  ? Center(
-                      child: DefaultTextStyle(
-                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                              color: bold ? XBlue : null,
-                              fontWeight:
-                                  bold ? FontWeight.bold : FontWeight.w500,
-                            ),
-                        child: child,
+            width: col.getWidth(context),
+            child: center
+                ? Center(
+                    child: DefaultTextStyle(
+                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                        color: bold ? XBlue : null,
+                        fontWeight: bold ? FontWeight.bold : FontWeight.w500,
                       ),
-                    )
-                  : Align(
-                      alignment: Alignment.centerLeft,
-                      child: DefaultTextStyle(
-                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                              color: bold ? XBlue : null,
-                              fontWeight:
-                                  bold ? FontWeight.bold : FontWeight.w500,
-                            ),
-                        child: child,
+                      child: child,
+                    ),
+                  )
+                : Align(
+                    alignment: Alignment.centerLeft,
+                    child: DefaultTextStyle(
+                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                        color: bold ? XBlue : null,
+                        fontWeight: bold ? FontWeight.bold : FontWeight.w500,
                       ),
-                    )),
+                      child: child,
+                    ),
+                  ),
+          ),
         ),
       ),
     );
@@ -1047,7 +1146,7 @@ enum Col {
 
   const Col({this.defaultAsc = 1, this.defaultSortOnly = false});
 
-// 1 means asc, -1 means desc
+  // 1 means asc, -1 means desc
   final SortOrder defaultAsc;
   final bool defaultSortOnly;
 
@@ -1110,7 +1209,8 @@ enum Col {
 
   Widget headerWidget(BuildContext context, {bool sorting = false}) {
     final compact = MediaQuery.sizeOf(context).width < 600;
-    final showIcon = compact ||
+    final showIcon =
+        compact ||
         (context.read<SharedPreferences>().language?.aiTranslated ?? false);
     switch (this) {
       case Col.select:
@@ -1129,13 +1229,17 @@ enum Col {
       //   return const Text("SNI");
       case Col.usable:
         return showIcon
-            ? Icon(Icons.check_circle_outline_rounded,
-                color: sorting ? XBlue : null)
+            ? Icon(
+                Icons.check_circle_outline_rounded,
+                color: sorting ? XBlue : null,
+              )
             : Text(AppLocalizations.of(context)!.usable);
       case Col.speed:
         return showIcon
-            ? Icon(Icons.arrow_circle_down_rounded,
-                color: sorting ? XBlue : null)
+            ? Icon(
+                Icons.arrow_circle_down_rounded,
+                color: sorting ? XBlue : null,
+              )
             : Text(AppLocalizations.of(context)!.speed);
       case Col.ping:
         return showIcon
@@ -1143,30 +1247,39 @@ enum Col {
             : Text(AppLocalizations.of(context)!.latency);
       case Col.active:
         return showIcon
-            ? Icon(Icons.toggle_on_outlined,
-                size: 28, color: sorting ? XBlue : null)
+            ? Icon(
+                Icons.toggle_on_outlined,
+                size: 28,
+                color: sorting ? XBlue : null,
+              )
             : Text(AppLocalizations.of(context)!.selectOneOutbound);
     }
   }
 
   Widget getHeaderCell(
-      BuildContext context, bool testingArea, (Col, SortOrder)? sort) {
+    BuildContext context,
+    bool testingArea,
+    (Col, SortOrder)? sort,
+  ) {
     switch (this) {
       case Col.select:
         return SizedBox(
           width: 40,
           child: Center(
-              child: IconButton(
-                  style: IconButton.styleFrom(
-                      minimumSize: const Size(32, 32),
-                      padding: EdgeInsets.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                  onPressed: () {
-                    context
-                        .read<OutboundBloc>()
-                        .add(const MultiSelectSelectAllEvent(true));
-                  },
-                  icon: const Icon(Icons.check_box_rounded))),
+            child: IconButton(
+              style: IconButton.styleFrom(
+                minimumSize: const Size(32, 32),
+                padding: EdgeInsets.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              onPressed: () {
+                context.read<OutboundBloc>().add(
+                  const MultiSelectSelectAllEvent(true),
+                );
+              },
+              icon: const Icon(Icons.check_box_rounded),
+            ),
+          ),
         );
       case Col.countryIcon:
         return SortableHeaderCell(
@@ -1176,20 +1289,22 @@ enum Col {
         );
       case Col.remark || Col.remarkProtocol:
         return Expanded(
-            flex: 3,
-            child: SortableHeaderCell(
-              col: this,
-              sortCol: sort,
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              center: false,
-            ));
+          flex: 3,
+          child: SortableHeaderCell(
+            col: this,
+            sortCol: sort,
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            center: false,
+          ),
+        );
       case Col.address:
         return Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              child: headerWidget(context),
-            ));
+          flex: 3,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: headerWidget(context),
+          ),
+        );
       case Col.protocol:
         return SortableHeaderCell(
           col: this,
@@ -1205,25 +1320,13 @@ enum Col {
       //         child: headerWidget(context),
       //       ));
       case Col.usable:
-        return SortableHeaderCell(
-          col: this,
-          sortCol: sort,
-        );
+        return SortableHeaderCell(col: this, sortCol: sort);
       case Col.speed:
-        return SortableHeaderCell(
-          col: this,
-          sortCol: sort,
-        );
+        return SortableHeaderCell(col: this, sortCol: sort);
       case Col.ping:
-        return SortableHeaderCell(
-          col: this,
-          sortCol: sort,
-        );
+        return SortableHeaderCell(col: this, sortCol: sort);
       case Col.active:
-        return SortableHeaderCell(
-          col: this,
-          sortCol: sort,
-        );
+        return SortableHeaderCell(col: this, sortCol: sort);
     }
   }
 
@@ -1236,8 +1339,12 @@ enum Col {
             //     'vertical drag start: ; local ${details.localPosition}; global ${details.globalPosition}; handler: ${handler.id}');
           },
           onVerticalDragUpdate: (details) {
-            context.read<OutboundBloc>().add(MultiSelectVerticalDragUpdateEvent(
-                handler, details.localPosition));
+            context.read<OutboundBloc>().add(
+              MultiSelectVerticalDragUpdateEvent(
+                handler,
+                details.localPosition,
+              ),
+            );
             // print(
             //     'vertical drag update: delta ${details.delta}; primaryDelta ${details.primaryDelta}; local ${details.localPosition}; global ${details.globalPosition}; handler: ${handler.id}');
           },
@@ -1246,17 +1353,17 @@ enum Col {
             //     'vertical drag end:; local ${details.localPosition}; global ${details.globalPosition}; handler: ${handler.id}');
           },
           child: Checkbox(
-              value: handler.selectedInMultipleSelect,
-              onChanged: (v) {
-                context
-                    .read<OutboundBloc>()
-                    .add(MultiSelectToggleEvent(handler));
-              }),
+            value: handler.selectedInMultipleSelect,
+            onChanged: (v) {
+              context.read<OutboundBloc>().add(MultiSelectToggleEvent(handler));
+            },
+          ),
         );
       case Col.countryIcon:
         return SizedBox(
-            width: getWidth(context),
-            child: Center(child: handler.countryIcon));
+          width: getWidth(context),
+          child: Center(child: handler.countryIcon),
+        );
       case Col.remarkProtocol:
         return Expanded(
           flex: 3,
@@ -1267,23 +1374,24 @@ enum Col {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxHeight: 33,
-                  ),
+                  constraints: const BoxConstraints(maxHeight: 33),
                   child: AutoSizeText(
-                      isProduction()
-                          ? handler.name
-                          : '${handler.name}(${handler.id})',
-                      minFontSize: 10,
-                      maxLines: 2),
+                    isProduction()
+                        ? handler.name
+                        : '${handler.name}(${handler.id})',
+                    minFontSize: 10,
+                    maxLines: 2,
+                  ),
                 ),
                 // if (MediaQuery.sizeOf(context).width <= 680)
-                Text(handler.displayProtocol(),
-                    maxLines: 1,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontSize: 10,
-                          color: Theme.of(context).colorScheme.outline,
-                        )),
+                Text(
+                  handler.displayProtocol(),
+                  maxLines: 1,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontSize: 10,
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                ),
               ],
             ),
           ),
@@ -1294,11 +1402,10 @@ enum Col {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
             child: AutoSizeText(
-                isProduction()
-                    ? handler.name
-                    : '${handler.name}(${handler.id})',
-                minFontSize: 10,
-                maxLines: 2),
+              isProduction() ? handler.name : '${handler.name}(${handler.id})',
+              minFontSize: 10,
+              maxLines: 2,
+            ),
           ),
         );
       case Col.address:
@@ -1306,22 +1413,20 @@ enum Col {
           flex: 3,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: AutoSizeText(
-              handler.displayAddress,
-              minFontSize: 10,
-            ),
+            child: AutoSizeText(handler.displayAddress, minFontSize: 10),
           ),
         );
       case Col.protocol:
         return Padding(
           padding: const EdgeInsets.only(left: 6, right: 12),
           child: SizedBox(
-              width: getWidth(context),
-              child: AutoSizeText(
-                handler.displayProtocol(),
-                maxLines: 2,
-                overflow: TextOverflow.clip,
-              )),
+            width: getWidth(context),
+            child: AutoSizeText(
+              handler.displayProtocol(),
+              maxLines: 2,
+              overflow: TextOverflow.clip,
+            ),
+          ),
         );
       // case Col.sni:
       //   return Expanded(
@@ -1334,9 +1439,9 @@ enum Col {
       case Col.usable:
         return InkWell(
           onTap: () {
-            context
-                .read<OutboundBloc>()
-                .add(StatusTestEvent(handlers: [handler]));
+            context.read<OutboundBloc>().add(
+              StatusTestEvent(handlers: [handler]),
+            );
           },
           child: Center(
             child: Padding(
@@ -1353,51 +1458,59 @@ enum Col {
       case Col.speed:
         return InkWell(
           onTap: () {
-            context
-                .read<OutboundBloc>()
-                .add(SpeedTestEvent(handlers: [handler]));
+            context.read<OutboundBloc>().add(
+              SpeedTestEvent(handlers: [handler]),
+            );
           },
           child: SizedBox(
-              width: getWidth(context),
-              child: Center(
-                  child: handler.speedTesting
-                      ? _progressIndicator
-                      : Text(handler.ok > 0 && handler.speed > 0
+            width: getWidth(context),
+            child: Center(
+              child: handler.speedTesting
+                  ? _progressIndicator
+                  : Text(
+                      handler.ok > 0 && handler.speed > 0
                           ? handler.speed.toStringAsFixed(1)
-                          : ''))),
+                          : '',
+                    ),
+            ),
+          ),
         );
       case Col.ping:
         return InkWell(
           onTap: () {
-            context
-                .read<OutboundBloc>()
-                .add(StatusTestEvent(handlers: [handler]));
+            context.read<OutboundBloc>().add(
+              StatusTestEvent(handlers: [handler]),
+            );
           },
           child: SizedBox(
-              width: getWidth(context),
-              child: Center(
-                  child: handler.usableTesting
-                      ? _progressIndicator
-                      : FittedBox(
-                          child: Text(
-                            handler.ok > 0 && handler.ping > 0
-                                ? handler.ping.toString()
-                                : '',
-                          ),
-                        ))),
+            width: getWidth(context),
+            child: Center(
+              child: handler.usableTesting
+                  ? _progressIndicator
+                  : FittedBox(
+                      child: Text(
+                        handler.ok > 0 && handler.ping > 0
+                            ? handler.ping.toString()
+                            : '',
+                      ),
+                    ),
+            ),
+          ),
         );
       case Col.active:
         return SizedBox(
           width: getWidth(context),
           child: Transform.scale(
-              scale: 0.8,
-              child: Switch(
-                  value: handler.selected,
-                  onChanged: (v) {
-                    context
-                        .read<OutboundBloc>()
-                        .add(SwitchHandlerEvent(handler, v));
-                  })),
+            scale: 0.8,
+            child: Switch(
+              value: handler.selected,
+              onChanged: (v) {
+                context.read<OutboundBloc>().add(
+                  SwitchHandlerEvent(handler, v),
+                );
+              },
+            ),
+          ),
         );
     }
   }
@@ -1406,9 +1519,7 @@ enum Col {
 const _progressIndicator = SizedBox(
   width: 12,
   height: 12,
-  child: CircularProgressIndicator(
-    strokeWidth: 2,
-  ),
+  child: CircularProgressIndicator(strokeWidth: 2),
 );
 
 Widget _usableText(int status) {
@@ -1526,9 +1637,9 @@ class _GridSortButton extends StatelessWidget {
             color: sortCol?.$1 == Col.usable ? XBlue : null,
           ),
           onPressed: () {
-            context
-                .read<OutboundBloc>()
-                .add(const SortHandlersEvent((Col.usable, -1)));
+            context.read<OutboundBloc>().add(
+              const SortHandlersEvent((Col.usable, -1)),
+            );
           },
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -1547,9 +1658,9 @@ class _GridSortButton extends StatelessWidget {
             color: sortCol?.$1 == Col.speed ? XBlue : null,
           ),
           onPressed: () {
-            context
-                .read<OutboundBloc>()
-                .add(const SortHandlersEvent((Col.speed, -1)));
+            context.read<OutboundBloc>().add(
+              const SortHandlersEvent((Col.speed, -1)),
+            );
           },
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -1568,9 +1679,9 @@ class _GridSortButton extends StatelessWidget {
             color: sortCol?.$1 == Col.ping ? XBlue : null,
           ),
           onPressed: () {
-            context
-                .read<OutboundBloc>()
-                .add(const SortHandlersEvent((Col.ping, 1)));
+            context.read<OutboundBloc>().add(
+              const SortHandlersEvent((Col.ping, 1)),
+            );
           },
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -1589,9 +1700,9 @@ class _GridSortButton extends StatelessWidget {
             color: sortCol?.$1 == Col.active ? XBlue : null,
           ),
           onPressed: () {
-            context
-                .read<OutboundBloc>()
-                .add(const SortHandlersEvent((Col.active, -1)));
+            context.read<OutboundBloc>().add(
+              const SortHandlersEvent((Col.active, -1)),
+            );
           },
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -1622,10 +1733,7 @@ class _GridSortButton extends StatelessWidget {
               controller.open();
             }
           },
-          icon: Icon(
-            Icons.sort_rounded,
-            color: sortCol != null ? XBlue : null,
-          ),
+          icon: Icon(Icons.sort_rounded, color: sortCol != null ? XBlue : null),
           tooltip: 'Sort',
         );
       },
@@ -1634,17 +1742,17 @@ class _GridSortButton extends StatelessWidget {
 }
 
 class _HeaderRow extends StatelessWidget {
-  const _HeaderRow({
-    required this.cols,
-  });
+  const _HeaderRow({required this.cols});
 
   final List<Col> cols;
 
-  List<Widget> _getHeaderCells(BuildContext context, List<Col> cols,
-      bool testingArea, (Col, SortOrder)? sort) {
-    final cells = <Widget>[
-      const Gap(8),
-    ];
+  List<Widget> _getHeaderCells(
+    BuildContext context,
+    List<Col> cols,
+    bool testingArea,
+    (Col, SortOrder)? sort,
+  ) {
+    final cells = <Widget>[const Gap(8)];
     for (var col in cols) {
       cells.add(col.getHeaderCell(context, testingArea, sort));
     }
@@ -1656,29 +1764,36 @@ class _HeaderRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondaryContainer,
-          borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(15), topRight: Radius.circular(15))),
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(15),
+          topRight: Radius.circular(15),
+        ),
+      ),
       child: DefaultTextStyle(
-        style: Theme.of(context)
-            .textTheme
-            .labelLarge!
-            .copyWith(fontWeight: FontWeight.w500),
+        style: Theme.of(
+          context,
+        ).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.w500),
         child: Container(
           decoration: BoxDecoration(
-              border: Border(
-            bottom: BorderSide(color: Theme.of(context).colorScheme.outline),
-          )),
-          height: 36,
-          child: BlocSelector<OutboundBloc, OutboundState,
-              (bool, (Col, SortOrder)?)>(
-            selector: (state) => (state.testingArea, state.sortCol),
-            builder: (context, r) {
-              return Row(
-                children: _getHeaderCells(context, cols, r.$1, r.$2),
-              );
-            },
+            border: Border(
+              bottom: BorderSide(color: Theme.of(context).colorScheme.outline),
+            ),
           ),
+          height: 36,
+          child:
+              BlocSelector<
+                OutboundBloc,
+                OutboundState,
+                (bool, (Col, SortOrder)?)
+              >(
+                selector: (state) => (state.testingArea, state.sortCol),
+                builder: (context, r) {
+                  return Row(
+                    children: _getHeaderCells(context, cols, r.$1, r.$2),
+                  );
+                },
+              ),
         ),
       ),
     );

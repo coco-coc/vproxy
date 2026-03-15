@@ -28,8 +28,11 @@ import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/data/database.dart';
 
 class AddEditChainHandlerDialog extends StatefulWidget {
-  const AddEditChainHandlerDialog(
-      {super.key, this.fullScreen = false, this.config});
+  const AddEditChainHandlerDialog({
+    super.key,
+    this.fullScreen = false,
+    this.config,
+  });
 
   final bool fullScreen;
   final ChainHandlerConfig? config;
@@ -49,15 +52,22 @@ class _AddEditChainHandlerDialogState extends State<AddEditChainHandlerDialog> {
         ChainHandlerConfig config =
             (_widgetKey.currentState as ChainHandlerFormState).config;
         if (config.handlers.length <= 1) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
               duration: const Duration(seconds: 5),
-              content: Text(AppLocalizations.of(context)!.atLeastTwoNodes)));
+              content: Text(AppLocalizations.of(context)!.atLeastTwoNodes),
+            ),
+          );
           return;
         }
         context.pop(config);
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            duration: const Duration(seconds: 5), content: Text(e.toString())));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            duration: const Duration(seconds: 5),
+            content: Text(e.toString()),
+          ),
+        );
       }
     }
   }
@@ -78,71 +88,89 @@ class _AddEditChainHandlerDialogState extends State<AddEditChainHandlerDialog> {
                 actions: [
                   if (Platform.isMacOS)
                     TextButton(
-                        onPressed: () => context.pop(),
-                        child: Text(AppLocalizations.of(context)!.cancel)),
-                  Builder(builder: (context) {
-                    return TextButton(
+                      onPressed: () => context.pop(),
+                      child: Text(AppLocalizations.of(context)!.cancel),
+                    ),
+                  Builder(
+                    builder: (context) {
+                      return TextButton(
                         onPressed: () => _onSave(context),
-                        child: Text(AppLocalizations.of(context)!.save));
-                  })
+                        child: Text(AppLocalizations.of(context)!.save),
+                      );
+                    },
+                  ),
                 ],
               ),
               body: ChainHandlerForm(
-                  formKey: _formKey, key: _widgetKey, config: widget.config),
+                formKey: _formKey,
+                key: _widgetKey,
+                config: widget.config,
+              ),
             ),
           )
         : ScaffoldMessenger(
             child: Dialog(
               clipBehavior: Clip.antiAlias,
               child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 400),
-                  child: Scaffold(
-                    body: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(AppLocalizations.of(context)!.chainProxy,
-                              style: Theme.of(context).textTheme.titleLarge),
-                          const SizedBox(height: 16),
-                          Expanded(
-                            child: SingleChildScrollView(
-                                child: ChainHandlerForm(
-                                    formKey: _formKey,
-                                    key: _widgetKey,
-                                    config: widget.config)),
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: Scaffold(
+                  body: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!.chainProxy,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 16),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: ChainHandlerForm(
+                              formKey: _formKey,
+                              key: _widgetKey,
+                              config: widget.config,
+                            ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 24),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                FilledButton.tonal(
-                                  style: FilledButton.styleFrom(
-                                      fixedSize: const Size(100, 40),
-                                      elevation: 1),
-                                  onPressed: () => context.pop(),
-                                  child: Text(
-                                      AppLocalizations.of(context)!.cancel),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 24),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              FilledButton.tonal(
+                                style: FilledButton.styleFrom(
+                                  fixedSize: const Size(100, 40),
+                                  elevation: 1,
                                 ),
-                                const SizedBox(width: 10),
-                                Builder(builder: (context) {
+                                onPressed: () => context.pop(),
+                                child: Text(
+                                  AppLocalizations.of(context)!.cancel,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Builder(
+                                builder: (context) {
                                   return FilledButton(
                                     style: FilledButton.styleFrom(
-                                        fixedSize: const Size(100, 40),
-                                        elevation: 1),
+                                      fixedSize: const Size(100, 40),
+                                      elevation: 1,
+                                    ),
                                     onPressed: () => _onSave(context),
                                     child: Text(
-                                        AppLocalizations.of(context)!.save),
+                                      AppLocalizations.of(context)!.save,
+                                    ),
                                   );
-                                })
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  )),
+                  ),
+                ),
+              ),
               // actions: [
               //   TextButton(
               //       onPressed: () => context.pop(),
@@ -187,14 +215,17 @@ class ChainHandlerFormState extends State<ChainHandlerForm> {
   void initState() {
     super.initState();
     _groups = context.read<OutboundBloc>().state.groups;
-    Future.wait(_groups.map((e) async {
-      final handlers =
-          await context.read<OutboundRepo>().getHandlersByNodeGroup(e);
-      _handlersByGroup[e.name] = handlers
-          .where((e) => e.config.hasOutbound())
-          .map((e) => e.config.outbound)
-          .toList();
-    })).then((_) {
+    Future.wait(
+      _groups.map((e) async {
+        final handlers = await context
+            .read<OutboundRepo>()
+            .getHandlersByNodeGroup(e);
+        _handlersByGroup[e.name] = handlers
+            .where((e) => e.config.hasOutbound())
+            .map((e) => e.config.outbound)
+            .toList();
+      }),
+    ).then((_) {
       setState(() {});
     });
 
@@ -204,14 +235,15 @@ class ChainHandlerFormState extends State<ChainHandlerForm> {
         final gk = GlobalKey<_ExpansionHandlerState>();
         return (
           ExpansionHandler(
-              key: gk,
-              config: e,
-              onDelete: (key) {
-                setState(() {
-                  _handlers.removeWhere((e) => e.$2 == key);
-                });
-              }),
-          gk
+            key: gk,
+            config: e,
+            onDelete: (key) {
+              setState(() {
+                _handlers.removeWhere((e) => e.$2 == key);
+              });
+            },
+          ),
+          gk,
         );
       }).toList();
     }
@@ -268,20 +300,23 @@ class ChainHandlerFormState extends State<ChainHandlerForm> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   const SizedBox(width: 8),
-                  Text(AppLocalizations.of(context)!.yourDevices,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
-                          )),
+                  Text(
+                    AppLocalizations.of(context)!.yourDevices,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
                 ],
               ),
               const Gap(2),
               ArrowDownAddButton(
-                  handlers: _handlers,
-                  groups: _groups,
-                  handlersByGroup: _handlersByGroup,
-                  formKey: widget.formKey,
-                  index: 0,
-                  setState: setState),
+                handlers: _handlers,
+                groups: _groups,
+                handlersByGroup: _handlersByGroup,
+                formKey: widget.formKey,
+                index: 0,
+                setState: setState,
+              ),
               const Gap(2),
             ],
           ),
@@ -299,12 +334,13 @@ class ChainHandlerFormState extends State<ChainHandlerForm> {
                       ReorderableDragStartListener(index: e.$1, child: e.$2.$1),
                       const Gap(2),
                       ArrowDownAddButton(
-                          handlers: _handlers,
-                          groups: _groups,
-                          handlersByGroup: _handlersByGroup,
-                          formKey: widget.formKey,
-                          index: e.$1 + 1,
-                          setState: setState)
+                        handlers: _handlers,
+                        groups: _groups,
+                        handlersByGroup: _handlersByGroup,
+                        formKey: widget.formKey,
+                        index: e.$1 + 1,
+                        setState: setState,
+                      ),
                     ],
                   );
                 }).toList(),
@@ -313,10 +349,8 @@ class ChainHandlerFormState extends State<ChainHandlerForm> {
                     if (oldIndex < newIndex) {
                       newIndex -= 1;
                     }
-                    final (
-                      ExpansionHandler,
-                      GlobalKey<_ExpansionHandlerState>
-                    ) item = _handlers.removeAt(oldIndex);
+                    final (ExpansionHandler, GlobalKey<_ExpansionHandlerState>)
+                    item = _handlers.removeAt(oldIndex);
                     _handlers.insert(newIndex, item);
                   });
                 },
@@ -330,10 +364,12 @@ class ChainHandlerFormState extends State<ChainHandlerForm> {
                 color: Theme.of(context).colorScheme.primary,
               ),
               const SizedBox(width: 8),
-              Text(AppLocalizations.of(context)!.destination,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                      )),
+              Text(
+                AppLocalizations.of(context)!.destination,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
             ],
           ),
         ],
@@ -343,8 +379,11 @@ class ChainHandlerFormState extends State<ChainHandlerForm> {
 }
 
 class ExpansionHandler extends StatefulWidget {
-  const ExpansionHandler(
-      {super.key, required this.config, required this.onDelete});
+  const ExpansionHandler({
+    super.key,
+    required this.config,
+    required this.onDelete,
+  });
 
   final OutboundHandlerConfig? config;
   final Function(GlobalKey<_ExpansionHandlerState> key) onDelete;
@@ -378,15 +417,11 @@ class _ExpansionHandlerState extends State<ExpansionHandler> {
       collapsedBackgroundColor: Theme.of(context).colorScheme.surfaceContainer,
       clipBehavior: Clip.antiAlias,
       collapsedShape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.outline,
-        ),
+        side: BorderSide(color: Theme.of(context).colorScheme.outline),
         borderRadius: BorderRadius.circular(10),
       ),
       shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.outline,
-        ),
+        side: BorderSide(color: Theme.of(context).colorScheme.outline),
         borderRadius: BorderRadius.circular(10),
       ),
       leading: IconButton(
@@ -426,14 +461,15 @@ class _ExpansionHandlerState extends State<ExpansionHandler> {
 }
 
 class ArrowDownAddButton extends StatelessWidget {
-  const ArrowDownAddButton(
-      {super.key,
-      required this.handlers,
-      required this.groups,
-      required this.handlersByGroup,
-      required this.formKey,
-      required this.index,
-      required this.setState});
+  const ArrowDownAddButton({
+    super.key,
+    required this.handlers,
+    required this.groups,
+    required this.handlersByGroup,
+    required this.formKey,
+    required this.index,
+    required this.setState,
+  });
   final List<(ExpansionHandler, GlobalKey<_ExpansionHandlerState>)> handlers;
   final List<NodeGroup> groups;
   final Map<String, List<OutboundHandlerConfig>> handlersByGroup;
@@ -461,59 +497,64 @@ class ArrowDownAddButton extends StatelessWidget {
                   final k = GlobalKey<_ExpansionHandlerState>();
                   handlers.insert(index, (
                     ExpansionHandler(
-                        key: k,
-                        config: null,
-                        onDelete: (key) {
-                          setState(() {
-                            handlers.removeWhere((e) => e.$2 == key);
-                          });
-                        }),
-                    k
+                      key: k,
+                      config: null,
+                      onDelete: (key) {
+                        setState(() {
+                          handlers.removeWhere((e) => e.$2 == key);
+                        });
+                      },
+                    ),
+                    k,
                   ));
                 });
               },
             ),
             SubmenuButton(
-                menuChildren: groups.map((e) {
-                  return SubmenuButton(
-                    menuChildren: handlersByGroup[e.name]
-                            ?.map((e) => MenuItemButton(
-                                child: Text(e.tag),
-                                onPressed: () {
-                                  setState(() {
-                                    final k =
-                                        GlobalKey<_ExpansionHandlerState>();
-                                    handlers.insert(index, (
-                                      ExpansionHandler(
-                                          key: k,
-                                          config: e,
-                                          onDelete: (key) {
-                                            setState(() {
-                                              handlers.removeWhere(
-                                                  (e) => e.$2 == key);
-                                            });
-                                          }),
-                                      k
-                                    ));
-                                  });
-                                }))
-                            .toList() ??
-                        [],
-                    child: Text(e.name),
-                  );
-                }).toList(),
-                child: Text(AppLocalizations.of(context)!.useExistingNode))
+              menuChildren: groups.map((e) {
+                return SubmenuButton(
+                  menuChildren:
+                      handlersByGroup[e.name]
+                          ?.map(
+                            (e) => MenuItemButton(
+                              child: Text(e.tag),
+                              onPressed: () {
+                                setState(() {
+                                  final k = GlobalKey<_ExpansionHandlerState>();
+                                  handlers.insert(index, (
+                                    ExpansionHandler(
+                                      key: k,
+                                      config: e,
+                                      onDelete: (key) {
+                                        setState(() {
+                                          handlers.removeWhere(
+                                            (e) => e.$2 == key,
+                                          );
+                                        });
+                                      },
+                                    ),
+                                    k,
+                                  ));
+                                });
+                              },
+                            ),
+                          )
+                          .toList() ??
+                      [],
+                  child: Text(e.name),
+                );
+              }).toList(),
+              child: Text(AppLocalizations.of(context)!.useExistingNode),
+            ),
           ],
           builder: (context, controller, child) => IconButton(
-              onPressed: () => controller.open(),
-              style: IconButton.styleFrom(
-                visualDensity: VisualDensity.compact,
-                padding: const EdgeInsets.all(0),
-              ),
-              icon: const Icon(
-                Icons.add,
-                size: 18,
-              )),
+            onPressed: () => controller.open(),
+            style: IconButton.styleFrom(
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.all(0),
+            ),
+            icon: const Icon(Icons.add, size: 18),
+          ),
         ),
       ],
     );

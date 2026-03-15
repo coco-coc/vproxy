@@ -743,12 +743,14 @@ class XConfigHelper {
           atomicIpSets.any((e) => e.name == dstIpTag)) {
         return;
       }
-      final greatSet = await ((_databaseProvider.database.select(
-        _databaseProvider.database.greatIpSets,
-      ))..where(
-                (s) => s.name.equals(dstIpTag) | s.oppositeName.equals(dstIpTag),
+      final greatSet =
+          await ((_databaseProvider.database.select(
+                _databaseProvider.database.greatIpSets,
+              ))..where(
+                (s) =>
+                    s.name.equals(dstIpTag) | s.oppositeName.equals(dstIpTag),
               ))
-          .getSingleOrNull();
+              .getSingleOrNull();
       if (greatSet != null) {
         greatIpSets.add(greatSet.greatIpSetConfig);
         for (final setName in [

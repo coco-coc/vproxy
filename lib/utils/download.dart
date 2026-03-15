@@ -27,8 +27,11 @@ import 'package:vx/utils/path.dart';
 import 'package:vx/utils/xapi_client.dart';
 
 /// download content from url, save them to [dest] file
-Future<void> directDownloadToFile(String url, String dest,
-    [http.Client? client]) async {
+Future<void> directDownloadToFile(
+  String url,
+  String dest, [
+  http.Client? client,
+]) async {
   logger.d("downloading $url to $dest");
   final httpClient = client ?? http.Client();
   // Create temporary file path
@@ -63,8 +66,10 @@ Future<void> directDownloadToFile(String url, String dest,
 }
 
 /// download from url, return the content
-Future<Uint8List> directDownloadMemory(String url,
-    [http.Client? client]) async {
+Future<Uint8List> directDownloadMemory(
+  String url, [
+  http.Client? client,
+]) async {
   final httpClient = client ?? http.Client();
   final res = await httpClient.get(Uri.parse(url));
   return res.bodyBytes;
@@ -92,13 +97,18 @@ class Downloader {
     logger.d("downloading $url to $dest with proxy");
     try {
       final handlers = await outboundRepo.getHandlers(
-          usable: true, orderBySpeed1MBDesc: true);
+        usable: true,
+        orderBySpeed1MBDesc: true,
+      );
       if (handlers.isNotEmpty) {
         final configs = handlersToHandlerConfig(handlers);
-        await xApiClient.download(DownloadRequest(
+        await xApiClient.download(
+          DownloadRequest(
             url: url,
             handlers: configs.sublist(0, max(5, configs.length)),
-            dest: dest));
+            dest: dest,
+          ),
+        );
         logger.d("downloaded $url to $dest with proxy");
         return;
       }
@@ -113,8 +123,11 @@ class Downloader {
     await _download(url, dest);
   }
 
-  Future<void> downloadZip(String url, String dest,
-      {bool cleanDest = true}) async {
+  Future<void> downloadZip(
+    String url,
+    String dest, {
+    bool cleanDest = true,
+  }) async {
     final tmpPath = '${await tempFilePath()}.zip';
     await downloadProxyFirst(url, tmpPath);
 
@@ -138,13 +151,15 @@ class Downloader {
       logger.d("plain download failed: $e", stackTrace: s);
     }
 
-    List<HandlerConfig> configs = handlersToHandlerConfig(await outboundRepo
-        .getHandlers(usable: true, orderBySpeed1MBDesc: true));
+    List<HandlerConfig> configs = handlersToHandlerConfig(
+      await outboundRepo.getHandlers(usable: true, orderBySpeed1MBDesc: true),
+    );
     if (configs.length >= 5) {
       configs = configs.sublist(0, 5);
     }
-    await xApiClient
-        .download(DownloadRequest(url: url, handlers: configs, dest: dest));
+    await xApiClient.download(
+      DownloadRequest(url: url, handlers: configs, dest: dest),
+    );
   }
 
   Future<Uint8List> downloadMemory(String url) async {
@@ -154,10 +169,12 @@ class Downloader {
       logger.e("plain download failed: $e");
     }
 
-    final configs =
-        handlersToHandlerConfig(await outboundRepo.getHandlers(usable: true));
-    final rsp =
-        await xApiClient.download(DownloadRequest(url: url, handlers: configs));
+    final configs = handlersToHandlerConfig(
+      await outboundRepo.getHandlers(usable: true),
+    );
+    final rsp = await xApiClient.download(
+      DownloadRequest(url: url, handlers: configs),
+    );
     return Uint8List.fromList(rsp.data);
   }
 }

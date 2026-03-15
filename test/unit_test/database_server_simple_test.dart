@@ -15,16 +15,18 @@ class MockServiceCall extends Mock implements ServiceCall {}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  
+
   late AppDatabase database;
   late DatabaseServer server;
   late MockServiceCall mockCall;
 
   setUp(() async {
-    database = AppDatabase(DatabaseConnection(
-      NativeDatabase.memory(),
-      closeStreamsSynchronously: true,
-    ));
+    database = AppDatabase(
+      DatabaseConnection(
+        NativeDatabase.memory(),
+        closeStreamsSynchronously: true,
+      ),
+    );
     server = DatabaseServer(database);
     mockCall = MockServiceCall();
   });
@@ -33,7 +35,7 @@ void main() {
     await database.close();
   });
 
-  // Helper function to create test handler data  
+  // Helper function to create test handler data
   OutboundHandlersCompanion createTestHandlerCompanion({
     int? id,
     bool selected = false,
@@ -91,7 +93,7 @@ void main() {
       ping: ping,
       ok: ok,
     );
-    
+
     return await database.into(database.outboundHandlers).insert(companion);
   }
 
@@ -101,17 +103,20 @@ void main() {
       expect(server, isA<DbServiceBase>());
     });
 
-    test('getAllHandlers should return empty list when no handlers exist', () async {
-      // Arrange
-      final request = GetAllHandlersRequest();
+    test(
+      'getAllHandlers should return empty list when no handlers exist',
+      () async {
+        // Arrange
+        final request = GetAllHandlersRequest();
 
-      // Act
-      final result = await server.getAllHandlers(mockCall, request);
+        // Act
+        final result = await server.getAllHandlers(mockCall, request);
 
-      // Assert
-      expect(result, isA<DbHandlers>());
-      expect(result.handlers, isEmpty);
-    });
+        // Assert
+        expect(result, isA<DbHandlers>());
+        expect(result.handlers, isEmpty);
+      },
+    );
 
     test('getAllHandlers should return handlers when they exist', () async {
       // Arrange
@@ -135,7 +140,7 @@ void main() {
         speed: 75.5,
         ping: 25,
       );
-      
+
       final request = GetHandlerRequest(id: handlerId);
 
       // Act
@@ -154,22 +159,20 @@ void main() {
       // Act & Assert
       expect(
         () => server.getHandler(mockCall, request),
-        throwsA(isA<Exception>().having(
-          (e) => e.toString(),
-          'message',
-          contains('Handler not found with id: 99999'),
-        )),
+        throwsA(
+          isA<Exception>().having(
+            (e) => e.toString(),
+            'message',
+            contains('Handler not found with id: 99999'),
+          ),
+        ),
       );
     });
 
     test('updateHandler should update handler fields', () async {
       // Arrange
-      final handlerId = await insertTestHandler(
-        speed: 50.0,
-        ping: 100,
-        ok: 0,
-      );
-      
+      final handlerId = await insertTestHandler(speed: 50.0, ping: 100, ok: 0);
+
       final request = UpdateHandlerRequest(
         id: handlerId,
         speed: 150.0,
@@ -182,13 +185,13 @@ void main() {
 
       // Assert
       expect(result, isA<Receipt>());
-      
+
       // Verify the handler was actually updated
       final verifyResult = await server.getHandler(
         mockCall,
         GetHandlerRequest(id: handlerId),
       );
-      
+
       expect(verifyResult.speed, 150.0);
       expect(verifyResult.ping, 25);
       expect(verifyResult.ok, 1);
@@ -199,7 +202,7 @@ void main() {
       await insertTestHandler(speed: 100.0);
       await insertTestHandler(speed: 90.0);
       await insertTestHandler(speed: 80.0);
-      
+
       final request = GetBatchedHandlersRequest(batchSize: 2, offset: 0);
 
       // Act
@@ -211,34 +214,41 @@ void main() {
   });
 
   group('DatabaseServer Group Tests', () {
-    test('getHandlersByGroup should return empty list when group does not exist', () async {
-      // Arrange
-      final request = GetHandlersByGroupRequest(group: 'nonexistent-group');
+    test(
+      'getHandlersByGroup should return empty list when group does not exist',
+      () async {
+        // Arrange
+        final request = GetHandlersByGroupRequest(group: 'nonexistent-group');
 
-      // Act
-      final result = await server.getHandlersByGroup(mockCall, request);
+        // Act
+        final result = await server.getHandlersByGroup(mockCall, request);
 
-      // Assert
-      expect(result.handlers, isEmpty);
-    });
+        // Assert
+        expect(result.handlers, isEmpty);
+      },
+    );
 
     test('getHandlersByGroup should work with valid group', () async {
       // Arrange
       // Create a test group first
-      await database.into(database.outboundHandlerGroups).insert(
-        const OutboundHandlerGroupsCompanion(name: Value('test-group')),
-      );
-      
+      await database
+          .into(database.outboundHandlerGroups)
+          .insert(
+            const OutboundHandlerGroupsCompanion(name: Value('test-group')),
+          );
+
       final handlerId = await insertTestHandler(speed: 100.0);
-      
+
       // Add handler to group
-      await database.into(database.outboundHandlerGroupRelations).insert(
-        OutboundHandlerGroupRelationsCompanion(
-          handlerId: Value(handlerId),
-          groupName: const Value('test-group'),
-        ),
-      );
-      
+      await database
+          .into(database.outboundHandlerGroupRelations)
+          .insert(
+            OutboundHandlerGroupRelationsCompanion(
+              handlerId: Value(handlerId),
+              groupName: const Value('test-group'),
+            ),
+          );
+
       final request = GetHandlersByGroupRequest(group: 'test-group');
 
       // Act
@@ -253,10 +263,7 @@ void main() {
   group('DatabaseServer Error Handling', () {
     test('should handle invalid update gracefully', () async {
       // Arrange
-      final request = UpdateHandlerRequest(
-        id: 99999,
-        speed: 100.0,
-      );
+      final request = UpdateHandlerRequest(id: 99999, speed: 100.0);
 
       // Act & Assert - should not throw, just update 0 rows
       final result = await server.updateHandler(mockCall, request);

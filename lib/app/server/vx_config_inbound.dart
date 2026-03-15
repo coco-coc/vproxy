@@ -24,10 +24,7 @@ class _Inbounds extends StatelessWidget {
     final bloc = context.read<VXBloc>();
     final config = await showMyAdaptiveDialog<MultiProxyInboundConfig?>(
       context,
-      MultiInboundForm(
-        key: k,
-        multiConfig: MultiProxyInboundConfig(),
-      ),
+      MultiInboundForm(key: k, multiConfig: MultiProxyInboundConfig()),
       title: AppLocalizations.of(context)!.addMulti,
       onSave: (BuildContext context) {
         final formData = (k.currentState as FormDataGetter).formData;
@@ -39,7 +36,8 @@ class _Inbounds extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                      AppLocalizations.of(context)!.duplicateInboundTagName),
+                    AppLocalizations.of(context)!.duplicateInboundTagName,
+                  ),
                 ),
               );
             } else {
@@ -71,7 +69,8 @@ class _Inbounds extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                      AppLocalizations.of(context)!.duplicateInboundTagName),
+                    AppLocalizations.of(context)!.duplicateInboundTagName,
+                  ),
                 ),
               );
             } else {
@@ -104,42 +103,43 @@ class _Inbounds extends StatelessWidget {
           ],
           builder: (context, controller, child) {
             return FilledButton.tonalIcon(
-                onPressed: () => controller.open(),
-                icon: const Icon(Icons.add),
-                label: Text(AppLocalizations.of(context)!.add));
+              onPressed: () => controller.open(),
+              icon: const Icon(Icons.add),
+              label: Text(AppLocalizations.of(context)!.add),
+            );
           },
         ),
         const Gap(10),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.only(right: 8.0),
-            child: LayoutBuilder(builder: (ctx, c) {
-              const cardHeight = 136;
-              final count = c.maxWidth ~/ 250;
-              final cardWidth = (c.maxWidth - ((count - 1) * 10)) / count;
-              return CustomScrollView(
-                slivers: [
-                  SliverGrid.list(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: count,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      childAspectRatio: cardWidth / cardHeight,
+            child: LayoutBuilder(
+              builder: (ctx, c) {
+                const cardHeight = 136;
+                final count = c.maxWidth ~/ 250;
+                final cardWidth = (c.maxWidth - ((count - 1) * 10)) / count;
+                return CustomScrollView(
+                  slivers: [
+                    SliverGrid.list(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: count,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                        childAspectRatio: cardWidth / cardHeight,
+                      ),
+                      children: [
+                        ...config.inbounds.indexed.map(
+                          (e) => InboundCard(config: e.$2, index: e.$1),
+                        ),
+                        ...config.multiInbounds.indexed.map(
+                          (e) => InboundCard(multiConfig: e.$2, index: e.$1),
+                        ),
+                      ],
                     ),
-                    children: [
-                      ...config.inbounds.indexed.map((e) => InboundCard(
-                            config: e.$2,
-                            index: e.$1,
-                          )),
-                      ...config.multiInbounds.indexed.map((e) => InboundCard(
-                            multiConfig: e.$2,
-                            index: e.$1,
-                          )),
-                    ],
-                  ),
-                ],
-              );
-            }),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ],
@@ -148,8 +148,12 @@ class _Inbounds extends StatelessWidget {
 }
 
 class InboundCard extends StatelessWidget {
-  const InboundCard(
-      {super.key, required this.index, this.config, this.multiConfig});
+  const InboundCard({
+    super.key,
+    required this.index,
+    this.config,
+    this.multiConfig,
+  });
   final int index;
   // either one should be non-null
   final ProxyInboundConfig? config;
@@ -205,15 +209,18 @@ class InboundCard extends StatelessWidget {
           config != null ? _onEditSingle(context) : _onEditMulti(context),
       menuChildren: [
         MenuItemButton(
-          onPressed: () => context.read<VXBloc>().add(VXAddToNodesEvent(
-              inbound: config, multiInbound: multiConfig)),
+          onPressed: () => context.read<VXBloc>().add(
+            VXAddToNodesEvent(inbound: config, multiInbound: multiConfig),
+          ),
           child: Text(AppLocalizations.of(context)!.addToNodes),
         ),
         const Divider(),
         MenuItemButton(
-          onPressed: () => context.read<VXBloc>().add(config != null
-              ? VXRemoveInboundEvent(config!.tag)
-              : VXRemoveMultiInboundEvent(multiConfig!.tag)),
+          onPressed: () => context.read<VXBloc>().add(
+            config != null
+                ? VXRemoveInboundEvent(config!.tag)
+                : VXRemoveMultiInboundEvent(multiConfig!.tag),
+          ),
           child: Text(AppLocalizations.of(context)!.delete),
         ),
       ],
@@ -222,9 +229,7 @@ class InboundCard extends StatelessWidget {
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.outlineVariant,
-          ),
+          side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -233,9 +238,9 @@ class InboundCard extends StatelessWidget {
             children: [
               Text(
                 name,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -243,8 +248,8 @@ class InboundCard extends StatelessWidget {
               Text(
                 address,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -252,8 +257,8 @@ class InboundCard extends StatelessWidget {
               Text(
                 proxyProtocol,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -261,8 +266,8 @@ class InboundCard extends StatelessWidget {
               Text(
                 transportProtocol,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -270,8 +275,8 @@ class InboundCard extends StatelessWidget {
               Text(
                 securityProtocol,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

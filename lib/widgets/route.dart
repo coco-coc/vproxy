@@ -45,8 +45,11 @@ class AddPopUpRoute<T> extends PopupRoute<T> {
   String? get barrierLabel => null; //TODO
 
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation) {
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
     return child;
   }
 }
@@ -56,9 +59,6 @@ class AddPopUpPage extends Page {
   final Widget child;
   @override
   Route createRoute(BuildContext context) {
-    return AddPopUpRoute(
-      child: child,
-      settings: this,
-    );
+    return AddPopUpRoute(child: child, settings: this);
   }
 }

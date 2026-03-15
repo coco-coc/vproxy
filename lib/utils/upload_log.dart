@@ -48,12 +48,12 @@ class LogUploadService {
     required String secret,
     required XApiClient xApiClient,
     required ValueGetter<bool> shareLog,
-  })  : _flutterLogDir = flutterLogDir,
-        _tunnelLogDir = tunnelLogDir,
-        _uploadUrl = uploadUrl,
-        _secret = secret,
-        _xApiClient = xApiClient,
-        _shareLog = shareLog;
+  }) : _flutterLogDir = flutterLogDir,
+       _tunnelLogDir = tunnelLogDir,
+       _uploadUrl = uploadUrl,
+       _secret = secret,
+       _xApiClient = xApiClient,
+       _shareLog = shareLog;
 
   Timer? _uploadTimer;
   final Directory _flutterLogDir;
@@ -78,11 +78,13 @@ class LogUploadService {
     performUpload();
 
     _uploadTimer = Timer.periodic(
-        const Duration(minutes: _defaultUploadIntervalMinutes),
-        (_) => performUpload());
+      const Duration(minutes: _defaultUploadIntervalMinutes),
+      (_) => performUpload(),
+    );
 
     logger.i(
-        'Periodic log upload started - interval: $_defaultUploadIntervalMinutes minutes');
+      'Periodic log upload started - interval: $_defaultUploadIntervalMinutes minutes',
+    );
   }
 
   /// Stop periodic log uploads
@@ -126,9 +128,11 @@ class LogUploadService {
     }
   }
 
-  static Future<String?> getLogsContent(Directory logDir,
-      // if true, the latest log will be deleted
-      {bool deleteLatest = false}) async {
+  static Future<String?> getLogsContent(
+    Directory logDir, {
+    // if true, the latest log will be deleted
+    bool deleteLatest = false,
+  }) async {
     String? logZipBase64;
     List<File> logFiles = [];
     try {
@@ -138,14 +142,16 @@ class LogUploadService {
           .cast<File>()
           .toList();
       if (logFiles.isNotEmpty) {
-        final zipBytes = await CompressionHelper.compressFilesToBytes(logFiles
-            // .where((e) {
-            //   // only collect logs with error
-            //   final content = e.readAsStringSync();
-            //   return content.contains(tunnelLog ? 'ERR' : '⛔');
-            // })
-            .map((e) => e.path)
-            .toList());
+        final zipBytes = await CompressionHelper.compressFilesToBytes(
+          logFiles
+              // .where((e) {
+              //   // only collect logs with error
+              //   final content = e.readAsStringSync();
+              //   return content.contains(tunnelLog ? 'ERR' : '⛔');
+              // })
+              .map((e) => e.path)
+              .toList(),
+        );
         logZipBase64 = base64UrlEncode(zipBytes);
       }
     } catch (e) {
@@ -200,8 +206,10 @@ class LogUploadService {
     String? flutterLogZipBase64;
     await _closeFlutterLogger();
     try {
-      flutterLogZipBase64 =
-          await getLogsContent(_flutterLogDir, deleteLatest: true);
+      flutterLogZipBase64 = await getLogsContent(
+        _flutterLogDir,
+        deleteLatest: true,
+      );
       await _openFlutterLogger();
     } catch (e) {
       await _openFlutterLogger();
@@ -209,8 +217,10 @@ class LogUploadService {
     }
 
     // tunnel logs
-    final tunnelLogZipBase64 = await getLogsContent(_tunnelLogDir,
-        deleteLatest: Tm.instance.state == TmStatus.disconnected);
+    final tunnelLogZipBase64 = await getLogsContent(
+      _tunnelLogDir,
+      deleteLatest: Tm.instance.state == TmStatus.disconnected,
+    );
 
     if ((flutterLogZipBase64 == null || flutterLogZipBase64.isEmpty) &&
         (tunnelLogZipBase64 == null || tunnelLogZipBase64.isEmpty)) {
@@ -231,12 +241,15 @@ class LogUploadService {
   }
 
   Future<void> uploadDebugLog(String reason) async {
-    final tunnelLogZipBase64 =
-        await getLogsContent(await getDebugTunnelLogDir(), deleteLatest: false);
+    final tunnelLogZipBase64 = await getLogsContent(
+      await getDebugTunnelLogDir(),
+      deleteLatest: false,
+    );
 
     final flutterLogZipBase64 = await getLogsContent(
-        await getDebugFlutterLogDir(),
-        deleteLatest: false);
+      await getDebugFlutterLogDir(),
+      deleteLatest: false,
+    );
 
     if ((tunnelLogZipBase64 == null || tunnelLogZipBase64.isEmpty) &&
         (flutterLogZipBase64 == null || flutterLogZipBase64.isEmpty)) {
@@ -270,7 +283,7 @@ class LogUploadService {
         'physicalRamSize': deviceInfo.physicalRamSize,
         'availableRamSize': deviceInfo.availableRamSize,
         'product': deviceInfo.product,
-        'freeDiskSize': deviceInfo.freeDiskSize
+        'freeDiskSize': deviceInfo.freeDiskSize,
       });
     } else if (deviceInfo is IosDeviceInfo) {
       return json.encode({
@@ -278,7 +291,7 @@ class LogUploadService {
         'version': deviceInfo.systemVersion,
         'modelName': deviceInfo.modelName,
         'systemName': deviceInfo.systemName,
-        'freeDiskSize': deviceInfo.freeDiskSize
+        'freeDiskSize': deviceInfo.freeDiskSize,
       });
     } else if (deviceInfo is WindowsDeviceInfo) {
       return json.encode({
@@ -312,8 +325,10 @@ class LogUploadService {
     return platform
         .replaceAll(RegExp(r'[^\x00-\x7F]'), '') // Remove non-ASCII characters
         .replaceAll(RegExp(r'\s+'), '_') // Replace spaces with underscores
-        .replaceAll(RegExp(r'[^\w\-_.]'),
-            '') // Keep only alphanumeric, hyphens, underscores, and dots
+        .replaceAll(
+          RegExp(r'[^\w\-_.]'),
+          '',
+        ) // Keep only alphanumeric, hyphens, underscores, and dots
         .trim();
   }
 
@@ -323,14 +338,18 @@ class LogUploadService {
 
     final jsonString = json.encode(logData.toJson());
 
-    await _xApiClient.uploadLog(UploadLogRequest(
+    await _xApiClient.uploadLog(
+      UploadLogRequest(
         ca: utf8.encode(serverCA),
         url: _uploadUrl,
         secret: generateHmacSha256(
-            jsonString.substring(0, min(jsonString.length, 1024)),
-            utf8.encode(_secret)),
+          jsonString.substring(0, min(jsonString.length, 1024)),
+          utf8.encode(_secret),
+        ),
         version: packageInfo.version,
-        body: jsonString));
+        body: jsonString,
+      ),
+    );
     logger.i('Log upload successful');
   }
 }

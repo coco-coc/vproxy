@@ -17,20 +17,19 @@ void main() {
     testWidgets('renders with default values', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: OutboundHandlerForm(
-              formKey: formKey,
-            ),
-          ),
+          home: Scaffold(body: OutboundHandlerForm(formKey: formKey)),
         ),
       );
 
       // Verify initial protocol is VMess
       expect(find.text('VMess'), findsOneWidget);
-      
+
       // Verify form fields are present
-      expect(find.byType(TextFormField), findsNWidgets(3)); // Name, address, port
-      
+      expect(
+        find.byType(TextFormField),
+        findsNWidgets(3),
+      ); // Name, address, port
+
       // Verify Mux switch is present
       expect(find.byType(Switch), findsOneWidget);
     });
@@ -38,11 +37,7 @@ void main() {
     testWidgets('validates required fields', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: OutboundHandlerForm(
-              formKey: formKey,
-            ),
-          ),
+          home: Scaffold(body: OutboundHandlerForm(formKey: formKey)),
         ),
       );
 
@@ -58,11 +53,7 @@ void main() {
     testWidgets('switches protocols correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: OutboundHandlerForm(
-              formKey: formKey,
-            ),
-          ),
+          home: Scaffold(body: OutboundHandlerForm(formKey: formKey)),
         ),
       );
 
@@ -75,7 +66,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify VLESS specific fields are shown
-      expect(find.byType(TextFormField), findsNWidgets(3)); // Should still have 3 text fields
+      expect(
+        find.byType(TextFormField),
+        findsNWidgets(3),
+      ); // Should still have 3 text fields
 
       // Select Trojan
       await tester.tap(find.byType(DropdownMenu));
@@ -84,17 +78,18 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify Trojan specific fields are shown
-      expect(find.byType(TextFormField), findsNWidgets(3)); // Should still have 3 text fields
+      expect(
+        find.byType(TextFormField),
+        findsNWidgets(3),
+      ); // Should still have 3 text fields
     });
 
-    testWidgets('generates correct OutboundHandler', (WidgetTester tester) async {
+    testWidgets('generates correct OutboundHandler', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: OutboundHandlerForm(
-              formKey: formKey,
-            ),
-          ),
+          home: Scaffold(body: OutboundHandlerForm(formKey: formKey)),
         ),
       );
 
@@ -116,7 +111,9 @@ void main() {
       expect(handler.config.enableMux, isFalse);
     });
 
-    testWidgets('initializes with existing handler', (WidgetTester tester) async {
+    testWidgets('initializes with existing handler', (
+      WidgetTester tester,
+    ) async {
       final existingHandler = OutboundHandler(
         config: OutboundHandlerConfig(
           tag: 'Existing',
@@ -142,10 +139,10 @@ void main() {
       expect(find.text('Existing'), findsOneWidget);
       expect(find.text('existing.com'), findsOneWidget);
       expect(find.text('8080'), findsOneWidget);
-      
+
       // Verify Mux is enabled
       final switchFinder = find.byType(Switch);
       expect(tester.widget<Switch>(switchFinder).value, isTrue);
     });
   });
-} 
+}

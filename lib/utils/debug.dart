@@ -51,11 +51,7 @@ void saveLogToApplicationDocumentsDir() async {
     }
   }
   rootScaffoldMessengerKey.currentState?.showSnackBar(
-    SnackBar(
-      content: Text(
-        "saved log to: $dstDir",
-      ),
-    ),
+    SnackBar(content: Text("saved log to: $dstDir")),
   );
 
   // copy flutterLogDir to ApplicationDocumentsDirectory
@@ -77,11 +73,7 @@ void saveLogToApplicationDocumentsDir() async {
       }
     }
     rootScaffoldMessengerKey.currentState?.showSnackBar(
-      SnackBar(
-        content: Text(
-          "copied flutter logs to: $dstFlutterLogDir",
-        ),
-      ),
+      SnackBar(content: Text("copied flutter logs to: $dstFlutterLogDir")),
     );
   } else {
     logger.d("flutter log directory does not exist");

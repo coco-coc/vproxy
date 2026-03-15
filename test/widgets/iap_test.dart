@@ -1,11 +1,13 @@
-
-import 'package:in_app_purchase/in_app_purchase.dart';     // Add this import
+import 'package:in_app_purchase/in_app_purchase.dart'; // Add this import
 import 'package:in_app_purchase_platform_interface/src/in_app_purchase_platform_addition.dart'; // And this import
 
-class TestIAPConnection implements InAppPurchase {         // Add from here
+class TestIAPConnection implements InAppPurchase {
+  // Add from here
   @override
-  Future<bool> buyConsumable(
-      {required PurchaseParam purchaseParam, bool autoConsume = true}) {
+  Future<bool> buyConsumable({
+    required PurchaseParam purchaseParam,
+    bool autoConsume = true,
+  }) {
     return Future.value(false);
   }
 
@@ -26,10 +28,9 @@ class TestIAPConnection implements InAppPurchase {         // Add from here
 
   @override
   Future<ProductDetailsResponse> queryProductDetails(Set<String> identifiers) {
-    return Future.value(ProductDetailsResponse(
-      productDetails: [],
-      notFoundIDs: [],
-    ));
+    return Future.value(
+      ProductDetailsResponse(productDetails: [], notFoundIDs: []),
+    );
   }
 
   @override
@@ -53,4 +54,4 @@ class TestIAPConnection implements InAppPurchase {         // Add from here
     // TODO: implement countryCode
     throw UnimplementedError();
   }
-}                            
+}

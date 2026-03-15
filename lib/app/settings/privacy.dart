@@ -51,7 +51,9 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
     return Scaffold(
       appBar: widget.showAppBar
           ? getAdaptiveAppBar(
-              context, Text(AppLocalizations.of(context)!.privacyPolicy))
+              context,
+              Text(AppLocalizations.of(context)!.privacyPolicy),
+            )
           : null,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -72,39 +74,47 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
             const SizedBox(height: 10),
             Row(
               children: [
-                Text(AppLocalizations.of(context)!
-                    .shareDiagnosticLogWithDeveloper),
+                Text(
+                  AppLocalizations.of(context)!.shareDiagnosticLogWithDeveloper,
+                ),
                 const Spacer(),
                 Switch(
-                    value: _shareLog,
-                    onChanged: isPkg
-                        ? null
-                        : (value) {
-                            setState(() {
-                              _shareLog = value;
-                            });
-                            setShareLog(
-                                _shareLog,
-                                context.read<SharedPreferences>(),
-                                context.read<LogUploadService>());
-                          }),
+                  value: _shareLog,
+                  onChanged: isPkg
+                      ? null
+                      : (value) {
+                          setState(() {
+                            _shareLog = value;
+                          });
+                          setShareLog(
+                            _shareLog,
+                            context.read<SharedPreferences>(),
+                            context.read<LogUploadService>(),
+                          );
+                        },
+                ),
               ],
             ),
             const Gap(5),
             Text(
-                AppLocalizations.of(context)!
-                    .diagnosticLogDoesNotContainPersonalData,
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ))
+              AppLocalizations.of(
+                context,
+              )!.diagnosticLogDoesNotContainPersonalData,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> setShareLog(bool value, SharedPreferences pref,
-      LogUploadService logUploadService) async {
+  Future<void> setShareLog(
+    bool value,
+    SharedPreferences pref,
+    LogUploadService logUploadService,
+  ) async {
     pref.setShareLog(value);
     if (value) {
       await startShareLog();

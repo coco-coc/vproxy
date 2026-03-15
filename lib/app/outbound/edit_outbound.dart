@@ -38,51 +38,57 @@ class _EditOutboundDialogState extends State<EditOutboundDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-        title: Text(AppLocalizations.of(context)!.edit),
-        scrollable: true,
-        content: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 450),
-          child: OutboundHandlerForm(
-            config: widget.handler?.config.outbound,
-            formKey: _formKey,
-            key: _widgetKey,
-          ),
+      title: Text(AppLocalizations.of(context)!.edit),
+      scrollable: true,
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 450),
+        child: OutboundHandlerForm(
+          config: widget.handler?.config.outbound,
+          formKey: _formKey,
+          key: _widgetKey,
         ),
-        actions: [
-          FilledButton.tonal(
-            style: FilledButton.styleFrom(
-                fixedSize: const Size(100, 40), elevation: 1),
-            onPressed: () => context.pop(),
-            child: Text(AppLocalizations.of(context)!.cancel),
+      ),
+      actions: [
+        FilledButton.tonal(
+          style: FilledButton.styleFrom(
+            fixedSize: const Size(100, 40),
+            elevation: 1,
           ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-                fixedSize: const Size(100, 40), elevation: 1),
-            onPressed: () {
-              final allGood = _formKey.currentState?.validate();
-              if (allGood == true) {
-                OutboundHandlerConfig config =
-                    (_widgetKey.currentState as OutboundHandlerConfigGetter)
-                        .outboundHandler;
-                OutboundHandler handler =
-                    OutboundHandler(config: HandlerConfig(outbound: config));
-                if (widget.handler != null) {
-                  final handlerAddressChanged =
-                      widget.handler!.address != handler.address;
-                  handler = handler.copyWith(
-                    id: widget.handler!.id,
-                    selected: widget.handler!.selected,
-                    subId: widget.handler!.subId,
-                    ping: handlerAddressChanged ? null : widget.handler!.ping,
-                    speed: handlerAddressChanged ? null : widget.handler!.speed,
-                  );
-                }
-                context.pop(handler);
+          onPressed: () => context.pop(),
+          child: Text(AppLocalizations.of(context)!.cancel),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(
+            fixedSize: const Size(100, 40),
+            elevation: 1,
+          ),
+          onPressed: () {
+            final allGood = _formKey.currentState?.validate();
+            if (allGood == true) {
+              OutboundHandlerConfig config =
+                  (_widgetKey.currentState as OutboundHandlerConfigGetter)
+                      .outboundHandler;
+              OutboundHandler handler = OutboundHandler(
+                config: HandlerConfig(outbound: config),
+              );
+              if (widget.handler != null) {
+                final handlerAddressChanged =
+                    widget.handler!.address != handler.address;
+                handler = handler.copyWith(
+                  id: widget.handler!.id,
+                  selected: widget.handler!.selected,
+                  subId: widget.handler!.subId,
+                  ping: handlerAddressChanged ? null : widget.handler!.ping,
+                  speed: handlerAddressChanged ? null : widget.handler!.speed,
+                );
               }
-            },
-            child: Text(AppLocalizations.of(context)!.save),
-          )
-        ]);
+              context.pop(handler);
+            }
+          },
+          child: Text(AppLocalizations.of(context)!.save),
+        ),
+      ],
+    );
   }
 }
 
@@ -113,31 +119,34 @@ class _EditFullScreenDialogState extends State<EditFullScreenDialog> {
         actions: [
           if (Platform.isMacOS)
             TextButton(
-                onPressed: () => context.pop(),
-                child: Text(AppLocalizations.of(context)!.cancel)),
+              onPressed: () => context.pop(),
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
           TextButton(
-              onPressed: () {
-                final allGood = _formKey.currentState?.validate();
-                if (allGood == true) {
-                  OutboundHandlerConfig config =
-                      (_widgetKey.currentState as OutboundHandlerConfigGetter)
-                          .outboundHandler;
-                  OutboundHandler handler =
-                      OutboundHandler(config: HandlerConfig(outbound: config));
-                  if (widget.handler != null) {
-                    // final destinationChanged = widget.handler!.config.address !=
-                    //         handler.config.address ||
-                    //     widget.handler!.config.ports != handler.config.ports;
-                    handler = handler.copyWith(
-                      id: widget.handler!.id,
-                      selected: widget.handler!.selected,
-                      subId: widget.handler!.subId,
-                    );
-                  }
-                  context.pop(handler);
+            onPressed: () {
+              final allGood = _formKey.currentState?.validate();
+              if (allGood == true) {
+                OutboundHandlerConfig config =
+                    (_widgetKey.currentState as OutboundHandlerConfigGetter)
+                        .outboundHandler;
+                OutboundHandler handler = OutboundHandler(
+                  config: HandlerConfig(outbound: config),
+                );
+                if (widget.handler != null) {
+                  // final destinationChanged = widget.handler!.config.address !=
+                  //         handler.config.address ||
+                  //     widget.handler!.config.ports != handler.config.ports;
+                  handler = handler.copyWith(
+                    id: widget.handler!.id,
+                    selected: widget.handler!.selected,
+                    subId: widget.handler!.subId,
+                  );
                 }
-              },
-              child: Text(AppLocalizations.of(context)!.save))
+                context.pop(handler);
+              }
+            },
+            child: Text(AppLocalizations.of(context)!.save),
+          ),
         ],
       ),
       body: SingleChildScrollView(

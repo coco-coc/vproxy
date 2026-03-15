@@ -16,11 +16,12 @@
 part of 'routing_page.dart';
 
 class AppWidget extends StatefulWidget {
-  const AppWidget(
-      {super.key,
-      required this.appSetName,
-      this.showLabel = true,
-      this.addButtonInWrap = false});
+  const AppWidget({
+    super.key,
+    required this.appSetName,
+    this.showLabel = true,
+    this.addButtonInWrap = false,
+  });
   final String appSetName;
   final bool addButtonInWrap;
   final bool showLabel;
@@ -68,10 +69,11 @@ class _AppWidgetState extends State<AppWidget> {
       ],
       builder: (context, controller, child) {
         return IconButton.filledTonal(
-            visualDensity: VisualDensity.compact,
-            padding: const EdgeInsets.all(0),
-            onPressed: () => controller.open(),
-            icon: const Icon(Icons.add_rounded));
+          visualDensity: VisualDensity.compact,
+          padding: const EdgeInsets.all(0),
+          onPressed: () => controller.open(),
+          icon: const Icon(Icons.add_rounded),
+        );
       },
     );
     _subscribe();
@@ -105,9 +107,10 @@ class _AppWidgetState extends State<AppWidget> {
       return;
     }
     final result = await showDialog(
-        barrierDismissible: desktopPlatforms ? true : false,
-        context: context,
-        builder: (context) => AddAppIdDialog(appSetName: widget.appSetName));
+      barrierDismissible: desktopPlatforms ? true : false,
+      context: context,
+      builder: (context) => AddAppIdDialog(appSetName: widget.appSetName),
+    );
     if (result != null && result is AppId) {
       await _setRepo.addApp(widget.appSetName, result);
     }
@@ -120,17 +123,21 @@ class _AppWidgetState extends State<AppWidget> {
     );
     if (result != null) {
       try {
-        final response = await context
-            .read<XApiClient>()
-            .parseClashRuleFile(result.files.first.bytes!.toList());
-        await _setRepo.addApps(response.appIds
-            .map((e) => App(
+        final response = await context.read<XApiClient>().parseClashRuleFile(
+          result.files.first.bytes!.toList(),
+        );
+        await _setRepo.addApps(
+          response.appIds
+              .map(
+                (e) => App(
                   appId: e,
                   icon: null,
                   id: 0,
                   appSetName: widget.appSetName,
-                ))
-            .toList());
+                ),
+              )
+              .toList(),
+        );
       } catch (e) {
         snack(e.toString());
       }
@@ -150,159 +157,191 @@ class _AppWidgetState extends State<AppWidget> {
     final result = await FilePicker.platform.pickFiles(
       type: Platform.isWindows ? FileType.custom : FileType.any,
       allowedExtensions: Platform.isWindows ? ['exe'] : null,
-      dialogTitle:
-          Platform.isWindows ? 'Select an executable' : 'Select an application',
+      dialogTitle: Platform.isWindows
+          ? 'Select an executable'
+          : 'Select an application',
     );
     if (result != null && result.files.first.path != null) {
       await _setRepo.addApp(
-          widget.appSetName,
-          AppId(
-              type: Platform.isMacOS ? AppId_Type.Prefix : AppId_Type.Exact,
-              value: result.files.first.path!));
+        widget.appSetName,
+        AppId(
+          type: Platform.isMacOS ? AppId_Type.Prefix : AppId_Type.Exact,
+          value: result.files.first.path!,
+        ),
+      );
     }
   }
 
   List<Widget> _buildWrapChildren(List<App> apps) {
     final children = <Widget>[];
     if (!Platform.isAndroid) {
-      children.add(WrapChild(
-        shape: chipBorderRadius,
-        text: AppLocalizations.of(context)!.keyword,
-        backgroundColor: pinkColorTheme.secondaryContainer,
-        foregroundColor: pinkColorTheme.onSecondaryContainer,
-      ));
-      children.addAll(apps
-          .where((app) => app.appId.type == AppId_Type.Keyword)
-          .map((app) => WrapChild(
+      children.add(
+        WrapChild(
+          shape: chipBorderRadius,
+          text: AppLocalizations.of(context)!.keyword,
+          backgroundColor: pinkColorTheme.secondaryContainer,
+          foregroundColor: pinkColorTheme.onSecondaryContainer,
+        ),
+      );
+      children.addAll(
+        apps
+            .where((app) => app.appId.type == AppId_Type.Keyword)
+            .map(
+              (app) => WrapChild(
                 text: app.appId.value,
                 shape: chipBorderRadius,
-                backgroundColor:
-                    Theme.of(context).colorScheme.surfaceContainerLow,
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerLow,
                 onDelete: () {
                   _setRepo.removeApp([app.id]);
                 },
-              )));
-      children.add(WrapChild(
-        text: AppLocalizations.of(context)!.prefix,
-        backgroundColor: greenColorTheme.secondaryContainer,
-        foregroundColor: greenColorTheme.onSecondaryContainer,
-        shape: chipBorderRadius,
-      ));
-      children.addAll(apps
-          .where((app) => app.appId.type == AppId_Type.Prefix)
-          .map((app) => WrapChild(
+              ),
+            ),
+      );
+      children.add(
+        WrapChild(
+          text: AppLocalizations.of(context)!.prefix,
+          backgroundColor: greenColorTheme.secondaryContainer,
+          foregroundColor: greenColorTheme.onSecondaryContainer,
+          shape: chipBorderRadius,
+        ),
+      );
+      children.addAll(
+        apps
+            .where((app) => app.appId.type == AppId_Type.Prefix)
+            .map(
+              (app) => WrapChild(
                 shape: chipBorderRadius,
-                backgroundColor:
-                    Theme.of(context).colorScheme.surfaceContainerLow,
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerLow,
                 text: app.appId.value,
                 onDelete: () => _setRepo.removeApp([app.id]),
-              )));
+              ),
+            ),
+      );
     }
-    children.add(WrapChild(
-      shape: chipBorderRadius,
-      text: AppLocalizations.of(context)!.exact,
-      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-      foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
-    ));
-    children.addAll(apps
-        .where((app) => app.appId.type == AppId_Type.Exact)
-        .map((app) => WrapChild(
+    children.add(
+      WrapChild(
+        shape: chipBorderRadius,
+        text: AppLocalizations.of(context)!.exact,
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+      ),
+    );
+    children.addAll(
+      apps
+          .where((app) => app.appId.type == AppId_Type.Exact)
+          .map(
+            (app) => WrapChild(
               shape: chipBorderRadius,
-              backgroundColor:
-                  Theme.of(context).colorScheme.surfaceContainerLow,
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.surfaceContainerLow,
               text: app.appId.value,
               onDelete: () => _setRepo.removeApp([app.id]),
-            )));
+            ),
+          ),
+    );
 
     return children;
   }
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (ctx, c) {
-      final useListview = c.isCompact || Platform.isAndroid;
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (!widget.addButtonInWrap)
-            Row(
-              children: [
-                if (widget.showLabel)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10.0),
-                    child: Chip(
-                      side: const BorderSide(color: Colors.transparent),
-                      shape: chipBorderRadius,
-                      backgroundColor:
-                          Theme.of(context).colorScheme.primaryContainer,
-                      label: Text(AppLocalizations.of(context)!.app,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
+    return LayoutBuilder(
+      builder: (ctx, c) {
+        final useListview = c.isCompact || Platform.isAndroid;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (!widget.addButtonInWrap)
+              Row(
+                children: [
+                  if (widget.showLabel)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10.0),
+                      child: Chip(
+                        side: const BorderSide(color: Colors.transparent),
+                        shape: chipBorderRadius,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer,
+                        label: Text(
+                          AppLocalizations.of(context)!.app,
+                          style: Theme.of(context).textTheme.bodyMedium!
                               .copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer,
-                                  fontWeight: FontWeight.w500)),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onPrimaryContainer,
+                                fontWeight: FontWeight.w500,
+                              ),
+                        ),
+                      ),
                     ),
-                  ),
-                if (!desktopPlatforms)
-                  IconButton.filledTonal(
+                  if (!desktopPlatforms)
+                    IconButton.filledTonal(
                       visualDensity: VisualDensity.compact,
                       padding: const EdgeInsets.all(0),
                       onPressed: _onAddApp,
-                      icon: const Icon(Icons.add_rounded)),
-                if (desktopPlatforms) _menuAnchor,
-              ],
-            ),
-          const Gap(10),
-          Expanded(
-            child: useListview
-                ? Column(
-                    children: [
-                      Expanded(
-                        child: StreamBuilder(
+                      icon: const Icon(Icons.add_rounded),
+                    ),
+                  if (desktopPlatforms) _menuAnchor,
+                ],
+              ),
+            const Gap(10),
+            Expanded(
+              child: useListview
+                  ? Column(
+                      children: [
+                        Expanded(
+                          child: StreamBuilder(
                             stream: _stream,
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
                                 return ListView.builder(
-                                    itemCount: snapshot.data!.length,
-                                    itemBuilder: (ctx, index) {
-                                      final app =
-                                          snapshot.data!.elementAt(index);
-                                      return ListTile(
-                                        leading: Platform.isAndroid
-                                            ? app.icon == null
+                                  itemCount: snapshot.data!.length,
+                                  itemBuilder: (ctx, index) {
+                                    final app = snapshot.data!.elementAt(index);
+                                    return ListTile(
+                                      leading: Platform.isAndroid
+                                          ? app.icon == null
                                                 ? const Icon(Icons.android)
                                                 : Image.memory(app.icon!)
-                                            : null,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 5, vertical: 5),
-                                        title: Text(app.appId.value),
-                                        subtitle: Text(app.appId.type
-                                            .toLocalString(context)),
-                                        trailing: IconButton(
-                                          onPressed: () {
-                                            _setRepo.removeApp([app.id]);
-                                          },
-                                          icon:
-                                              const Icon(Icons.delete_outline),
-                                        ),
-                                      );
-                                    });
+                                          : null,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 5,
+                                            vertical: 5,
+                                          ),
+                                      title: Text(app.appId.value),
+                                      subtitle: Text(
+                                        app.appId.type.toLocalString(context),
+                                      ),
+                                      trailing: IconButton(
+                                        onPressed: () {
+                                          _setRepo.removeApp([app.id]);
+                                        },
+                                        icon: const Icon(Icons.delete_outline),
+                                      ),
+                                    );
+                                  },
+                                );
                               }
                               return const SizedBox.shrink();
-                            }),
-                      ),
-                      if (widget.addButtonInWrap)
-                        FilledButton.tonal(
+                            },
+                          ),
+                        ),
+                        if (widget.addButtonInWrap)
+                          FilledButton.tonal(
                             onPressed: _onAddApp,
-                            child: Text(AppLocalizations.of(context)!.addApp)),
-                    ],
-                  )
-                : SingleChildScrollView(
-                    child: StreamBuilder(
+                            child: Text(AppLocalizations.of(context)!.addApp),
+                          ),
+                      ],
+                    )
+                  : SingleChildScrollView(
+                      child: StreamBuilder(
                         stream: _stream,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
@@ -316,12 +355,14 @@ class _AppWidgetState extends State<AppWidget> {
                             );
                           }
                           return const SizedBox.shrink();
-                        }),
-                  ),
-          )
-        ],
-      );
-    });
+                        },
+                      ),
+                    ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -385,8 +426,7 @@ class _AddAppIdAndroidScreenState extends State<AddAppIdAndroidScreen> {
       !_showSystemApps,
       true,
       "",
-    ))
-      ..removeWhere((appInfo) => appInfo.packageName == androidPackageNme);
+    ))..removeWhere((appInfo) => appInfo.packageName == androidPackageNme);
     final value = await _setRepo.getApps(widget.appSetName);
     setState(() {
       _loading = false;
@@ -405,24 +445,28 @@ class _AddAppIdAndroidScreenState extends State<AddAppIdAndroidScreen> {
     try {
       // delete some apps and add some apps
       final toDelete = _originalApps
-          .where((app) =>
-              app.appId.type == AppId_Type.Exact &&
-              !_selectedApps.containsKey(app.appId.value))
+          .where(
+            (app) =>
+                app.appId.type == AppId_Type.Exact &&
+                !_selectedApps.containsKey(app.appId.value),
+          )
           .toList();
       final toAdd = _selectedApps.entries
           .where((e) {
-            return !_originalApps.any((app) =>
-                app.appId.type == AppId_Type.Exact && app.appId.value == e.key);
+            return !_originalApps.any(
+              (app) =>
+                  app.appId.type == AppId_Type.Exact &&
+                  app.appId.value == e.key,
+            );
           })
-          .map((e) => App(
-                appId: AppId(
-                  type: AppId_Type.Exact,
-                  value: e.key,
-                ),
-                icon: e.value.icon,
-                id: 0,
-                appSetName: widget.appSetName,
-              ))
+          .map(
+            (e) => App(
+              appId: AppId(type: AppId_Type.Exact, value: e.key),
+              icon: e.value.icon,
+              id: 0,
+              appSetName: widget.appSetName,
+            ),
+          )
           .toList();
       if (toDelete.isNotEmpty) {
         await _setRepo.removeApp(toDelete.map((e) => e.id).toList());
@@ -445,84 +489,90 @@ class _AddAppIdAndroidScreenState extends State<AddAppIdAndroidScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: true,
-          actions: [
-            TextButton(
-                onPressed: _save,
-                child: Text(AppLocalizations.of(context)!.save)),
-            MenuAnchor(
-              menuChildren: [
-                MenuItemButton(
-                  onPressed: () async {
-                    setState(() {
-                      _showSystemApps = !_showSystemApps;
-                      _loading = true;
-                    });
-                    await _init();
-                  },
-                  child: Text(_showSystemApps
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        actions: [
+          TextButton(
+            onPressed: _save,
+            child: Text(AppLocalizations.of(context)!.save),
+          ),
+          MenuAnchor(
+            menuChildren: [
+              MenuItemButton(
+                onPressed: () async {
+                  setState(() {
+                    _showSystemApps = !_showSystemApps;
+                    _loading = true;
+                  });
+                  await _init();
+                },
+                child: Text(
+                  _showSystemApps
                       ? AppLocalizations.of(context)!.hideSystemApps
-                      : AppLocalizations.of(context)!.showSystemApps),
+                      : AppLocalizations.of(context)!.showSystemApps,
+                ),
+              ),
+            ],
+            builder: (context, controller, child) => IconButton(
+              onPressed: () {
+                if (controller.isOpen) {
+                  controller.close();
+                } else {
+                  controller.open();
+                }
+              },
+              icon: const Icon(Icons.more_vert_rounded),
+            ),
+          ),
+          const Gap(10),
+        ],
+      ),
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SearchBar(
+                    leading: const Padding(
+                      padding: EdgeInsets.zero,
+                      child: Icon(Icons.search),
+                    ),
+                    trailing: [
+                      if (_searchQuery.isNotEmpty)
+                        IconButton(
+                          icon: const Icon(Icons.clear_rounded),
+                          onPressed: () {
+                            _searchController.clear();
+                          },
+                        ),
+                    ],
+                    controller: _searchController,
+                    elevation: const WidgetStatePropertyAll(0),
+                    padding: const WidgetStatePropertyAll(
+                      EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _filteredAppInfos.length,
+                    itemBuilder: (context, index) {
+                      final app = _filteredAppInfos[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2),
+                        child: _AppIdTile(
+                          key: Key(app.packageName),
+                          app: app,
+                          selectedApps: _selectedApps,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
-              builder: (context, controller, child) => IconButton(
-                  onPressed: () {
-                    if (controller.isOpen) {
-                      controller.close();
-                    } else {
-                      controller.open();
-                    }
-                  },
-                  icon: const Icon(Icons.more_vert_rounded)),
             ),
-            const Gap(10)
-          ],
-        ),
-        body: _loading
-            ? const Center(child: CircularProgressIndicator())
-            : Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SearchBar(
-                      leading: const Padding(
-                        padding: EdgeInsets.zero,
-                        child: Icon(Icons.search),
-                      ),
-                      trailing: [
-                        if (_searchQuery.isNotEmpty)
-                          IconButton(
-                            icon: const Icon(Icons.clear_rounded),
-                            onPressed: () {
-                              _searchController.clear();
-                            },
-                          )
-                      ],
-                      controller: _searchController,
-                      elevation: const WidgetStatePropertyAll(0),
-                      padding: const WidgetStatePropertyAll(
-                          EdgeInsets.symmetric(horizontal: 16)),
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _filteredAppInfos.length,
-                      itemBuilder: (context, index) {
-                        final app = _filteredAppInfos[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2),
-                          child: _AppIdTile(
-                            key: Key(app.packageName),
-                            app: app,
-                            selectedApps: _selectedApps,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ));
+    );
   }
 }
 
@@ -631,24 +681,31 @@ class _AddAppIdDialogState extends State<AddAppIdDialog> {
               setState(() {});
             },
             dropdownMenuEntries: AppId_Type.values
-                .map((e) => DropdownMenuEntry(
-                    label: e.toLocalString(context), value: e))
+                .map(
+                  (e) => DropdownMenuEntry(
+                    label: e.toLocalString(context),
+                    value: e,
+                  ),
+                )
                 .toList(),
           ),
         ],
       ),
       actions: [
         FilledButton.tonal(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(AppLocalizations.of(context)!.cancel)),
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(AppLocalizations.of(context)!.cancel),
+        ),
         FilledButton(
-            onPressed: () {
-              if (_controller.text.isNotEmpty) {
-                Navigator.of(context)
-                    .pop(AppId(type: _type, value: _controller.text));
-              }
-            },
-            child: Text(AppLocalizations.of(context)!.add)),
+          onPressed: () {
+            if (_controller.text.isNotEmpty) {
+              Navigator.of(
+                context,
+              ).pop(AppId(type: _type, value: _controller.text));
+            }
+          },
+          child: Text(AppLocalizations.of(context)!.add),
+        ),
       ],
     );
   }
@@ -711,8 +768,9 @@ class _AddAppIdDesktopScreenState extends State<AddAppIdDesktopScreen> {
     _appInfos = await DesktopInstalledApps.getInstalledApps();
     // Filter out apps without executable paths
     _appInfos = _appInfos
-        .where((app) =>
-            app.executablePath != null && app.executablePath!.isNotEmpty)
+        .where(
+          (app) => app.executablePath != null && app.executablePath!.isNotEmpty,
+        )
         .toList();
 
     final value = await _setRepo.getApps(widget.appSetName);
@@ -733,24 +791,28 @@ class _AddAppIdDesktopScreenState extends State<AddAppIdDesktopScreen> {
     try {
       // delete some apps and add some apps
       final toDelete = _originalApps
-          .where((app) =>
-              app.appId.type == AppId_Type.Exact &&
-              !_selectedApps.containsKey(app.appId.value))
+          .where(
+            (app) =>
+                app.appId.type == AppId_Type.Exact &&
+                !_selectedApps.containsKey(app.appId.value),
+          )
           .toList();
       final toAdd = _selectedApps.entries
           .where((e) {
-            return !_originalApps.any((app) =>
-                app.appId.type == AppId_Type.Exact && app.appId.value == e.key);
+            return !_originalApps.any(
+              (app) =>
+                  app.appId.type == AppId_Type.Exact &&
+                  app.appId.value == e.key,
+            );
           })
-          .map((e) => App(
-                appId: AppId(
-                  type: AppId_Type.Exact,
-                  value: e.key,
-                ),
-                icon: e.value.icon,
-                id: 0,
-                appSetName: widget.appSetName,
-              ))
+          .map(
+            (e) => App(
+              appId: AppId(type: AppId_Type.Exact, value: e.key),
+              icon: e.value.icon,
+              id: 0,
+              appSetName: widget.appSetName,
+            ),
+          )
           .toList();
       if (toDelete.isNotEmpty) {
         await _setRepo.removeApp(toDelete.map((app) => app.id).toList());

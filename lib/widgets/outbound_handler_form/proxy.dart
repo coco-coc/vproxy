@@ -87,21 +87,23 @@ class _VmessClientState extends State<_VmessClient> {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 200),
                 child: DropdownMenu<SecurityType>(
-                    requestFocusOnTap: false,
-                    initialSelection: widget.config.security,
-                    label: const Text('Security'),
-                    onSelected: (SecurityType? s) {
-                      if (s != null) {
-                        widget.config.security = s;
-                      }
-                    },
-                    dropdownMenuEntries: SecurityType.values
-                        .map<DropdownMenuEntry<SecurityType>>((SecurityType s) {
-                      return DropdownMenuEntry<SecurityType>(
-                        label: s.name,
-                        value: s,
-                      );
-                    }).toList()),
+                  requestFocusOnTap: false,
+                  initialSelection: widget.config.security,
+                  label: const Text('Security'),
+                  onSelected: (SecurityType? s) {
+                    if (s != null) {
+                      widget.config.security = s;
+                    }
+                  },
+                  dropdownMenuEntries: SecurityType.values
+                      .map<DropdownMenuEntry<SecurityType>>((SecurityType s) {
+                        return DropdownMenuEntry<SecurityType>(
+                          label: s.name,
+                          value: s,
+                        );
+                      })
+                      .toList(),
+                ),
               ),
             ),
           ],
@@ -191,8 +193,8 @@ class _AnytlsClientState extends State<_AnytlsClient> {
     if (widget.config.minIdleSession == 0) {
       widget.config.minIdleSession = 5;
     }
-    _idleSessionCheckInterval.text =
-        widget.config.idleSessionCheckInterval.toString();
+    _idleSessionCheckInterval.text = widget.config.idleSessionCheckInterval
+        .toString();
     _idleSessionTimeout.text = widget.config.idleSessionTimeout.toString();
     _minIdleSession.text = widget.config.minIdleSession.toString();
   }
@@ -237,9 +239,7 @@ class _AnytlsClientState extends State<_AnytlsClient> {
             widget.config.idleSessionTimeout = int.parse(value ?? '0');
             return null;
           },
-          decoration: const InputDecoration(
-            labelText: 'Idle Session Timeout',
-          ),
+          decoration: const InputDecoration(labelText: 'Idle Session Timeout'),
         ),
         boxH10,
         TextFormField(
@@ -250,9 +250,7 @@ class _AnytlsClientState extends State<_AnytlsClient> {
             widget.config.minIdleSession = int.parse(value ?? '0');
             return null;
           },
-          decoration: const InputDecoration(
-            labelText: 'Min Idle Session',
-          ),
+          decoration: const InputDecoration(labelText: 'Min Idle Session'),
         ),
       ],
     );
@@ -303,21 +301,23 @@ class _VlessClientState extends State<_VlessClient> {
         ),
         boxH10,
         DropdownMenu<VlessFlow>(
-            requestFocusOnTap: false,
-            initialSelection: VlessFlow.fromString(widget.config.flow),
-            label: const Text('Flow'),
-            onSelected: (VlessFlow? s) {
-              if (s != null) {
-                widget.config.flow = s.toString();
-              }
-            },
-            dropdownMenuEntries: VlessFlow.values
-                .map<DropdownMenuEntry<VlessFlow>>((VlessFlow s) {
-              return DropdownMenuEntry<VlessFlow>(
-                label: s.toString(),
-                value: s,
-              );
-            }).toList()),
+          requestFocusOnTap: false,
+          initialSelection: VlessFlow.fromString(widget.config.flow),
+          label: const Text('Flow'),
+          onSelected: (VlessFlow? s) {
+            if (s != null) {
+              widget.config.flow = s.toString();
+            }
+          },
+          dropdownMenuEntries: VlessFlow.values
+              .map<DropdownMenuEntry<VlessFlow>>((VlessFlow s) {
+                return DropdownMenuEntry<VlessFlow>(
+                  label: s.toString(),
+                  value: s,
+                );
+              })
+              .toList(),
+        ),
       ],
     );
   }
@@ -386,7 +386,8 @@ class _ShadowsocksClientState extends State<_ShadowsocksClient> {
         TextFormField(
           controller: _password,
           decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.password),
+            labelText: AppLocalizations.of(context)!.password,
+          ),
           validator: (value) {
             widget.config.password = value ?? '';
             return null;
@@ -403,13 +404,15 @@ class _ShadowsocksClientState extends State<_ShadowsocksClient> {
             }
           },
           dropdownMenuEntries: ShadowsocksCipherType.values
-              .map<DropdownMenuEntry<ShadowsocksCipherType>>(
-                  (ShadowsocksCipherType s) {
-            return DropdownMenuEntry<ShadowsocksCipherType>(
-              label: s.toString(),
-              value: s,
-            );
-          }).toList(),
+              .map<DropdownMenuEntry<ShadowsocksCipherType>>((
+                ShadowsocksCipherType s,
+              ) {
+                return DropdownMenuEntry<ShadowsocksCipherType>(
+                  label: s.toString(),
+                  value: s,
+                );
+              })
+              .toList(),
         ),
       ],
     );
@@ -468,7 +471,8 @@ class _Shadowsocks2022ClientState extends State<_Shadowsocks2022Client> {
           },
           dropdownMenuEntries: _methods
               .map<DropdownMenuEntry<String>>(
-                  (m) => DropdownMenuEntry<String>(label: m, value: m))
+                (m) => DropdownMenuEntry<String>(label: m, value: m),
+              )
               .toList(),
         ),
         boxH10,
@@ -526,7 +530,8 @@ class _SocksClientState extends State<_SocksClient> {
         TextFormField(
           controller: _username,
           decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.accountName),
+            labelText: AppLocalizations.of(context)!.accountName,
+          ),
           validator: (value) {
             widget.config.name = value ?? '';
             return null;
@@ -536,7 +541,8 @@ class _SocksClientState extends State<_SocksClient> {
         TextFormField(
           controller: _password,
           decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.password),
+            labelText: AppLocalizations.of(context)!.password,
+          ),
           validator: (value) {
             widget.config.password = value ?? '';
             return null;
@@ -553,11 +559,13 @@ QuicConfig getDefaultQuicConfig() {
     // maxConnectionReceiveWindow: 8,
     // initialStreamReceiveWindow: 20,
     // maxStreamReceiveWindow: 20,
-    initialConnectionReceiveWindowBytes:
-        Platform.isIOS ? Int64(200 * 1024) : Int64(20 * 1024 * 1024),
+    initialConnectionReceiveWindowBytes: Platform.isIOS
+        ? Int64(200 * 1024)
+        : Int64(20 * 1024 * 1024),
     maxConnectionReceiveWindowBytes: Int64(20 * 1024 * 1024),
-    initialStreamReceiveWindowBytes:
-        Platform.isIOS ? Int64(80 * 1024) : Int64(8 * 1024 * 1024),
+    initialStreamReceiveWindowBytes: Platform.isIOS
+        ? Int64(80 * 1024)
+        : Int64(8 * 1024 * 1024),
     maxStreamReceiveWindowBytes: Int64(8 * 1024 * 1024),
     maxIdleTimeout: 30,
     keepAlivePeriod: 10,
@@ -567,19 +575,21 @@ QuicConfig getDefaultQuicConfig() {
 
 Hysteria2ServerConfig getDefaultHysteriaServerConfig() {
   return Hysteria2ServerConfig(
-      quic: getDefaultQuicConfig(),
-      bandwidth: BandwidthConfig(),
-      obfs: ObfsConfig(),
-      tlsConfig: TlsConfig());
+    quic: getDefaultQuicConfig(),
+    bandwidth: BandwidthConfig(),
+    obfs: ObfsConfig(),
+    tlsConfig: TlsConfig(),
+  );
 }
 
 Hysteria2ClientConfig _getDefaultHysteriaConfig() {
   return Hysteria2ClientConfig(
-      quic: getDefaultQuicConfig(),
-      fastOpen: true,
-      bandwidth: BandwidthConfig(),
-      obfs: ObfsConfig(),
-      tlsConfig: TlsConfig());
+    quic: getDefaultQuicConfig(),
+    fastOpen: true,
+    bandwidth: BandwidthConfig(),
+    obfs: ObfsConfig(),
+    tlsConfig: TlsConfig(),
+  );
 }
 
 // It modifies the config
@@ -610,8 +620,10 @@ class _VmessServerState extends State<VmessServer> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text('Secure Encryption Only',
-            style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          'Secure Encryption Only',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         Switch(
           value: _secureEncryptionOnly,
           onChanged: (value) {
@@ -639,8 +651,9 @@ class __SecretsState extends State<_Secrets> {
   @override
   void initState() {
     super.initState();
-    _secretControllers
-        .addAll(widget.secrets.map((e) => TextEditingController(text: e)));
+    _secretControllers.addAll(
+      widget.secrets.map((e) => TextEditingController(text: e)),
+    );
     for (var i = 0; i < widget.secrets.length; i++) {
       _secretControllers.add(TextEditingController(text: widget.secrets[i]));
     }
@@ -657,8 +670,9 @@ class __SecretsState extends State<_Secrets> {
 
   void _addSecret() {
     setState(() {
-      final newSecretController =
-          TextEditingController(text: _newSecretController.text);
+      final newSecretController = TextEditingController(
+        text: _newSecretController.text,
+      );
       _newSecretController.text = '';
       widget.secrets.add(newSecretController.text);
       _secretControllers.add(newSecretController);
@@ -680,18 +694,21 @@ class __SecretsState extends State<_Secrets> {
         ...widget.secrets.asMap().entries.map((entry) {
           final index = entry.key;
           final secretController = _secretControllers[index];
-          return Row(children: [
-            Expanded(
-              child: TextFormField(
-                controller: secretController,
-                decoration: const InputDecoration(labelText: 'Secret'),
+          return Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: secretController,
+                  decoration: const InputDecoration(labelText: 'Secret'),
+                ),
               ),
-            ),
-            boxW10,
-            IconButton.filledTonal(
+              boxW10,
+              IconButton.filledTonal(
                 icon: const Icon(Icons.delete),
-                onPressed: () => _removeSecret(index)),
-          ]);
+                onPressed: () => _removeSecret(index),
+              ),
+            ],
+          );
         }),
         Row(
           children: [
@@ -825,34 +842,36 @@ class _DokodemoServerState extends State<DokodemoServer> {
         Row(
           children: [
             ChoiceChip(
-                label: const Text('TCP'),
-                selected: widget.config.networks.contains(Network.TCP),
-                onSelected: (value) {
-                  setState(() {
-                    if (value) {
-                      widget.config.networks.add(Network.TCP);
-                    } else {
-                      widget.config.networks.remove(Network.TCP);
-                    }
-                  });
-                }),
+              label: const Text('TCP'),
+              selected: widget.config.networks.contains(Network.TCP),
+              onSelected: (value) {
+                setState(() {
+                  if (value) {
+                    widget.config.networks.add(Network.TCP);
+                  } else {
+                    widget.config.networks.remove(Network.TCP);
+                  }
+                });
+              },
+            ),
             const Gap(5),
             ChoiceChip(
-                label: const Text('UDP'),
-                selected: widget.config.networks.contains(Network.UDP),
-                onSelected: (value) {
-                  if (value) {
-                    setState(() {
-                      widget.config.networks.add(Network.UDP);
-                    });
-                  } else {
-                    setState(() {
-                      widget.config.networks.remove(Network.UDP);
-                    });
-                  }
-                }),
+              label: const Text('UDP'),
+              selected: widget.config.networks.contains(Network.UDP),
+              onSelected: (value) {
+                if (value) {
+                  setState(() {
+                    widget.config.networks.add(Network.UDP);
+                  });
+                } else {
+                  setState(() {
+                    widget.config.networks.remove(Network.UDP);
+                  });
+                }
+              },
+            ),
           ],
-        )
+        ),
       ],
     );
   }
@@ -896,13 +915,15 @@ class _ShadowsocksServerState extends State<ShadowsocksServer> {
             }
           },
           dropdownMenuEntries: ShadowsocksCipherType.values
-              .map<DropdownMenuEntry<ShadowsocksCipherType>>(
-                  (ShadowsocksCipherType s) {
-            return DropdownMenuEntry<ShadowsocksCipherType>(
-              label: s.toString(),
-              value: s,
-            );
-          }).toList(),
+              .map<DropdownMenuEntry<ShadowsocksCipherType>>((
+                ShadowsocksCipherType s,
+              ) {
+                return DropdownMenuEntry<ShadowsocksCipherType>(
+                  label: s.toString(),
+                  value: s,
+                );
+              })
+              .toList(),
         ),
         boxH10,
         Row(
@@ -987,7 +1008,8 @@ class _Shadowsocks2022ServerState extends State<Shadowsocks2022Server> {
           },
           dropdownMenuEntries: _methods
               .map<DropdownMenuEntry<String>>(
-                  (m) => DropdownMenuEntry<String>(label: m, value: m))
+                (m) => DropdownMenuEntry<String>(label: m, value: m),
+              )
               .toList(),
         ),
         boxH10,
@@ -1071,13 +1093,11 @@ class _SocksServerState extends State<SocksServer> {
               });
             }
           },
-          dropdownMenuEntries:
-              AuthType.values.map<DropdownMenuEntry<AuthType>>((AuthType s) {
-            return DropdownMenuEntry<AuthType>(
-              label: s.name,
-              value: s,
-            );
-          }).toList(),
+          dropdownMenuEntries: AuthType.values.map<DropdownMenuEntry<AuthType>>(
+            (AuthType s) {
+              return DropdownMenuEntry<AuthType>(label: s.name, value: s);
+            },
+          ).toList(),
         ),
         boxH10,
         TextFormField(
@@ -1147,7 +1167,8 @@ class _HysteriaClientState extends State<HysteriaClient> {
         TextFormField(
           controller: _authController,
           decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.password),
+            labelText: AppLocalizations.of(context)!.password,
+          ),
           validator: (value) {
             if (value != null) {
               widget.config.auth = value;
@@ -1157,10 +1178,11 @@ class _HysteriaClientState extends State<HysteriaClient> {
         ),
         const Gap(10),
         Hysteria(
-            quicConfig: widget.config.quic,
-            tlsConfig: widget.config.tlsConfig,
-            obfsConfig: widget.config.obfs,
-            bandwidthConfig: widget.config.bandwidth),
+          quicConfig: widget.config.quic,
+          tlsConfig: widget.config.tlsConfig,
+          obfsConfig: widget.config.obfs,
+          bandwidthConfig: widget.config.bandwidth,
+        ),
         const Gap(10),
         Row(
           children: [
@@ -1174,7 +1196,7 @@ class _HysteriaClientState extends State<HysteriaClient> {
               },
             ),
           ],
-        )
+        ),
       ],
     );
   }
@@ -1182,13 +1204,14 @@ class _HysteriaClientState extends State<HysteriaClient> {
 
 /// the constructor parameters will be modified directly.
 class Hysteria extends StatefulWidget {
-  const Hysteria(
-      {super.key,
-      required this.quicConfig,
-      required this.tlsConfig,
-      required this.obfsConfig,
-      required this.bandwidthConfig,
-      this.server = false});
+  const Hysteria({
+    super.key,
+    required this.quicConfig,
+    required this.tlsConfig,
+    required this.obfsConfig,
+    required this.bandwidthConfig,
+    this.server = false,
+  });
   final QuicConfig quicConfig;
   final TlsConfig tlsConfig;
   final BandwidthConfig bandwidthConfig;
@@ -1219,16 +1242,20 @@ class _HysteriaState extends State<Hysteria> {
           (widget.quicConfig.initialStreamReceiveWindow * 1024 * 1024)
               .toString();
     } else {
-      _initialStreamReceiveWindowController.text =
-          widget.quicConfig.initialStreamReceiveWindowBytes.toString();
+      _initialStreamReceiveWindowController.text = widget
+          .quicConfig
+          .initialStreamReceiveWindowBytes
+          .toString();
     }
     _maxStreamReceiveWindowController = TextEditingController();
     if (widget.quicConfig.maxStreamReceiveWindow != 0) {
       _maxStreamReceiveWindowController.text =
           (widget.quicConfig.maxStreamReceiveWindow * 1024 * 1024).toString();
     } else {
-      _maxStreamReceiveWindowController.text =
-          widget.quicConfig.maxStreamReceiveWindowBytes.toString();
+      _maxStreamReceiveWindowController.text = widget
+          .quicConfig
+          .maxStreamReceiveWindowBytes
+          .toString();
     }
     _initialConnectionReceiveWindowController = TextEditingController();
     if (widget.quicConfig.initialConnectionReceiveWindow != 0) {
@@ -1236,8 +1263,10 @@ class _HysteriaState extends State<Hysteria> {
           (widget.quicConfig.initialConnectionReceiveWindow * 1024 * 1024)
               .toString();
     } else {
-      _initialConnectionReceiveWindowController.text =
-          widget.quicConfig.initialConnectionReceiveWindowBytes.toString();
+      _initialConnectionReceiveWindowController.text = widget
+          .quicConfig
+          .initialConnectionReceiveWindowBytes
+          .toString();
     }
     _maxConnectionReceiveWindowController = TextEditingController();
     if (widget.quicConfig.maxConnectionReceiveWindow != 0) {
@@ -1245,25 +1274,33 @@ class _HysteriaState extends State<Hysteria> {
           (widget.quicConfig.maxConnectionReceiveWindow * 1024 * 1024)
               .toString();
     } else {
-      _maxConnectionReceiveWindowController.text =
-          widget.quicConfig.maxConnectionReceiveWindowBytes.toString();
+      _maxConnectionReceiveWindowController.text = widget
+          .quicConfig
+          .maxConnectionReceiveWindowBytes
+          .toString();
     }
     _maxIdleTimeoutController = TextEditingController(
-        text: widget.quicConfig.maxIdleTimeout.toString());
+      text: widget.quicConfig.maxIdleTimeout.toString(),
+    );
     _keepAlivePeriodController = TextEditingController(
-        text: widget.quicConfig.keepAlivePeriod.toString());
+      text: widget.quicConfig.keepAlivePeriod.toString(),
+    );
     _disablePathMtuDiscoveryController = TextEditingController(
-        text: widget.quicConfig.disablePathMtuDiscovery.toString());
+      text: widget.quicConfig.disablePathMtuDiscovery.toString(),
+    );
     _maxTxController = TextEditingController(
-        text: widget.bandwidthConfig.maxTx == 0
-            ? null
-            : widget.bandwidthConfig.maxTx.toString());
+      text: widget.bandwidthConfig.maxTx == 0
+          ? null
+          : widget.bandwidthConfig.maxTx.toString(),
+    );
     _maxRxController = TextEditingController(
-        text: widget.bandwidthConfig.maxRx == 0
-            ? null
-            : widget.bandwidthConfig.maxRx.toString());
-    _salamanderPasswordController =
-        TextEditingController(text: widget.obfsConfig.salamander.password);
+      text: widget.bandwidthConfig.maxRx == 0
+          ? null
+          : widget.bandwidthConfig.maxRx.toString(),
+    );
+    _salamanderPasswordController = TextEditingController(
+      text: widget.obfsConfig.salamander.password,
+    );
   }
 
   @override
@@ -1291,19 +1328,22 @@ class _HysteriaState extends State<Hysteria> {
               child: TextFormField(
                 controller: _initialStreamReceiveWindowController,
                 decoration: const InputDecoration(
-                    labelText: 'Initial Stream Receive Window',
-                    suffixText: 'Byte'),
+                  labelText: 'Initial Stream Receive Window',
+                  suffixText: 'Byte',
+                ),
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   print('value: $value');
                   if (value.isNotEmpty) {
-                    widget.quicConfig.initialStreamReceiveWindowBytes =
-                        Int64(int.parse(value));
+                    widget.quicConfig.initialStreamReceiveWindowBytes = Int64(
+                      int.parse(value),
+                    );
                     widget.quicConfig.initialStreamReceiveWindow = 0;
                   } else {
-                    widget.quicConfig.initialStreamReceiveWindowBytes =
-                        Int64(0);
+                    widget.quicConfig.initialStreamReceiveWindowBytes = Int64(
+                      0,
+                    );
                     widget.quicConfig.initialStreamReceiveWindow = 0;
                   }
                 },
@@ -1314,13 +1354,16 @@ class _HysteriaState extends State<Hysteria> {
               child: TextFormField(
                 controller: _maxStreamReceiveWindowController,
                 decoration: const InputDecoration(
-                    labelText: 'Max Stream Receive Window', suffixText: 'Byte'),
+                  labelText: 'Max Stream Receive Window',
+                  suffixText: 'Byte',
+                ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 onChanged: (value) {
                   if (value.isNotEmpty) {
-                    widget.quicConfig.maxStreamReceiveWindowBytes =
-                        Int64(int.parse(value));
+                    widget.quicConfig.maxStreamReceiveWindowBytes = Int64(
+                      int.parse(value),
+                    );
                     widget.quicConfig.maxStreamReceiveWindow = 0;
                   } else {
                     widget.quicConfig.maxStreamReceiveWindowBytes = Int64(0);
@@ -1338,8 +1381,9 @@ class _HysteriaState extends State<Hysteria> {
               child: TextFormField(
                 controller: _initialConnectionReceiveWindowController,
                 decoration: const InputDecoration(
-                    labelText: 'Initial Connection Receive Window',
-                    suffixText: 'Byte'),
+                  labelText: 'Initial Connection Receive Window',
+                  suffixText: 'Byte',
+                ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 onChanged: (value) {
@@ -1360,18 +1404,21 @@ class _HysteriaState extends State<Hysteria> {
               child: TextFormField(
                 controller: _maxConnectionReceiveWindowController,
                 decoration: const InputDecoration(
-                    labelText: 'Max Connection Receive Window',
-                    suffixText: 'Byte'),
+                  labelText: 'Max Connection Receive Window',
+                  suffixText: 'Byte',
+                ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 onChanged: (value) {
                   if (value.isNotEmpty) {
-                    widget.quicConfig.maxConnectionReceiveWindowBytes =
-                        Int64(int.parse(value));
+                    widget.quicConfig.maxConnectionReceiveWindowBytes = Int64(
+                      int.parse(value),
+                    );
                     widget.quicConfig.maxConnectionReceiveWindow = 0;
                   } else {
-                    widget.quicConfig.maxConnectionReceiveWindowBytes =
-                        Int64(0);
+                    widget.quicConfig.maxConnectionReceiveWindowBytes = Int64(
+                      0,
+                    );
                     widget.quicConfig.maxConnectionReceiveWindow = 0;
                   }
                 },
@@ -1386,7 +1433,9 @@ class _HysteriaState extends State<Hysteria> {
               child: TextFormField(
                 controller: _maxIdleTimeoutController,
                 decoration: const InputDecoration(
-                    labelText: 'Max Idle Timeout', suffixText: 's'),
+                  labelText: 'Max Idle Timeout',
+                  suffixText: 's',
+                ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 // onChanged: (value) {
@@ -1415,7 +1464,9 @@ class _HysteriaState extends State<Hysteria> {
               child: TextFormField(
                 controller: _keepAlivePeriodController,
                 decoration: const InputDecoration(
-                    labelText: 'Keep Alive Period', suffixText: 's'),
+                  labelText: 'Keep Alive Period',
+                  suffixText: 's',
+                ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 onChanged: (value) {
@@ -1429,8 +1480,9 @@ class _HysteriaState extends State<Hysteria> {
                   if (value != null && value.isNotEmpty) {
                     final v = int.parse(value);
                     if (v < 2 || v > 60) {
-                      return AppLocalizations.of(context)!
-                          .keepAlivePeriodMustBeBetween2And60;
+                      return AppLocalizations.of(
+                        context,
+                      )!.keepAlivePeriodMustBeBetween2And60;
                     }
                     widget.quicConfig.keepAlivePeriod = v;
                   } else {
@@ -1448,8 +1500,10 @@ class _HysteriaState extends State<Hysteria> {
             Expanded(
               child: TextFormField(
                 controller: _maxTxController,
-                decoration:
-                    const InputDecoration(labelText: 'Tx', suffixText: 'MB'),
+                decoration: const InputDecoration(
+                  labelText: 'Tx',
+                  suffixText: 'MB',
+                ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 validator: (value) {
@@ -1471,8 +1525,10 @@ class _HysteriaState extends State<Hysteria> {
             Expanded(
               child: TextFormField(
                 controller: _maxRxController,
-                decoration:
-                    const InputDecoration(labelText: 'Rx', suffixText: 'MB'),
+                decoration: const InputDecoration(
+                  labelText: 'Rx',
+                  suffixText: 'MB',
+                ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 validator: (value) {
@@ -1508,8 +1564,10 @@ class _HysteriaState extends State<Hysteria> {
         const Gap(10),
         Row(
           children: [
-            Text('Disable Path MTU Discovery',
-                style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Disable Path MTU Discovery',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             Switch(
               value: widget.quicConfig.disablePathMtuDiscovery,
               onChanged: (value) {
@@ -1521,14 +1579,17 @@ class _HysteriaState extends State<Hysteria> {
           ],
         ),
         const Gap(10),
-        FormContainer(children: [
-          const Text(
-            'TLS',
-          ),
-          const Gap(10),
-          _TransportSecurityTls(
-              config: widget.tlsConfig, showAlpn: false, server: widget.server),
-        ])
+        FormContainer(
+          children: [
+            const Text('TLS'),
+            const Gap(10),
+            _TransportSecurityTls(
+              config: widget.tlsConfig,
+              showAlpn: false,
+              server: widget.server,
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -1553,16 +1614,19 @@ class _HysteriaServerState extends State<HysteriaServer> {
     return Column(
       children: [
         Hysteria(
-            quicConfig: widget.config.quic,
-            tlsConfig: widget.config.tlsConfig,
-            obfsConfig: widget.config.obfs,
-            bandwidthConfig: widget.config.bandwidth,
-            server: true),
+          quicConfig: widget.config.quic,
+          tlsConfig: widget.config.tlsConfig,
+          obfsConfig: widget.config.obfs,
+          bandwidthConfig: widget.config.bandwidth,
+          server: true,
+        ),
         boxH10,
         Row(
           children: [
-            Text('Ignore Client Bandwidth',
-                style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Ignore Client Bandwidth',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             Switch(
               value: widget.config.ignoreClientBandwidth,
               onChanged: (value) {
@@ -1572,7 +1636,7 @@ class _HysteriaServerState extends State<HysteriaServer> {
               },
             ),
           ],
-        )
+        ),
       ],
     );
   }
@@ -1606,9 +1670,7 @@ class __HttpClientState extends State<_HttpClient> {
       children: [
         TextFormField(
           controller: _usernameController,
-          decoration: const InputDecoration(
-            labelText: 'Username',
-          ),
+          decoration: const InputDecoration(labelText: 'Username'),
           validator: (value) {
             if (value == null || value.isEmpty) {
               return AppLocalizations.of(context)!.fieldRequired;

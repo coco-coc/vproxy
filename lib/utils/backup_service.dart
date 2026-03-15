@@ -36,19 +36,19 @@ import 'package:vx/utils/xapi_client.dart';
 
 //TODO: reduce duplicate code
 class BackupSerevice extends ChangeNotifier {
-  BackupSerevice(
-      {required AuthBloc authProvider,
-      required SharedPreferences prefHelper,
-      required FlutterSecureStorage storage,
-      required DatabaseProvider databaseProvider,
-      required this.xController,
-      required this.xApiClient,
-      required SyncService syncService})
-      : _authProvider = authProvider,
-        _storage = storage,
-        _prefHelper = prefHelper,
-        databaseProvider = databaseProvider,
-        _syncService = syncService;
+  BackupSerevice({
+    required AuthBloc authProvider,
+    required SharedPreferences prefHelper,
+    required FlutterSecureStorage storage,
+    required DatabaseProvider databaseProvider,
+    required this.xController,
+    required this.xApiClient,
+    required SyncService syncService,
+  }) : _authProvider = authProvider,
+       _storage = storage,
+       _prefHelper = prefHelper,
+       databaseProvider = databaseProvider,
+       _syncService = syncService;
   final AuthBloc _authProvider;
   final SharedPreferences _prefHelper;
   final FlutterSecureStorage _storage;
@@ -173,16 +173,19 @@ class BackupSerevice extends ChangeNotifier {
           .upload('$userId/$fileName', fileToUpload);
 
       // Clean up old backups asynchronously
-      unawaited(Future(() async {
-        final existingFiles =
-            await supabase.storage.from('backup').list(path: userId);
-        if (existingFiles.isNotEmpty) {
-          existingFiles.removeWhere((element) => element.name == fileName);
-          await supabase.storage
+      unawaited(
+        Future(() async {
+          final existingFiles = await supabase.storage
               .from('backup')
-              .remove(existingFiles.map((e) => '$userId/${e.name}').toList());
-        }
-      }));
+              .list(path: userId);
+          if (existingFiles.isNotEmpty) {
+            existingFiles.removeWhere((element) => element.name == fileName);
+            await supabase.storage
+                .from('backup')
+                .remove(existingFiles.map((e) => '$userId/${e.name}').toList());
+          }
+        }),
+      );
 
       return fileName;
     } catch (e) {
@@ -207,8 +210,9 @@ class BackupSerevice extends ChangeNotifier {
     if (userId.isEmpty) {
       return null;
     }
-    final existingFiles =
-        await supabase.storage.from('backup').list(path: userId);
+    final existingFiles = await supabase.storage
+        .from('backup')
+        .list(path: userId);
     if (existingFiles.isEmpty) {
       return null;
     }
@@ -221,8 +225,9 @@ class BackupSerevice extends ChangeNotifier {
     if (userId.isEmpty) {
       return;
     }
-    final existingFiles =
-        await supabase.storage.from('backup').list(path: userId);
+    final existingFiles = await supabase.storage
+        .from('backup')
+        .list(path: userId);
     if (existingFiles.isEmpty) {
       return;
     }
@@ -249,8 +254,9 @@ class BackupSerevice extends ChangeNotifier {
       }
 
       // Download the backup file
-      final storageResponse =
-          await supabase.storage.from('backup').download('$userId/$path');
+      final storageResponse = await supabase.storage
+          .from('backup')
+          .download('$userId/$path');
       final tmpLocation = await tempFilePath();
       final tmpFile = await File(tmpLocation).writeAsBytes(storageResponse);
       filesToDelete.add(tmpFile);
@@ -268,7 +274,8 @@ class BackupSerevice extends ChangeNotifier {
         } catch (e) {
           logger.e('Failed to decrypt backup', error: e);
           throw Exception(
-              'Failed to decrypt backup. Please check your password.');
+            'Failed to decrypt backup. Please check your password.',
+          );
         }
       } else {
         logger.w('No backup password set, assuming unencrypted backup');
@@ -311,30 +318,36 @@ class BackupSerevice extends ChangeNotifier {
       }
 
       databaseProvider.setDatabase(
-          AppDatabase(path: newDbPath)..syncService = _syncService);
+        AppDatabase(path: newDbPath)..syncService = _syncService,
+      );
       await xApiClient.openDb();
     } catch (e) {
       rethrow;
     } finally {
       restoring = false;
       notifyListeners();
-      unawaited(Future(() async {
-        // remove old db
-        // get all files ended with .sqlite
-        final currentDbPath = await getDbPath(_prefHelper);
-        final sqliteFiles = resourceDirectory.listSync().where((e) {
-          return e.path.endsWith('.sqlite') && e.path != currentDbPath;
-        }).map((e) => File(e.path));
-        filesToDelete.addAll(sqliteFiles);
-        // delete the temporary database file
-        for (final file in filesToDelete) {
-          try {
-            file.delete();
-          } catch (e) {
-            logger.e('Failed to delete file', error: e);
+      unawaited(
+        Future(() async {
+          // remove old db
+          // get all files ended with .sqlite
+          final currentDbPath = await getDbPath(_prefHelper);
+          final sqliteFiles = resourceDirectory
+              .listSync()
+              .where((e) {
+                return e.path.endsWith('.sqlite') && e.path != currentDbPath;
+              })
+              .map((e) => File(e.path));
+          filesToDelete.addAll(sqliteFiles);
+          // delete the temporary database file
+          for (final file in filesToDelete) {
+            try {
+              file.delete();
+            } catch (e) {
+              logger.e('Failed to delete file', error: e);
+            }
           }
-        }
-      }));
+        }),
+      );
     }
   }
 
@@ -356,8 +369,9 @@ class BackupSerevice extends ChangeNotifier {
 
       // Work on a temporary copy so the original file is never modified
       final tmpLocation = await tempFilePath();
-      final tmpFile =
-          await File(tmpLocation).writeAsBytes(await sourceFile.readAsBytes());
+      final tmpFile = await File(
+        tmpLocation,
+      ).writeAsBytes(await sourceFile.readAsBytes());
       filesToDelete.add(tmpFile);
 
       File dbFileToRestore = tmpFile;
@@ -373,7 +387,8 @@ class BackupSerevice extends ChangeNotifier {
         } catch (e) {
           logger.e('Failed to decrypt local backup', error: e);
           throw Exception(
-              'Failed to decrypt backup. Please check your password.');
+            'Failed to decrypt backup. Please check your password.',
+          );
         }
       } else {
         logger.w('No backup password set, assuming unencrypted local backup');
@@ -416,30 +431,36 @@ class BackupSerevice extends ChangeNotifier {
       }
 
       databaseProvider.setDatabase(
-          AppDatabase(path: newDbPath)..syncService = _syncService);
+        AppDatabase(path: newDbPath)..syncService = _syncService,
+      );
       await xApiClient.openDb();
     } catch (e) {
       rethrow;
     } finally {
       restoring = false;
       notifyListeners();
-      unawaited(Future(() async {
-        // remove old db
-        // get all files ended with .sqlite
-        final currentDbPath = await getDbPath(_prefHelper);
-        final sqliteFiles = resourceDirectory.listSync().where((e) {
-          return e.path.endsWith('.sqlite') && e.path != currentDbPath;
-        }).map((e) => File(e.path));
-        filesToDelete.addAll(sqliteFiles);
-        // delete the temporary database file
-        for (final file in filesToDelete) {
-          try {
-            file.delete();
-          } catch (e) {
-            logger.e('Failed to delete file', error: e);
+      unawaited(
+        Future(() async {
+          // remove old db
+          // get all files ended with .sqlite
+          final currentDbPath = await getDbPath(_prefHelper);
+          final sqliteFiles = resourceDirectory
+              .listSync()
+              .where((e) {
+                return e.path.endsWith('.sqlite') && e.path != currentDbPath;
+              })
+              .map((e) => File(e.path));
+          filesToDelete.addAll(sqliteFiles);
+          // delete the temporary database file
+          for (final file in filesToDelete) {
+            try {
+              file.delete();
+            } catch (e) {
+              logger.e('Failed to delete file', error: e);
+            }
           }
-        }
-      }));
+        }),
+      );
     }
   }
 }

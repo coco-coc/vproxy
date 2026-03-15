@@ -43,7 +43,7 @@ String generateRealisticDomain() {
     'app',
     'dev',
     'code',
-    'soft'
+    'soft',
   ];
 
   // Common domain suffixes
@@ -68,7 +68,7 @@ String generateRealisticDomain() {
     'premium',
     'elite',
     'pro',
-    'expert'
+    'expert',
   ];
 
   // Randomly decide the structure

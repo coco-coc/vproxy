@@ -45,9 +45,7 @@ class GeneralSettingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: showAppBar
-          ? AppBar(
-              title: Text(AppLocalizations.of(context)!.general),
-            )
+          ? AppBar(title: Text(AppLocalizations.of(context)!.general))
           : null,
       body: Padding(
         padding: const EdgeInsets.only(top: 8, right: 8),
@@ -58,21 +56,30 @@ class GeneralSettingPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               leading: const Icon(Icons.language),
-              title: Text(AppLocalizations.of(context)!.language,
-                  style: Theme.of(context).textTheme.bodyLarge),
-              subtitle: Language.fromCode(
-                              Localizations.localeOf(context).languageCode)
-                          ?.localText !=
+              title: Text(
+                AppLocalizations.of(context)!.language,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              subtitle:
+                  Language.fromCode(
+                        Localizations.localeOf(context).languageCode,
+                      )?.localText !=
                       null
-                  ? Text(Language.fromCode(
-                          Localizations.localeOf(context).languageCode)!
-                      .localText)
+                  ? Text(
+                      Language.fromCode(
+                        Localizations.localeOf(context).languageCode,
+                      )!.localText,
+                    )
                   : null,
               trailing: const Icon(Icons.keyboard_arrow_right_rounded),
               onTap: () {
-                Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) {
-                  return const LanguagePage();
-                }));
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (ctx) {
+                      return const LanguagePage();
+                    },
+                  ),
+                );
               },
             ),
             ListTile(
@@ -81,54 +88,86 @@ class GeneralSettingPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               leading: const Icon(Icons.sync),
-              title: Text(AppLocalizations.of(context)!.syncBackup,
-                  style: Theme.of(context).textTheme.bodyLarge),
+              title: Text(
+                AppLocalizations.of(context)!.syncBackup,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
               trailing: const Icon(Icons.keyboard_arrow_right_rounded),
               onTap: () {
-                Navigator.of(context).push(CupertinoPageRoute(builder: (ctx) {
-                  return const SyncPage();
-                }));
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (ctx) {
+                      return const SyncPage();
+                    },
+                  ),
+                );
               },
             ),
             const Divider(),
             const Padding(
-              padding:
-                  EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
+              padding: EdgeInsets.only(
+                top: 10,
+                bottom: 10,
+                left: 16,
+                right: 16,
+              ),
               child: ThemeModeSetting(),
             ),
             const Divider(),
             const Padding(
-              padding:
-                  EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
+              padding: EdgeInsets.only(
+                top: 10,
+                bottom: 10,
+                left: 16,
+                right: 16,
+              ),
               child: PingModeSetting(),
             ),
             const Divider(),
             const Padding(
-              padding:
-                  EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
+              padding: EdgeInsets.only(
+                top: 10,
+                bottom: 10,
+                left: 16,
+                right: 16,
+              ),
               child: GeoFileUpdateSettings(),
             ),
             const Divider(),
             const Padding(
-              padding:
-                  EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
+              padding: EdgeInsets.only(
+                top: 10,
+                bottom: 10,
+                left: 16,
+                right: 16,
+              ),
               child: NodeTestSettings(),
             ),
             if (Platform.isWindows)
-              const Column(children: [
-                Divider(),
-                Padding(
-                  padding:
-                      EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
-                  child: StartOnBootSetting(),
-                ),
-                Divider(),
-                Padding(
-                  padding:
-                      EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 16),
-                  child: AlwaysOnSetting(),
-                ),
-              ]),
+              const Column(
+                children: [
+                  Divider(),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: 10,
+                      bottom: 10,
+                      left: 16,
+                      right: 16,
+                    ),
+                    child: StartOnBootSetting(),
+                  ),
+                  Divider(),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: 10,
+                      bottom: 10,
+                      left: 16,
+                      right: 16,
+                    ),
+                    child: AlwaysOnSetting(),
+                  ),
+                ],
+              ),
             // if (isPkg)
             //   Column(children: [
             //     Divider(),
@@ -172,32 +211,38 @@ class _PingModeSettingState extends State<PingModeSetting> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(AppLocalizations.of(context)!.pingTestMethod,
-            style: Theme.of(context).textTheme.bodyLarge),
+        Text(
+          AppLocalizations.of(context)!.pingTestMethod,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
         const Gap(10),
         DropdownMenu<PingMode>(
-            initialSelection: _pingMode,
-            requestFocusOnTap: false,
-            dropdownMenuEntries: [
-              DropdownMenuEntry(
-                  value: PingMode.Real,
-                  label: AppLocalizations.of(context)!.pingReal),
-              const DropdownMenuEntry(value: PingMode.Rtt, label: 'RTT'),
-            ],
-            onSelected: (value) {
-              context
-                  .read<SharedPreferences>()
-                  .setPingMode(value ?? PingMode.Real);
-              setState(() {
-                _pingMode = value ?? PingMode.Real;
-              });
-            }),
+          initialSelection: _pingMode,
+          requestFocusOnTap: false,
+          dropdownMenuEntries: [
+            DropdownMenuEntry(
+              value: PingMode.Real,
+              label: AppLocalizations.of(context)!.pingReal,
+            ),
+            const DropdownMenuEntry(value: PingMode.Rtt, label: 'RTT'),
+          ],
+          onSelected: (value) {
+            context.read<SharedPreferences>().setPingMode(
+              value ?? PingMode.Real,
+            );
+            setState(() {
+              _pingMode = value ?? PingMode.Real;
+            });
+          },
+        ),
         const Gap(10),
         if (_pingMode == PingMode.Real)
-          Text(AppLocalizations.of(context)!.pingRealDesc,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
+          Text(
+            AppLocalizations.of(context)!.pingRealDesc,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
       ],
     );
   }
@@ -224,32 +269,38 @@ class _ThemeModeSettingState extends State<ThemeModeSetting> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(AppLocalizations.of(context)!.themeMode,
-            style: Theme.of(context).textTheme.bodyLarge),
+        Text(
+          AppLocalizations.of(context)!.themeMode,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
         const Gap(10),
         DropdownMenu<ThemeMode>(
-            initialSelection: _themeMode,
-            requestFocusOnTap: false,
-            dropdownMenuEntries: [
-              DropdownMenuEntry(
-                  value: ThemeMode.light,
-                  label: AppLocalizations.of(context)!.light),
-              DropdownMenuEntry(
-                  value: ThemeMode.dark,
-                  label: AppLocalizations.of(context)!.dark),
-              DropdownMenuEntry(
-                  value: ThemeMode.system,
-                  label: AppLocalizations.of(context)!.system),
-            ],
-            onSelected: (value) {
-              context
-                  .read<SharedPreferences>()
-                  .setThemeMode(value ?? ThemeMode.system);
-              App.of(context)?.setThemeMode(value);
-              setState(() {
-                _themeMode = value ?? ThemeMode.system;
-              });
-            }),
+          initialSelection: _themeMode,
+          requestFocusOnTap: false,
+          dropdownMenuEntries: [
+            DropdownMenuEntry(
+              value: ThemeMode.light,
+              label: AppLocalizations.of(context)!.light,
+            ),
+            DropdownMenuEntry(
+              value: ThemeMode.dark,
+              label: AppLocalizations.of(context)!.dark,
+            ),
+            DropdownMenuEntry(
+              value: ThemeMode.system,
+              label: AppLocalizations.of(context)!.system,
+            ),
+          ],
+          onSelected: (value) {
+            context.read<SharedPreferences>().setThemeMode(
+              value ?? ThemeMode.system,
+            );
+            App.of(context)?.setThemeMode(value);
+            setState(() {
+              _themeMode = value ?? ThemeMode.system;
+            });
+          },
+        ),
       ],
     );
   }
@@ -278,8 +329,10 @@ class _StartOnBootSettingState extends State<StartOnBootSetting> {
       children: [
         Row(
           children: [
-            Text(AppLocalizations.of(context)!.startOnBoot,
-                style: Theme.of(context).textTheme.bodyLarge),
+            Text(
+              AppLocalizations.of(context)!.startOnBoot,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
             const Expanded(child: SizedBox()),
             Switch(
               value: _startOnBoot,
@@ -298,10 +351,12 @@ class _StartOnBootSettingState extends State<StartOnBootSetting> {
           ],
         ),
         const Gap(10),
-        Text(AppLocalizations.of(context)!.startOnBootDesc,
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                )),
+        Text(
+          AppLocalizations.of(context)!.startOnBootDesc,
+          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
       ],
     );
   }
@@ -330,8 +385,10 @@ class _AlwaysOnSettingState extends State<AlwaysOnSetting> {
       children: [
         Row(
           children: [
-            Text(AppLocalizations.of(context)!.alwaysOn,
-                style: Theme.of(context).textTheme.bodyLarge),
+            Text(
+              AppLocalizations.of(context)!.alwaysOn,
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
             const Expanded(child: SizedBox()),
             Switch(
               value: _alwaysOn,
@@ -345,10 +402,12 @@ class _AlwaysOnSettingState extends State<AlwaysOnSetting> {
           ],
         ),
         const Gap(10),
-        Text(AppLocalizations.of(context)!.alwaysOnDesc,
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                )),
+        Text(
+          AppLocalizations.of(context)!.alwaysOnDesc,
+          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
       ],
     );
   }
@@ -370,7 +429,8 @@ class _GeoFileUpdateSettingsState extends State<GeoFileUpdateSettings> {
     super.initState();
     _autoUpdateGeoFiles = context.read<SharedPreferences>().autoUpdateGeoFiles;
     _intervalController = TextEditingController(
-        text: '${context.read<SharedPreferences>().geoUpdateInterval}');
+      text: '${context.read<SharedPreferences>().geoUpdateInterval}',
+    );
   }
 
   @override
@@ -408,8 +468,8 @@ class _GeoFileUpdateSettingsState extends State<GeoFileUpdateSettings> {
         Text(
           AppLocalizations.of(context)!.autoUpdateGeoFilesDesc,
           style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         if (_autoUpdateGeoFiles) ...[
           const Gap(15),
@@ -426,9 +486,9 @@ class _GeoFileUpdateSettingsState extends State<GeoFileUpdateSettings> {
             onChanged: (event) {
               final parsedValue = int.tryParse(_intervalController.text);
               if (parsedValue != null && parsedValue >= 1) {
-                context
-                    .read<SharedPreferences>()
-                    .setGeoUpdateInterval(parsedValue);
+                context.read<SharedPreferences>().setGeoUpdateInterval(
+                  parsedValue,
+                );
                 context.read<GeoDataHelper>().reset();
               } else if (parsedValue != null && parsedValue < 1) {
                 // Reset to minimum if user enters invalid value
@@ -460,7 +520,8 @@ class _NodeTestSettingsState extends State<NodeTestSettings> {
     super.initState();
     _autoTestNodes = context.read<SharedPreferences>().autoTestNodes;
     _intervalController = TextEditingController(
-        text: '${context.read<SharedPreferences>().nodeTestInterval}');
+      text: '${context.read<SharedPreferences>().nodeTestInterval}',
+    );
   }
 
   @override
@@ -500,8 +561,8 @@ class _NodeTestSettingsState extends State<NodeTestSettings> {
         Text(
           AppLocalizations.of(context)!.autoTestNodesDesc,
           style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         if (_autoTestNodes) ...[
           const Gap(15),

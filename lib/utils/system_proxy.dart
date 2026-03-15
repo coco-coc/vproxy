@@ -13,23 +13,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 import 'dart:io';
 import 'package:tm/protos/protos/sysproxy.pb.dart';
-
 
 class LinuxSystemProxy {
   static Future<void> setSystemProxy(SysProxyConfig settings) async {
     try {
       // Set system proxy using gsettings (GNOME/Unity)
       await _setGsettingsProxy(settings);
-      
+
       // Set environment variables for applications that don't use gsettings
       await _setEnvironmentProxy(settings);
-      
+
       // Set proxy for KDE (if available)
       await _setKdeProxy(settings);
-      
+
       print('Linux system proxy configured successfully');
     } catch (e) {
       print('Failed to set Linux system proxy: $e');
@@ -41,13 +39,13 @@ class LinuxSystemProxy {
     try {
       // Remove gsettings proxy
       await _unsetGsettingsProxy();
-      
+
       // Remove environment variables
       await _unsetEnvironmentProxy();
-      
+
       // Remove KDE proxy
       await _unsetKdeProxy();
-      
+
       print('Linux system proxy removed successfully');
     } catch (e) {
       print('Failed to remove Linux system proxy: $e');
@@ -63,7 +61,7 @@ class LinuxSystemProxy {
         'set',
         'org.gnome.system.proxy',
         'mode',
-        'manual'
+        'manual',
       ]);
 
       // Set HTTP proxy
@@ -72,19 +70,19 @@ class LinuxSystemProxy {
           'set',
           'org.gnome.system.proxy.http',
           'host',
-          settings.httpProxyAddress
+          settings.httpProxyAddress,
         ]);
         await Process.run('gsettings', [
           'set',
           'org.gnome.system.proxy.http',
           'port',
-          settings.httpProxyPort.toString()
+          settings.httpProxyPort.toString(),
         ]);
         await Process.run('gsettings', [
           'set',
           'org.gnome.system.proxy.http',
           'enabled',
-          'true'
+          'true',
         ]);
       }
 
@@ -94,19 +92,19 @@ class LinuxSystemProxy {
           'set',
           'org.gnome.system.proxy.https',
           'host',
-          settings.httpsProxyAddress
+          settings.httpsProxyAddress,
         ]);
         await Process.run('gsettings', [
           'set',
           'org.gnome.system.proxy.https',
           'port',
-          settings.httpsProxyPort.toString()
+          settings.httpsProxyPort.toString(),
         ]);
         await Process.run('gsettings', [
           'set',
           'org.gnome.system.proxy.https',
           'enabled',
-          'true'
+          'true',
         ]);
       }
 
@@ -116,19 +114,19 @@ class LinuxSystemProxy {
           'set',
           'org.gnome.system.proxy.socks',
           'host',
-          settings.socksProxyAddress
+          settings.socksProxyAddress,
         ]);
         await Process.run('gsettings', [
           'set',
           'org.gnome.system.proxy.socks',
           'port',
-          settings.socksProxyPort.toString()
+          settings.socksProxyPort.toString(),
         ]);
         await Process.run('gsettings', [
           'set',
           'org.gnome.system.proxy.socks',
           'enabled',
-          'true'
+          'true',
         ]);
       }
 
@@ -137,7 +135,7 @@ class LinuxSystemProxy {
         'set',
         'org.gnome.system.proxy',
         'ignore-hosts',
-        "['localhost', '127.0.0.0/8', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16']"
+        "['localhost', '127.0.0.0/8', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16']",
       ]);
     } catch (e) {
       print('Failed to set gsettings proxy: $e');
@@ -152,7 +150,7 @@ class LinuxSystemProxy {
         'set',
         'org.gnome.system.proxy',
         'mode',
-        'none'
+        'none',
       ]);
     } catch (e) {
       print('Failed to unset gsettings proxy: $e');
@@ -163,36 +161,39 @@ class LinuxSystemProxy {
   static Future<void> _setEnvironmentProxy(SysProxyConfig settings) async {
     try {
       final envVars = <String, String>{};
-      
+
       if (settings.hasHttpProxyAddress() && settings.hasHttpProxyPort()) {
-        final httpProxy = '${settings.httpProxyAddress}:${settings.httpProxyPort}';
+        final httpProxy =
+            '${settings.httpProxyAddress}:${settings.httpProxyPort}';
         envVars['http_proxy'] = httpProxy;
         envVars['HTTP_PROXY'] = httpProxy;
         envVars['https_proxy'] = httpProxy;
         envVars['HTTPS_PROXY'] = httpProxy;
       }
-      
+
       if (settings.hasSocksProxyAddress() && settings.hasSocksProxyPort()) {
-        final socksProxy = 'socks5://${settings.socksProxyAddress}:${settings.socksProxyPort}';
+        final socksProxy =
+            'socks5://${settings.socksProxyAddress}:${settings.socksProxyPort}';
         envVars['all_proxy'] = socksProxy;
         envVars['ALL_PROXY'] = socksProxy;
       }
-      
+
       // Set no_proxy for localhost and private networks
-      envVars['no_proxy'] = 'localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16';
-      envVars['NO_PROXY'] = 'localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16';
-      
+      envVars['no_proxy'] =
+          'localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16';
+      envVars['NO_PROXY'] =
+          'localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16';
+
       // Write to a shell script that can be sourced
       final script = StringBuffer();
       script.writeln('#!/bin/bash');
       for (final entry in envVars.entries) {
         script.writeln('export ${entry.key}="${entry.value}"');
       }
-      
+
       final scriptFile = File('/tmp/vx_proxy_env.sh');
       await scriptFile.writeAsString(script.toString());
       await Process.run('chmod', ['+x', scriptFile.path]);
-      
     } catch (e) {
       print('Failed to set environment proxy: $e');
     }
@@ -205,7 +206,7 @@ class LinuxSystemProxy {
       script.writeln('#!/bin/bash');
       script.writeln('unset http_proxy HTTP_PROXY https_proxy HTTPS_PROXY');
       script.writeln('unset all_proxy ALL_PROXY no_proxy NO_PROXY');
-      
+
       final scriptFile = File('/tmp/vx_proxy_env.sh');
       await scriptFile.writeAsString(script.toString());
       await Process.run('chmod', ['+x', scriptFile.path]);
@@ -230,7 +231,7 @@ class LinuxSystemProxy {
           'Proxy Settings',
           '--key',
           'ProxyType',
-          '1' // Manual proxy
+          '1', // Manual proxy
         ]);
         await Process.run('kwriteconfig5', [
           '--file',
@@ -239,7 +240,7 @@ class LinuxSystemProxy {
           'Proxy Settings',
           '--key',
           'httpProxy',
-          '${settings.httpProxyAddress} ${settings.httpProxyPort}'
+          '${settings.httpProxyAddress} ${settings.httpProxyPort}',
         ]);
       }
 
@@ -252,7 +253,7 @@ class LinuxSystemProxy {
           'Proxy Settings',
           '--key',
           'httpsProxy',
-          '${settings.httpsProxyAddress} ${settings.httpsProxyPort}'
+          '${settings.httpsProxyAddress} ${settings.httpsProxyPort}',
         ]);
       }
 
@@ -265,7 +266,7 @@ class LinuxSystemProxy {
           'Proxy Settings',
           '--key',
           'socksProxy',
-          '${settings.socksProxyAddress} ${settings.socksProxyPort}'
+          '${settings.socksProxyAddress} ${settings.socksProxyPort}',
         ]);
       }
 
@@ -277,7 +278,7 @@ class LinuxSystemProxy {
         'Proxy Settings',
         '--key',
         'NoProxyFor',
-        'localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16'
+        'localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16',
       ]);
     } catch (e) {
       print('Failed to set KDE proxy: $e');
@@ -297,7 +298,7 @@ class LinuxSystemProxy {
         'Proxy Settings',
         '--key',
         'ProxyType',
-        '0' // No proxy
+        '0', // No proxy
       ]);
     } catch (e) {
       print('Failed to unset KDE proxy: $e');
@@ -329,27 +330,31 @@ class LinuxSystemProxy {
   static Future<SysProxyConfig?> getCurrentProxy() async {
     try {
       final config = SysProxyConfig();
-      
+
       // Try to get gsettings proxy
       final httpHost = await Process.run('gsettings', [
         'get',
         'org.gnome.system.proxy.http',
-        'host'
+        'host',
       ]);
-      
+
       if (httpHost.exitCode == 0 && httpHost.stdout.toString().trim() != "''") {
         final httpPort = await Process.run('gsettings', [
           'get',
           'org.gnome.system.proxy.http',
-          'port'
+          'port',
         ]);
-        
+
         if (httpPort.exitCode == 0) {
-          config.httpProxyAddress = httpHost.stdout.toString().trim().replaceAll("'", "");
-          config.httpProxyPort = int.tryParse(httpPort.stdout.toString().trim()) ?? 0;
+          config.httpProxyAddress = httpHost.stdout
+              .toString()
+              .trim()
+              .replaceAll("'", "");
+          config.httpProxyPort =
+              int.tryParse(httpPort.stdout.toString().trim()) ?? 0;
         }
       }
-      
+
       return config;
     } catch (e) {
       print('Failed to get current proxy: $e');

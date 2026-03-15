@@ -16,11 +16,12 @@
 part of 'routing_page.dart';
 
 class IPWidget extends StatefulWidget {
-  const IPWidget(
-      {super.key,
-      required this.ipSetName,
-      this.showLabel = true,
-      this.addButtonInWrap = false});
+  const IPWidget({
+    super.key,
+    required this.ipSetName,
+    this.showLabel = true,
+    this.addButtonInWrap = false,
+  });
 
   final String ipSetName;
   final bool showLabel;
@@ -39,11 +40,7 @@ class _IPWidgetState extends State<IPWidget> {
   }
 
   void _subscribe() {
-    _geoIPSubscription = setRepo
-        .getCidrsStream(
-      widget.ipSetName,
-    )
-        .listen((q) {
+    _geoIPSubscription = setRepo.getCidrsStream(widget.ipSetName).listen((q) {
       setState(() {
         _cidrs = q;
       });
@@ -75,9 +72,10 @@ class _IPWidgetState extends State<IPWidget> {
 
   void _onAddIP() async {
     final result = await showDialog(
-        barrierDismissible: desktopPlatforms ? true : false,
-        context: context,
-        builder: (context) => const AddDialog(domain: false));
+      barrierDismissible: desktopPlatforms ? true : false,
+      context: context,
+      builder: (context) => const AddDialog(domain: false),
+    );
     if (result != null && result is List<CIDR>) {
       await setRepo.bulkAddCidr(widget.ipSetName, result);
     }
@@ -100,10 +98,11 @@ class _IPWidgetState extends State<IPWidget> {
         }),
         if (widget.addButtonInWrap)
           IconButton.filledTonal(
-              visualDensity: VisualDensity.compact,
-              padding: const EdgeInsets.all(0),
-              onPressed: _onAddIP,
-              icon: const Icon(Icons.add_rounded, size: 18)),
+            visualDensity: VisualDensity.compact,
+            padding: const EdgeInsets.all(0),
+            onPressed: _onAddIP,
+            icon: const Icon(Icons.add_rounded, size: 18),
+          ),
       ],
     );
     return Column(
@@ -118,32 +117,31 @@ class _IPWidgetState extends State<IPWidget> {
                   child: Chip(
                     side: const BorderSide(color: Colors.transparent),
                     shape: chipBorderRadius,
-                    backgroundColor:
-                        Theme.of(context).colorScheme.primaryContainer,
-                    label: Text('IP',
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onPrimaryContainer,
-                            fontWeight: FontWeight.w500)),
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.primaryContainer,
+                    label: Text(
+                      'IP',
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
                 ),
               IconButton.filledTonal(
-                  visualDensity: VisualDensity.compact,
-                  padding: const EdgeInsets.all(0),
-                  onPressed: _onAddIP,
-                  icon: const Icon(Icons.add_rounded)),
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.all(0),
+                onPressed: _onAddIP,
+                icon: const Icon(Icons.add_rounded),
+              ),
               const Gap(10),
             ],
           ),
         const Gap(10),
         widget.addButtonInWrap
             ? wrap
-            : Expanded(
-                child: SingleChildScrollView(
-                  child: wrap,
-                ),
-              ),
+            : Expanded(child: SingleChildScrollView(child: wrap)),
         // Expanded(
         //   child: ListView.builder(
         //     itemCount: _cidrs.length,
@@ -186,8 +184,9 @@ class _IPWidgetState extends State<IPWidget> {
 }
 
 String cidrToString(CIDR cidr) {
-  String displayString =
-      InternetAddress.fromRawAddress(Uint8List.fromList(cidr.ip)).address;
+  String displayString = InternetAddress.fromRawAddress(
+    Uint8List.fromList(cidr.ip),
+  ).address;
   if (cidr.prefix != 32 && cidr.prefix != 128) {
     displayString += '/${cidr.prefix}';
   }

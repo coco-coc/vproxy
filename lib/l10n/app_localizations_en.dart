@@ -255,7 +255,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get serverPubKey => 'Server Public Key';
 
   @override
-  String get serverPubKeyHelper => 'If not filled, any public key sent by the server on the first connection will be accepted, then the public key will be used on the future connections.';
+  String get serverPubKeyHelper =>
+      'If not filled, any public key sent by the server on the first connection will be accepted, then the public key will be used on the future connections.';
 
   @override
   String get failedConnectServer => 'Failed to connect';
@@ -318,10 +319,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get autoDownload => 'Automatically Download New Version';
 
   @override
-  String get unableToGetNodes => 'Failed to get nodes, your pasteboard does not contain a subscription url that VX can parse';
+  String get unableToGetNodes =>
+      'Failed to get nodes, your pasteboard does not contain a subscription url that VX can parse';
 
   @override
-  String get unableToGetNodesEmptyClipboard => 'Failed to get nodes, clipboard is empty';
+  String get unableToGetNodesEmptyClipboard =>
+      'Failed to get nodes, clipboard is empty';
 
   @override
   String get subscriptionAddress => 'Subscription Address';
@@ -372,13 +375,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectOneOutbound => 'Select';
 
   @override
-  String get addFailedUniqueConstraint => 'Addition failed because the rule confilcts with an existing rule.';
+  String get addFailedUniqueConstraint =>
+      'Addition failed because the rule confilcts with an existing rule.';
 
   @override
   String get enableInAuto => 'Enable in auto mode';
 
   @override
-  String get homeCustomizeDragHint => 'Drag cards to reorder. Hidden cards move to the bottom tray.';
+  String get homeCustomizeDragHint =>
+      'Drag cards to reorder. Hidden cards move to the bottom tray.';
 
   @override
   String get homeCustomizeResetOrder => 'Reset order';
@@ -422,7 +427,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quit => 'Quit';
 
   @override
-  String get iosAppRoutingNoSupport => 'App-based routing is currently not supported on iOS';
+  String get iosAppRoutingNoSupport =>
+      'App-based routing is currently not supported on iOS';
 
   @override
   String get failedToChangeInboundMode => 'Failed to change inbound';
@@ -440,7 +446,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String min(num value) {
     final intl.NumberFormat valueNumberFormat = intl.NumberFormat.compact(
       locale: localeName,
-      
     );
     final String valueString = valueNumberFormat.format(value);
 
@@ -458,7 +463,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String hour(num value) {
     final intl.NumberFormat valueNumberFormat = intl.NumberFormat.compact(
       locale: localeName,
-      
     );
     final String valueString = valueNumberFormat.format(value);
 
@@ -485,13 +489,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get copy => 'Copy';
 
   @override
-  String get privacyPolicySummary => 'VX only collects diagnostic logs if the switch button below is on. These logs do not contain personal data. Please click the button below to view the detailed privacy policy.';
+  String get privacyPolicySummary =>
+      'VX only collects diagnostic logs if the switch button below is on. These logs do not contain personal data. Please click the button below to view the detailed privacy policy.';
 
   @override
-  String get diagnosticLogDoesNotContainPersonalData => 'Diagnostic logs does not link to you, and does not contain personal data';
+  String get diagnosticLogDoesNotContainPersonalData =>
+      'Diagnostic logs does not link to you, and does not contain personal data';
 
   @override
-  String get shareDiagnosticLogWithDeveloper => 'Share diagnostic logs with developers';
+  String get shareDiagnosticLogWithDeveloper =>
+      'Share diagnostic logs with developers';
 
   @override
   String get yes => 'Yes';
@@ -500,13 +507,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get no => 'No';
 
   @override
-  String get contactUsSummary => 'You can contact us by the following ways. Thank you!';
+  String get contactUsSummary =>
+      'You can contact us by the following ways. Thank you!';
 
   @override
   String get contactUsFreely => 'If you have any questions, please contact us.';
 
   @override
-  String get bugAreWelcome => 'Bug reports and suggestions are welcome, thanks very much!';
+  String get bugAreWelcome =>
+      'Bug reports and suggestions are welcome, thanks very much!';
 
   @override
   String get copiedToClipboard => 'Copied to clipboard';
@@ -581,7 +590,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get matchAll => 'Match All';
 
   @override
-  String get ruleMatchCondition => 'When all conditions are met, the rule matches. If there are zero conditions, the rule will never match.';
+  String get ruleMatchCondition =>
+      'When all conditions are met, the rule matches. If there are zero conditions, the rule will never match.';
 
   @override
   String get inboundLabel => 'Inbound';
@@ -617,7 +627,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nodeChain => 'Node Chain';
 
   @override
-  String get nodeChainDesc => 'Nodes selected by this selector will form a node chain with the below nodes. The last node in the below list is the landing node. [Your Traffic] -> [Node(s) selected by the selector] -> [First node in the below list] -> ... -> [Last node in the below list] -> [Final destination]';
+  String get nodeChainDesc =>
+      'Nodes selected by this selector will form a node chain with the below nodes. The last node in the below list is the landing node. [Your Traffic] -> [Node(s) selected by the selector] -> [First node in the below list] -> ... -> [Last node in the below list] -> [Final destination]';
 
   @override
   String get addSelector => 'Add Selector';
@@ -734,7 +745,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hideRealtimeUsage => 'Hide realtime usage';
 
   @override
-  String get proFeatureDescription => 'This is a Pro feature. Upgrade to Pro to unlock all features';
+  String get proFeatureDescription =>
+      'This is a Pro feature. Upgrade to Pro to unlock all features';
 
   @override
   String get becomePermanentPro => 'Become Permanent Pro User';
@@ -785,7 +797,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unableToConnectToStore => 'Unable to connect to store';
 
   @override
-  String get loginBeforePurchase => 'Please login before purchasing. New users can try Pro for 7 days';
+  String get loginBeforePurchase =>
+      'Please login before purchasing. New users can try Pro for 7 days';
 
   @override
   String get loginBeforeRestore => 'Please login before restoring purchase.';
@@ -805,13 +818,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get startFailedReasonTunNeedAdmin => 'Tun inbound is only available when running as administrator. Rerun VX as administrator or change inbound mode.';
+  String get startFailedReasonTunNeedAdmin =>
+      'Tun inbound is only available when running as administrator. Rerun VX as administrator or change inbound mode.';
 
   @override
   String get startFailedReasonNoNode => 'No node';
 
   @override
-  String get startFailedReasonNoEnabledNode => 'No enabled nodes, enable at least one node';
+  String get startFailedReasonNoEnabledNode =>
+      'No enabled nodes, enable at least one node';
 
   @override
   String get startFailedReasonNoSelected => 'No selected node';
@@ -822,7 +837,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get failedToAddSubscription => 'Failed to add subscription, there is an existing subscription with the same link';
+  String get failedToAddSubscription =>
+      'Failed to add subscription, there is an existing subscription with the same link';
 
   @override
   String get tunNeedAdmin => 'To use tun, rerun VX as administrator';
@@ -831,12 +847,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String decodeResult(num value1, num value2) {
     final intl.NumberFormat value1NumberFormat = intl.NumberFormat.compact(
       locale: localeName,
-      
     );
     final String value1String = value1NumberFormat.format(value1);
     final intl.NumberFormat value2NumberFormat = intl.NumberFormat.compact(
       locale: localeName,
-      
     );
     final String value2String = value2NumberFormat.format(value2);
 
@@ -859,22 +873,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String updateSubResult(num value1, num value2, num value3, num value4) {
     final intl.NumberFormat value1NumberFormat = intl.NumberFormat.compact(
       locale: localeName,
-      
     );
     final String value1String = value1NumberFormat.format(value1);
     final intl.NumberFormat value2NumberFormat = intl.NumberFormat.compact(
       locale: localeName,
-      
     );
     final String value2String = value2NumberFormat.format(value2);
     final intl.NumberFormat value3NumberFormat = intl.NumberFormat.compact(
       locale: localeName,
-      
     );
     final String value3String = value3NumberFormat.format(value3);
     final intl.NumberFormat value4NumberFormat = intl.NumberFormat.compact(
       locale: localeName,
-      
     );
     final String value4String = value4NumberFormat.format(value4);
 
@@ -909,7 +919,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failedToUpdateCountry => 'Failed to update areas';
 
   @override
-  String get keepAlivePeriodMustBeBetween2And60 => 'Need to be between 2 and 60';
+  String get keepAlivePeriodMustBeBetween2And60 =>
+      'Need to be between 2 and 60';
 
   @override
   String get showApp => 'Show App';
@@ -939,13 +950,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addCommonSshKey => 'Add SSH Key';
 
   @override
-  String get sshKeyContentOrPathRequired => 'At least one of SSH Key Content or SSH Key File Path is required';
+  String get sshKeyContentOrPathRequired =>
+      'At least one of SSH Key Content or SSH Key File Path is required';
 
   @override
   String get failedToAddCommonSshKey => 'Failed to add SSH key';
 
   @override
-  String get failedToAddCommonSshKeyDueToDuplicateName => 'Failed to add SSH key because there is a key with the same name';
+  String get failedToAddCommonSshKeyDueToDuplicateName =>
+      'Failed to add SSH key because there is a key with the same name';
 
   @override
   String get quickDeploy => 'Quick Deploy';
@@ -1012,10 +1025,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get all => 'All';
 
   @override
-  String get failedToUndoBlockDns => 'Failed to remove the WFP filter for blocking dns traffic of primary NIC, please close this app which can remove the filter';
+  String get failedToUndoBlockDns =>
+      'Failed to remove the WFP filter for blocking dns traffic of primary NIC, please close this app which can remove the filter';
 
   @override
-  String get failedToRemoveSystemProxy => 'Failed to remove system proxy, please remove it mannually at Settings > System Proxy.';
+  String get failedToRemoveSystemProxy =>
+      'Failed to remove system proxy, please remove it mannually at Settings > System Proxy.';
 
   @override
   String failedToChangeNode(String value) {
@@ -1176,13 +1191,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAccount => 'Delete Account';
 
   @override
-  String get deleteAccountConfirm => 'Are you sure you want to delete your account? This action cannot be undone.';
+  String get deleteAccountConfirm =>
+      'Are you sure you want to delete your account? This action cannot be undone.';
 
   @override
-  String get domainSetDescription => 'The following domain set uses proxy DNS server (default 8.8.8.8 and 1.1.1.1) to resolve, other domains use direct DNS server (default is dns servers of your primary physical nic, or 223.5.5.5 and 114.114.114.114 if the former cannot be known) to resolve';
+  String get domainSetDescription =>
+      'The following domain set uses proxy DNS server (default 8.8.8.8 and 1.1.1.1) to resolve, other domains use direct DNS server (default is dns servers of your primary physical nic, or 223.5.5.5 and 114.114.114.114 if the former cannot be known) to resolve';
 
   @override
-  String get routerRuleDescription => 'For each connection, rules are matched one by one from top to bottom, if a rule matches, the following rules will not be considered. If no rule matches, the connection will abort.';
+  String get routerRuleDescription =>
+      'For each connection, rules are matched one by one from top to bottom, if a rule matches, the following rules will not be considered. If no rule matches, the connection will abort.';
 
   @override
   String get dstIpSet => 'Destination IP Set';
@@ -1245,7 +1263,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ruleNameRuBlockProxyIp => 'RU-Block Mode Proxy IPs';
 
   @override
-  String get ruleNameRuBlockAllProxyDomain => 'RU-Block(All) Mode Proxy Domains';
+  String get ruleNameRuBlockAllProxyDomain =>
+      'RU-Block(All) Mode Proxy Domains';
 
   @override
   String get ruleNameRuBlockAllProxyIp => 'RU-Block(All) Mode Proxy IPs';
@@ -1272,7 +1291,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sniff => 'Sniff';
 
   @override
-  String get proxyShareDesc => 'Enable HTTP and SOCKS inbound after VPN starts, so that other devices in the local network can access the internet through this machine. The inbound name is \"proxyShare\", which you can use in rules.';
+  String get proxyShareDesc =>
+      'Enable HTTP and SOCKS inbound after VPN starts, so that other devices in the local network can access the internet through this machine. The inbound name is \"proxyShare\", which you can use in rules.';
 
   @override
   String get loginSuccess => 'Login Success';
@@ -1293,7 +1313,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rateApp => 'Rate VX';
 
   @override
-  String get userConsend => 'Once you login, your email will be stored in our server until you delete your account. This is neccessary for providing account login. We do not share your email with any third party. Do you allow us to store your email?';
+  String get userConsend =>
+      'Once you login, your email will be stored in our server until you delete your account. This is neccessary for providing account login. We do not share your email with any third party. Do you allow us to store your email?';
 
   @override
   String get okay => 'Okay';
@@ -1305,10 +1326,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reject => 'Reject';
 
   @override
-  String get greatSetDescription1 => 'A large set is composed of small sets or other large sets. When telling whether a domain/IP is in the set, the exluded sets will be considered first, if the domain is in any of the excluded set, then the domain is not in the set. ';
+  String get greatSetDescription1 =>
+      'A large set is composed of small sets or other large sets. When telling whether a domain/IP is in the set, the exluded sets will be considered first, if the domain is in any of the excluded set, then the domain is not in the set. ';
 
   @override
-  String get greatSetDescription2 => 'A large set can have a mutually exclusive set. If a domain/IP is in set A, then the domain/IP is not in it\'s mutually exclusive set.';
+  String get greatSetDescription2 =>
+      'A large set can have a mutually exclusive set. If a domain/IP is in set A, then the domain/IP is not in it\'s mutually exclusive set.';
 
   @override
   String get pleaseLoginFirst => 'Please login first';
@@ -1342,16 +1365,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dependsOnDefaultNic => 'Depends on Default Physical NIC';
 
   @override
-  String get dependsOnDefaultNicDesc => 'If the default physical NIC supports IPv6, then the TUN NIC will also support IPv6, otherwise IPv6 is not supported';
+  String get dependsOnDefaultNicDesc =>
+      'If the default physical NIC supports IPv6, then the TUN NIC will also support IPv6, otherwise IPv6 is not supported';
 
   @override
-  String get tunIpv4Desc => 'On Windows/Linux, if your physical NIC supports IPv6, IPv6 traffic will not be handled by VX TUN, they will be handled by your physical NIC; on Android/iOS/macOS, IPv6 traffic will be blocked anyway.';
+  String get tunIpv4Desc =>
+      'On Windows/Linux, if your physical NIC supports IPv6, IPv6 traffic will not be handled by VX TUN, they will be handled by your physical NIC; on Android/iOS/macOS, IPv6 traffic will be blocked anyway.';
 
   @override
   String get tunRejectIpv6 => 'Reject IPv6 if node does not support it';
 
   @override
-  String get tunRejectIpv6Desc => 'Match a connection based on destination, source, application (if available), if the matched handler does not support IPv6, reject the connection';
+  String get tunRejectIpv6Desc =>
+      'Match a connection based on destination, source, application (if available), if the matched handler does not support IPv6, reject the connection';
 
   @override
   String get tunCidr4 => 'TUN IPv4 address (CIDR)';
@@ -1439,7 +1465,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get customizeHomeWidgets => 'Customize home';
 
   @override
-  String get customizeHomeWidgetsDesc => 'Choose which sections to show on the home screen.';
+  String get customizeHomeWidgetsDesc =>
+      'Choose which sections to show on the home screen.';
 
   @override
   String get homeWidgetStats => 'Speed & stats';
@@ -1466,10 +1493,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get serverError => 'Server Error';
 
   @override
-  String get gfwDesc => 'All domains/IPs that are blocked by GFW go proxy, others go direct';
+  String get gfwDesc =>
+      'All domains/IPs that are blocked by GFW go proxy, others go direct';
 
   @override
-  String get cnDesc => 'All domains/IPs of China mainland go direct, others go proxy';
+  String get cnDesc =>
+      'All domains/IPs of China mainland go direct, others go proxy';
 
   @override
   String get proxyAllDesc => 'All non-private domains/IPs go proxy';
@@ -1484,13 +1513,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dnsRuleNameGfwProxy => 'GFW Mode Proxy Domains';
 
   @override
-  String get dnsRuleNameRuBlockProxyFake => 'RU-Block Mode Proxy Domains(A/AAAA)';
+  String get dnsRuleNameRuBlockProxyFake =>
+      'RU-Block Mode Proxy Domains(A/AAAA)';
 
   @override
   String get dnsRuleNameRuBlockProxy => 'RU-Block Mode Proxy Domains';
 
   @override
-  String get dnsRuleNameRuBlockAllProxyFake => 'RU-Block(All) Mode Proxy Domains(A/AAAA)';
+  String get dnsRuleNameRuBlockAllProxyFake =>
+      'RU-Block(All) Mode Proxy Domains(A/AAAA)';
 
   @override
   String get dnsRuleNameRuBlockAllProxy => 'RU-Block(All) Mode Proxy Domains';
@@ -1502,7 +1533,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dnsRuleNameCnProxy => 'CN Mode Proxy Domains';
 
   @override
-  String get dnsRuleNameProxyAllProxyFake => 'Proxy-All Mode Proxy Domains(A/AAAA)';
+  String get dnsRuleNameProxyAllProxyFake =>
+      'Proxy-All Mode Proxy Domains(A/AAAA)';
 
   @override
   String get dnsRuleNameProxyAllProxy => 'Proxy-All Mode Proxy Domains';
@@ -1514,13 +1546,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get routerRules => 'Router Rules';
 
   @override
-  String get dnsRuleDesc => 'For each DNS request, rules are matched one by one starting from the top. If a rule matches, the following rule will not be considered. The dns server specified by the rule will be used to handle the dns query. If no rule matches, return empty DNS result.';
+  String get dnsRuleDesc =>
+      'For each DNS request, rules are matched one by one starting from the top. If a rule matches, the following rule will not be considered. The dns server specified by the rule will be used to handle the dns query. If no rule matches, return empty DNS result.';
 
   @override
   String get dnsServer => 'DNS Server';
 
   @override
-  String get howDnsRuleMatch => 'When all conditions match or there is no condition enabled, a dns rule matches.';
+  String get howDnsRuleMatch =>
+      'When all conditions match or there is no condition enabled, a dns rule matches.';
 
   @override
   String get selectAtleastOneDnsServer => 'Select at least one dns server';
@@ -1538,13 +1572,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addDnsServer => 'Add DNS Server';
 
   @override
-  String get useDefaultDnsServer => 'Use DNS servers of default NIC. If unable to get the servers, fallback to use the above servers.';
+  String get useDefaultDnsServer =>
+      'Use DNS servers of default NIC. If unable to get the servers, fallback to use the above servers.';
 
   @override
-  String get useDefaultNicDnsServer => 'Use DNS servers of default NIC. If unable to get the servers, use the following:';
+  String get useDefaultNicDnsServer =>
+      'Use DNS servers of default NIC. If unable to get the servers, use the following:';
 
   @override
-  String get addDnsAddressHint => 'Multiple addresses supported. Use comma to seperate. Each dns query will be sent to all addresses simultaneouly, the first reply will be used.';
+  String get addDnsAddressHint =>
+      'Multiple addresses supported. Use comma to seperate. Each dns query will be sent to all addresses simultaneouly, the first reply will be used.';
 
   @override
   String get invalidUrl => 'Invalid URL';
@@ -1553,13 +1590,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get duplicateDnsServerName => 'Duplicate DNS server name';
 
   @override
-  String get dnsTypeConditionDesc => 'If checked, then this condition is enabled. The condition is true only when the type of a dns query is in the selected type.';
+  String get dnsTypeConditionDesc =>
+      'If checked, then this condition is enabled. The condition is true only when the type of a dns query is in the selected type.';
 
   @override
   String enabledConditions(num number) {
     final intl.NumberFormat numberNumberFormat = intl.NumberFormat.compact(
       locale: localeName,
-      
     );
     final String numberString = numberNumberFormat.format(number);
 
@@ -1591,10 +1628,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveToDownloadFolder => 'Save to Download';
 
   @override
-  String get saveToDownloadFolderDesc => 'Move the logs to your Download folder';
+  String get saveToDownloadFolderDesc =>
+      'Move the logs to your Download folder';
 
   @override
-  String get debugLogDesc => 'If you encountered any problem during using VX, you can enable the button, and wait until the problem occur again, then click upload to upload the logs to us, rememeber to close it and delete the logsafter uploading.  Developer logs are not uploaded automatically since they contain your network activities, including the websites and apps you use. We delete the logs immediately once we process them.';
+  String get debugLogDesc =>
+      'If you encountered any problem during using VX, you can enable the button, and wait until the problem occur again, then click upload to upload the logs to us, rememeber to close it and delete the logsafter uploading.  Developer logs are not uploaded automatically since they contain your network activities, including the websites and apps you use. We delete the logs immediately once we process them.';
 
   @override
   String get clashFormatSupported => 'Only Clash Rule files are supported';
@@ -1609,19 +1648,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fallbackToProxy => 'Fallback To Proxy';
 
   @override
-  String get fallbackToProxySetting => 'When a direct connection failed, fallback to use proxy. The node selected by the \"Proxy\" selector will be used, if the selector does not exist, a random nodes will be selected';
+  String get fallbackToProxySetting =>
+      'When a direct connection failed, fallback to use proxy. The node selected by the \"Proxy\" selector will be used, if the selector does not exist, a random nodes will be selected';
 
   @override
   String get changeIpv6ToDomain => 'Change IPv6 to Domain';
 
   @override
-  String get changeIpv6ToDomainDesc => 'If the matched node does not support IPv6, but the target address is IPv6, and the domain is sniffed, change target address to the domain.';
+  String get changeIpv6ToDomainDesc =>
+      'If the matched node does not support IPv6, but the target address is IPv6, and the domain is sniffed, change target address to the domain.';
 
   @override
   String get installAsWinService => 'Add VX to Windows Service';
 
   @override
-  String get installAsWinServiceDesc => 'Before use TUN, VX needs to be added into Windows Service. Click Yes to install VX as a service, which would require you to give permission in the following UAC prompt window.';
+  String get installAsWinServiceDesc =>
+      'Before use TUN, VX needs to be added into Windows Service. Click Yes to install VX as a service, which would require you to give permission in the following UAC prompt window.';
 
   @override
   String get placeOnTop => 'Top';
@@ -1653,7 +1695,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get alwaysOn => 'Always ON';
 
   @override
-  String get alwaysOnDesc => 'As long as you did not click disconnect, always try to be connected when the app is running';
+  String get alwaysOnDesc =>
+      'As long as you did not click disconnect, always try to be connected when the app is running';
 
   @override
   String get checkAndUpdate => 'Check and Update';
@@ -1662,7 +1705,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noNewVersion => 'No new versions';
 
   @override
-  String get enableSystemExtension => 'Please enable VX SystemExtension by going to System Settings -> General -> Login Items & Extensions -> Network Extensions';
+  String get enableSystemExtension =>
+      'Please enable VX SystemExtension by going to System Settings -> General -> Login Items & Extensions -> Network Extensions';
 
   @override
   String get systemProxyPortSetting => 'System Proxy Port Setting';
@@ -1686,7 +1730,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkUpdate => 'Check Update';
 
   @override
-  String get handlerCopiedSuccess => 'Copy succeeded. The node has been added to the Default group';
+  String get handlerCopiedSuccess =>
+      'Copy succeeded. The node has been added to the Default group';
 
   @override
   String get hysteriaRejectQuic => 'Hysteria Reject QUIC';
@@ -1701,10 +1746,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cloudSyncDesc1 => 'Sync your database between multiple devices. ';
 
   @override
-  String get cloudSyncDesc2 => 'For Android devices with Google Services installed and notification on and Apple devices that can communicate with Google FCM servers, sync are real-time. Otherwise, sync will happen every 5 minutes, you can click the top left V logo icon to trigger a sync manually.';
+  String get cloudSyncDesc2 =>
+      'For Android devices with Google Services installed and notification on and Apple devices that can communicate with Google FCM servers, sync are real-time. Otherwise, sync will happen every 5 minutes, you can click the top left V logo icon to trigger a sync manually.';
 
   @override
-  String get cloudSyncDesc3 => 'The sync data will be automatically cleared from the cloud after your device have fetched them. If your device has not fetched them for 7 days, the data will deleted from the cloud.';
+  String get cloudSyncDesc3 =>
+      'The sync data will be automatically cleared from the cloud after your device have fetched them. If your device has not fetched them for 7 days, the data will deleted from the cloud.';
 
   @override
   String get nodeSub => 'Node/Subscription';
@@ -1725,7 +1772,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sync => 'Sync';
 
   @override
-  String get conditaionWarn1 => 'In most cases, domain conditions and IP conditions should not exist at the same time. When they both exist, the rule will only match when the request has both domain and IP information, which is not always the case.';
+  String get conditaionWarn1 =>
+      'In most cases, domain conditions and IP conditions should not exist at the same time. When they both exist, the rule will only match when the request has both domain and IP information, which is not always the case.';
 
   @override
   String get setName => 'Set Name';
@@ -1734,7 +1782,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addSet => 'Add Set';
 
   @override
-  String get domainIpAppConditionDesc => 'When a request\'s domain/IP/App is in any of the sets, the rule matches.';
+  String get domainIpAppConditionDesc =>
+      'When a request\'s domain/IP/App is in any of the sets, the rule matches.';
 
   @override
   String get backup => 'Database Backup';
@@ -1743,7 +1792,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get autoBackup => 'Auto Backup';
 
   @override
-  String get autoBackupDesc => 'Automatically backup database to cloud once a day.';
+  String get autoBackupDesc =>
+      'Automatically backup database to cloud once a day.';
 
   @override
   String get currentBackup => 'Current Backup';
@@ -1782,13 +1832,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fallbackRetryDomain => 'Retry Domain';
 
   @override
-  String get fallbackRetryDomainDesc => 'If a proxy connection uses ip targets and failed due to i/o timeout(this might due to DNS pollution), use domain as target and retry. The sniffed domain of the connection will be used first, if it is unavailable, the ip-to-domain domain will be used.';
+  String get fallbackRetryDomainDesc =>
+      'If a proxy connection uses ip targets and failed due to i/o timeout(this might due to DNS pollution), use domain as target and retry. The sniffed domain of the connection will be used first, if it is unavailable, the ip-to-domain domain will be used.';
 
   @override
-  String get backupPasswordDesc => 'Used to encrypt database. Only devices with this password can restore backups. The password is encrypted and stored locally.';
+  String get backupPasswordDesc =>
+      'Used to encrypt database. Only devices with this password can restore backups. The password is encrypted and stored locally.';
 
   @override
-  String get syncPasswordDesc => 'Used to encrypt sync data. Only devices with this password can sync data successfully. The password is encrypted and stored locally.';
+  String get syncPasswordDesc =>
+      'Used to encrypt sync data. Only devices with this password can sync data successfully. The password is encrypted and stored locally.';
 
   @override
   String get addDomainIpAppSet => 'Add Domain/App/IP Set';
@@ -1812,37 +1865,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get applyFailed => 'Failed to apply';
 
   @override
-  String get rememberPasswordInMemory => 'Remember sudo password in memory for later use';
+  String get rememberPasswordInMemory =>
+      'Remember sudo password in memory for later use';
 
   @override
   String get doNotShowAgain => 'Do not show again';
 
   @override
-  String get rpmTunNotice => 'When TUN is on, Reverse Path Forwarding mode will be set to Loose(2) and reset to what it was when disconnect. You can go to the following website to learn about Reverse Path Forwarding';
+  String get rpmTunNotice =>
+      'When TUN is on, Reverse Path Forwarding mode will be set to Loose(2) and reset to what it was when disconnect. You can go to the following website to learn about Reverse Path Forwarding';
 
   @override
-  String get internalDnsDesc => 'Internal DNS servers are mainly used to resolve domains when outbounds are dialing. They will be used from left to right until one of them succeeds.';
+  String get internalDnsDesc =>
+      'Internal DNS servers are mainly used to resolve domains when outbounds are dialing. They will be used from left to right until one of them succeeds.';
 
   @override
-  String get nodeSetDesc => 'There is a small domain set named \"__node__\" which contains domains and SNIs of all nodes. There is also a small IP set named \"__node__\" which contains IPs of all nodes.';
+  String get nodeSetDesc =>
+      'There is a small domain set named \"__node__\" which contains domains and SNIs of all nodes. There is also a small IP set named \"__node__\" which contains IPs of all nodes.';
 
   @override
-  String get dnsNameDesc => 'A DNS server\'s name can be referenced in the inbound condition to specify which node it uses.';
+  String get dnsNameDesc =>
+      'A DNS server\'s name can be referenced in the inbound condition to specify which node it uses.';
 
   @override
-  String get directAppSetDesc => 'On Android, applications in the direct app set will not go through VX (Split Tunnel)';
+  String get directAppSetDesc =>
+      'On Android, applications in the direct app set will not go through VX (Split Tunnel)';
 
   @override
   String get deleteDebugLogs => 'Delete Debug Logs';
 
   @override
-  String get conditionDesc => 'When a connection does not have IP info, IP condition will be false and the rule will not match. Similarly, when a connection does not have domain info, domain condition will be false and the rule will not match.';
+  String get conditionDesc =>
+      'When a connection does not have IP info, IP condition will be false and the rule will not match. Similarly, when a connection does not have domain info, domain condition will be false and the rule will not match.';
 
   @override
   String get lookupEch => 'Lookup ECH';
 
   @override
-  String get lookupEchDesc => 'If enabled and above ECH Config is empty, ECH config will be looked up from DNS server. If lookup success, use ECH, otherwise do not use ECH.';
+  String get lookupEchDesc =>
+      'If enabled and above ECH Config is empty, ECH config will be looked up from DNS server. If lookup success, use ECH, otherwise do not use ECH.';
 
   @override
   String get adWanted => 'Publish Ads';
@@ -1851,10 +1912,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get basicQuickDeployTitle => 'Two cores, four protocols';
 
   @override
-  String get basicQuickDeploySummary => 'Deploy Xray, Hysteria cores and set nodes with four common protocols';
+  String get basicQuickDeploySummary =>
+      'Deploy Xray, Hysteria cores and set nodes with four common protocols';
 
   @override
-  String get basicQuickDeployDetails => 'Install Xray-core and Hysteria, and deploy the following four inbound. If the server has already installed Xray or Hysteria, the original configuration will be replaced. If the server has not enabled BBR, BBR will be enabled.';
+  String get basicQuickDeployDetails =>
+      'Install Xray-core and Hysteria, and deploy the following four inbound. If the server has already installed Xray or Hysteria, the original configuration will be replaced. If the server has not enabled BBR, BBR will be enabled.';
 
   @override
   String get basicQuickDeployContent1 => 'Vmess five random ports';
@@ -1872,10 +1935,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get masqueradeQuickDeployTitle => 'Reality/XHTTP';
 
   @override
-  String get masqueradeQuickDeploySummary => 'Install Xray-core and deploy Reality/XHTTP inbound. If the server has already installed Xray, the original configuration will be replaced. If the server has not enabled BBR, BBR will be enabled.';
+  String get masqueradeQuickDeploySummary =>
+      'Install Xray-core and deploy Reality/XHTTP inbound. If the server has already installed Xray, the original configuration will be replaced. If the server has not enabled BBR, BBR will be enabled.';
 
   @override
-  String get masqueradeQuickDeployDetails => 'Install Xray-core, and deploy Reality/XHTTP inbound. If the server has already installed Xray, the original configuration will be replaced. If the server has not enabled BBR, BBR will be enabled.';
+  String get masqueradeQuickDeployDetails =>
+      'Install Xray-core, and deploy Reality/XHTTP inbound. If the server has already installed Xray, the original configuration will be replaced. If the server has not enabled BBR, BBR will be enabled.';
 
   @override
   String fatalError(String error) {
@@ -1915,10 +1980,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseSelectARoutingMode => 'Please select a routing mode';
 
   @override
-  String get addRouteModeNotice => 'Clicking the + button to add a routing mode.';
+  String get addRouteModeNotice =>
+      'Clicking the + button to add a routing mode.';
 
   @override
-  String get freeUserCannotUseCustomRoutingMode => 'Free users cannot use custom routing modes. Please select a default routing mode. You can add default routing modes in the routing page.';
+  String get freeUserCannotUseCustomRoutingMode =>
+      'Free users cannot use custom routing modes. Please select a default routing mode. You can add default routing modes in the routing page.';
 
   @override
   String get defaultRouteModes => 'Default modes';
@@ -1927,22 +1994,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get custom => 'Custom';
 
   @override
-  String get geositeUrlDesc => 'If empty, the geosite.dat provided by LoyalSoldier will be used';
+  String get geositeUrlDesc =>
+      'If empty, the geosite.dat provided by LoyalSoldier will be used';
 
   @override
-  String get geoUrlDesc => 'If empty, the geoip.dat provided by LoyalSoldier will be used';
+  String get geoUrlDesc =>
+      'If empty, the geoip.dat provided by LoyalSoldier will be used';
 
   @override
   String get ruBlocked => 'Russia Blocked';
 
   @override
-  String get ruBlockedDesc => 'Domains/IPs blocked in Russia go proxy, others go direct';
+  String get ruBlockedDesc =>
+      'Domains/IPs blocked in Russia go proxy, others go direct';
 
   @override
   String get ruBlockedAll => 'Russia Blocked(All)';
 
   @override
-  String get ruBlockedAllDesc => 'All domains/IPs known to be blocked in Russia go proxy, others go direct';
+  String get ruBlockedAllDesc =>
+      'All domains/IPs known to be blocked in Russia go proxy, others go direct';
 
   @override
   String get dnsServerProxy => 'Proxy DNS Server';
@@ -1951,10 +2022,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dnsServerDirect => 'Direct DNS Server';
 
   @override
-  String get sniffDomainForIpConnection => 'If a connection use IP target, sniff domain';
+  String get sniffDomainForIpConnection =>
+      'If a connection use IP target, sniff domain';
 
   @override
-  String get resolveDomain => 'For connections using domain targets, use DNS to resolve IPs. When each resolved IP make the IP condition true, the condition is true';
+  String get resolveDomain =>
+      'For connections using domain targets, use DNS to resolve IPs. When each resolved IP make the IP condition true, the condition is true';
 
   @override
   String get skipSniff => 'No Sniff';
@@ -1966,16 +2039,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get skipResolve => 'No Resolve';
 
   @override
-  String get describeTheProblem => 'Please describe the problem you encountered, if you have already contacted customer service, you can leave it blank';
+  String get describeTheProblem =>
+      'Please describe the problem you encountered, if you have already contacted customer service, you can leave it blank';
 
   @override
-  String get debugLogNotAvailable => 'Developer log function is not available in non-store version';
+  String get debugLogNotAvailable =>
+      'Developer log function is not available in non-store version';
 
   @override
   String get useBloomFilter => 'Use Bloom Filter in iOS';
 
   @override
-  String get useBloomFilterDesc => 'Bloom Filter can reduce memory usage, however, there is a small chance (1%) of false positives: domains not in the set might be misclassified as in the set.';
+  String get useBloomFilterDesc =>
+      'Bloom Filter can reduce memory usage, however, there is a small chance (1%) of false positives: domains not in the set might be misclassified as in the set.';
 
   @override
   String get addFromClashRuleFiles => 'Add from Clash Rule Files';
@@ -1984,10 +2060,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectFromInstalledApps => 'Select from Installed Apps';
 
   @override
-  String get ipToDomainDesc => 'IP -> Domain is got from the recent DNS history. Because many domains can have same IP, it can only be said that the connection is likely to have the domain, but not guaranteed.';
+  String get ipToDomainDesc =>
+      'IP -> Domain is got from the recent DNS history. Because many domains can have same IP, it can only be said that the connection is likely to have the domain, but not guaranteed.';
 
   @override
-  String get followingAiTranslated => 'The following languages are translated by AI, which may not be accurate.';
+  String get followingAiTranslated =>
+      'The following languages are translated by AI, which may not be accurate.';
 
   @override
   String get addToDefault => 'Add to Default';
@@ -2020,43 +2098,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vxCoreConfig => 'VX Core Config';
 
   @override
-  String get selectorDesc1 => 'Selector is used to select nodes. The \"Proxy\" selector is a special selector because it supports manual selection, other selectors do not support this option.';
+  String get selectorDesc1 =>
+      'Selector is used to select nodes. The \"Proxy\" selector is a special selector because it supports manual selection, other selectors do not support this option.';
 
   @override
-  String get selectorDesc2 => 'Nodes selected by a selector will form a node chain with the nodes in Node Chain list of the selector. The last node in the Node Chain list is the landing node. [Your Traffic] -> [Node(s) selected by the selector] -> [First node in the Node Chain list] -> ... -> [Last node in the Node Chain list] -> [Final destination]';
+  String get selectorDesc2 =>
+      'Nodes selected by a selector will form a node chain with the nodes in Node Chain list of the selector. The last node in the Node Chain list is the landing node. [Your Traffic] -> [Node(s) selected by the selector] -> [First node in the Node Chain list] -> ... -> [Last node in the Node Chain list] -> [Final destination]';
 
   @override
-  String get balanceStrategyDesc => 'When the select strategy is \"All\" or \"Usable\", multiple nodes will be selected, and all of them will be used at the same time. For a connection, which node to use will be determined by the balancing strategy: if the balancing strategy is \"Random\", a random node will be selected; if the balancing strategy is \"Memory\", the same node will be used for connections with the same root domain or from the same app.';
+  String get balanceStrategyDesc =>
+      'When the select strategy is \"All\" or \"Usable\", multiple nodes will be selected, and all of them will be used at the same time. For a connection, which node to use will be determined by the balancing strategy: if the balancing strategy is \"Random\", a random node will be selected; if the balancing strategy is \"Memory\", the same node will be used for connections with the same root domain or from the same app.';
 
   @override
-  String get inboundDesc1 => 'TUN mode will make all your network traffic handled by VX. This mode prevents DNS leaking';
+  String get inboundDesc1 =>
+      'TUN mode will make all your network traffic handled by VX. This mode prevents DNS leaking';
 
   @override
-  String get inboundDesc2 => 'System Proxy mode will set proxy setting of your host. Some apps, such as browsers, respect that and their traffic will be handled by VX, however, some apps does not respect that and their traffic will not go thruogh VX';
+  String get inboundDesc2 =>
+      'System Proxy mode will set proxy setting of your host. Some apps, such as browsers, respect that and their traffic will be handled by VX, however, some apps does not respect that and their traffic will not go thruogh VX';
 
   @override
   String get fakeDnsDesc => 'FakeDNS can reduce latency';
 
   @override
-  String get routeDesc => 'VX will add one or more routing modes based on your device language. Routing modes can be added/deleted in the routing page';
+  String get routeDesc =>
+      'VX will add one or more routing modes based on your device language. Routing modes can be added/deleted in the routing page';
 
   @override
-  String get transportConditionMatchAllDesc => 'Force the inbound connections to use this protocol. When enabled, inbound connections must use this protocol, otherwise the connection will fail, and there should only be one transport protocol. When disabled, this transport protocol will only be considered when the condition matches, if condition does not match, the next transport protocol will be considered, if no transport protocol matches, then the inbound conn will be handed to the upper layer';
+  String get transportConditionMatchAllDesc =>
+      'Force the inbound connections to use this protocol. When enabled, inbound connections must use this protocol, otherwise the connection will fail, and there should only be one transport protocol. When disabled, this transport protocol will only be considered when the condition matches, if condition does not match, the next transport protocol will be considered, if no transport protocol matches, then the inbound conn will be handed to the upper layer';
 
   @override
-  String get transportConditionH2Desc => 'Data starting with http2 preface. This should be checked for h2 protocols such as grpc or http';
+  String get transportConditionH2Desc =>
+      'Data starting with http2 preface. This should be checked for h2 protocols such as grpc or http';
 
   @override
-  String get securityConditionMatchAllDesc => 'Force the inbound connections to use this security protocol. When enabled, inbound connections must use this security protocol, otherwise the connection will fail, and there should only be one security protocol. When disabled, this security protocol will only be considered when the condition matches, if condition does not match, the next security protocol will be considered, if no security protocol matches, then the inbound conn will be handed to the upper layer: Transport Protocol layer.';
+  String get securityConditionMatchAllDesc =>
+      'Force the inbound connections to use this security protocol. When enabled, inbound connections must use this security protocol, otherwise the connection will fail, and there should only be one security protocol. When disabled, this security protocol will only be considered when the condition matches, if condition does not match, the next security protocol will be considered, if no security protocol matches, then the inbound conn will be handed to the upper layer: Transport Protocol layer.';
 
   @override
   String get allInOneQuickDeployTitle => 'All in One';
 
   @override
-  String get allInOneQuickDeploySummary => 'Install VX core (Open Source), deploy many protocols';
+  String get allInOneQuickDeploySummary =>
+      'Install VX core (Open Source), deploy many protocols';
 
   @override
-  String get allInOneQuickDeployDetails => 'Install VX core (Open Source), deploy a combination of: (Vmess, Trojan, Anytls)x(Websocket, gRPC)x(TLS, Reality) + Hysteria. If the server has not enabled BBR, BBR will be enabled';
+  String get allInOneQuickDeployDetails =>
+      'Install VX core (Open Source), deploy a combination of: (Vmess, Trojan, Anytls)x(Websocket, gRPC)x(TLS, Reality) + Hysteria. If the server has not enabled BBR, BBR will be enabled';
 
   @override
   String get addMulti => 'Add Multi Inbound';
@@ -2065,25 +2154,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addSingle => 'Add Normal Inbound';
 
   @override
-  String get multiDesc => 'Multi inbound can use almost all protocols on a port. It is similar to Xray fallback. It supports fallback of all layers, which means you can set multiple proxy protocols, transport protocols and security protocols. Currently, UDP fallback is not supported, so the UDP port will only be used by one protocol, Hysteria will be preferred, if it is not available, the first protocol that supports UDP will use the UDP port.';
+  String get multiDesc =>
+      'Multi inbound can use almost all protocols on a port. It is similar to Xray fallback. It supports fallback of all layers, which means you can set multiple proxy protocols, transport protocols and security protocols. Currently, UDP fallback is not supported, so the UDP port will only be used by one protocol, Hysteria will be preferred, if it is not available, the first protocol that supports UDP will use the UDP port.';
 
   @override
-  String get normalInboundDesc => 'Normal inbound is similar to V2ray inbound, it supports fallback of proxy layer, you can set multiple proxy protocols, but it does not support fallback of transport layer and security layer (Multi inbound supports fallback of all layers).';
+  String get normalInboundDesc =>
+      'Normal inbound is similar to V2ray inbound, it supports fallback of proxy layer, you can set multiple proxy protocols, but it does not support fallback of transport layer and security layer (Multi inbound supports fallback of all layers).';
 
   @override
   String get optional => 'Optional';
 
   @override
-  String get allInOneRealityDesc => 'Optional. If not filled, Reality inbound will not be added';
+  String get allInOneRealityDesc =>
+      'Optional. If not filled, Reality inbound will not be added';
 
   @override
-  String get allInOneCdnDesc => 'Optional. The SSL/TLS encryption of CDN can be flexible/full. It is recommended to use full, because it will encrypt the traffic between CDN and your server';
+  String get allInOneCdnDesc =>
+      'Optional. The SSL/TLS encryption of CDN can be flexible/full. It is recommended to use full, because it will encrypt the traffic between CDN and your server';
 
   @override
   String get disableOSFirewall => 'Disable OS Firewall';
 
   @override
-  String get disableOSFirewallDesc => 'Your VPS usually has two firewalls, one is OS firewall, the other is the firewall provided by the VPS provider. This option will ONLY disable the OS firewall. Many cloud providers such as GCP disable the OS firewall by default, but some do not. If your VPS has the OS firewall enabled, and the OS firewall does not allow inbound traffic on the above port, your nodes will be unusable until you manually configure the OS firewall to allow inbound traffic on the above port.';
+  String get disableOSFirewallDesc =>
+      'Your VPS usually has two firewalls, one is OS firewall, the other is the firewall provided by the VPS provider. This option will ONLY disable the OS firewall. Many cloud providers such as GCP disable the OS firewall by default, but some do not. If your VPS has the OS firewall enabled, and the OS firewall does not allow inbound traffic on the above port, your nodes will be unusable until you manually configure the OS firewall to allow inbound traffic on the above port.';
 
   @override
   String get vxNotRunning => 'VX is not running';
@@ -2098,7 +2192,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uninstall => 'Uninstall';
 
   @override
-  String get installVXCoreFirst => 'Install VX-Core (Open Source) first to configure it';
+  String get installVXCoreFirst =>
+      'Install VX-Core (Open Source) first to configure it';
 
   @override
   String get duplicateInboundTagName => 'Duplicate inbound tag name';
@@ -2116,7 +2211,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get certToBeProvidedToPeer => 'Certificate to be provided to peer';
 
   @override
-  String get verifyPeerCertDesc => 'Used to verify the certificate provided by the peer';
+  String get verifyPeerCertDesc =>
+      'Used to verify the certificate provided by the peer';
 
   @override
   String get issueCADesc => 'Used to issue certificates to peers in real time';
@@ -2131,7 +2227,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clientOnly => 'Client Only';
 
   @override
-  String get visionDesc => 'Vision will reduce the characteristics of the connection and improve performance, expecially on Linux. If you enable this, the server must also have this enabled. (This feature originates from Vision-RPRX-XTLS of VLESS, and is roughly same as the basic mode of Vision-RPRX-XTLS)';
+  String get visionDesc =>
+      'Vision will reduce the characteristics of the connection and improve performance, expecially on Linux. If you enable this, the server must also have this enabled. (This feature originates from Vision-RPRX-XTLS of VLESS, and is roughly same as the basic mode of Vision-RPRX-XTLS)';
 
   @override
   String get activeNodes => 'Active Nodes';
@@ -2155,13 +2252,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get realtimeRate => 'Rate';
 
   @override
-  String get realtimeRateDesc => 'Observerd rate of the node: speed of downloading 10KB data.';
+  String get realtimeRateDesc =>
+      'Observerd rate of the node: speed of downloading 10KB data.';
 
   @override
   String get realtimeLatency => 'Latency';
 
   @override
-  String get realtimeLatencyDesc => 'Observerd latency of the node: the time used to get a response';
+  String get realtimeLatencyDesc =>
+      'Observerd latency of the node: the time used to get a response';
 
   @override
   String get download => 'Download';
@@ -2179,7 +2278,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get autoUpdateGeoFiles => 'Auto Update Geo Files';
 
   @override
-  String get autoUpdateGeoFilesDesc => 'Automatically update geo files at the configured interval';
+  String get autoUpdateGeoFilesDesc =>
+      'Automatically update geo files at the configured interval';
 
   @override
   String get geoUpdateInterval => 'Update Interval';
@@ -2194,7 +2294,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shareWithOtherClients => 'Share with Other Clients';
 
   @override
-  String get shareWithOtherClientsNotice => 'There might be incompatibility issues';
+  String get shareWithOtherClientsNotice =>
+      'There might be incompatibility issues';
 
   @override
   String get homeEditStandardLayout => 'Standard';
@@ -2203,10 +2304,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeEditCustomizableLayout => 'Customizable';
 
   @override
-  String get domainStrategyDesc => 'Determine how to resolve domains when dialing. PreferIPv4: lookup both IPv4 and IPv6(if default nic support 6), wait for the two queries to complete, then try IPv4s, if failed, try IPv6s; PreferIPv6: lookup both IPv4 and IPv6(if default nic support 6), wait for the two queries to complete, then try IPv6s first, if failed, use IPv4; IPv4Only: only lookup IPv4; IPv6Only: only lookup IPv6; Speed: lookup both A and AAAA(if default nic support 6), use the first returned result (might be IPv4s or IPv6s), if failed, use the other IPs.';
+  String get domainStrategyDesc =>
+      'Determine how to resolve domains when dialing. PreferIPv4: lookup both IPv4 and IPv6(if default nic support 6), wait for the two queries to complete, then try IPv4s, if failed, try IPv6s; PreferIPv6: lookup both IPv4 and IPv6(if default nic support 6), wait for the two queries to complete, then try IPv6s first, if failed, use IPv4; IPv4Only: only lookup IPv4; IPv6Only: only lookup IPv6; Speed: lookup both A and AAAA(if default nic support 6), use the first returned result (might be IPv4s or IPv6s), if failed, use the other IPs.';
 
   @override
-  String get uotDesc => 'Use TCP to transport UDP (Sagernet UDP over TCP v2 protocol). The server must also support it';
+  String get uotDesc =>
+      'Use TCP to transport UDP (Sagernet UDP over TCP v2 protocol). The server must also support it';
 
   @override
   String get maxConcurrency => 'Max Concurrency';
@@ -2224,7 +2327,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcome => 'Welcome to VX';
 
   @override
-  String get sourceCodeAvailable => 'VX is a open-source proxy client powered by vx-core.';
+  String get sourceCodeAvailable =>
+      'VX is a open-source proxy client powered by vx-core.';
 
   @override
   String get vxSourceCode => 'Source Code of VX';
@@ -2233,7 +2337,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get vxCoreSourceCode => 'Source Code of VX-Core';
 
   @override
-  String get windowsUpdateNotice1 => 'If you update to this app from a 2.x.x version, to reuse your previous database and preference, close the app, rename the following folder: ';
+  String get windowsUpdateNotice1 =>
+      'If you update to this app from a 2.x.x version, to reuse your previous database and preference, close the app, rename the following folder: ';
 
   @override
   String get windowsUpdateNotice2 => 'Then start app.';
@@ -2242,22 +2347,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get copyPath => 'Copy Path';
 
   @override
-  String get invalidFields => 'Form contains invalid fields, please correct them first';
+  String get invalidFields =>
+      'Form contains invalid fields, please correct them first';
 
   @override
-  String get lruSizeDesc => 'The number of fake DNS records to cache for each cidr. ';
+  String get lruSizeDesc =>
+      'The number of fake DNS records to cache for each cidr. ';
 
   @override
   String get cacheDuration => 'Cache Duration';
 
   @override
-  String get cacheDurationDesc => 'How long to cache DNS record. If empty or 0, DNS records will cached until they expire';
+  String get cacheDurationDesc =>
+      'How long to cache DNS record. If empty or 0, DNS records will cached until they expire';
 
   @override
   String get activate => 'Activate This Device';
 
   @override
-  String get activateDesc => 'After activation, you can use most Pro features without logging in (except for cloud sync and cloud backup). Each account can activate up to 10 devices per year.';
+  String get activateDesc =>
+      'After activation, you can use most Pro features without logging in (except for cloud sync and cloud backup). Each account can activate up to 10 devices per year.';
 
   @override
   String get activated => 'Activated';
@@ -2266,13 +2375,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get myInvitationCode => 'My Invitation Code';
 
   @override
-  String get myInvitationCodeDesc => 'Share this code to your friends, both sides will get 3 month of pro features for free';
+  String get myInvitationCodeDesc =>
+      'Share this code to your friends, both sides will get 3 month of pro features for free';
 
   @override
   String get useInvitationCode => 'Use Invitation Code';
 
   @override
-  String get useInvitationCodeDesc => 'Input other\'s invitation code to get 3 month of pro features for both!';
+  String get useInvitationCodeDesc =>
+      'Input other\'s invitation code to get 3 month of pro features for both!';
 
   @override
   String get apply => 'Apply';
@@ -2287,7 +2398,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expired => 'Expired';
 
   @override
-  String get deploySuccessWarnings => 'Deploy nodes successfully, but these tasks failed: ';
+  String get deploySuccessWarnings =>
+      'Deploy nodes successfully, but these tasks failed: ';
 
   @override
   String get subString => 'Sub String';
@@ -2305,7 +2417,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get restoreSuccessful => 'Restore Successful';
 
   @override
-  String get pleaseUseAnotherEmail => 'Unsupported email, please use another email';
+  String get pleaseUseAnotherEmail =>
+      'Unsupported email, please use another email';
 
   @override
   String dbError(String error) {
@@ -2325,26 +2438,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fallback => 'Fallback';
 
   @override
-  String get fallbackDesc => 'If the handler picked for this rule failed, use the following fallbacks. Each fallback has a list of conditions, the fallback will be used only if all conditions are true.';
+  String get fallbackDesc =>
+      'If the handler picked for this rule failed, use the following fallbacks. Each fallback has a list of conditions, the fallback will be used only if all conditions are true.';
 
   @override
   String get rewriteIpToDomain => 'Rewrite IP to Domain';
 
   @override
-  String get rewriteIpToDomainDesc => 'If the request address is IP, and there is sniffed domain, then use the sniffed domain as the request address. This is a measure for DNS pollution';
+  String get rewriteIpToDomainDesc =>
+      'If the request address is IP, and there is sniffed domain, then use the sniffed domain as the request address. This is a measure for DNS pollution';
 
   @override
   String get resultIpSet => 'Result IP Set';
 
   @override
-  String get resultIpSetDesc => 'A/AAAA records whose IPs are not in the set will be dropped';
+  String get resultIpSetDesc =>
+      'A/AAAA records whose IPs are not in the set will be dropped';
 
   @override
   String get inverse => 'Inverse';
 
   @override
-  String get automaticallyAddFallbackDomain => 'Automatically Add Fallback Domain';
+  String get automaticallyAddFallbackDomain =>
+      'Automatically Add Fallback Domain';
 
   @override
-  String get automaticallyAddFallbackDomainDesc => 'If a connection initially went direct but failed, then it fallbacked to proxy and succeeded, automatically add the domain into a domain set called \"Fallback\"';
+  String get automaticallyAddFallbackDomainDesc =>
+      'If a connection initially went direct but failed, then it fallbacked to proxy and succeeded, automatically add the domain into a domain set called \"Fallback\"';
 }

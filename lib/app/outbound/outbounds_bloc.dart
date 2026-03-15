@@ -52,12 +52,15 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
     this._authBloc,
     this._pref,
     this._xApiClient,
-  ) : super(OutboundState(
-            sortCol: _pref.sortCol,
-            viewMode: _pref.outboundViewMode == 'grid'
-                ? OutboundViewMode.grid
-                : OutboundViewMode.list,
-            smallScreenPreference: _pref.outboundTableSmallScreenPreference)) {
+  ) : super(
+        OutboundState(
+          sortCol: _pref.sortCol,
+          viewMode: _pref.outboundViewMode == 'grid'
+              ? OutboundViewMode.grid
+              : OutboundViewMode.list,
+          smallScreenPreference: _pref.outboundTableSmallScreenPreference,
+        ),
+      ) {
     on<InitialEvent>(_initial);
     on<SyncEvent>(_sync);
     on<UserIsNotProEvent>(_onUserIsNotPro);
@@ -140,103 +143,134 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
 
   Future<void> _initial(InitialEvent e, Emitter<OutboundState> emit) async {
     final handlers = await _outboundRepo.getHandlers();
-    emit(state.copyWith(
-      handlers: _sortHandlers(handlers, state.sortCol),
-    ));
+    emit(state.copyWith(handlers: _sortHandlers(handlers, state.sortCol)));
 
     final future = <Future>[];
-    future.add(emit.forEach(_xController.handlerBeingUsedStream(),
+    future.add(
+      emit.forEach(
+        _xController.handlerBeingUsedStream(),
         onData: (handlerBeingUsed) {
-      late final int handlerBeingUsedId4;
-      if (handlerBeingUsed.tag4.contains('-')) {
-        handlerBeingUsedId4 =
-            int.tryParse(handlerBeingUsed.tag4.split('-').firstOrNull ?? '') ??
+          late final int handlerBeingUsedId4;
+          if (handlerBeingUsed.tag4.contains('-')) {
+            handlerBeingUsedId4 =
+                int.tryParse(
+                  handlerBeingUsed.tag4.split('-').firstOrNull ?? '',
+                ) ??
                 0;
-      } else {
-        handlerBeingUsedId4 = int.tryParse(handlerBeingUsed.tag4) ?? 0;
-      }
-      late final int handlerBeingUsedId6;
-      if (handlerBeingUsed.tag6.contains('-')) {
-        handlerBeingUsedId6 =
-            int.tryParse(handlerBeingUsed.tag6.split('-').firstOrNull ?? '') ??
+          } else {
+            handlerBeingUsedId4 = int.tryParse(handlerBeingUsed.tag4) ?? 0;
+          }
+          late final int handlerBeingUsedId6;
+          if (handlerBeingUsed.tag6.contains('-')) {
+            handlerBeingUsedId6 =
+                int.tryParse(
+                  handlerBeingUsed.tag6.split('-').firstOrNull ?? '',
+                ) ??
                 0;
-      } else {
-        handlerBeingUsedId6 = int.tryParse(handlerBeingUsed.tag6) ?? 0;
-      }
-      List<OutboundHandler> newHandlers = state.handlers;
-      if (handlerBeingUsedId4 != 0 || handlerBeingUsedId6 != 0) {
-        newHandlers = stableMoveToFront(state.handlers,
-            (h) => h.id == handlerBeingUsedId4 || h.id == handlerBeingUsedId6);
-      }
-      return state.copyWith(
-          handlers: newHandlers,
-          using4: handlerBeingUsedId4,
-          using6: handlerBeingUsedId6);
-    }));
+          } else {
+            handlerBeingUsedId6 = int.tryParse(handlerBeingUsed.tag6) ?? 0;
+          }
+          List<OutboundHandler> newHandlers = state.handlers;
+          if (handlerBeingUsedId4 != 0 || handlerBeingUsedId6 != 0) {
+            newHandlers = stableMoveToFront(
+              state.handlers,
+              (h) => h.id == handlerBeingUsedId4 || h.id == handlerBeingUsedId6,
+            );
+          }
+          return state.copyWith(
+            handlers: newHandlers,
+            using4: handlerBeingUsedId4,
+            using6: handlerBeingUsedId6,
+          );
+        },
+      ),
+    );
     final subsStream = _outboundRepo.getStreamOfSubs();
     List<MySubscription> mySubs = [];
-    future.add(subsStream.forEach((subs) async {
-      mySubs = subs;
-      final groups = await _outboundRepo.getGroups();
-      final allGroups = <NodeGroup>[];
-      allGroups.addAll(groups);
-      allGroups.addAll(subs);
-      allGroups.sort((a, b) {
-        if (a.placeOnTop == b.placeOnTop) {
-          return 0;
+    future.add(
+      subsStream.forEach((subs) async {
+        mySubs = subs;
+        final groups = await _outboundRepo.getGroups();
+        final allGroups = <NodeGroup>[];
+        allGroups.addAll(groups);
+        allGroups.addAll(subs);
+        allGroups.sort((a, b) {
+          if (a.placeOnTop == b.placeOnTop) {
+            return 0;
+          }
+          return a.placeOnTop ? -1 : 1;
+        });
+        final initial = state.selected == null && _pref.nodeGroup != null;
+        emit(
+          state.copyWith(
+            gs: allGroups,
+            selected: initial
+                ? () => allGroups.firstWhereOrNull(
+                    (e) => e.name == _pref.nodeGroup,
+                  )
+                : null,
+          ),
+        );
+        if (initial) {
+          emit(
+            state.copyWith(
+              handlers: _sortHandlers(await _getHandlers(), state.sortCol),
+            ),
+          );
         }
-        return a.placeOnTop ? -1 : 1;
-      });
-      final initial = state.selected == null && _pref.nodeGroup != null;
-      emit(state.copyWith(
-          gs: allGroups,
-          selected: initial
-              ? () =>
-                  allGroups.firstWhereOrNull((e) => e.name == _pref.nodeGroup)
-              : null));
-      if (initial) {
-        emit(state.copyWith(
-          handlers: _sortHandlers(await _getHandlers(), state.sortCol),
-        ));
-      }
-    }));
+      }),
+    );
     final groupsStream = _outboundRepo.getStreamOfGroups();
-    future.add(groupsStream.forEach((groups) async {
-      final allGroups = <NodeGroup>[];
-      allGroups.addAll(groups);
-      allGroups.addAll(mySubs);
-      allGroups.sort((a, b) {
-        if (a.placeOnTop == b.placeOnTop) {
-          return 0;
-        }
-        return a.placeOnTop ? -1 : 1;
-      });
-      emit(state.copyWith(
-          gs: allGroups,
-          selected: () {
-            if (state.selected is MySubscription) {
-              return allGroups.firstWhereOrNull((e) =>
-                  e is MySubscription &&
-                  e.id == (state.selected as MySubscription).id);
-            } else if (state.selected is OutboundHandlerGroup) {
-              return allGroups.firstWhereOrNull((e) =>
-                  e is OutboundHandlerGroup && e.name == state.selected!.name);
-            }
-            return null;
-          }));
-    }));
+    future.add(
+      groupsStream.forEach((groups) async {
+        final allGroups = <NodeGroup>[];
+        allGroups.addAll(groups);
+        allGroups.addAll(mySubs);
+        allGroups.sort((a, b) {
+          if (a.placeOnTop == b.placeOnTop) {
+            return 0;
+          }
+          return a.placeOnTop ? -1 : 1;
+        });
+        emit(
+          state.copyWith(
+            gs: allGroups,
+            selected: () {
+              if (state.selected is MySubscription) {
+                return allGroups.firstWhereOrNull(
+                  (e) =>
+                      e is MySubscription &&
+                      e.id == (state.selected as MySubscription).id,
+                );
+              } else if (state.selected is OutboundHandlerGroup) {
+                return allGroups.firstWhereOrNull(
+                  (e) =>
+                      e is OutboundHandlerGroup &&
+                      e.name == state.selected!.name,
+                );
+              }
+              return null;
+            },
+          ),
+        );
+      }),
+    );
     await Future.wait(future);
   }
 
   void _sync(SyncEvent e, Emitter<OutboundState> emit) async {
     logger.d('SyncEvent');
-    emit(state.copyWith(
-      handlers: _sortHandlers(await _getHandlers(), state.sortCol),
-    ));
+    emit(
+      state.copyWith(
+        handlers: _sortHandlers(await _getHandlers(), state.sortCol),
+      ),
+    );
   }
 
   void _onOutboundModeSwitch(
-      OutboundModeSwitchEvent e, Emitter<OutboundState> emit) {
+    OutboundModeSwitchEvent e,
+    Emitter<OutboundState> emit,
+  ) {
     if (e.mode == ProxySelectorMode.manual) {
       emit(state.copyWith(using4: null, using6: null));
     }
@@ -263,11 +297,15 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   }
 
   List<OutboundHandler> _sortHandlers(
-      List<OutboundHandler> handlers, (Col, SortOrder)? colSort) {
+    List<OutboundHandler> handlers,
+    (Col, SortOrder)? colSort,
+  ) {
     if (colSort == null) {
-      if (state.using4 != 0 /* || state.using6 != 0 */) {
-        handlers = stableMoveToFront(handlers,
-            (h) => h.id == state.using4 /* || h.id == state.using6 */);
+      if (state.using4 != 0 /* || state.using6 != 0 */ ) {
+        handlers = stableMoveToFront(
+          handlers,
+          (h) => h.id == state.using4 /* || h.id == state.using6 */,
+        );
       }
       return handlers;
     }
@@ -298,23 +336,32 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
         //   final bOk = b.ok > 0 ? 1 : b.ok;
         //   return (aOk).compareTo(bOk) * multiplier;
         // });
-        insertionSort(handlers, compare: (a, b) {
-          final aOk = a.ok > 0 ? 1 : a.ok;
-          final bOk = b.ok > 0 ? 1 : b.ok;
-          return (aOk).compareTo(bOk) * multiplier;
-        });
+        insertionSort(
+          handlers,
+          compare: (a, b) {
+            final aOk = a.ok > 0 ? 1 : a.ok;
+            final bOk = b.ok > 0 ? 1 : b.ok;
+            return (aOk).compareTo(bOk) * multiplier;
+          },
+        );
       case Col.protocol:
-        handlers.sort((a, b) =>
-            (a.displayProtocol()).compareTo(b.displayProtocol()) * multiplier);
+        handlers.sort(
+          (a, b) =>
+              (a.displayProtocol()).compareTo(b.displayProtocol()) * multiplier,
+        );
       case Col.countryIcon:
         handlers.sort(
-            (a, b) => (a.countryCode).compareTo(b.countryCode) * multiplier);
+          (a, b) => (a.countryCode).compareTo(b.countryCode) * multiplier,
+        );
       case Col.active:
-        insertionSort(handlers, compare: (a, b) {
-          final va = a.selected ? 1 : -1;
-          final vb = b.selected ? 1 : -1;
-          return va.compareTo(vb) * multiplier;
-        });
+        insertionSort(
+          handlers,
+          compare: (a, b) {
+            final va = a.selected ? 1 : -1;
+            final vb = b.selected ? 1 : -1;
+            return va.compareTo(vb) * multiplier;
+          },
+        );
       default:
     }
     return handlers;
@@ -323,21 +370,25 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   void _sort(SortHandlersEvent e, Emitter<OutboundState> emit) {
     _pref.setSortCol(e.colSort);
     final handlers = List<OutboundHandler>.from(state.handlers);
-    emit(state.copyWith(
-      handlers: _sortHandlers(handlers, e.colSort),
-      sortCol: () => e.colSort,
-    ));
+    emit(
+      state.copyWith(
+        handlers: _sortHandlers(handlers, e.colSort),
+        sortCol: () => e.colSort,
+      ),
+    );
   }
 
   // get currently displayed handlers
   Future<List<OutboundHandler>> _getHandlers() async {
     late List<OutboundHandler> handlers;
     if (state.selected is OutboundHandlerGroup) {
-      handlers = await _outboundRepo
-          .getHandlersByGroup((state.selected as OutboundHandlerGroup).name);
+      handlers = await _outboundRepo.getHandlersByGroup(
+        (state.selected as OutboundHandlerGroup).name,
+      );
     } else if (state.selected is Subscription) {
       handlers = await _outboundRepo.getHandlers(
-          subId: (state.selected as Subscription).id);
+        subId: (state.selected as Subscription).id,
+      );
     } else {
       handlers = await _outboundRepo.getHandlers();
     }
@@ -346,17 +397,25 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   }
 
   Future<void> _onSelectedChange(
-      SelectedGroupChangeEvent e, Emitter<OutboundState> emit) async {
+    SelectedGroupChangeEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
     emit(state.copyWith(selected: () => e.selected));
     _pref.setNodeGroup(e.selected?.name);
-    emit(state.copyWith(
-        handlers: _sortHandlers(await _getHandlers(), state.sortCol)));
+    emit(
+      state.copyWith(
+        handlers: _sortHandlers(await _getHandlers(), state.sortCol),
+      ),
+    );
   }
 
   Future<void> _onHandlersCopy(
-      HandlersCopyEvent e, Emitter<OutboundState> emit) async {
-    final newHandler =
-        (await _outboundRepo.insertHandlersWithGroup([e.handler.config]))[0];
+    HandlersCopyEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
+    final newHandler = (await _outboundRepo.insertHandlersWithGroup([
+      e.handler.config,
+    ]))[0];
     if (newHandler == null) {
       return;
     }
@@ -371,10 +430,15 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   }
 
   Future<void> _onDelete(
-      HandlersDeleteEvent e, Emitter<OutboundState> emit) async {
+    HandlersDeleteEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
     await _outboundRepo.removeHandlersByIds(e.ids);
-    emit(state.copyWith(
-        handlers: _sortHandlers(await _getHandlers(), state.sortCol)));
+    emit(
+      state.copyWith(
+        handlers: _sortHandlers(await _getHandlers(), state.sortCol),
+      ),
+    );
     await _xController.handlersRemoved(e.ids);
   }
 
@@ -389,8 +453,9 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
       }
     }
     emit(state.copyWith(handlers: newHandlers));
-    _outboundRepo
-        .removeHandlersByIds(handlersToDelete.map((h) => h.id).toList());
+    _outboundRepo.removeHandlersByIds(
+      handlersToDelete.map((h) => h.id).toList(),
+    );
     _xController.handlersRemoved(handlersToDelete.map((h) => h.id).toList());
   }
 
@@ -417,7 +482,9 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   // }
 
   Future<void> _switchHandler(
-      SwitchHandlerEvent e, Emitter<OutboundState> emit) async {
+    SwitchHandlerEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
     final newList = List<OutboundHandler>.from(state.handlers);
     final index = newList.indexWhere((h) => h.id == e.handler.id);
     final unlockPro = _authBloc.state.pro;
@@ -427,8 +494,9 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
             ProxySelectorManualNodeSelectionMode.single) {
       final currentlySelected = newList.indexWhere((h) => h.selected);
       if (currentlySelected >= 0 && currentlySelected != index) {
-        newList[currentlySelected] =
-            newList[currentlySelected].copyWith(selected: false);
+        newList[currentlySelected] = newList[currentlySelected].copyWith(
+          selected: false,
+        );
       }
       if (index >= 0) {
         newList[index] = newList[index].copyWith(selected: e.selected);
@@ -464,12 +532,16 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   }
 
   Future<void> _onUserIsNotPro(
-      UserIsNotProEvent e, Emitter<OutboundState> emit) async {
+    UserIsNotProEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
     await _multiSelectToSingle(emit);
   }
 
   Future<void> _onManuualSingleSelection(
-      ManuualSingleSelectionEvent e, Emitter<OutboundState> emit) async {
+    ManuualSingleSelectionEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
     await _multiSelectToSingle(emit);
   }
 
@@ -481,23 +553,28 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
         m[handler.id] = const OutboundHandlersCompanion(selected: Value(false));
       }
       await _outboundRepo.updateHandlersTx(m);
-      emit(state.copyWith(
-          handlers: _sortHandlers(await _getHandlers(), state.sortCol)));
+      emit(
+        state.copyWith(
+          handlers: _sortHandlers(await _getHandlers(), state.sortCol),
+        ),
+      );
       await _xController.notifyHandlerChange();
       await _xController.selectorBalancingStrategyChange(
-          defaultProxySelectorTag, SelectorConfig_BalanceStrategy.RANDOM);
+        defaultProxySelectorTag,
+        SelectorConfig_BalanceStrategy.RANDOM,
+      );
     }
   }
 
   Future<void> _onHandlerEditted(
-      HandlerEdittedEvent e, Emitter<OutboundState> emit) async {
+    HandlerEdittedEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
     final handlers = List<OutboundHandler>.from(state.handlers);
     final index = handlers.indexWhere((h) => h.id == e.handler.id);
     if (index >= 0) {
       handlers[index] = e.handler;
-      emit(state.copyWith(
-        handlers: _sortHandlers(handlers, state.sortCol),
-      ));
+      emit(state.copyWith(handlers: _sortHandlers(handlers, state.sortCol)));
     }
     await _outboundRepo.replaceHandler(e.handler);
     _xController.handlerUpdated(e.handler);
@@ -505,7 +582,9 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   }
 
   Future<void> _onHandlerUpdated(
-      HandlerUpdatedEvent e, Emitter<OutboundState> emit) async {
+    HandlerUpdatedEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
     final handler = await _outboundRepo.getHandlerById(e.id);
     final index = state.handlers.indexWhere((h) => h.id == e.id);
     if (index >= 0) {
@@ -518,9 +597,12 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   }
 
   Future<void> _onHandlerAdd(
-      AddHandlerEvent e, Emitter<OutboundState> emit) async {
-    final newHandler =
-        (await _outboundRepo.insertHandlersWithGroup([e.handler]))[0];
+    AddHandlerEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
+    final newHandler = (await _outboundRepo.insertHandlersWithGroup([
+      e.handler,
+    ]))[0];
     if (newHandler == null) {
       return;
     }
@@ -532,14 +614,20 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   }
 
   Future<void> _onAddHandlers(
-      AddHandlersEvent e, Emitter<OutboundState> emit) async {
-    await _outboundRepo.insertHandlersWithGroup(e.handlers,
-        groupName: e.groupName);
+    AddHandlersEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
+    await _outboundRepo.insertHandlersWithGroup(
+      e.handlers,
+      groupName: e.groupName,
+    );
     final handlers = await _getHandlers();
     emit(state.copyWith(handlers: _sortHandlers(handlers, state.sortCol)));
     _xController.handlerAdded();
     await updateCountry(
-        await _outboundRepo.getHandlers(country: '', ok: 0), emit);
+      await _outboundRepo.getHandlers(country: '', ok: 0),
+      emit,
+    );
   }
 
   Future<void> _onAddGroup(AddGroupEvent e, Emitter<OutboundState> emit) async {
@@ -547,7 +635,9 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   }
 
   Future<void> _onDeleteGroup(
-      DeleteGroupEvent e, Emitter<OutboundState> emit) async {
+    DeleteGroupEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
     await _outboundRepo.removeHandlerGroup(e.group.name);
     if (e.group.name == state.selected?.name) {
       emit(state.copyWith(selected: () => null));
@@ -560,10 +650,13 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
     // if e.handlers is null, a user want to test all handlers in state.handlers
     final testALL = e.handlers == null;
     if (testALL) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           handlers: handlersToBeTested
               .map((h) => h.copyWith(speedTesting: true))
-              .toList()));
+              .toList(),
+        ),
+      );
     } else {
       final newList = List<OutboundHandler>.from(state.handlers);
       for (var ha in handlersToBeTested) {
@@ -582,16 +675,22 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
       speed: 0,
     );
 
-    final resStream = await _xApiClient.speedTest(SpeedTestRequest(
-      handlers: handlersToBeTested.map((h) => h.toConfig()).toList(),
-    ));
+    final resStream = await _xApiClient.speedTest(
+      SpeedTestRequest(
+        handlers: handlersToBeTested.map((h) => h.toConfig()).toList(),
+      ),
+    );
 
     void onError(e) async {
       logger.e('speedTest error', error: e);
-      _handlersSpeedTesting
-          .removeWhere((id) => handlersToBeTested.any((h) => h.id == id));
-      emit(state.copyWith(
-          handlers: _sortHandlers(await _getHandlers(), state.sortCol)));
+      _handlersSpeedTesting.removeWhere(
+        (id) => handlersToBeTested.any((h) => h.id == id),
+      );
+      emit(
+        state.copyWith(
+          handlers: _sortHandlers(await _getHandlers(), state.sortCol),
+        ),
+      );
     }
 
     await resStream
@@ -610,12 +709,15 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
             );
           }
           emit(
-              state.copyWith(handlers: _sortHandlers(handlers, state.sortCol)));
-          await _outboundRepo.updateHandler(id,
-              ping: ok > 0 ? null : 0,
-              speed: bytesToMbps(res.down.toInt()),
-              speedTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-              ok: ok);
+            state.copyWith(handlers: _sortHandlers(handlers, state.sortCol)),
+          );
+          await _outboundRepo.updateHandler(
+            id,
+            ping: ok > 0 ? null : 0,
+            speed: bytesToMbps(res.down.toInt()),
+            speedTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+            ok: ok,
+          );
           await _xController.updateHandlerSpeed(res.tag, res.down.toInt());
         })
         .forEach((_) {})
@@ -623,14 +725,19 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   }
 
   Future<void> _statusTest(
-      StatusTestEvent e, Emitter<OutboundState> emit) async {
+    StatusTestEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
     final handlersToBeTested = e.handlers ?? state.handlers;
     final testAll = e.handlers == null;
     if (testAll) {
-      emit(state.copyWith(
+      emit(
+        state.copyWith(
           handlers: handlersToBeTested
               .map((h) => h.copyWith(usableTesting: true))
-              .toList()));
+              .toList(),
+        ),
+      );
     } else {
       final newList = List<OutboundHandler>.from(state.handlers);
       for (var ha in handlersToBeTested) {
@@ -645,17 +752,22 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
     _handlersUsableTesting.addAll(handlersToBeTested.map((h) => h.id));
 
     _outboundRepo.updateHandlerFields(
-        handlersToBeTested.map((h) => h.id).toList(),
-        ok: 0,
-        ping: 0);
+      handlersToBeTested.map((h) => h.id).toList(),
+      ok: 0,
+      ping: 0,
+    );
 
     void onError(dynamic e, OutboundHandler h) {
       _handlersUsableTesting.remove(h.id);
       final handlers = List<OutboundHandler>.from(state.handlers);
       final index = handlers.indexWhere((hh) => hh.id == h.id);
       if (index >= 0) {
-        handlers[index] = handlers[index]
-            .copyWith(usableTesting: false, ok: 0, ping: 0, speed: 0);
+        handlers[index] = handlers[index].copyWith(
+          usableTesting: false,
+          ok: 0,
+          ping: 0,
+          speed: 0,
+        );
         emit(state.copyWith(handlers: _sortHandlers(handlers, state.sortCol)));
       }
       _outboundRepo.updateHandler(h.id, ok: 0, ping: 0, serverIp: '', speed: 0);
@@ -673,34 +785,43 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
     late final List<Future> futures;
     if (pingMode == PingMode.Real) {
       futures = handlersToBeTested
-          .map((h) => _xApiClient
-                  .handlerUsable(HandlerUsableRequest(handler: h.toConfig()))
-                  .then((res) {
-                _handlersUsableTesting.remove(h.id);
-                final handlers = List<OutboundHandler>.from(state.handlers);
-                final index = handlers.indexWhere((hh) => hh.id == h.id);
-                final ok = res.ping > 0;
-                if (index >= 0) {
-                  handlers[index] = handlers[index].copyWith(
+          .map(
+            (h) => _xApiClient
+                .handlerUsable(HandlerUsableRequest(handler: h.toConfig()))
+                .then((res) {
+                  _handlersUsableTesting.remove(h.id);
+                  final handlers = List<OutboundHandler>.from(state.handlers);
+                  final index = handlers.indexWhere((hh) => hh.id == h.id);
+                  final ok = res.ping > 0;
+                  if (index >= 0) {
+                    handlers[index] = handlers[index].copyWith(
                       usableTesting: false,
                       ok: ok ? 1 : -1,
                       ping: res.ping,
                       countryCode: res.country,
-                      speed: ok ? null : 0);
-                  emit(state.copyWith(
-                      handlers: _sortHandlers(handlers, state.sortCol)));
-                }
-                print('updateHandler: ${h.id}, ${res.country}, ${res.ip}');
-                _outboundRepo.updateHandler(h.id,
+                      speed: ok ? null : 0,
+                    );
+                    emit(
+                      state.copyWith(
+                        handlers: _sortHandlers(handlers, state.sortCol),
+                      ),
+                    );
+                  }
+                  print('updateHandler: ${h.id}, ${res.country}, ${res.ip}');
+                  _outboundRepo.updateHandler(
+                    h.id,
                     ok: ok ? 1 : -1,
                     ping: res.ping,
                     serverIp: res.ip,
                     country: res.country,
                     pingTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-                    speed: ok ? null : 0);
-              }).catchError((e) {
-                onError(e, h);
-              }))
+                    speed: ok ? null : 0,
+                  );
+                })
+                .catchError((e) {
+                  onError(e, h);
+                }),
+          )
           .toList();
     } else {
       futures = handlersToBeTested.map((h) async {
@@ -722,28 +843,36 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
           f = _xApiClient.rtt(RttTestRequest(addr: config.address, port: port));
         }
 
-        return f.then((res) {
-          _handlersUsableTesting.remove(h.id);
-          final handlers = List<OutboundHandler>.from(state.handlers);
-          final index = handlers.indexWhere((hh) => hh.id == h.id);
-          final ok = res > 0;
-          if (index >= 0) {
-            handlers[index] = handlers[index].copyWith(
-                usableTesting: false,
+        return f
+            .then((res) {
+              _handlersUsableTesting.remove(h.id);
+              final handlers = List<OutboundHandler>.from(state.handlers);
+              final index = handlers.indexWhere((hh) => hh.id == h.id);
+              final ok = res > 0;
+              if (index >= 0) {
+                handlers[index] = handlers[index].copyWith(
+                  usableTesting: false,
+                  ok: ok ? 1 : -1,
+                  ping: res,
+                  speed: ok ? null : 0,
+                );
+                emit(
+                  state.copyWith(
+                    handlers: _sortHandlers(handlers, state.sortCol),
+                  ),
+                );
+              }
+              _outboundRepo.updateHandler(
+                h.id,
                 ok: ok ? 1 : -1,
                 ping: res,
-                speed: ok ? null : 0);
-            emit(state.copyWith(
-                handlers: _sortHandlers(handlers, state.sortCol)));
-          }
-          _outboundRepo.updateHandler(h.id,
-              ok: ok ? 1 : -1,
-              ping: res,
-              pingTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-              speed: ok ? null : 0);
-        }).catchError((e) {
-          onError(e, h);
-        });
+                pingTestTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+                speed: ok ? null : 0,
+              );
+            })
+            .catchError((e) {
+              onError(e, h);
+            });
       }).toList();
     }
 
@@ -751,7 +880,9 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   }
 
   Future<void> _onSubscriptionDelete(
-      SubscriptionDeleteEvent e, Emitter<OutboundState> emit) async {
+    SubscriptionDeleteEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
     if (state.selected?.name == e.sub.name) {
       emit(state.copyWith(selected: () => null));
       _pref.setNodeGroup(null);
@@ -768,20 +899,29 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   }
 
   Future<void> _onSubscriptionPlaceOnTop(
-      SubscriptionPlaceOnTopEvent e, Emitter<OutboundState> emit) async {
-    await _outboundRepo.updateSubscription(e.sub.id,
-        placeOnTop: !e.sub.placeOnTop);
+    SubscriptionPlaceOnTopEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
+    await _outboundRepo.updateSubscription(
+      e.sub.id,
+      placeOnTop: !e.sub.placeOnTop,
+    );
   }
 
   Future<void> _onOutboundHandlerGroupPlaceOnTop(
-      OutboundHandlerGroupPlaceOnTopEvent e,
-      Emitter<OutboundState> emit) async {
-    await _outboundRepo.updateOutboundHandlerGroup(e.group.name,
-        placeOnTop: !e.group.placeOnTop);
+    OutboundHandlerGroupPlaceOnTopEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
+    await _outboundRepo.updateOutboundHandlerGroup(
+      e.group.name,
+      placeOnTop: !e.group.placeOnTop,
+    );
   }
 
   Future<void> _populateCountry(
-      PopulateCountryEvent e, Emitter<OutboundState> emit) async {
+    PopulateCountryEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
     emit(state.copyWith(testingArea: true));
     try {
       await updateCountry(state.handlers, emit);
@@ -809,14 +949,21 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   // }
 
   Future<void> _onSubscriptionUpdated(
-      SubscriptionUpdatedEvent e, Emitter<OutboundState> emit) async {
-    emit(state.copyWith(
-        handlers: _sortHandlers(await _getHandlers(), state.sortCol)));
+    SubscriptionUpdatedEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        handlers: _sortHandlers(await _getHandlers(), state.sortCol),
+      ),
+    );
     await updateCountry(await _outboundRepo.getHandlers(country: ''), emit);
   }
 
   Future<void> updateCountry(
-      List<OutboundHandler> handlers, Emitter<OutboundState> emit) async {
+    List<OutboundHandler> handlers,
+    Emitter<OutboundState> emit,
+  ) async {
     add(StatusTestEvent(handlers: handlers, pingMode: PingMode.Real));
     // try {
     //   final futures = <Future>[];
@@ -850,7 +997,8 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   void _multiSelect(MultiSelectEvent e, Emitter<OutboundState> emit) {
     if (e.multiSelect) {
       final handlers = List<OutboundHandler>.from(
-          state.handlers.map((h) => h.copyWith(selectInMultipleSelect: false)));
+        state.handlers.map((h) => h.copyWith(selectInMultipleSelect: false)),
+      );
       emit(state.copyWith(handlers: handlers, multiSelect: e.multiSelect));
     } else {
       emit(state.copyWith(multiSelect: e.multiSelect));
@@ -858,34 +1006,43 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   }
 
   void _multiSelectVerticalDragUpdate(
-      MultiSelectVerticalDragUpdateEvent e, Emitter<OutboundState> emit) {
+    MultiSelectVerticalDragUpdateEvent e,
+    Emitter<OutboundState> emit,
+  ) {
     final handlers = List<OutboundHandler>.from(state.handlers);
     final index = handlers.indexWhere((h) => h.id == e.handler.id);
     if (index >= 0) {
       final num = (e.localOffset.dy / 50).ceil();
       for (int i = 0; i < num; i++) {
-        handlers[index + i] =
-            handlers[index + i].copyWith(selectInMultipleSelect: true);
+        handlers[index + i] = handlers[index + i].copyWith(
+          selectInMultipleSelect: true,
+        );
       }
       emit(state.copyWith(handlers: handlers));
     }
   }
 
   void _multiSelectToggle(
-      MultiSelectToggleEvent e, Emitter<OutboundState> emit) {
+    MultiSelectToggleEvent e,
+    Emitter<OutboundState> emit,
+  ) {
     final handlers = List<OutboundHandler>.from(state.handlers);
     final index = handlers.indexWhere((h) => h.id == e.handler.id);
     if (index >= 0) {
       handlers[index] = handlers[index].copyWith(
-          selectInMultipleSelect: !handlers[index].selectedInMultipleSelect);
+        selectInMultipleSelect: !handlers[index].selectedInMultipleSelect,
+      );
       emit(state.copyWith(handlers: handlers));
     }
   }
 
   void _multiSelectSelectAll(
-      MultiSelectSelectAllEvent e, Emitter<OutboundState> emit) {
-    final handlers = List<OutboundHandler>.from(state.handlers
-        .map((h) => h.copyWith(selectInMultipleSelect: e.selected)));
+    MultiSelectSelectAllEvent e,
+    Emitter<OutboundState> emit,
+  ) {
+    final handlers = List<OutboundHandler>.from(
+      state.handlers.map((h) => h.copyWith(selectInMultipleSelect: e.selected)),
+    );
     emit(state.copyWith(handlers: handlers));
   }
 
@@ -896,16 +1053,21 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   // }
 
   void _onSmallScreenPreference(
-      SmallScreenPreferenceEvent e, Emitter<OutboundState> emit) {
-    emit(state.copyWith(
+    SmallScreenPreferenceEvent e,
+    Emitter<OutboundState> emit,
+  ) {
+    emit(
+      state.copyWith(
         smallScreenPreference: state.smallScreenPreference.copyWith(
-      showProtocol: e.protocol,
-      showUsable: e.usable,
-      showPing: e.ping,
-      showSpeed: e.speed,
-      showActive: e.active,
-      showAddress: e.address,
-    )));
+          showProtocol: e.protocol,
+          showUsable: e.usable,
+          showPing: e.ping,
+          showSpeed: e.speed,
+          showActive: e.active,
+          showAddress: e.address,
+        ),
+      ),
+    );
     if (e.protocol != null) {
       _pref.setSmScreenShowProtocol(e.protocol!);
     }
@@ -935,15 +1097,22 @@ class OutboundBloc extends Bloc<OutboundEvent, OutboundState> {
   }
 
   void _onAddSelectedHandlersToGroup(
-      AddSelectedHandlersToGroupEvent e, Emitter<OutboundState> emit) {
-    final handlers =
-        state.handlers.where((h) => h.selectedInMultipleSelect).toList();
+    AddSelectedHandlersToGroupEvent e,
+    Emitter<OutboundState> emit,
+  ) {
+    final handlers = state.handlers
+        .where((h) => h.selectedInMultipleSelect)
+        .toList();
     _outboundRepo.addHandlerToGroup(
-        e.groupName, handlers.map((h) => h.id).toList());
+      e.groupName,
+      handlers.map((h) => h.id).toList(),
+    );
   }
 
   Future<void> _onAddHandlerToGroup(
-      AddHandlerToGroupEvent e, Emitter<OutboundState> emit) async {
+    AddHandlerToGroupEvent e,
+    Emitter<OutboundState> emit,
+  ) async {
     await _outboundRepo.addHandlerToGroup(e.groupName, [e.handler.id]);
   }
 }
@@ -1086,13 +1255,14 @@ class HandlerUpdatedEvent extends OutboundEvent {
 }
 
 class SmallScreenPreferenceEvent extends OutboundEvent {
-  const SmallScreenPreferenceEvent(
-      {this.protocol,
-      this.usable,
-      this.ping,
-      this.speed,
-      this.active,
-      this.address});
+  const SmallScreenPreferenceEvent({
+    this.protocol,
+    this.usable,
+    this.ping,
+    this.speed,
+    this.active,
+    this.address,
+  });
   final bool? protocol;
   final bool? usable;
   final bool? ping;

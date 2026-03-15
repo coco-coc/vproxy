@@ -43,10 +43,13 @@ class _ProxyShareSettingScreenState extends State<ProxyShareSettingScreen> {
   void initState() {
     _proxyShare = context.read<SharedPreferences>().proxyShare;
     // TODO: implement initState
-    _listenAddressController.text =
-        context.read<SharedPreferences>().proxyShareListenAddress;
-    _listenPortController.text =
-        context.read<SharedPreferences>().proxyShareListenPort.toString();
+    _listenAddressController.text = context
+        .read<SharedPreferences>()
+        .proxyShareListenAddress;
+    _listenPortController.text = context
+        .read<SharedPreferences>()
+        .proxyShareListenPort
+        .toString();
     super.initState();
   }
 
@@ -82,7 +85,7 @@ class _ProxyShareSettingScreenState extends State<ProxyShareSettingScreen> {
             TextButton(
               onPressed: _save,
               child: Text(AppLocalizations.of(context)!.save),
-            )
+            ),
         ],
       ),
       body: Padding(
@@ -99,24 +102,27 @@ class _ProxyShareSettingScreenState extends State<ProxyShareSettingScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(AppLocalizations.of(context)!.proxyShare,
-                            style: Theme.of(context).textTheme.titleMedium),
+                        Text(
+                          AppLocalizations.of(context)!.proxyShare,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
                         Switch(
-                            value: _proxyShare,
-                            onChanged: (value) {
-                              setState(() {
-                                _proxyShare = value;
-                              });
-                            }),
+                          value: _proxyShare,
+                          onChanged: (value) {
+                            setState(() {
+                              _proxyShare = value;
+                            });
+                          },
+                        ),
                       ],
                     ),
                     const Gap(10),
-                    Text(AppLocalizations.of(context)!.proxyShareDesc,
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
-                            ))
+                    Text(
+                      AppLocalizations.of(context)!.proxyShareDesc,
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -189,7 +195,7 @@ class _ProxyShareSettingScreenState extends State<ProxyShareSettingScreen> {
                 FilledButton(
                   onPressed: _save,
                   child: Text(AppLocalizations.of(context)!.save),
-                )
+                ),
             ],
           ),
         ),

@@ -129,22 +129,32 @@ class VXInstalledState extends VXState {
   final ServerConfig? config;
   final bool configUnsaved;
   final bool isSavingConfig;
-  final String? operationInProgress; // 'restart', 'stop', 'start', 'update', 'uninstall'
+  final String?
+  operationInProgress; // 'restart', 'stop', 'start', 'update', 'uninstall'
   final String? lastError;
 
-  VXInstalledState(
-      {required this.version,
-      this.uptime,
-      this.memory,
-      this.config,
-      this.isSavingConfig = false,
-      this.configUnsaved = false,
-      this.operationInProgress,
-      this.lastError});
+  VXInstalledState({
+    required this.version,
+    this.uptime,
+    this.memory,
+    this.config,
+    this.isSavingConfig = false,
+    this.configUnsaved = false,
+    this.operationInProgress,
+    this.lastError,
+  });
 
   @override
-  List<Object?> get props =>
-      [version, uptime, memory, config, configUnsaved, isSavingConfig, operationInProgress, lastError];
+  List<Object?> get props => [
+    version,
+    uptime,
+    memory,
+    config,
+    configUnsaved,
+    isSavingConfig,
+    operationInProgress,
+    lastError,
+  ];
 
   VXInstalledState copyWith({
     String? version,
@@ -157,14 +167,15 @@ class VXInstalledState extends VXState {
     String? lastError,
   }) {
     return VXInstalledState(
-        version: version ?? this.version,
-        uptime: uptime ?? this.uptime,
-        memory: memory ?? this.memory,
-        config: config != null ? config() : this.config,
-        configUnsaved: configUnsaved ?? this.configUnsaved,
-        isSavingConfig: isSavingConfig ?? this.isSavingConfig,
-        operationInProgress: operationInProgress,
-        lastError: lastError);
+      version: version ?? this.version,
+      uptime: uptime ?? this.uptime,
+      memory: memory ?? this.memory,
+      config: config != null ? config() : this.config,
+      configUnsaved: configUnsaved ?? this.configUnsaved,
+      isSavingConfig: isSavingConfig ?? this.isSavingConfig,
+      operationInProgress: operationInProgress,
+      lastError: lastError,
+    );
   }
 
   @override
@@ -178,10 +189,10 @@ class VXBloc extends Bloc<VXEvent, VXState> {
     required XApiClient xapiClient,
     required SshServer server,
     required OutboundBloc outboundBloc,
-  })  : _xapiClient = xapiClient,
-        _server = server,
-        _outboundBloc = outboundBloc,
-        super(VXLoadingState()) {
+  }) : _xapiClient = xapiClient,
+       _server = server,
+       _outboundBloc = outboundBloc,
+       super(VXLoadingState()) {
     on<VXBlocInitialEvent>(_onVproxyBlocInitialEvent);
     on<_RefreshVXStatusEvent>(_onRefreshVXStatusEvent);
     on<VXRestartEvent>(_onVproxyRestartEvent);
@@ -226,7 +237,9 @@ class VXBloc extends Bloc<VXEvent, VXState> {
   }
 
   Future<void> _onVproxyBlocInitialEvent(
-      VXBlocInitialEvent event, Emitter<VXState> emit) async {
+    VXBlocInitialEvent event,
+    Emitter<VXState> emit,
+  ) async {
     // periodically fetch vx status
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 10), (timer) async {
@@ -236,7 +249,9 @@ class VXBloc extends Bloc<VXEvent, VXState> {
   }
 
   Future<void> _onRefreshVXStatusEvent(
-      _RefreshVXStatusEvent event, Emitter<VXState> emit) async {
+    _RefreshVXStatusEvent event,
+    Emitter<VXState> emit,
+  ) async {
     late VproxyStatusResponse status;
     try {
       status = await _xapiClient.vproxyStatus(_server);
@@ -255,24 +270,28 @@ class VXBloc extends Bloc<VXEvent, VXState> {
               uptime: status.startTime.isNotEmpty
                   ? durationUntilNow(status.startTime)
                   : null,
-              memory: status.memory != 0 ? status.memory : null)
+              memory: status.memory != 0 ? status.memory : null,
+            )
           : VXInstalledState(
               version: status.version,
               uptime: status.startTime.isNotEmpty
                   ? durationUntilNow(status.startTime)
                   : null,
-              memory: status.memory != 0 ? status.memory : null);
+              memory: status.memory != 0 ? status.memory : null,
+            );
       // convert startTime to duration+
       emit(s);
       if (s.config == null) {
         try {
           _originalConfig = await _xapiClient.serverConfig(_server);
-          emit((state as VXInstalledState)
-              .copyWith(config: () => _originalConfig));
+          emit(
+            (state as VXInstalledState).copyWith(config: () => _originalConfig),
+          );
         } catch (e) {
           logger.e('Failed to fetch server config: $e');
-          emit((state as VXInstalledState)
-              .copyWith(config: () => ServerConfig()));
+          emit(
+            (state as VXInstalledState).copyWith(config: () => ServerConfig()),
+          );
         }
       }
     } else {
@@ -281,35 +300,45 @@ class VXBloc extends Bloc<VXEvent, VXState> {
   }
 
   Future<void> _onVproxyReloadConfigEvent(
-      VXReloadConfigEvent event, Emitter<VXState> emit) async {
+    VXReloadConfigEvent event,
+    Emitter<VXState> emit,
+  ) async {
     _originalConfig = await _xapiClient.serverConfig(_server);
     emit((state as VXInstalledState).copyWith(config: () => _originalConfig));
   }
 
   Future<void> _onVproxyRestartEvent(
-      VXRestartEvent event, Emitter<VXState> emit) async {
+    VXRestartEvent event,
+    Emitter<VXState> emit,
+  ) async {
     final currentState = state;
     if (currentState is! VXInstalledState) return;
-    
+
     try {
-      emit(currentState.copyWith(operationInProgress: 'restart', lastError: null));
+      emit(
+        currentState.copyWith(operationInProgress: 'restart', lastError: null),
+      );
       await _xapiClient.vx(_server, restart: true);
       emit(currentState.copyWith(operationInProgress: null));
       _showSuccessDialog(rootLocalizations()?.restart ?? 'Restart');
       add(_RefreshVXStatusEvent());
     } catch (e) {
       final errorMsg = e.toString();
-      emit(currentState.copyWith(operationInProgress: null, lastError: errorMsg));
+      emit(
+        currentState.copyWith(operationInProgress: null, lastError: errorMsg),
+      );
       _showErrorDialog(rootLocalizations()?.restart ?? 'Restart', errorMsg);
       logger.e('Failed to restart VX', error: e);
     }
   }
 
   Future<void> _onVproxyStopEvent(
-      VXStopEvent event, Emitter<VXState> emit) async {
+    VXStopEvent event,
+    Emitter<VXState> emit,
+  ) async {
     final currentState = state;
     if (currentState is! VXInstalledState) return;
-    
+
     try {
       emit(currentState.copyWith(operationInProgress: 'stop', lastError: null));
       await _xapiClient.vx(_server, stop: true);
@@ -318,143 +347,204 @@ class VXBloc extends Bloc<VXEvent, VXState> {
       add(_RefreshVXStatusEvent());
     } catch (e) {
       final errorMsg = e.toString();
-      emit(currentState.copyWith(operationInProgress: null, lastError: errorMsg));
+      emit(
+        currentState.copyWith(operationInProgress: null, lastError: errorMsg),
+      );
       _showErrorDialog(rootLocalizations()?.stop ?? 'Stop', errorMsg);
       logger.e('Failed to stop VX', error: e);
     }
   }
 
   Future<void> _onVproxyStartEvent(
-      VXStartEvent event, Emitter<VXState> emit) async {
+    VXStartEvent event,
+    Emitter<VXState> emit,
+  ) async {
     final currentState = state;
     if (currentState is! VXInstalledState) return;
-    
+
     try {
-      emit(currentState.copyWith(operationInProgress: 'start', lastError: null));
+      emit(
+        currentState.copyWith(operationInProgress: 'start', lastError: null),
+      );
       await _xapiClient.vx(_server, start: true);
       emit(currentState.copyWith(operationInProgress: null));
       _showSuccessDialog(rootLocalizations()?.start ?? 'Start');
       add(_RefreshVXStatusEvent());
     } catch (e) {
       final errorMsg = e.toString();
-      emit(currentState.copyWith(operationInProgress: null, lastError: errorMsg));
+      emit(
+        currentState.copyWith(operationInProgress: null, lastError: errorMsg),
+      );
       _showErrorDialog(rootLocalizations()?.start ?? 'Start', errorMsg);
       logger.e('Failed to start VX', error: e);
     }
   }
 
   Future<void> _onVproxyUpdateEvent(
-      VXUpdateEvent event, Emitter<VXState> emit) async {
+    VXUpdateEvent event,
+    Emitter<VXState> emit,
+  ) async {
     final currentState = state;
     if (currentState is! VXInstalledState) return;
-    
+
     try {
-      emit(currentState.copyWith(operationInProgress: 'update', lastError: null));
+      emit(
+        currentState.copyWith(operationInProgress: 'update', lastError: null),
+      );
       await _xapiClient.vx(_server, update: true);
       emit(currentState.copyWith(operationInProgress: null));
       _showSuccessDialog(rootLocalizations()?.update ?? 'Update');
       add(_RefreshVXStatusEvent());
     } catch (e) {
       final errorMsg = e.toString();
-      emit(currentState.copyWith(operationInProgress: null, lastError: errorMsg));
+      emit(
+        currentState.copyWith(operationInProgress: null, lastError: errorMsg),
+      );
       _showErrorDialog(rootLocalizations()?.update ?? 'Update', errorMsg);
       logger.e('Failed to update VX', error: e);
     }
   }
 
   Future<void> _onVproxyUninstallEvent(
-      VXUninstallEvent event, Emitter<VXState> emit) async {
+    VXUninstallEvent event,
+    Emitter<VXState> emit,
+  ) async {
     final currentState = state;
     if (currentState is! VXInstalledState) return;
-    
+
     try {
-      emit(currentState.copyWith(operationInProgress: 'uninstall', lastError: null));
+      emit(
+        currentState.copyWith(
+          operationInProgress: 'uninstall',
+          lastError: null,
+        ),
+      );
       await _xapiClient.vx(_server, uninstall: true);
       emit(currentState.copyWith(operationInProgress: null));
       _showSuccessDialog(rootLocalizations()?.uninstall ?? 'Uninstall');
       add(_RefreshVXStatusEvent());
     } catch (e) {
       final errorMsg = e.toString();
-      emit(currentState.copyWith(operationInProgress: null, lastError: errorMsg));
+      emit(
+        currentState.copyWith(operationInProgress: null, lastError: errorMsg),
+      );
       _showErrorDialog(rootLocalizations()?.uninstall ?? 'Uninstall', errorMsg);
       logger.e('Failed to uninstall VX', error: e);
     }
   }
 
   Future<void> _onVproxyAddInboundEvent(
-      VXAddInboundEvent event, Emitter<VXState> emit) async {
+    VXAddInboundEvent event,
+    Emitter<VXState> emit,
+  ) async {
     final state = this.state as VXInstalledState;
     if (state.config == null) {
       return;
     }
     final copy = state.config!.deepCopy();
     copy.inbounds.add(event.inbound);
-    emit(state.copyWith(
-        configUnsaved: copy != _originalConfig, config: () => copy));
+    emit(
+      state.copyWith(
+        configUnsaved: copy != _originalConfig,
+        config: () => copy,
+      ),
+    );
   }
 
   Future<void> _onVproxyAddMultiInboundEvent(
-      VXAddMultiInboundEvent event, Emitter<VXState> emit) async {
+    VXAddMultiInboundEvent event,
+    Emitter<VXState> emit,
+  ) async {
     final state = this.state as VXInstalledState;
     if (state.config == null) {
       return;
     }
     final copy = state.config!.deepCopy();
     copy.multiInbounds.add(event.multiInbound);
-    emit(state.copyWith(
-        configUnsaved: copy != _originalConfig, config: () => copy));
+    emit(
+      state.copyWith(
+        configUnsaved: copy != _originalConfig,
+        config: () => copy,
+      ),
+    );
   }
 
   Future<void> _onVproxyEditInboundEvent(
-      VXEditInboundEvent event, Emitter<VXState> emit) async {
+    VXEditInboundEvent event,
+    Emitter<VXState> emit,
+  ) async {
     final state = this.state as VXInstalledState;
     if (state.config == null) {
       return;
     }
     final copy = state.config!.deepCopy();
     copy.inbounds[event.index] = event.inbound;
-    emit(state.copyWith(
-        configUnsaved: copy != _originalConfig, config: () => copy));
+    emit(
+      state.copyWith(
+        configUnsaved: copy != _originalConfig,
+        config: () => copy,
+      ),
+    );
   }
 
   Future<void> _onVproxyEditMultiInboundEvent(
-      VXEditMultiInboundEvent event, Emitter<VXState> emit) async {
+    VXEditMultiInboundEvent event,
+    Emitter<VXState> emit,
+  ) async {
     final state = this.state as VXInstalledState;
     if (state.config == null) {
       return;
     }
     final copy = state.config!.deepCopy();
     copy.multiInbounds[event.index] = event.multiInbound;
-    emit(state.copyWith(
-        configUnsaved: copy != _originalConfig, config: () => copy));
+    emit(
+      state.copyWith(
+        configUnsaved: copy != _originalConfig,
+        config: () => copy,
+      ),
+    );
   }
 
   Future<void> _onVproxyRemoveInboundEvent(
-      VXRemoveInboundEvent event, Emitter<VXState> emit) async {
+    VXRemoveInboundEvent event,
+    Emitter<VXState> emit,
+  ) async {
     final state = this.state as VXInstalledState;
     if (state.config == null) {
       return;
     }
     final copy = state.config!.deepCopy();
     copy.inbounds.removeWhere((e) => e.tag == event.tag);
-    emit(state.copyWith(
-        configUnsaved: copy != _originalConfig, config: () => copy));
+    emit(
+      state.copyWith(
+        configUnsaved: copy != _originalConfig,
+        config: () => copy,
+      ),
+    );
   }
 
   Future<void> _onVproxyRemoveMultiInboundEvent(
-      VXRemoveMultiInboundEvent event, Emitter<VXState> emit) async {
+    VXRemoveMultiInboundEvent event,
+    Emitter<VXState> emit,
+  ) async {
     final state = this.state as VXInstalledState;
     if (state.config == null) {
       return;
     }
     final copy = state.config!.deepCopy();
     copy.multiInbounds.removeWhere((e) => e.tag == event.tag);
-    emit(state.copyWith(
-        configUnsaved: copy != _originalConfig, config: () => copy));
+    emit(
+      state.copyWith(
+        configUnsaved: copy != _originalConfig,
+        config: () => copy,
+      ),
+    );
   }
 
   Future<void> _onVproxySaveConfigEvent(
-      VXSaveConfigEvent event, Emitter<VXState> emit) async {
+    VXSaveConfigEvent event,
+    Emitter<VXState> emit,
+  ) async {
     final state = this.state as VXInstalledState;
     try {
       emit(state.copyWith(isSavingConfig: true));
@@ -469,7 +559,9 @@ class VXBloc extends Bloc<VXEvent, VXState> {
   }
 
   Future<void> _onVproxyDiscardChangesEvent(
-      VXDiscardChangesEvent event, Emitter<VXState> emit) async {
+    VXDiscardChangesEvent event,
+    Emitter<VXState> emit,
+  ) async {
     final state = this.state as VXInstalledState;
     try {
       // Fetch the config from the server again to discard local changes
@@ -481,16 +573,26 @@ class VXBloc extends Bloc<VXEvent, VXState> {
   }
 
   Future<void> _onVproxyAddToNodesEvent(
-      VXAddToNodesEvent event, Emitter<VXState> emit) async {
-    final outbounds = await _xapiClient.convertInboundToOutbound(_server,
-        inbound: event.inbound, multiInbound: event.multiInbound);
-    _outboundBloc.add(AddHandlersEvent(
+    VXAddToNodesEvent event,
+    Emitter<VXState> emit,
+  ) async {
+    final outbounds = await _xapiClient.convertInboundToOutbound(
+      _server,
+      inbound: event.inbound,
+      multiInbound: event.multiInbound,
+    );
+    _outboundBloc.add(
+      AddHandlersEvent(
         outbounds.map((e) => HandlerConfig(outbound: e)).toList(),
-        groupName: _server.name));
+        groupName: _server.name,
+      ),
+    );
   }
 
   Future<void> _onVproxySetLogLevelEvent(
-      VXSetLogLevelEvent event, Emitter<VXState> emit) async {
+    VXSetLogLevelEvent event,
+    Emitter<VXState> emit,
+  ) async {
     final state = this.state as VXInstalledState;
     if (state.config == null) {
       return;
@@ -501,20 +603,30 @@ class VXBloc extends Bloc<VXEvent, VXState> {
     } else {
       copy.log = LoggerConfig(logLevel: event.logLevel);
     }
-    emit(state.copyWith(
-        configUnsaved: copy != _originalConfig, config: () => copy));
+    emit(
+      state.copyWith(
+        configUnsaved: copy != _originalConfig,
+        config: () => copy,
+      ),
+    );
   }
 
   Future<void> _onVproxySetLoggerConfigEvent(
-      VXSetLoggerConfigEvent event, Emitter<VXState> emit) async {
+    VXSetLoggerConfigEvent event,
+    Emitter<VXState> emit,
+  ) async {
     final state = this.state as VXInstalledState;
     if (state.config == null) {
       return;
     }
     final copy = state.config!.deepCopy();
     copy.log = event.loggerConfig;
-    emit(state.copyWith(
-        configUnsaved: copy != _originalConfig, config: () => copy));
+    emit(
+      state.copyWith(
+        configUnsaved: copy != _originalConfig,
+        config: () => copy,
+      ),
+    );
   }
 
   void _showSuccessDialog(String operation) {
@@ -548,7 +660,7 @@ class VXBloc extends Bloc<VXEvent, VXState> {
     }
     final context = rootNavigationKey.currentState!.context;
     final l10n = AppLocalizations.of(context);
-    
+
     // Use localized error message if available, otherwise construct from operation name
     String title;
     if (operation == (l10n?.start ?? 'Start') && l10n?.startFailed != null) {
@@ -556,7 +668,7 @@ class VXBloc extends Bloc<VXEvent, VXState> {
     } else {
       title = '$operation ${l10n?.applyFailed ?? 'failed'}';
     }
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -568,9 +680,7 @@ class VXBloc extends Bloc<VXEvent, VXState> {
         title: Text(title),
         content: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 400),
-          child: SingleChildScrollView(
-            child: Text(error),
-          ),
+          child: SingleChildScrollView(child: Text(error)),
         ),
         actions: [
           FilledButton(
@@ -586,6 +696,7 @@ class VXBloc extends Bloc<VXEvent, VXState> {
 Duration durationUntilNow(String unixTimestamp) {
   final now = DateTime.now().toUtc();
   final duration = now.difference(
-      DateTime.fromMillisecondsSinceEpoch(int.parse(unixTimestamp) * 1000));
+    DateTime.fromMillisecondsSinceEpoch(int.parse(unixTimestamp) * 1000),
+  );
   return duration;
 }

@@ -75,24 +75,28 @@ class _SystemProxySettingState extends State<SystemProxySetting> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context)!.systemProxyPortSetting,
-              style: Theme.of(context).textTheme.bodyLarge),
+          Text(
+            AppLocalizations.of(context)!.systemProxyPortSetting,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
           const Gap(10),
           Row(
             children: [
               ChoiceChip(
-                  label: Text(AppLocalizations.of(context)!.randomPorts),
-                  selected: _dynamicSystemProxyPorts,
-                  onSelected: (_) {
-                    _toggleDynamicSystemProxyPorts(true);
-                  }),
+                label: Text(AppLocalizations.of(context)!.randomPorts),
+                selected: _dynamicSystemProxyPorts,
+                onSelected: (_) {
+                  _toggleDynamicSystemProxyPorts(true);
+                },
+              ),
               const Gap(10),
               ChoiceChip(
-                  label: Text(AppLocalizations.of(context)!.staticPorts),
-                  selected: !_dynamicSystemProxyPorts,
-                  onSelected: (_) {
-                    _toggleDynamicSystemProxyPorts(false);
-                  })
+                label: Text(AppLocalizations.of(context)!.staticPorts),
+                selected: !_dynamicSystemProxyPorts,
+                onSelected: (_) {
+                  _toggleDynamicSystemProxyPorts(false);
+                },
+              ),
             ],
           ),
           const Gap(10),
@@ -101,13 +105,14 @@ class _SystemProxySettingState extends State<SystemProxySetting> {
               children: [
                 Expanded(
                   child: TextField(
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'SOCKS',
-                      ),
-                      keyboardType: TextInputType.number,
-                      controller: _socksPortController,
-                      onChanged: _toggleSocksPort),
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'SOCKS',
+                    ),
+                    keyboardType: TextInputType.number,
+                    controller: _socksPortController,
+                    onChanged: _toggleSocksPort,
+                  ),
                 ),
                 const Gap(10),
                 Expanded(
@@ -120,9 +125,9 @@ class _SystemProxySettingState extends State<SystemProxySetting> {
                     controller: _httpPortController,
                     onChanged: _toggleHttpPort,
                   ),
-                )
+                ),
               ],
-            )
+            ),
         ],
       ),
     );

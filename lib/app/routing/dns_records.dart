@@ -89,152 +89,173 @@ class __DnsRecordsState extends State<_DnsRecords>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return LayoutBuilder(builder: (context, constraints) {
-      final count = constraints.maxWidth ~/ width;
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          FilledButton.tonal(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final count = constraints.maxWidth ~/ width;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FilledButton.tonal(
               onPressed: _onAdd,
-              child: Text(AppLocalizations.of(context)!.addDnsRecord)),
-          const SizedBox(height: 10),
-          Expanded(
-            child: _records.isEmpty
-                ? Center(
-                    child: Text(
-                      AppLocalizations.of(context)!.empty,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant),
-                    ),
-                  )
-                : MasonryGridView.count(
-                    padding: const EdgeInsets.only(bottom: 70),
-                    crossAxisCount: count,
-                    itemCount: _records.length,
-                    mainAxisSpacing: 4,
-                    crossAxisSpacing: 4,
-                    itemBuilder: (context, index) {
-                      final record = _records[index];
-                      return Card(
-                        elevation: 0,
-                        color: Theme.of(context).colorScheme.surfaceContainer,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(10),
-                          onTap: () {
-                            _onEdit(index);
-                          },
-                          child: Stack(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (record.dnsRecord.domain.isNotEmpty)
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            AppLocalizations.of(context)!.domain,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelMedium
-                                                ?.copyWith(
+              child: Text(AppLocalizations.of(context)!.addDnsRecord),
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: _records.isEmpty
+                  ? Center(
+                      child: Text(
+                        AppLocalizations.of(context)!.empty,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    )
+                  : MasonryGridView.count(
+                      padding: const EdgeInsets.only(bottom: 70),
+                      crossAxisCount: count,
+                      itemCount: _records.length,
+                      mainAxisSpacing: 4,
+                      crossAxisSpacing: 4,
+                      itemBuilder: (context, index) {
+                        final record = _records[index];
+                        return Card(
+                          elevation: 0,
+                          color: Theme.of(context).colorScheme.surfaceContainer,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(10),
+                            onTap: () {
+                              _onEdit(index);
+                            },
+                            child: Stack(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (record.dnsRecord.domain.isNotEmpty)
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              AppLocalizations.of(
+                                                context,
+                                              )!.domain,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelMedium
+                                                  ?.copyWith(
                                                     color: Theme.of(context)
                                                         .colorScheme
-                                                        .onSurfaceVariant),
-                                          ),
-                                          const SizedBox(height: 5),
-                                          Chip(
+                                                        .onSurfaceVariant,
+                                                  ),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Chip(
                                               shape: chipBorderRadius,
-                                              backgroundColor: Theme.of(context)
-                                                  .colorScheme
-                                                  .surfaceContainerLow,
+                                              backgroundColor: Theme.of(
+                                                context,
+                                              ).colorScheme.surfaceContainerLow,
                                               label: Text(
-                                                  record.dnsRecord.domain)),
-                                          const SizedBox(height: 10),
-                                        ],
-                                      ),
-                                    if (record.dnsRecord.ip.isNotEmpty)
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'IP',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelMedium
-                                                ?.copyWith(
+                                                record.dnsRecord.domain,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 10),
+                                          ],
+                                        ),
+                                      if (record.dnsRecord.ip.isNotEmpty)
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'IP',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelMedium
+                                                  ?.copyWith(
                                                     color: Theme.of(context)
                                                         .colorScheme
-                                                        .onSurfaceVariant),
-                                          ),
-                                          const SizedBox(height: 5),
-                                          Wrap(
-                                            runSpacing: 5,
-                                            spacing: 5,
-                                            children: record.dnsRecord.ip
-                                                .map((e) => Chip(
-                                                    shape: chipBorderRadius,
-                                                    backgroundColor:
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .surfaceContainerLow,
-                                                    label: Text(e)))
-                                                .toList(),
-                                          ),
-                                          const SizedBox(height: 10),
-                                        ],
-                                      ),
-                                    if (record.dnsRecord.proxiedDomain.isNotEmpty)
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Proxied Domain',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelMedium
-                                                ?.copyWith(
+                                                        .onSurfaceVariant,
+                                                  ),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Wrap(
+                                              runSpacing: 5,
+                                              spacing: 5,
+                                              children: record.dnsRecord.ip
+                                                  .map(
+                                                    (e) => Chip(
+                                                      shape: chipBorderRadius,
+                                                      backgroundColor:
+                                                          Theme.of(context)
+                                                              .colorScheme
+                                                              .surfaceContainerLow,
+                                                      label: Text(e),
+                                                    ),
+                                                  )
+                                                  .toList(),
+                                            ),
+                                            const SizedBox(height: 10),
+                                          ],
+                                        ),
+                                      if (record
+                                          .dnsRecord
+                                          .proxiedDomain
+                                          .isNotEmpty)
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Proxied Domain',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelMedium
+                                                  ?.copyWith(
                                                     color: Theme.of(context)
                                                         .colorScheme
-                                                        .onSurfaceVariant),
-                                          ),
-                                          const SizedBox(height: 5),
-                                          Chip(
+                                                        .onSurfaceVariant,
+                                                  ),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Chip(
                                               shape: chipBorderRadius,
-                                              backgroundColor: Theme.of(context)
-                                                  .colorScheme
-                                                  .surfaceContainerLow,
-                                              label: Text(record
-                                                  .dnsRecord.proxiedDomain)),
-                                        ],
-                                      ),
-                                  ],
+                                              backgroundColor: Theme.of(
+                                                context,
+                                              ).colorScheme.surfaceContainerLow,
+                                              label: Text(
+                                                record.dnsRecord.proxiedDomain,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Positioned(
-                                right: 5,
-                                top: 5,
-                                child: IconButton(
+                                Positioned(
+                                  right: 5,
+                                  top: 5,
+                                  child: IconButton(
                                     onPressed: () async {
                                       await _dnsRepo.removeDnsRecord(record);
                                     },
-                                    icon: const Icon(Icons.delete_outline)),
-                              )
-                            ],
+                                    icon: const Icon(Icons.delete_outline),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
-      );
-    });
+                        );
+                      },
+                    ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -289,7 +310,10 @@ class __DnsRecordFormState extends State<_DnsRecordForm> with FormDataGetter {
     if (value == null || value.isEmpty) {
       return null; // IP is optional
     }
-    final ips = value.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty);
+    final ips = value
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty);
     for (var ip in ips) {
       if (!isValidIp(ip)) {
         return AppLocalizations.of(context)!.invalidIp;
@@ -306,40 +330,46 @@ class __DnsRecordFormState extends State<_DnsRecordForm> with FormDataGetter {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextFormField(
-              controller: _domainController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return AppLocalizations.of(context)!.empty;
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  labelText: AppLocalizations.of(context)!.domain,
-                  hintText: 'example.com')),
+            controller: _domainController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return AppLocalizations.of(context)!.empty;
+              }
+              return null;
+            },
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+              labelText: AppLocalizations.of(context)!.domain,
+              hintText: 'example.com',
+            ),
+          ),
           const SizedBox(height: 10),
           TextFormField(
-              controller: _ipController,
-              validator: _validateIp,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  labelText: 'IP Addresses',
-                  hintText: '1.1.1.1,2400:3200::1',
-                  helperText: 'A/AAAA')),
+            controller: _ipController,
+            validator: _validateIp,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+              labelText: 'IP Addresses',
+              hintText: '1.1.1.1,2400:3200::1',
+              helperText: 'A/AAAA',
+            ),
+          ),
           const SizedBox(height: 10),
           TextFormField(
-              controller: _proxiedDomainController,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  labelText: 'Proxied Domain',
-                  hintText: 'proxied.example.com',
-                  helperText: 'CNAME')),
+            controller: _proxiedDomainController,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+              labelText: 'Proxied Domain',
+              hintText: 'proxied.example.com',
+              helperText: 'CNAME',
+            ),
+          ),
         ],
       ),
     );

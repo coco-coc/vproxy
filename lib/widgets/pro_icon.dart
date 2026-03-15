@@ -28,13 +28,7 @@ class AppendProIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        child,
-        const SizedBox(width: 4),
-        proIconSmall,
-      ],
-    );
+    return Row(children: [child, const SizedBox(width: 4), proIconSmall]);
   }
 }
 
@@ -44,15 +38,12 @@ class ActivatedIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Chip(
-      avatar: const Icon(
-        Icons.verified_user_rounded,
-        color: XBlue,
+      avatar: const Icon(Icons.verified_user_rounded, color: XBlue),
+      label: Text(
+        AppLocalizations.of(context)!.activated,
+        style: Theme.of(context).textTheme.bodySmall,
       ),
-      label: Text(AppLocalizations.of(context)!.activated,
-          style: Theme.of(context).textTheme.bodySmall),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(25),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
     );
   }
 }

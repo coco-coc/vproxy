@@ -24,9 +24,10 @@ class DialogShell extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 560),
         child: Card(
-            clipBehavior: Clip.hardEdge,
-            margin: const EdgeInsets.symmetric(vertical: 24),
-            child: child),
+          clipBehavior: Clip.hardEdge,
+          margin: const EdgeInsets.symmetric(vertical: 24),
+          child: child,
+        ),
       ),
     );
   }

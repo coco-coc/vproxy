@@ -48,11 +48,10 @@ class IAPStateWithoutPurchaseDetail extends IAPState {
   IAPStateWithoutPurchaseDetail copyWith({
     StoreState? storeState,
     bool? buying,
-  }) =>
-      IAPStateWithoutPurchaseDetail(
-        storeState: storeState ?? this.storeState,
-        buying: buying ?? this.buying,
-      );
+  }) => IAPStateWithoutPurchaseDetail(
+    storeState: storeState ?? this.storeState,
+    buying: buying ?? this.buying,
+  );
 }
 
 class IAPStateWithPurchaseDetail extends IAPState {
@@ -77,14 +76,13 @@ class IAPStateWithPurchaseDetail extends IAPState {
     VerifyFailedException? verifyFailed,
     bool? success,
     PurchaseDetails? purchaseDetails,
-  }) =>
-      IAPStateWithPurchaseDetail(
-        verifying: verifying,
-        invalidPurchase: invalidPurchase,
-        verifyFailed: verifyFailed,
-        success: success,
-        purchaseDetails: purchaseDetails ?? this.purchaseDetails,
-      );
+  }) => IAPStateWithPurchaseDetail(
+    verifying: verifying,
+    invalidPurchase: invalidPurchase,
+    verifyFailed: verifyFailed,
+    success: success,
+    purchaseDetails: purchaseDetails ?? this.purchaseDetails,
+  );
 }
 
 class ProPurchases extends ChangeNotifier {
@@ -99,30 +97,31 @@ class ProPurchases extends ChangeNotifier {
   Future<void> loadPurchases() async {
     final available = await iapConnection.isAvailable();
     if (!available) {
-      state =
-          IAPStateWithoutPurchaseDetail(storeState: StoreState.notAvailable);
+      state = IAPStateWithoutPurchaseDetail(
+        storeState: StoreState.notAvailable,
+      );
       notifyListeners();
       return;
     }
-    final ids = <String>{
-      Platform.isAndroid ? androidProductId : proLifetime,
-    };
+    final ids = <String>{Platform.isAndroid ? androidProductId : proLifetime};
     final response = await iapConnection.queryProductDetails(ids);
-    products =
-        response.productDetails.map((e) => PurchasableProduct(e)).toList();
+    products = response.productDetails
+        .map((e) => PurchasableProduct(e))
+        .toList();
     state = IAPStateWithoutPurchaseDetail(storeState: StoreState.available);
     notifyListeners();
     // _restore();
   }
 
   ProPurchases(this.authProvider)
-      : state = IAPStateWithoutPurchaseDetail(storeState: StoreState.loading) {
+    : state = IAPStateWithoutPurchaseDetail(storeState: StoreState.loading) {
     _userSubscription = authProvider.sessionStreams.listen((session) async {
       if (session != null && state is IAPStateWithPurchaseDetail) {
         final stateWithPurchaseDetail = state as IAPStateWithPurchaseDetail;
         if (stateWithPurchaseDetail.verifyFailed != null &&
-            stateWithPurchaseDetail.verifyFailed!.message
-                .contains('userId is null')) {
+            stateWithPurchaseDetail.verifyFailed!.message.contains(
+              'userId is null',
+            )) {
           await _verifyAndFulfill(stateWithPurchaseDetail);
         }
       }
@@ -137,7 +136,8 @@ class ProPurchases extends ChangeNotifier {
   }
 
   Future<void> _onPurchaseUpdate(
-      List<PurchaseDetails> purchaseDetailsList) async {
+    List<PurchaseDetails> purchaseDetailsList,
+  ) async {
     logger.d('_onPurchaseUpdate: $purchaseDetailsList');
     for (var purchaseDetails in purchaseDetailsList) {
       try {
@@ -153,7 +153,8 @@ class ProPurchases extends ChangeNotifier {
   Future<void> _handlePurchase(PurchaseDetails purchaseDetails) async {
     inspect(purchaseDetails);
     print(
-        'purchaseDetails: status: ${purchaseDetails.status}, orderId: ${purchaseDetails.purchaseID}, verificationData: ${purchaseDetails.verificationData.serverVerificationData}');
+      'purchaseDetails: status: ${purchaseDetails.status}, orderId: ${purchaseDetails.purchaseID}, verificationData: ${purchaseDetails.verificationData.serverVerificationData}',
+    );
     state = IAPStateWithPurchaseDetail(purchaseDetails: purchaseDetails);
     notifyListeners();
     final stateWithPurchaseDetail = state as IAPStateWithPurchaseDetail;
@@ -193,7 +194,8 @@ class ProPurchases extends ChangeNotifier {
   }
 
   Future<void> _verifyAndFulfill(
-      IAPStateWithPurchaseDetail stateWithPurchaseDetail) async {
+    IAPStateWithPurchaseDetail stateWithPurchaseDetail,
+  ) async {
     logger.d('verifying: ${stateWithPurchaseDetail.purchaseDetails.status}');
     state = stateWithPurchaseDetail.copyWith(
       purchaseDetails: stateWithPurchaseDetail.purchaseDetails,
@@ -202,23 +204,27 @@ class ProPurchases extends ChangeNotifier {
     notifyListeners();
     // Send to server
     try {
-      var validPurchase =
-          await _verifyPurchase(stateWithPurchaseDetail.purchaseDetails);
+      var validPurchase = await _verifyPurchase(
+        stateWithPurchaseDetail.purchaseDetails,
+      );
       if (!validPurchase) {
         state = stateWithPurchaseDetail.copyWith(
           purchaseDetails: stateWithPurchaseDetail.purchaseDetails,
           invalidPurchase: true,
         );
         logger.e(
-            'invalidPurchase: ${stateWithPurchaseDetail.purchaseDetails.status}');
+          'invalidPurchase: ${stateWithPurchaseDetail.purchaseDetails.status}',
+        );
         reportError(
-            'invalidPurchase ${stateWithPurchaseDetail.purchaseDetails.toString()}',
-            '无法验证购买');
+          'invalidPurchase ${stateWithPurchaseDetail.purchaseDetails.toString()}',
+          '无法验证购买',
+        );
       } else {
         logger.d('verify success');
         if (stateWithPurchaseDetail.purchaseDetails.pendingCompletePurchase) {
-          await iapConnection
-              .completePurchase(stateWithPurchaseDetail.purchaseDetails);
+          await iapConnection.completePurchase(
+            stateWithPurchaseDetail.purchaseDetails,
+          );
         }
         state = stateWithPurchaseDetail.copyWith(
           purchaseDetails: stateWithPurchaseDetail.purchaseDetails,
@@ -302,8 +308,9 @@ class ProPurchases extends ChangeNotifier {
         try {
           await iapConnection.buyNonConsumable(purchaseParam: purchaseParam);
         } catch (e) {
-          state =
-              (state as IAPStateWithoutPurchaseDetail).copyWith(buying: false);
+          state = (state as IAPStateWithoutPurchaseDetail).copyWith(
+            buying: false,
+          );
           notifyListeners();
           if (e is PlatformException &&
               (e.message?.contains('cancelled') ?? false)) {
@@ -318,18 +325,16 @@ class ProPurchases extends ChangeNotifier {
       // }
       default:
         throw ArgumentError.value(
-            product.productDetails, '${product.id} is not a known product');
+          product.productDetails,
+          '${product.id} is not a known product',
+        );
     }
   }
 }
 
 class ProductPro {}
 
-enum ProductStatus {
-  purchasable,
-  purchased,
-  pending,
-}
+enum ProductStatus { purchasable, purchased, pending }
 
 class PurchasableProduct {
   String get id => productDetails.id;

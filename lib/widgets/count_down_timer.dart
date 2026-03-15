@@ -65,9 +65,6 @@ class _CountdownTimerState extends State<CountdownTimer> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      '${_secondsRemaining}s',
-      style: widget.textStyle,
-    );
+    return Text('${_secondsRemaining}s', style: widget.textStyle);
   }
 }

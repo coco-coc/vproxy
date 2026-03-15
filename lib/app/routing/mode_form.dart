@@ -1737,7 +1737,9 @@ class _IPSetPickerState extends State<IPSetPicker> {
                   onPressed: () {
                     widget.onChanged(e.greatIpSetConfig.name);
                   },
-                  child: Text(localizedSetName(context, e.greatIpSetConfig.name)),
+                  child: Text(
+                    localizedSetName(context, e.greatIpSetConfig.name),
+                  ),
                 ),
               );
               if (e.greatIpSetConfig.oppositeName.isNotEmpty) {
@@ -1747,7 +1749,11 @@ class _IPSetPickerState extends State<IPSetPicker> {
                       widget.onChanged(e.greatIpSetConfig.oppositeName);
                     },
                     child: Text(
-                        localizedSetName(context, e.greatIpSetConfig.oppositeName)),
+                      localizedSetName(
+                        context,
+                        e.greatIpSetConfig.oppositeName,
+                      ),
+                    ),
                   ),
                 );
               }

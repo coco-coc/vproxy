@@ -37,29 +37,17 @@ const ns223Ip = '223.5.5.5';
 const oneFourFourDnsIp = '114.114.114.114';
 const localhost = 'localhost';
 
-const boxH4 = SizedBox(
-  height: 4,
-);
+const boxH4 = SizedBox(height: 4);
 
-const boxH8 = SizedBox(
-  height: 8,
-);
+const boxH8 = SizedBox(height: 8);
 
-const boxH10 = SizedBox(
-  height: 10,
-);
+const boxH10 = SizedBox(height: 10);
 
-const boxW4 = SizedBox(
-  width: 4,
-);
+const boxW4 = SizedBox(width: 4);
 
-const boxW10 = SizedBox(
-  width: 10,
-);
+const boxW10 = SizedBox(width: 10);
 
-const boxW20 = SizedBox(
-  width: 20,
-);
+const boxW20 = SizedBox(width: 20);
 
 // const outboundHandlerGroup = 'outboundHandlerGroup';
 // const outboundHandlerConfig = 'outboundHandlerConfig';

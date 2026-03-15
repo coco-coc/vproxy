@@ -25,29 +25,29 @@ import 'package:vx/utils/logger.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(this._authRepo, bool isActivated)
-      : super(
-          AuthState(
-            user: _authRepo.currentSession != null
-                ? _toUser(_authRepo.currentSession!)
-                : null,
-            isActivated: isActivated,
-          ),
-        ) {
+    : super(
+        AuthState(
+          user: _authRepo.currentSession != null
+              ? _toUser(_authRepo.currentSession!)
+              : null,
+          isActivated: isActivated,
+        ),
+      ) {
     on<_AuthUserChanged>(_onUserChanged);
     on<AuthActivatedEvent>(_onActivated);
-    _userSubscription = _authRepo.sessionStreams.listen(
-      (session) {
-        logger.d("authStateChange, current user: ${session?.user}");
-        add(_AuthUserChanged(session != null ? _toUser(session) : null));
-      },
-    );
+    _userSubscription = _authRepo.sessionStreams.listen((session) {
+      logger.d("authStateChange, current user: ${session?.user}");
+      add(_AuthUserChanged(session != null ? _toUser(session) : null));
+    });
   }
 
   void setTestUser() {
-    emit(const AuthState(
-      user: User(id: 'test', email: 'test@test.com', pro: true),
-      isActivated: false,
-    ));
+    emit(
+      const AuthState(
+        user: User(id: 'test', email: 'test@test.com', pro: true),
+        isActivated: false,
+      ),
+    );
   }
 
   void unsetTestUser() {

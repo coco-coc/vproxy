@@ -34,39 +34,43 @@ import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/widgets/pro_icon.dart';
 
-final useStripe = Platform.isWindows ||
+final useStripe =
+    Platform.isWindows ||
     (androidApkRelease) ||
     appFlavor == "pkg" ||
     Platform.isLinux;
 void showProPromotionDialog(BuildContext context) {
   if (Provider.of<MyLayout>(context, listen: false).isCompact) {
-    Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
+    Navigator.of(context, rootNavigator: true).push(
+      CupertinoPageRoute(
         builder: (context) => Scaffold(
-              appBar: AppBar(
-                title: largeProIcon,
-              ),
-              body: Padding(
-                padding: const EdgeInsets.all(16),
-                child: !useStripe ? const IAPPurchase() : const ProPromotion(),
-              ),
-            )));
+          appBar: AppBar(title: largeProIcon),
+          body: Padding(
+            padding: const EdgeInsets.all(16),
+            child: !useStripe ? const IAPPurchase() : const ProPromotion(),
+          ),
+        ),
+      ),
+    );
     // showBottomSheet(context: context, builder: (context) => ProPromotion());
   } else {
     showDialog(
-        context: context,
-        barrierDismissible: useStripe ? true : false,
-        builder: (context) => AlertDialog(
-              title: largeProIcon,
-              actions: [
-                if (!useStripe)
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(AppLocalizations.of(context)!.cancel))
-              ],
-              content: !useStripe ? const IAPPurchase() : const ProPromotion(),
-            ));
+      context: context,
+      barrierDismissible: useStripe ? true : false,
+      builder: (context) => AlertDialog(
+        title: largeProIcon,
+        actions: [
+          if (!useStripe)
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(AppLocalizations.of(context)!.cancel),
+            ),
+        ],
+        content: !useStripe ? const IAPPurchase() : const ProPromotion(),
+      ),
+    );
   }
 }
 
@@ -114,36 +118,42 @@ class ProPromotion extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context)!.proFeatureDescription,
-              style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            AppLocalizations.of(context)!.proFeatureDescription,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const Gap(10),
           Row(
             children: [
               Expanded(
-                  child: BuyLifeTimeCard(
-                      onPressed: _onPressed,
-                      title: 'Pro',
-                      price: price,
-                      description: AppLocalizations.of(context)!
-                          .becomePermanentProDescription)),
-              const Expanded(
-                child: SizedBox(),
-              )
+                child: BuyLifeTimeCard(
+                  onPressed: _onPressed,
+                  title: 'Pro',
+                  price: price,
+                  description: AppLocalizations.of(
+                    context,
+                  )!.becomePermanentProDescription,
+                ),
+              ),
+              const Expanded(child: SizedBox()),
             ],
           ),
           const Gap(10),
           Row(
             children: [
               TextButton(
-                  onPressed: () {
-                    while (Navigator.of(context).canPop()) {
-                      Navigator.of(context).pop();
-                    }
-                    context.go('/setting/account');
-                  },
-                  child: Text(AppLocalizations.of(context)!.tryPro)),
-              Text(AppLocalizations.of(context)!.newUserProTrial,
-                  style: Theme.of(context).textTheme.bodySmall),
+                onPressed: () {
+                  while (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();
+                  }
+                  context.go('/setting/account');
+                },
+                child: Text(AppLocalizations.of(context)!.tryPro),
+              ),
+              Text(
+                AppLocalizations.of(context)!.newUserProTrial,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             ],
           ),
         ],
@@ -175,19 +185,26 @@ class BuyLifeTimeCard extends StatelessWidget {
           children: [
             Text(title, style: Theme.of(context).textTheme.titleMedium),
             const Gap(10),
-            Text(price,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(
+              price,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
             const Gap(10),
-            Text(description,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(
+              description,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
             const Gap(24),
             FilledButton.tonal(
-                onPressed: () {
-                  onPressed(context);
-                },
-                child: Text(AppLocalizations.of(context)!.purchase))
+              onPressed: () {
+                onPressed(context);
+              },
+              child: Text(AppLocalizations.of(context)!.purchase),
+            ),
           ],
         ),
       ),
@@ -202,18 +219,21 @@ class IAPPurchase extends StatelessWidget {
     final user = context.read<AuthBloc>().state.user;
     if (user == null) {
       showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: Text(AppLocalizations.of(context)!.loginBeforePurchase),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text(AppLocalizations.of(context)!.close)),
-                  TextButton(
-                      onPressed: () => _goLogin(context),
-                      child: Text(AppLocalizations.of(context)!.login))
-                ],
-              ));
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(AppLocalizations.of(context)!.loginBeforePurchase),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(AppLocalizations.of(context)!.close),
+            ),
+            TextButton(
+              onPressed: () => _goLogin(context),
+              child: Text(AppLocalizations.of(context)!.login),
+            ),
+          ],
+        ),
+      );
       return;
     }
     final proPurchases = context.read<ProPurchases>();
@@ -231,8 +251,10 @@ class IAPPurchase extends StatelessWidget {
     context.go('/setting/account');
   }
 
-  Widget _ifYouHavePaid(BuildContext context,
-      IAPStateWithPurchaseDetail stateWithPurchaseDetail) {
+  Widget _ifYouHavePaid(
+    BuildContext context,
+    IAPStateWithPurchaseDetail stateWithPurchaseDetail,
+  ) {
     return RichText(
       maxLines: 10,
       text: TextSpan(
@@ -240,7 +262,8 @@ class IAPPurchase extends StatelessWidget {
         children: [
           TextSpan(
             text: AppLocalizations.of(context)!.ifYouHavePaid(
-                stateWithPurchaseDetail.purchaseDetails.purchaseID ?? ''),
+              stateWithPurchaseDetail.purchaseDetails.purchaseID ?? '',
+            ),
           ),
           WidgetSpan(
             child: IconButton(
@@ -253,11 +276,13 @@ class IAPPurchase extends StatelessWidget {
               ),
               onPressed: () {
                 Pasteboard.writeText(
-                    stateWithPurchaseDetail.purchaseDetails.purchaseID ?? '');
+                  stateWithPurchaseDetail.purchaseDetails.purchaseID ?? '',
+                );
                 rootScaffoldMessengerKey.currentState?.showSnackBar(
                   SnackBar(
-                    content:
-                        Text(AppLocalizations.of(context)!.copiedToClipboard),
+                    content: Text(
+                      AppLocalizations.of(context)!.copiedToClipboard,
+                    ),
                     duration: const Duration(seconds: 2),
                   ),
                 );
@@ -278,199 +303,242 @@ class IAPPurchase extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context)!.proFeatureDescription,
-              style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            AppLocalizations.of(context)!.proFeatureDescription,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const Gap(10),
           SizedBox(
             width: 400,
-            child:
-                Consumer<ProPurchases>(builder: (context, proPurchases, child) {
-              if (proPurchases.state is IAPStateWithPurchaseDetail) {
-                final stateWithPurchaseDetail =
-                    proPurchases.state as IAPStateWithPurchaseDetail;
-                if (stateWithPurchaseDetail.purchaseDetails.status ==
-                    PurchaseStatus.canceled) {
-                  return Center(
+            child: Consumer<ProPurchases>(
+              builder: (context, proPurchases, child) {
+                if (proPurchases.state is IAPStateWithPurchaseDetail) {
+                  final stateWithPurchaseDetail =
+                      proPurchases.state as IAPStateWithPurchaseDetail;
+                  if (stateWithPurchaseDetail.purchaseDetails.status ==
+                      PurchaseStatus.canceled) {
+                    return Center(
                       child: Text(
-                          AppLocalizations.of(context)!.purchaseCancelled,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant)));
-                } else if (stateWithPurchaseDetail.purchaseDetails.status ==
-                    PurchaseStatus.pending) {
-                  return const Center(
-                    child: SizedBox(
+                        AppLocalizations.of(context)!.purchaseCancelled,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    );
+                  } else if (stateWithPurchaseDetail.purchaseDetails.status ==
+                      PurchaseStatus.pending) {
+                    return const Center(
+                      child: SizedBox(
                         width: 24,
                         height: 24,
-                        child: CircularProgressIndicator()),
-                  );
-                } else if (stateWithPurchaseDetail.verifying ?? false) {
-                  if (stateWithPurchaseDetail.purchaseDetails.status ==
-                      PurchaseStatus.restored) {
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  } else if (stateWithPurchaseDetail.verifying ?? false) {
+                    if (stateWithPurchaseDetail.purchaseDetails.status ==
+                        PurchaseStatus.restored) {
+                      return SizedBox(
+                        height: 200,
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(),
+                              ),
+                              const Gap(10),
+                              Text(
+                                AppLocalizations.of(context)!.restoringPurchase,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
                     return SizedBox(
                       height: 200,
                       child: Center(
-                          child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(
                               width: 24,
                               height: 24,
-                              child: CircularProgressIndicator()),
-                          const Gap(10),
-                          Text(AppLocalizations.of(context)!.restoringPurchase),
-                        ],
-                      )),
-                    );
-                  }
-                  return SizedBox(
-                    height: 200,
-                    child: Center(
-                        child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator()),
-                        const Gap(10),
-                        Text(AppLocalizations.of(context)!.verifyingPurchase),
-                      ],
-                    )),
-                  );
-                } else if (stateWithPurchaseDetail.verifyFailed != null) {
-                  return Column(
-                    children: [
-                      Icon(Icons.error,
-                          color: Theme.of(context).colorScheme.error, size: 24),
-                      const Gap(5),
-                      Text(
-                        AppLocalizations.of(context)!
-                            .purchaseVerificationFailed(stateWithPurchaseDetail
-                                .verifyFailed!
-                                .toLocalString(context)),
-                        maxLines: 10,
+                              child: CircularProgressIndicator(),
+                            ),
+                            const Gap(10),
+                            Text(
+                              AppLocalizations.of(context)!.verifyingPurchase,
+                            ),
+                          ],
+                        ),
                       ),
-                      const Gap(5),
-                      TextButton(
+                    );
+                  } else if (stateWithPurchaseDetail.verifyFailed != null) {
+                    return Column(
+                      children: [
+                        Icon(
+                          Icons.error,
+                          color: Theme.of(context).colorScheme.error,
+                          size: 24,
+                        ),
+                        const Gap(5),
+                        Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.purchaseVerificationFailed(
+                            stateWithPurchaseDetail.verifyFailed!.toLocalString(
+                              context,
+                            ),
+                          ),
+                          maxLines: 10,
+                        ),
+                        const Gap(5),
+                        TextButton(
                           onPressed: () {
                             proPurchases.reverify();
                           },
-                          child: Text(AppLocalizations.of(context)!.retry)),
-                      const Gap(10),
-                      _ifYouHavePaid(context, stateWithPurchaseDetail),
+                          child: Text(AppLocalizations.of(context)!.retry),
+                        ),
+                        const Gap(10),
+                        _ifYouHavePaid(context, stateWithPurchaseDetail),
+                      ],
+                    );
+                  } else if (stateWithPurchaseDetail.invalidPurchase != null) {
+                    return Center(
+                      child: Column(
+                        children: [
+                          Text(AppLocalizations.of(context)!.invalidPurchase),
+                          const Gap(10),
+                          _ifYouHavePaid(context, stateWithPurchaseDetail),
+                        ],
+                      ),
+                    );
+                  } else if (stateWithPurchaseDetail.success ?? false) {
+                    if (stateWithPurchaseDetail.purchaseDetails.status ==
+                        PurchaseStatus.purchased) {
+                      return Center(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.check_circle,
+                              color: Colors.green,
+                              size: 32,
+                            ),
+                            const Gap(10),
+                            Text(
+                              AppLocalizations.of(context)!.purchaseSuccessful,
+                            ),
+                          ],
+                        ),
+                      );
+                    } else if (stateWithPurchaseDetail.purchaseDetails.status ==
+                        PurchaseStatus.restored) {
+                      return Center(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.check_circle,
+                              color: Colors.green,
+                              size: 32,
+                            ),
+                            const Gap(10),
+                            Text(
+                              AppLocalizations.of(context)!.restoreSuccessful,
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      logger.e(
+                        'unknown purchase status: ${stateWithPurchaseDetail.purchaseDetails.status}',
+                      );
+                    }
+                    // return Center(
+                    //     child: Row(
+                    //   mainAxisSize: MainAxisSize.min,
+                    //   children: [
+                    //     const Icon(Icons.check_circle,
+                    //         color: Colors.green, size: 32),
+                    //     const Gap(10),
+                    //     Text(AppLocalizations.of(context)!.purchaseSuccessful),
+                    //   ],
+                    // ));
+                  } else if (stateWithPurchaseDetail.purchaseDetails.status ==
+                      PurchaseStatus.error) {
+                    return Center(
+                      child: Text(
+                        AppLocalizations.of(context)!.purchaseFailed(
+                          stateWithPurchaseDetail
+                                  .purchaseDetails
+                                  .error
+                                  ?.message ??
+                              '',
+                        ),
+                        maxLines: 10,
+                      ),
+                    );
+                  }
+                  return const SizedBox();
+                } else {
+                  final stateWithoutPurchaseDetail =
+                      proPurchases.state as IAPStateWithoutPurchaseDetail;
+                  if (stateWithoutPurchaseDetail.storeState ==
+                      StoreState.notAvailable) {
+                    return Center(
+                      child: Row(
+                        children: [
+                          const Icon(Icons.error),
+                          const Gap(10),
+                          Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.unableToConnectToStore,
+                          ),
+                        ],
+                      ),
+                    );
+                  } else if (stateWithoutPurchaseDetail.storeState ==
+                      StoreState.loading) {
+                    return const Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  } else if (stateWithoutPurchaseDetail.buying) {
+                    return const Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (proPurchases.products.isNotEmpty)
+                        Expanded(
+                          child: BuyLifeTimeCard(
+                            onPressed: _onPressed,
+                            title: proPurchases.products.first.title,
+                            price: proPurchases.products.first.price,
+                            description:
+                                proPurchases.products.first.description,
+                          ),
+                        ),
+                      const Expanded(child: SizedBox()),
                     ],
                   );
-                } else if (stateWithPurchaseDetail.invalidPurchase != null) {
-                  return Center(
-                      child: Column(
-                    children: [
-                      Text(AppLocalizations.of(context)!.invalidPurchase),
-                      const Gap(10),
-                      _ifYouHavePaid(context, stateWithPurchaseDetail),
-                    ],
-                  ));
-                } else if (stateWithPurchaseDetail.success ?? false) {
-                  if (stateWithPurchaseDetail.purchaseDetails.status ==
-                      PurchaseStatus.purchased) {
-                    return Center(
-                        child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.check_circle,
-                            color: Colors.green, size: 32),
-                        const Gap(10),
-                        Text(AppLocalizations.of(context)!.purchaseSuccessful),
-                      ],
-                    ));
-                  } else if (stateWithPurchaseDetail.purchaseDetails.status ==
-                      PurchaseStatus.restored) {
-                    return Center(
-                        child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.check_circle,
-                            color: Colors.green, size: 32),
-                        const Gap(10),
-                        Text(AppLocalizations.of(context)!.restoreSuccessful),
-                      ],
-                    ));
-                  } else {
-                    logger.e(
-                        'unknown purchase status: ${stateWithPurchaseDetail.purchaseDetails.status}');
-                  }
-                  // return Center(
-                  //     child: Row(
-                  //   mainAxisSize: MainAxisSize.min,
-                  //   children: [
-                  //     const Icon(Icons.check_circle,
-                  //         color: Colors.green, size: 32),
-                  //     const Gap(10),
-                  //     Text(AppLocalizations.of(context)!.purchaseSuccessful),
-                  //   ],
-                  // ));
-                } else if (stateWithPurchaseDetail.purchaseDetails.status ==
-                    PurchaseStatus.error) {
-                  return Center(
-                      child: Text(
-                    AppLocalizations.of(context)!.purchaseFailed(
-                        stateWithPurchaseDetail
-                                .purchaseDetails.error?.message ??
-                            ''),
-                    maxLines: 10,
-                  ));
                 }
-                return const SizedBox();
-              } else {
-                final stateWithoutPurchaseDetail =
-                    proPurchases.state as IAPStateWithoutPurchaseDetail;
-                if (stateWithoutPurchaseDetail.storeState ==
-                    StoreState.notAvailable) {
-                  return Center(
-                      child: Row(
-                    children: [
-                      const Icon(Icons.error),
-                      const Gap(10),
-                      Text(
-                          AppLocalizations.of(context)!.unableToConnectToStore),
-                    ],
-                  ));
-                } else if (stateWithoutPurchaseDetail.storeState ==
-                    StoreState.loading) {
-                  return const Center(
-                      child: SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator()));
-                } else if (stateWithoutPurchaseDetail.buying) {
-                  return const Center(
-                      child: SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator()));
-                }
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (proPurchases.products.isNotEmpty)
-                      Expanded(
-                          child: BuyLifeTimeCard(
-                              onPressed: _onPressed,
-                              title: proPurchases.products.first.title,
-                              price: proPurchases.products.first.price,
-                              description:
-                                  proPurchases.products.first.description)),
-                    const Expanded(
-                      child: SizedBox(),
-                    )
-                  ],
-                );
-              }
-            }),
+              },
+            ),
           ),
           const Gap(10),
           if (context.read<AuthBloc>().state.user == null)
@@ -480,25 +548,24 @@ class IAPPurchase extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodySmall,
                 children: [
                   TextSpan(
-                      text: AppLocalizations.of(context)!.loginBeforePurchase),
+                    text: AppLocalizations.of(context)!.loginBeforePurchase,
+                  ),
                   WidgetSpan(
                     child: TextButton(
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 5),
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          visualDensity: VisualDensity.compact,
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      onPressed: () => _goLogin(context),
+                      child: Text(
+                        AppLocalizations.of(context)!.login,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                        onPressed: () => _goLogin(context),
-                        child: Text(
-                          AppLocalizations.of(context)!.login,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                        )),
+                      ),
+                    ),
                   ),
                 ],
               ),

@@ -42,7 +42,7 @@ const Set<String> _statsWidgetIds = {
   'upload',
   'download',
   'memory',
-  'connections'
+  'connections',
 };
 
 /// Averages nearby data entries to reduce the number of points
@@ -105,21 +105,25 @@ class RealtimeSpeedNotifier extends ChangeNotifier {
   int? downloadSpeed;
   int? memory;
   int? connections;
-  CircularBuffer<DataPoint> uploadHistory =
-      CircularBuffer<DataPoint>(maxSize: _maxHistorySize);
-  CircularBuffer<DataPoint> downloadHistory =
-      CircularBuffer<DataPoint>(maxSize: _maxHistorySize);
-  CircularBuffer<DataPoint> memoryHistory =
-      CircularBuffer<DataPoint>(maxSize: _maxHistorySize);
-  CircularBuffer<DataPoint> connectionsHistory =
-      CircularBuffer<DataPoint>(maxSize: _maxHistorySize);
+  CircularBuffer<DataPoint> uploadHistory = CircularBuffer<DataPoint>(
+    maxSize: _maxHistorySize,
+  );
+  CircularBuffer<DataPoint> downloadHistory = CircularBuffer<DataPoint>(
+    maxSize: _maxHistorySize,
+  );
+  CircularBuffer<DataPoint> memoryHistory = CircularBuffer<DataPoint>(
+    maxSize: _maxHistorySize,
+  );
+  CircularBuffer<DataPoint> connectionsHistory = CircularBuffer<DataPoint>(
+    maxSize: _maxHistorySize,
+  );
   List<NodeInfo> nodeInfos = [];
 
   RealtimeSpeedNotifier({
     required XController controller,
     required OutboundRepo outboundRepo,
-  })  : _controller = controller,
-        _outboundRepo = outboundRepo {
+  }) : _controller = controller,
+       _outboundRepo = outboundRepo {
     _statusStream = _controller.statusStream().listen((event) async {
       if (event == XStatus.connected) {
         await _startSpeedStreamIfNeeded();
@@ -163,14 +167,17 @@ class RealtimeSpeedNotifier extends ChangeNotifier {
   Future<void> _startSpeedStreamIfNeeded() async {
     if (!_statsWidgetsVisible || _speedStream != null) return;
     try {
-      _speedStream =
-          (await _controller.outboundStatsStream(_interval)).listen((event) {
-        _process(event);
-      }, onDone: () {
-        logger.d("speed stream done");
-      }, onError: (e) {
-        logger.e("error in speed stream", error: e);
-      });
+      _speedStream = (await _controller.outboundStatsStream(_interval)).listen(
+        (event) {
+          _process(event);
+        },
+        onDone: () {
+          logger.d("speed stream done");
+        },
+        onError: (e) {
+          logger.e("error in speed stream", error: e);
+        },
+      );
       logger.d("speed stream started");
     } catch (e) {
       logger.e("error starting speed stream", error: e);
@@ -189,19 +196,21 @@ class RealtimeSpeedNotifier extends ChangeNotifier {
   void demo() {
     for (var i = 0; i < 10; i++) {
       sleep(const Duration(seconds: 1));
-      _process(StatsResponse(
-        memory: Int64(1000),
-        connections: 1000,
-        stats: [
-          OutboundStats(
-            id: "node-$i",
-            up: Int64(100000),
-            down: Int64(10000000),
-            rate: Int64(10000000),
-            ping: Int64(1000000),
-          ),
-        ],
-      ));
+      _process(
+        StatsResponse(
+          memory: Int64(1000),
+          connections: 1000,
+          stats: [
+            OutboundStats(
+              id: "node-$i",
+              up: Int64(100000),
+              down: Int64(10000000),
+              rate: Int64(10000000),
+              ping: Int64(1000000),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -224,25 +233,29 @@ class RealtimeSpeedNotifier extends ChangeNotifier {
       interval = max(interval, stat.interval);
       uploadTotal += stat.up.toInt();
       downloadTotal += stat.down.toInt();
-      int? nodeInfoIndex =
-          nodeInfos.indexWhere((element) => element.id == stat.id);
+      int? nodeInfoIndex = nodeInfos.indexWhere(
+        (element) => element.id == stat.id,
+      );
       NodeInfo? nodeInfo;
       if (nodeInfoIndex < 0) {
         final name = await _outboundRepo.getHandlerName(stat.id);
         late OutboundHandler handler;
         if (stat.id.contains('-')) {
-          handler = (await _outboundRepo
-              .getHandlerById(int.parse(stat.id.split('-').last)))!;
+          handler = (await _outboundRepo.getHandlerById(
+            int.parse(stat.id.split('-').last),
+          ))!;
         } else {
           handler = (await _outboundRepo.getHandlerById(int.parse(stat.id)))!;
         }
         nodeInfo = NodeInfo(
-            id: stat.id,
-            name: name,
-            serverIp:
-                handler.serverIp.isEmpty ? handler.address : handler.serverIp,
-            country: handler.countryIcon,
-            statsHistory: CircularBuffer<NodeStats>(maxSize: 500));
+          id: stat.id,
+          name: name,
+          serverIp: handler.serverIp.isEmpty
+              ? handler.address
+              : handler.serverIp,
+          country: handler.countryIcon,
+          statsHistory: CircularBuffer<NodeStats>(maxSize: 500),
+        );
         newList.add(nodeInfo);
       } else {
         nodeInfo = nodeInfos[nodeInfoIndex];
@@ -255,10 +268,7 @@ class RealtimeSpeedNotifier extends ChangeNotifier {
         }
         newList.add(nodeInfo);
       }
-      nodeInfo.statsHistory.add((
-        stat.rate.toInt(),
-        stat.ping.toInt(),
-      ));
+      nodeInfo.statsHistory.add((stat.rate.toInt(), stat.ping.toInt()));
     }
     if (interval > 0) {
       uploadSpeed = uploadTotal ~/ interval;
@@ -287,35 +297,34 @@ class Stats extends StatelessWidget {
     if (!showUpload && !showDownload && !showMemory && !showConnections) {
       return const SizedBox();
     }
-    return LayoutBuilder(builder: (context, constraints) {
-      final count = constraints.maxWidth > 800 ? 4 : 2;
-      final ratio = ((constraints.maxWidth - 30) / count) / 90;
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          childAspectRatio: ratio,
-          crossAxisCount: count,
-          children: [
-            if (showUpload) const RealtimeSpeed(isUpload: true),
-            if (showDownload) const RealtimeSpeed(isUpload: false),
-            if (showMemory) const MemoryStats(),
-            if (showConnections) const ConnectionsStats(),
-          ],
-        ),
-      );
-    });
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final count = constraints.maxWidth > 800 ? 4 : 2;
+        final ratio = ((constraints.maxWidth - 30) / count) / 90;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: ratio,
+            crossAxisCount: count,
+            children: [
+              if (showUpload) const RealtimeSpeed(isUpload: true),
+              if (showDownload) const RealtimeSpeed(isUpload: false),
+              if (showMemory) const MemoryStats(),
+              if (showConnections) const ConnectionsStats(),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
 class RealtimeSpeed extends StatefulWidget {
-  const RealtimeSpeed({
-    super.key,
-    required this.isUpload,
-  });
+  const RealtimeSpeed({super.key, required this.isUpload});
 
   final bool isUpload;
 
@@ -329,19 +338,20 @@ class _RealtimeSpeedState extends State<RealtimeSpeed> {
   void _toggleView() {
     if (context.read<MyLayout>().isCompact) {
       showModalBottomSheet(
-          useRootNavigator: true,
-          context: context,
-          builder: (context) => Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SafeArea(
-                  child: _SpeedChart(
-                    key: const ValueKey('chart'),
-                    bottomSheet: true,
-                    isUpload: widget.isUpload,
-                    color: widget.isUpload ? XPink : XBlue,
-                  ),
-                ),
-              ));
+        useRootNavigator: true,
+        context: context,
+        builder: (context) => Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SafeArea(
+            child: _SpeedChart(
+              key: const ValueKey('chart'),
+              bottomSheet: true,
+              isUpload: widget.isUpload,
+              color: widget.isUpload ? XPink : XBlue,
+            ),
+          ),
+        ),
+      );
     } else {
       setState(() {
         _showChart = !_showChart;
@@ -362,8 +372,9 @@ class _RealtimeSpeedState extends State<RealtimeSpeed> {
           color: Theme.of(context).colorScheme.surfaceContainerLow,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color:
-                Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3),
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withOpacity(0.3),
             width: 1,
           ),
           boxShadow: [
@@ -391,11 +402,7 @@ class _RealtimeSpeedState extends State<RealtimeSpeed> {
 }
 
 class _SpeedDisplay extends StatelessWidget {
-  const _SpeedDisplay({
-    super.key,
-    required this.isUpload,
-    required this.color,
-  });
+  const _SpeedDisplay({super.key, required this.isUpload, required this.color});
 
   final bool isUpload;
   final Color color;
@@ -429,11 +436,11 @@ class _SpeedDisplay extends StatelessWidget {
                     ? AppLocalizations.of(context)!.upload
                     : AppLocalizations.of(context)!.download,
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.2,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.2,
+                ),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -454,12 +461,12 @@ class _SpeedDisplay extends StatelessWidget {
                   child: Text(
                     speedText,
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          color: color,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                          height: 1.0,
-                          letterSpacing: -0.5,
-                        ),
+                      color: color,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      height: 1.0,
+                      letterSpacing: -0.5,
+                    ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -473,14 +480,13 @@ class _SpeedDisplay extends StatelessWidget {
             child: Text(
               '/s',
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurfaceVariant
-                        .withOpacity(0.7),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    height: 1.0,
-                  ),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurfaceVariant.withOpacity(0.7),
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                height: 1.0,
+              ),
             ),
           ),
         ),
@@ -509,8 +515,9 @@ class _SpeedChart extends StatelessWidget {
             ? speedProvider.uploadHistory
             : speedProvider.downloadHistory;
 
-        final speed =
-            isUpload ? speedProvider.uploadSpeed : speedProvider.downloadSpeed;
+        final speed = isUpload
+            ? speedProvider.uploadSpeed
+            : speedProvider.downloadSpeed;
         final speedText = speed != null ? bytesToReadable(speed) : '--';
 
         if (history.isEmpty) {
@@ -518,8 +525,8 @@ class _SpeedChart extends StatelessWidget {
             child: Text(
               AppLocalizations.of(context)!.noData,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           );
         }
@@ -546,18 +553,18 @@ class _SpeedChart extends StatelessWidget {
                 Text(
                   speedText,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: color,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    color: color,
+                    fontWeight: FontWeight.w500,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
                 const Spacer(),
                 Text(
                   'Max: $maxValueText',
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 10,
-                      ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 10,
+                  ),
                 ),
               ],
             ),
@@ -565,7 +572,12 @@ class _SpeedChart extends StatelessWidget {
             Expanded(
               child: LineChart(
                 _buildSpeedChartData(
-                    allData, color, maxValue, context, bottomSheet),
+                  allData,
+                  color,
+                  maxValue,
+                  context,
+                  bottomSheet,
+                ),
                 duration: Duration.zero, // Remove animation to prevent shaking
                 curve: Curves.easeInOut,
               ),
@@ -576,8 +588,13 @@ class _SpeedChart extends StatelessWidget {
     );
   }
 
-  LineChartData _buildSpeedChartData(List<(int, DateTime)> allData, Color color,
-      int maxValue, BuildContext context, bool bottomSheet) {
+  LineChartData _buildSpeedChartData(
+    List<(int, DateTime)> allData,
+    Color color,
+    int maxValue,
+    BuildContext context,
+    bool bottomSheet,
+  ) {
     if (allData.isEmpty) {
       return LineChartData(
         lineBarsData: [],
@@ -606,10 +623,7 @@ class _SpeedChart extends StatelessWidget {
         drawVerticalLine: false,
         horizontalInterval: maxY / 3,
         getDrawingHorizontalLine: (value) {
-          return FlLine(
-            color: Colors.grey.withOpacity(0.1),
-            strokeWidth: 1,
-          );
+          return FlLine(color: Colors.grey.withOpacity(0.1), strokeWidth: 1);
         },
       ),
       titlesData: FlTitlesData(
@@ -626,9 +640,9 @@ class _SpeedChart extends StatelessWidget {
                 child: Text(
                   _formatTimeNoAgo(ts),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 9,
-                      ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 9,
+                  ),
                 ),
               );
             },
@@ -655,24 +669,26 @@ class _SpeedChart extends StatelessWidget {
                   minFontSize: 7,
                   textAlign: TextAlign.right,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 9,
-                      ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 9,
+                  ),
                 ),
               );
             },
           ),
         ),
-        rightTitles:
-            const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
         topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       ),
       borderData: FlBorderData(
         show: false,
         border: Border(
           bottom: BorderSide(
-            color:
-                Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3),
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withOpacity(0.3),
             width: 1,
           ),
         ),
@@ -695,10 +711,7 @@ class _SpeedChart extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                color.withOpacity(0.2),
-                color.withOpacity(0.0),
-              ],
+              colors: [color.withOpacity(0.2), color.withOpacity(0.0)],
             ),
           ),
         ),
@@ -768,8 +781,9 @@ class _MemoryStatsState extends State<MemoryStats> {
           color: Theme.of(context).colorScheme.surfaceContainerLow,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color:
-                Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3),
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withOpacity(0.3),
             width: 1,
           ),
           boxShadow: [
@@ -781,24 +795,15 @@ class _MemoryStatsState extends State<MemoryStats> {
           ],
         ),
         child: _showChart
-            ? const _MemoryChart(
-                key: ValueKey('chart'),
-                color: color,
-              )
-            : const _MemoryDisplay(
-                key: ValueKey('display'),
-                color: color,
-              ),
+            ? const _MemoryChart(key: ValueKey('chart'), color: color)
+            : const _MemoryDisplay(key: ValueKey('display'), color: color),
       ),
     );
   }
 }
 
 class _MemoryDisplay extends StatelessWidget {
-  const _MemoryDisplay({
-    super.key,
-    required this.color,
-  });
+  const _MemoryDisplay({super.key, required this.color});
 
   final Color color;
 
@@ -817,52 +822,47 @@ class _MemoryDisplay extends StatelessWidget {
                 color: color.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: Icon(
-                Icons.memory,
-                color: color,
-                size: 14,
-              ),
+              child: Icon(Icons.memory, color: color, size: 14),
             ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 AppLocalizations.of(context)!.memory,
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.2,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.2,
+                ),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
-        Consumer<RealtimeSpeedNotifier>(builder: (ctx, speedProvider, child) {
-          final memory = demo ? 10000000 : speedProvider.memory;
-          final memoryText = memory != null ? bytesToReadable(memory) : '--';
-          return Text(
-            memoryText,
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: color,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  height: 1.0,
-                  letterSpacing: -0.5,
-                ),
-            overflow: TextOverflow.ellipsis,
-          );
-        }),
+        Consumer<RealtimeSpeedNotifier>(
+          builder: (ctx, speedProvider, child) {
+            final memory = demo ? 10000000 : speedProvider.memory;
+            final memoryText = memory != null ? bytesToReadable(memory) : '--';
+            return Text(
+              memoryText,
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                color: color,
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                height: 1.0,
+                letterSpacing: -0.5,
+              ),
+              overflow: TextOverflow.ellipsis,
+            );
+          },
+        ),
       ],
     );
   }
 }
 
 class _MemoryChart extends StatelessWidget {
-  const _MemoryChart({
-    super.key,
-    required this.color,
-  });
+  const _MemoryChart({super.key, required this.color});
 
   final Color color;
 
@@ -878,8 +878,8 @@ class _MemoryChart extends StatelessWidget {
             child: Text(
               AppLocalizations.of(context)!.noData,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           );
         }
@@ -889,18 +889,14 @@ class _MemoryChart extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.memory,
-                  color: color,
-                  size: 14,
-                ),
+                Icon(Icons.memory, color: color, size: 14),
                 const SizedBox(width: 6),
                 Text(
                   memoryText,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: color,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    color: color,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
@@ -919,7 +915,9 @@ class _MemoryChart extends StatelessWidget {
   }
 
   LineChartData _buildMemoryChartData(
-      CircularBuffer<DataPoint> history, Color color) {
+    CircularBuffer<DataPoint> history,
+    Color color,
+  ) {
     final allData = history.toList();
     if (allData.isEmpty) {
       return LineChartData(
@@ -937,8 +935,9 @@ class _MemoryChart extends StatelessWidget {
       return FlSpot(entry.key.toDouble(), entry.value.$1.toDouble());
     }).toList();
 
-    final maxValue =
-        averagedData.map((e) => e.$1).reduce((a, b) => a > b ? a : b);
+    final maxValue = averagedData
+        .map((e) => e.$1)
+        .reduce((a, b) => a > b ? a : b);
     final maxY = (maxValue * 1.1).toDouble().clamp(1.0, double.infinity);
     const minY = 0.0;
 
@@ -948,10 +947,7 @@ class _MemoryChart extends StatelessWidget {
         drawVerticalLine: false,
         horizontalInterval: maxY / 3,
         getDrawingHorizontalLine: (value) {
-          return FlLine(
-            color: Colors.grey.withOpacity(0.1),
-            strokeWidth: 1,
-          );
+          return FlLine(color: Colors.grey.withOpacity(0.1), strokeWidth: 1);
         },
       ),
       titlesData: const FlTitlesData(show: false),
@@ -974,10 +970,7 @@ class _MemoryChart extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                color.withOpacity(0.2),
-                color.withOpacity(0.0),
-              ],
+              colors: [color.withOpacity(0.2), color.withOpacity(0.0)],
             ),
           ),
         ),
@@ -1032,18 +1025,19 @@ class _ConnectionsStatsState extends State<ConnectionsStats> {
   void _toggleView() {
     if (context.read<MyLayout>().isCompact) {
       showModalBottomSheet(
-          useRootNavigator: true,
-          context: context,
-          builder: (context) => Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SafeArea(
-                  child: _ConnectionsChart(
-                    key: const ValueKey('chart'),
-                    color: color,
-                    bottomSheet: true,
-                  ),
-                ),
-              ));
+        useRootNavigator: true,
+        context: context,
+        builder: (context) => Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SafeArea(
+            child: _ConnectionsChart(
+              key: const ValueKey('chart'),
+              color: color,
+              bottomSheet: true,
+            ),
+          ),
+        ),
+      );
     } else {
       setState(() {
         _showChart = !_showChart;
@@ -1063,8 +1057,9 @@ class _ConnectionsStatsState extends State<ConnectionsStats> {
           color: Theme.of(context).colorScheme.surfaceContainerLow,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color:
-                Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3),
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withOpacity(0.3),
             width: 1,
           ),
           boxShadow: [
@@ -1076,24 +1071,15 @@ class _ConnectionsStatsState extends State<ConnectionsStats> {
           ],
         ),
         child: _showChart
-            ? _ConnectionsChart(
-                key: const ValueKey('chart'),
-                color: color,
-              )
-            : _ConnectionsDisplay(
-                key: const ValueKey('display'),
-                color: color,
-              ),
+            ? _ConnectionsChart(key: const ValueKey('chart'), color: color)
+            : _ConnectionsDisplay(key: const ValueKey('display'), color: color),
       ),
     );
   }
 }
 
 class _ConnectionsDisplay extends StatelessWidget {
-  const _ConnectionsDisplay({
-    super.key,
-    required this.color,
-  });
+  const _ConnectionsDisplay({super.key, required this.color});
 
   final Color color;
 
@@ -1112,45 +1098,43 @@ class _ConnectionsDisplay extends StatelessWidget {
                 color: color.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: Icon(
-                Icons.route_outlined,
-                color: color,
-                size: 14,
-              ),
+              child: Icon(Icons.route_outlined, color: color, size: 14),
             ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 AppLocalizations.of(context)!.connections,
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.2,
-                    ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.2,
+                ),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
-        Consumer<RealtimeSpeedNotifier>(builder: (ctx, speedProvider, child) {
-          final connections = demo
-              ? '37'
-              : (speedProvider.connections != null
-                  ? speedProvider.connections.toString()
-                  : '--');
-          return Text(
-            connections,
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: color,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  height: 1.0,
-                  letterSpacing: -0.5,
-                ),
-            overflow: TextOverflow.ellipsis,
-          );
-        }),
+        Consumer<RealtimeSpeedNotifier>(
+          builder: (ctx, speedProvider, child) {
+            final connections = demo
+                ? '37'
+                : (speedProvider.connections != null
+                      ? speedProvider.connections.toString()
+                      : '--');
+            return Text(
+              connections,
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                color: color,
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                height: 1.0,
+                letterSpacing: -0.5,
+              ),
+              overflow: TextOverflow.ellipsis,
+            );
+          },
+        ),
       ],
     );
   }
@@ -1178,8 +1162,8 @@ class _ConnectionsChart extends StatelessWidget {
             child: Text(
               AppLocalizations.of(context)!.noData,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           );
         }
@@ -1189,18 +1173,14 @@ class _ConnectionsChart extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.route_outlined,
-                  color: color,
-                  size: 14,
-                ),
+                Icon(Icons.route_outlined, color: color, size: 14),
                 const SizedBox(width: 6),
                 Text(
                   connections,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: color,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    color: color,
+                    fontWeight: FontWeight.w500,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -1209,7 +1189,11 @@ class _ConnectionsChart extends StatelessWidget {
             Expanded(
               child: LineChart(
                 _buildConnectionsChartData(
-                    history, color, bottomSheet, context),
+                  history,
+                  color,
+                  bottomSheet,
+                  context,
+                ),
                 duration: const Duration(milliseconds: 150),
                 curve: Curves.easeInOut,
               ),
@@ -1220,8 +1204,12 @@ class _ConnectionsChart extends StatelessWidget {
     );
   }
 
-  LineChartData _buildConnectionsChartData(CircularBuffer<DataPoint> history,
-      Color color, bool bottomSheet, BuildContext context) {
+  LineChartData _buildConnectionsChartData(
+    CircularBuffer<DataPoint> history,
+    Color color,
+    bool bottomSheet,
+    BuildContext context,
+  ) {
     final allData = history.toList();
     if (allData.isEmpty) {
       return LineChartData(
@@ -1258,10 +1246,7 @@ class _ConnectionsChart extends StatelessWidget {
               dashArray: [5, 5],
             );
           }
-          return FlLine(
-            color: Colors.grey.withOpacity(0.1),
-            strokeWidth: 1,
-          );
+          return FlLine(color: Colors.grey.withOpacity(0.1), strokeWidth: 1);
         },
       ),
       titlesData: FlTitlesData(
@@ -1278,9 +1263,9 @@ class _ConnectionsChart extends StatelessWidget {
                 child: Text(
                   _formatTimeNoAgo(ts),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 9,
-                      ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 9,
+                  ),
                 ),
               );
             },
@@ -1307,16 +1292,17 @@ class _ConnectionsChart extends StatelessWidget {
                   minFontSize: 7,
                   textAlign: TextAlign.right,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 9,
-                      ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 9,
+                  ),
                 ),
               );
             },
           ),
         ),
-        rightTitles:
-            const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        rightTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
         topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       ),
       borderData: FlBorderData(
@@ -1348,10 +1334,7 @@ class _ConnectionsChart extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                color.withOpacity(0.2),
-                color.withOpacity(0.0),
-              ],
+              colors: [color.withOpacity(0.2), color.withOpacity(0.0)],
             ),
           ),
         ),
@@ -1409,8 +1392,9 @@ class NodeStatsWidget extends StatelessWidget {
             color: Theme.of(context).colorScheme.surfaceContainerLow,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color:
-                  Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.outlineVariant.withOpacity(0.3),
               width: 1,
             ),
             boxShadow: [
@@ -1422,17 +1406,14 @@ class NodeStatsWidget extends StatelessWidget {
             ],
           ),
           child: ListView.separated(
-              separatorBuilder: (context, index) => Divider(
-                    height: 1,
-                    color: Colors.grey.withOpacity(0.1),
-                  ),
-              itemCount: speedProvider.nodeInfos.length,
-              itemBuilder: (context, index) {
-                final nodeInfo = speedProvider.nodeInfos[index];
-                return NodeCard(
-                  nodeInfo: nodeInfo,
-                );
-              }),
+            separatorBuilder: (context, index) =>
+                Divider(height: 1, color: Colors.grey.withOpacity(0.1)),
+            itemCount: speedProvider.nodeInfos.length,
+            itemBuilder: (context, index) {
+              final nodeInfo = speedProvider.nodeInfos[index];
+              return NodeCard(nodeInfo: nodeInfo);
+            },
+          ),
         );
       },
     );
@@ -1476,9 +1457,9 @@ class _NodeCardState extends State<NodeCard> {
             borderRadius: BorderRadius.circular(8),
             onTap: () {
               // Ensure "All" group is visible
-              context
-                  .read<OutboundBloc>()
-                  .add(SelectedGroupChangeEvent(allGroup));
+              context.read<OutboundBloc>().add(
+                SelectedGroupChangeEvent(allGroup),
+              );
               GoRouter.of(context).go('/node');
               final tableState =
                   outboundTableKey.currentState as OutboundTableState?;
@@ -1495,15 +1476,16 @@ class _NodeCardState extends State<NodeCard> {
               }
             },
             child: // Header: Country flag + Name + IP
-                Row(
+            Row(
               children: [
                 // Country flag
                 Padding(
                   padding: const EdgeInsets.all(6),
                   child: Container(
                     decoration: BoxDecoration(
-                      color:
-                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: Colors.white.withOpacity(0.1),
@@ -1521,18 +1503,17 @@ class _NodeCardState extends State<NodeCard> {
                     Text(
                       widget.nodeInfo.name,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       widget.nodeInfo.serverIp,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                            fontSize: 10,
-                          ),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 10,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -1556,10 +1537,13 @@ class _NodeCardState extends State<NodeCard> {
                 isSelected: false /*  _selectedChartType == 'rate' */,
                 onTap: () => {
                   showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                          content: Text(
-                              AppLocalizations.of(context)!.realtimeRateDesc)))
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      content: Text(
+                        AppLocalizations.of(context)!.realtimeRateDesc,
+                      ),
+                    ),
+                  ),
                 },
               ),
             ),
@@ -1573,10 +1557,13 @@ class _NodeCardState extends State<NodeCard> {
                 isSelected: false /* _selectedChartType == 'latency' */,
                 onTap: () => {
                   showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                          content: Text(AppLocalizations.of(context)!
-                              .realtimeLatencyDesc)))
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      content: Text(
+                        AppLocalizations.of(context)!.realtimeLatencyDesc,
+                      ),
+                    ),
+                  ),
                 },
               ),
             ),
@@ -1671,19 +1658,15 @@ class _StatItem extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
-                  icon,
-                  size: 14,
-                  color: color,
-                ),
+                Icon(icon, size: 14, color: color),
                 const SizedBox(width: 8),
                 Text(
                   label,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
@@ -1691,10 +1674,10 @@ class _StatItem extends StatelessWidget {
             Text(
               value,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -1706,10 +1689,7 @@ class _StatItem extends StatelessWidget {
 }
 
 class _NodeChart extends StatelessWidget {
-  const _NodeChart({
-    required this.nodeInfo,
-    required this.chartType,
-  });
+  const _NodeChart({required this.nodeInfo, required this.chartType});
 
   final NodeInfo nodeInfo;
   final String chartType;
@@ -1721,8 +1701,8 @@ class _NodeChart extends StatelessWidget {
         child: Text(
           'No data',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       );
     }
@@ -1759,15 +1739,21 @@ class _NodeChart extends StatelessWidget {
     }
 
     return LineChart(
-      _buildNodeChartData(dataValues, color,
-          label == AppLocalizations.of(context)!.realtimeLatency),
+      _buildNodeChartData(
+        dataValues,
+        color,
+        label == AppLocalizations.of(context)!.realtimeLatency,
+      ),
       duration: const Duration(milliseconds: 150),
       curve: Curves.easeInOut,
     );
   }
 
   LineChartData _buildNodeChartData(
-      List<int> dataValues, Color color, bool isLatency) {
+    List<int> dataValues,
+    Color color,
+    bool isLatency,
+  ) {
     if (dataValues.isEmpty) {
       return LineChartData(
         lineBarsData: [],
@@ -1801,10 +1787,7 @@ class _NodeChart extends StatelessWidget {
         drawVerticalLine: false,
         horizontalInterval: maxY / 3,
         getDrawingHorizontalLine: (value) {
-          return FlLine(
-            color: Colors.grey.withOpacity(0.1),
-            strokeWidth: 1,
-          );
+          return FlLine(color: Colors.grey.withOpacity(0.1), strokeWidth: 1);
         },
       ),
       titlesData: const FlTitlesData(show: false),
@@ -1827,10 +1810,7 @@ class _NodeChart extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                color.withOpacity(0.2),
-                color.withOpacity(0.0),
-              ],
+              colors: [color.withOpacity(0.2), color.withOpacity(0.0)],
             ),
           ),
         ),

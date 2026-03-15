@@ -39,13 +39,13 @@ class ProxySelectorState extends Equatable {
 
   @override
   List<Object?> get props => [
-        routeMode,
-        proxySelectorMode,
-        manualNodeSetting,
-        autoNodeSetting,
-        proxySelectorEnabled,
-        showProxySelector,
-      ];
+    routeMode,
+    proxySelectorMode,
+    manualNodeSetting,
+    autoNodeSetting,
+    proxySelectorEnabled,
+    showProxySelector,
+  ];
 
   // copy with
   ProxySelectorState copyWith({

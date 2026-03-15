@@ -30,32 +30,25 @@ import 'dart:ffi' as ffi;
 class XApiBindings {
   /// Holds the symbol lookup function.
   final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-      _lookup;
+  _lookup;
 
   /// The symbols are looked up in [dynamicLibrary].
   XApiBindings(ffi.DynamicLibrary dynamicLibrary)
-      : _lookup = dynamicLibrary.lookup;
+    : _lookup = dynamicLibrary.lookup;
 
   /// The symbols are looked up with [lookup].
   XApiBindings.fromLookup(
-      ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-          lookup)
-      : _lookup = lookup;
+    ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) lookup,
+  ) : _lookup = lookup;
 
-  void do_status_change_callback(
-    status_change_callback_t cb,
-    int status,
-  ) {
-    return _do_status_change_callback(
-      cb,
-      status,
-    );
+  void do_status_change_callback(status_change_callback_t cb, int status) {
+    return _do_status_change_callback(cb, status);
   }
 
-  late final _do_status_change_callbackPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Void Function(
-              status_change_callback_t, ffi.Int)>>('do_status_change_callback');
+  late final _do_status_change_callbackPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Void Function(status_change_callback_t, ffi.Int)>
+      >('do_status_change_callback');
   late final _do_status_change_callback = _do_status_change_callbackPtr
       .asFunction<void Function(status_change_callback_t, int)>();
 
@@ -64,20 +57,27 @@ class XApiBindings {
     int len,
     self_stop_callback_t callback,
   ) {
-    return _Start(
-      p,
-      len,
-      callback,
-    );
+    return _Start(p, len, callback);
   }
 
-  late final _StartPtr = _lookup<
-      ffi.NativeFunction<
+  late final _StartPtr =
+      _lookup<
+        ffi.NativeFunction<
           ffi.Pointer<ffi.Char> Function(
-              ffi.Pointer<ffi.Void>, ffi.Int, self_stop_callback_t)>>('Start');
-  late final _Start = _StartPtr.asFunction<
-      ffi.Pointer<ffi.Char> Function(
-          ffi.Pointer<ffi.Void>, int, self_stop_callback_t)>();
+            ffi.Pointer<ffi.Void>,
+            ffi.Int,
+            self_stop_callback_t,
+          )
+        >
+      >('Start');
+  late final _Start =
+      _StartPtr.asFunction<
+        ffi.Pointer<ffi.Char> Function(
+          ffi.Pointer<ffi.Void>,
+          int,
+          self_stop_callback_t,
+        )
+      >();
 
   ffi.Pointer<ffi.Char> Stop() {
     return _Stop();
@@ -87,50 +87,42 @@ class XApiBindings {
       _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>('Stop');
   late final _Stop = _StopPtr.asFunction<ffi.Pointer<ffi.Char> Function()>();
 
-  void FreeString(
-    ffi.Pointer<ffi.Char> s,
-  ) {
-    return _FreeString(
-      s,
-    );
+  void FreeString(ffi.Pointer<ffi.Char> s) {
+    return _FreeString(s);
   }
 
   late final _FreeStringPtr =
       _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Char>)>>(
-          'FreeString');
+        'FreeString',
+      );
   late final _FreeString =
       _FreeStringPtr.asFunction<void Function(ffi.Pointer<ffi.Char>)>();
 
-  void FreeBytes(
-    ffi.Pointer<ffi.Void> p,
-  ) {
-    return _FreeBytes(
-      p,
-    );
+  void FreeBytes(ffi.Pointer<ffi.Void> p) {
+    return _FreeBytes(p);
   }
 
   late final _FreeBytesPtr =
       _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
-          'FreeBytes');
+        'FreeBytes',
+      );
   late final _FreeBytes =
       _FreeBytesPtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
 
-  ffi.Pointer<ffi.Char> StartApiServer(
-    ffi.Pointer<ffi.Void> p,
-    int len,
-  ) {
-    return _StartApiServer(
-      p,
-      len,
-    );
+  ffi.Pointer<ffi.Char> StartApiServer(ffi.Pointer<ffi.Void> p, int len) {
+    return _StartApiServer(p, len);
   }
 
-  late final _StartApiServerPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<ffi.Char> Function(
-              ffi.Pointer<ffi.Void>, ffi.Int)>>('StartApiServer');
-  late final _StartApiServer = _StartApiServerPtr.asFunction<
-      ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Void>, int)>();
+  late final _StartApiServerPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Void>, ffi.Int)
+        >
+      >('StartApiServer');
+  late final _StartApiServer =
+      _StartApiServerPtr.asFunction<
+        ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Void>, int)
+      >();
 
   GenerateTls_return GenerateTls() {
     return _GenerateTls();
@@ -154,12 +146,12 @@ final class _GoString_ extends ffi.Struct {
 
 typedef self_stop_callback_tFunction = ffi.Void Function(ffi.Pointer<ffi.Char>);
 typedef Dartself_stop_callback_tFunction = void Function(ffi.Pointer<ffi.Char>);
-typedef self_stop_callback_t
-    = ffi.Pointer<ffi.NativeFunction<self_stop_callback_tFunction>>;
+typedef self_stop_callback_t =
+    ffi.Pointer<ffi.NativeFunction<self_stop_callback_tFunction>>;
 typedef status_change_callback_tFunction = ffi.Void Function(ffi.Int);
 typedef Dartstatus_change_callback_tFunction = void Function(int);
-typedef status_change_callback_t
-    = ffi.Pointer<ffi.NativeFunction<status_change_callback_tFunction>>;
+typedef status_change_callback_t =
+    ffi.Pointer<ffi.NativeFunction<status_change_callback_tFunction>>;
 typedef GoInt8 = ffi.SignedChar;
 typedef DartGoInt8 = int;
 typedef GoUint8 = ffi.UnsignedChar;

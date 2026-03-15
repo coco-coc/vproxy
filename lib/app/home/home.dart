@@ -161,9 +161,11 @@ enum HomeWidgetId {
         return const ConnectionsStats();
       case HomeWidgetId.nodesHelper:
         return ConstrainedBox(
-            constraints: BoxConstraints(
-                maxHeight: preset == HomeLayoutPreset.compact ? 284 : 614),
-            child: const NodesHelper());
+          constraints: BoxConstraints(
+            maxHeight: preset == HomeLayoutPreset.compact ? 284 : 614,
+          ),
+          child: const NodesHelper(),
+        );
       case HomeWidgetId.route:
         return const _Route();
       case HomeWidgetId.proxySelector:
@@ -185,9 +187,10 @@ class _Inbound extends StatelessWidget {
   Widget build(BuildContext context) {
     final disableTun = Platform.isWindows && !isRunningAsAdmin && isStore;
     return HomeCard(
-        title: AppLocalizations.of(context)!.inbound,
-        icon: Icons.keyboard_double_arrow_right_rounded,
-        child: BlocBuilder<InboundCubit, InboundMode>(builder: (ctx, mode) {
+      title: AppLocalizations.of(context)!.inbound,
+      icon: Icons.keyboard_double_arrow_right_rounded,
+      child: BlocBuilder<InboundCubit, InboundMode>(
+        builder: (ctx, mode) {
           return Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,8 +205,8 @@ class _Inbound extends StatelessWidget {
                     onSelected: disableTun
                         ? null
                         : (value) => context
-                            .read<InboundCubit>()
-                            .setInboundMode(InboundMode.tun),
+                              .read<InboundCubit>()
+                              .setInboundMode(InboundMode.tun),
                   ),
                   ChoiceChip(
                     label: Text(InboundMode.systemProxy.toLocalString(context)),
@@ -217,14 +220,17 @@ class _Inbound extends StatelessWidget {
               if (disableTun)
                 Padding(
                   padding: const EdgeInsets.only(top: 5),
-                  child: Text(AppLocalizations.of(context)!.tunNeedAdmin,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          )),
+                  child: Text(
+                    AppLocalizations.of(context)!.tunNeedAdmin,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ),
             ],
           );
-        }));
+        },
+      ),
+    );
   }
 }

@@ -15,7 +15,6 @@
 
 part of 'log_bloc.dart';
 
-
 class LogEvent extends Equatable {
   const LogEvent();
 

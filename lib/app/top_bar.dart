@@ -58,8 +58,9 @@ class GlobalQuicActionMenuAnchor extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: InkWell(
             borderRadius: BorderRadius.circular(8),
-            hoverColor:
-                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+            hoverColor: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.08),
             onTapDown: (_) {
               c.open();
             },
@@ -88,28 +89,31 @@ class TopBar extends StatelessWidget {
             if (!desktopPlatforms)
               GlobalQuicActionMenuAnchor(
                 child: SizedBox(
-                    width: 80,
-                    child: Image.asset(
-                      'assets/icons/V.png',
-                      width: 24,
-                      height: 24,
-                    )),
+                  width: 80,
+                  child: Image.asset(
+                    'assets/icons/V.png',
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
               ),
             const Expanded(child: SizedBox()),
             if (isHomeRoute) const HomeEditButton(),
             if (!isProduction())
               IconButton(
-                  onPressed: () async {
-                    final logUploadService = context.read<LogUploadService>();
-                    await logUploadService.performUpload();
-                    logUploadService.stopPeriodicUpload();
-                  },
-                  icon: const Icon(Icons.upload)),
-            IconButton(
-                onPressed: () {
-                  Scaffold.of(context).openEndDrawer();
+                onPressed: () async {
+                  final logUploadService = context.read<LogUploadService>();
+                  await logUploadService.performUpload();
+                  logUploadService.stopPeriodicUpload();
                 },
-                icon: const Icon(Icons.tune_rounded)),
+                icon: const Icon(Icons.upload),
+              ),
+            IconButton(
+              onPressed: () {
+                Scaffold.of(context).openEndDrawer();
+              },
+              icon: const Icon(Icons.tune_rounded),
+            ),
             const Gap(10),
           ],
         ),
@@ -126,10 +130,7 @@ class TopBar extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
           ),
-          Expanded(
-              child: MoveWindow(
-            child: const SizedBox(),
-          )),
+          Expanded(child: MoveWindow(child: const SizedBox())),
           if (isHomeRoute) const HomeEditButton(),
           if (!isProduction())
             TextButton(
@@ -141,15 +142,17 @@ class TopBar extends StatelessWidget {
             ),
           if (context.read<MyLayout>().isCompact)
             IconButton(
-                onPressed: () {
-                  context.push('/setting');
-                },
-                icon: const Icon(Icons.settings_rounded)),
-          IconButton(
               onPressed: () {
-                Scaffold.of(context).openEndDrawer();
+                context.push('/setting');
               },
-              icon: const Icon(Icons.tune_rounded)),
+              icon: const Icon(Icons.settings_rounded),
+            ),
+          IconButton(
+            onPressed: () {
+              Scaffold.of(context).openEndDrawer();
+            },
+            icon: const Icon(Icons.tune_rounded),
+          ),
           const Gap(5),
           const WindowButtons(),
           const Gap(5),
@@ -168,34 +171,41 @@ class MyMenuBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MenuBar(
-        style: const MenuStyle(
-            elevation: WidgetStatePropertyAll(0),
-            backgroundColor: WidgetStatePropertyAll(Colors.transparent)),
-        children: [
-          SubmenuButton(
-            menuChildren: [
-              MenuItemButton(
-                  leadingIcon: const Icon(Icons.content_paste),
-                  child: const Text('From Clipboard'),
-                  onPressed: () {}),
-              MenuItemButton(
-                  leadingIcon: const Icon(Icons.edit_outlined),
-                  child: const Text('Input Manually'),
-                  onPressed: () {}),
-              MenuItemButton(
-                  leadingIcon: const Icon(Icons.photo),
-                  child: const Text('Select QR Code'),
-                  onPressed: () {}),
-            ],
-            child: Center(
-                child: Text(
+      style: const MenuStyle(
+        elevation: WidgetStatePropertyAll(0),
+        backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+      ),
+      children: [
+        SubmenuButton(
+          menuChildren: [
+            MenuItemButton(
+              leadingIcon: const Icon(Icons.content_paste),
+              child: const Text('From Clipboard'),
+              onPressed: () {},
+            ),
+            MenuItemButton(
+              leadingIcon: const Icon(Icons.edit_outlined),
+              child: const Text('Input Manually'),
+              onPressed: () {},
+            ),
+            MenuItemButton(
+              leadingIcon: const Icon(Icons.photo),
+              child: const Text('Select QR Code'),
+              onPressed: () {},
+            ),
+          ],
+          child: Center(
+            child: Text(
               'Add',
               style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.primary),
-            )),
-          )
-        ]);
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -206,17 +216,19 @@ const backgroundStartColor = Color(0xFFFFD500);
 const backgroundEndColor = Color(0xFFF6A00C);
 
 final buttonColors = WindowButtonColors(
-    iconNormal: const Color(0xFF805306),
-    mouseOver: const Color(0xFFF6A00C),
-    mouseDown: const Color(0xFF805306),
-    iconMouseOver: const Color(0xFF805306),
-    iconMouseDown: const Color(0xFFFFD500));
+  iconNormal: const Color(0xFF805306),
+  mouseOver: const Color(0xFFF6A00C),
+  mouseDown: const Color(0xFF805306),
+  iconMouseOver: const Color(0xFF805306),
+  iconMouseDown: const Color(0xFFFFD500),
+);
 
 final closeButtonColors = WindowButtonColors(
-    mouseOver: const Color(0xFFD32F2F),
-    mouseDown: const Color(0xFFB71C1C),
-    iconNormal: const Color(0xFF805306),
-    iconMouseOver: Colors.white);
+  mouseOver: const Color(0xFFD32F2F),
+  mouseDown: const Color(0xFFB71C1C),
+  iconNormal: const Color(0xFF805306),
+  iconMouseOver: Colors.white,
+);
 
 class WindowButtons extends StatelessWidget {
   const WindowButtons({super.key});
@@ -226,37 +238,45 @@ class WindowButtons extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-            onPressed: appWindow.minimize,
-            icon: const Icon(Icons.remove_rounded)),
+          onPressed: appWindow.minimize,
+          icon: const Icon(Icons.remove_rounded),
+        ),
         const SizedBox(width: 4),
         IconButton(
-            onPressed: appWindow.maximizeOrRestore,
-            icon: Icon(
-                size: 20,
-                appWindow.isMaximized
-                    ? Icons.fullscreen_exit_rounded
-                    : Icons.fullscreen_rounded)),
+          onPressed: appWindow.maximizeOrRestore,
+          icon: Icon(
+            size: 20,
+            appWindow.isMaximized
+                ? Icons.fullscreen_exit_rounded
+                : Icons.fullscreen_rounded,
+          ),
+        ),
         const SizedBox(width: 4),
         IconButton(
-            onPressed: () async {
-              if (Platform.isLinux) {
-                await exitCurrentApp(context.read<XController>());
-              } else {
-                await windowManager.hide();
-              }
-            },
-            icon: const Icon(Icons.close_rounded)),
+          onPressed: () async {
+            if (Platform.isLinux) {
+              await exitCurrentApp(context.read<XController>());
+            } else {
+              await windowManager.hide();
+            }
+          },
+          icon: const Icon(Icons.close_rounded),
+        ),
       ],
     );
   }
 }
 
 class MinimizeWindowButton extends WindowButton {
-  MinimizeWindowButton(
-      {super.key, super.colors, VoidCallback? onPressed, bool? animate})
-      : super(
-            animate: animate ?? false,
-            iconBuilder: (buttonContext) =>
-                MinimizeIcon(color: buttonContext.iconColor),
-            onPressed: onPressed ?? () => appWindow.minimize());
+  MinimizeWindowButton({
+    super.key,
+    super.colors,
+    VoidCallback? onPressed,
+    bool? animate,
+  }) : super(
+         animate: animate ?? false,
+         iconBuilder: (buttonContext) =>
+             MinimizeIcon(color: buttonContext.iconColor),
+         onPressed: onPressed ?? () => appWindow.minimize(),
+       );
 }

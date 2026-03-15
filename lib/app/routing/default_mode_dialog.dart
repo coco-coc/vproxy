@@ -20,10 +20,7 @@ import 'package:vx/l10n/app_localizations.dart';
 /// A dialog that allows users to select a default route mode.
 /// Shows each mode with its name and description.
 class DefaultRouteModeDialog extends StatefulWidget {
-  const DefaultRouteModeDialog({
-    super.key,
-    this.initialSelection,
-  });
+  const DefaultRouteModeDialog({super.key, this.initialSelection});
 
   final DefaultRouteMode? initialSelection;
 
@@ -43,7 +40,7 @@ class _DefaultRouteModeDialogState extends State<DefaultRouteModeDialog> {
   @override
   Widget build(BuildContext context) {
     final al = AppLocalizations.of(context)!;
-    
+
     return AlertDialog(
       title: Text(al.defaultRouteModes),
       scrollable: true,
@@ -86,33 +83,29 @@ class _DefaultRouteModeDialogState extends State<DefaultRouteModeDialog> {
                           children: [
                             Text(
                               mode.toLocalString(AppLocalizations.of(context)!),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
+                              style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: isSelected
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimaryContainer
+                                        ? Theme.of(
+                                            context,
+                                          ).colorScheme.onPrimaryContainer
                                         : null,
                                   ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               mode.description(context),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
+                              style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
                                     color: isSelected
                                         ? Theme.of(context)
-                                            .colorScheme
-                                            .onPrimaryContainer
-                                            .withOpacity(0.8)
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSurfaceVariant,
+                                              .colorScheme
+                                              .onPrimaryContainer
+                                              .withOpacity(0.8)
+                                        : Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
                                   ),
                             ),
                           ],
@@ -151,9 +144,7 @@ Future<DefaultRouteMode?> showDefaultRouteModeDialog(
 }) async {
   return await showDialog<DefaultRouteMode?>(
     context: context,
-    builder: (context) => DefaultRouteModeDialog(
-      initialSelection: initialSelection,
-    ),
+    builder: (context) =>
+        DefaultRouteModeDialog(initialSelection: initialSelection),
   );
 }
-

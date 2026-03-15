@@ -22,8 +22,7 @@ void main() {
     logUploadService = LogUploadService(
       flutterLogDir: flutterLogDir,
       tunnelLogDir: tunnelLogDir,
-      uploadUrl:
-          'https://api.github.com/repos/5vnetwork/vx/releases/latest',
+      uploadUrl: 'https://api.github.com/repos/5vnetwork/vx/releases/latest',
       secret: 'test',
     );
   });
@@ -80,9 +79,13 @@ void main() {
       await tunnelLogFile.writeAsString('test tunnel log content');
 
       // Mock successful HTTP response
-      when(mockHttpClient.post(any,
-              headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response('success', 200));
+      when(
+        mockHttpClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),
+      ).thenAnswer((_) async => http.Response('success', 200));
 
       final logData = await logUploadService.collectLogData();
       expect(logData, isNotNull);
@@ -99,9 +102,13 @@ void main() {
       await tunnelLogFile.writeAsString('test tunnel log content');
 
       // Mock failed HTTP response
-      when(mockHttpClient.post(any,
-              headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => http.Response('error', 500));
+      when(
+        mockHttpClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),
+      ).thenAnswer((_) async => http.Response('error', 500));
 
       final logData = await logUploadService.collectLogData();
       expect(logData, isNotNull);
@@ -121,9 +128,13 @@ void main() {
       await tunnelLogFile.writeAsString('test tunnel log content');
 
       // Mock timeout
-      when(mockHttpClient.post(any,
-              headers: anyNamed('headers'), body: anyNamed('body')))
-          .thenAnswer((_) async => Future.delayed(const Duration(seconds: 31)));
+      when(
+        mockHttpClient.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),
+      ).thenAnswer((_) async => Future.delayed(const Duration(seconds: 31)));
 
       final logData = await logUploadService.collectLogData();
       expect(logData, isNotNull);
@@ -134,7 +145,4 @@ void main() {
       );
     });
   });
-  
-  
-  
 }

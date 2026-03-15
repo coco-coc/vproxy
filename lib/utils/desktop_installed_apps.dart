@@ -91,7 +91,10 @@ class DesktopInstalledApps {
             }
 
             // Skip Windows updates and system components
-            final systemComponent = _getRegistryValue(subKey, 'SystemComponent');
+            final systemComponent = _getRegistryValue(
+              subKey,
+              'SystemComponent',
+            );
             if (systemComponent == '1') {
               subKey.close();
               continue;
@@ -104,23 +107,32 @@ class DesktopInstalledApps {
             }
 
             // Get installation location and executable
-            final installLocation = _getRegistryValue(subKey, 'InstallLocation');
+            final installLocation = _getRegistryValue(
+              subKey,
+              'InstallLocation',
+            );
             final displayIcon = _getRegistryValue(subKey, 'DisplayIcon');
             final version = _getRegistryValue(subKey, 'DisplayVersion');
-            
+
             String? executablePath;
-            
+
             // Try to find executable from DisplayIcon first
             if (displayIcon != null && displayIcon.isNotEmpty) {
               // DisplayIcon often contains the path to the exe
-              final iconPath = displayIcon.split(',')[0].trim().replaceAll('"', '');
-              if (iconPath.toLowerCase().endsWith('.exe') && File(iconPath).existsSync()) {
+              final iconPath = displayIcon
+                  .split(',')[0]
+                  .trim()
+                  .replaceAll('"', '');
+              if (iconPath.toLowerCase().endsWith('.exe') &&
+                  File(iconPath).existsSync()) {
                 executablePath = iconPath;
               }
             }
 
             // If no exe found from icon, try InstallLocation
-            if (executablePath == null && installLocation != null && installLocation.isNotEmpty) {
+            if (executablePath == null &&
+                installLocation != null &&
+                installLocation.isNotEmpty) {
               final dir = Directory(installLocation);
               if (dir.existsSync()) {
                 // Look for .exe files in install location
@@ -129,7 +141,7 @@ class DesktopInstalledApps {
                     .whereType<File>()
                     .where((f) => f.path.toLowerCase().endsWith('.exe'))
                     .toList();
-                
+
                 if (exeFiles.isNotEmpty) {
                   // Prefer exe with similar name to the app
                   final matchingExe = exeFiles.where((f) {
@@ -137,21 +149,23 @@ class DesktopInstalledApps {
                     final appNameLower = displayName.toLowerCase();
                     return fileName.contains(appNameLower.split(' ')[0]);
                   }).firstOrNull;
-                  
+
                   executablePath = (matchingExe ?? exeFiles.first).path;
                 }
               }
             }
 
             seenNames.add(displayName);
-            apps.add(DesktopAppInfo(
-              name: subKeyName,
-              displayName: displayName,
-              installLocation: installLocation,
-              executablePath: executablePath,
-              icon: displayIcon,
-              version: version,
-            ));
+            apps.add(
+              DesktopAppInfo(
+                name: subKeyName,
+                displayName: displayName,
+                installLocation: installLocation,
+                executablePath: executablePath,
+                icon: displayIcon,
+                version: version,
+              ),
+            );
 
             subKey.close();
           } catch (e) {
@@ -168,8 +182,10 @@ class DesktopInstalledApps {
     }
 
     // Sort by display name
-    apps.sort((a, b) => (a.displayName ?? a.name).compareTo(b.displayName ?? b.name));
-    
+    apps.sort(
+      (a, b) => (a.displayName ?? a.name).compareTo(b.displayName ?? b.name),
+    );
+
     return apps;
   }
 
@@ -188,31 +204,35 @@ class DesktopInstalledApps {
         final entities = dir.listSync(recursive: false);
         for (final entity in entities) {
           if (entity is Directory && entity.path.endsWith('.app')) {
-            final appName = entity.uri.pathSegments[entity.uri.pathSegments.length - 2]
+            final appName = entity
+                .uri
+                .pathSegments[entity.uri.pathSegments.length - 2]
                 .replaceAll('.app', '');
-            
+
             // Try to find the executable in Contents/MacOS/
             final macosDir = Directory('${entity.path}/Contents/MacOS');
             String? executablePath;
-            
+
             if (macosDir.existsSync()) {
               final executables = macosDir
                   .listSync(recursive: false)
                   .whereType<File>()
                   .where((f) => _isExecutable(f.path))
                   .toList();
-              
+
               if (executables.isNotEmpty) {
                 executablePath = executables.first.path;
               }
             }
 
-            apps.add(DesktopAppInfo(
-              name: appName,
-              displayName: appName,
-              installLocation: entity.path,
-              executablePath: executablePath,
-            ));
+            apps.add(
+              DesktopAppInfo(
+                name: appName,
+                displayName: appName,
+                installLocation: entity.path,
+                executablePath: executablePath,
+              ),
+            );
           }
         }
       } catch (e) {
@@ -244,11 +264,11 @@ class DesktopInstalledApps {
             try {
               final content = entity.readAsStringSync();
               final lines = content.split('\n');
-              
+
               String? name;
               String? exec;
               String? icon;
-              
+
               for (final line in lines) {
                 if (line.startsWith('Name=')) {
                   name = line.substring(5).trim();
@@ -262,12 +282,17 @@ class DesktopInstalledApps {
               }
 
               if (name != null && name.isNotEmpty) {
-                apps.add(DesktopAppInfo(
-                  name: entity.uri.pathSegments.last.replaceAll('.desktop', ''),
-                  displayName: name,
-                  executablePath: exec,
-                  icon: icon,
-                ));
+                apps.add(
+                  DesktopAppInfo(
+                    name: entity.uri.pathSegments.last.replaceAll(
+                      '.desktop',
+                      '',
+                    ),
+                    displayName: name,
+                    executablePath: exec,
+                    icon: icon,
+                  ),
+                );
               }
             } catch (e) {
               // Skip invalid desktop files
@@ -281,7 +306,9 @@ class DesktopInstalledApps {
       }
     }
 
-    apps.sort((a, b) => (a.displayName ?? a.name).compareTo(b.displayName ?? b.name));
+    apps.sort(
+      (a, b) => (a.displayName ?? a.name).compareTo(b.displayName ?? b.name),
+    );
     return apps;
   }
 
@@ -300,7 +327,7 @@ class DesktopInstalledApps {
     if (Platform.isWindows) {
       return path.toLowerCase().endsWith('.exe');
     }
-    
+
     try {
       final result = Process.runSync('test', ['-x', path]);
       return result.exitCode == 0;
@@ -309,4 +336,3 @@ class DesktopInstalledApps {
     }
   }
 }
-
