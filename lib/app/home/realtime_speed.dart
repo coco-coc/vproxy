@@ -775,7 +775,7 @@ class _MemoryStatsState extends State<MemoryStats> {
       onTap: _toggleView,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        width: 180,
+        // width: 180,
         height: 90,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainerLow,
@@ -1051,7 +1051,6 @@ class _ConnectionsStatsState extends State<ConnectionsStats> {
       onTap: _toggleView,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        width: 180,
         height: 90,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainerLow,
