@@ -15,6 +15,7 @@
 
 import 'package:fixnum/fixnum.dart';
 import 'package:grpc/service_api.dart';
+import 'package:tm/protos/common/geo/geo.pb.dart';
 import 'package:tm/protos/protos/db/db.pbgrpc.dart';
 import 'package:vx/data/database.dart';
 import 'package:drift/drift.dart';
@@ -142,5 +143,23 @@ class DatabaseServer extends DbServiceBase {
       selected: row.selected,
       config: row.config.writeToBuffer(),
     );
+  }
+
+  @override
+  Future<Receipt> addGeoDomain(
+    ServiceCall call,
+    AddGeoDomainRequest request,
+  ) async {
+    await database
+        .into(database.geoDomains)
+        .insert(
+          GeoDomainsCompanion(
+            geoDomain: Value(
+              Domain(value: request.domain, type: Domain_Type.RootDomain),
+            ),
+            domainSetName: Value('Fallback'),
+          ),
+        );
+    return Receipt();
   }
 }
