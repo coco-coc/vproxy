@@ -200,6 +200,10 @@ class XApiClient {
       // TODO: show error dialog
       logger.e("xapi client init error", error: e);
       reportError("xapi client init error", e);
+       // disk I/O error: no such file or directory
+      if (e.toString().contains('disk I/O error: no such file or directory')) {
+        //TODO: recreate database
+      }
       if (rootNavigationKey.currentContext != null) {
         dialog(rootLocalizations()?.fatalError(
                 rootLocalizations()?.failedToInitGrpcClient(e.toString()) ??

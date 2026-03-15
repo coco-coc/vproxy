@@ -17,7 +17,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' hide User;
+import 'package:supabase_flutter/supabase_flutter.dart' hide User, decodeJwt;
 import 'package:vx/auth/user.dart';
 import 'package:flutter_common/auth/auth_provider.dart';
 import 'package:flutter_common/util/jwt.dart';
