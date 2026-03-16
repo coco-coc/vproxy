@@ -83,7 +83,7 @@ class XApiClient {
             showCaller: true,
             showColor: true,
             filePath: await getDebugFlutterLogDir().then(
-              (value) => join(value.path, 'vx-go.log'),
+              (value) => join(value.path, 'vx-go.txt'),
             ),
           );
         } else {

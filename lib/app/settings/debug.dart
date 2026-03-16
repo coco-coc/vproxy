@@ -74,7 +74,7 @@ class _DebugLogPageState extends State<DebugLogPage> {
           showCaller: true,
           showColor: true,
           filePath: await getDebugFlutterLogDir().then(
-            (value) => path.join(value.path, 'vx-go.log'),
+            (value) => path.join(value.path, 'vx-go.txt'),
           ),
         ),
       );
@@ -178,7 +178,8 @@ class _DebugLogPageState extends State<DebugLogPage> {
                             } else {
                               downloadsDir = await getDownloadsDirectory();
                             }
-                            final debugLogDir = await getDebugTunnelLogDir();
+                            final debugTunnelLogDir =
+                                await getDebugTunnelLogDir();
                             final dstDir = path.join(
                               downloadsDir!.path,
                               "vx_debug_logs",
@@ -187,7 +188,19 @@ class _DebugLogPageState extends State<DebugLogPage> {
                               Directory(dstDir).createSync(recursive: true);
                             }
                             for (final file
-                                in await debugLogDir.list().toList()) {
+                                in await debugTunnelLogDir.list().toList()) {
+                              if (file is File) {
+                                final fileName = path.basename(file.path);
+                                if (fileName.startsWith(".")) {
+                                  continue;
+                                }
+                                await file.copy(path.join(dstDir, fileName));
+                              }
+                            }
+                            final debugFlutterLogDir =
+                                await getDebugFlutterLogDir();
+                            for (final file
+                                in await debugFlutterLogDir.list().toList()) {
                               if (file is File) {
                                 final fileName = path.basename(file.path);
                                 if (fileName.startsWith(".")) {
@@ -203,7 +216,7 @@ class _DebugLogPageState extends State<DebugLogPage> {
                               ),
                             );
                             // remove all debug log files
-                            await debugLogDir.delete(recursive: true);
+                            await debugTunnelLogDir.delete(recursive: true);
                           },
                           child: Text(
                             AppLocalizations.of(context)!.saveToDownloadFolder,
