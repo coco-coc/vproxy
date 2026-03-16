@@ -12,6 +12,11 @@
                         "projectId": "vproxy-1407e-staging",
                         "appId": "1:629742529281:android:ee93ecf0934d980ef44900",
                         "fileOutput": "android/app/src/staging/google-services.json"
+                    },
+                    "src\\production": {
+                        "projectId": "vproxy-1407e",
+                        "appId": "1:479311300497:android:7daf8b25965b3c1489bc30",
+                        "fileOutput": "android/app/src/production/google-services.json"
                     }
                 }
             },

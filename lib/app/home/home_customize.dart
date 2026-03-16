@@ -89,9 +89,16 @@ class HomeLayout {
     final decoded = jsonDecode(json);
     if (decoded is Map<String, dynamic>) {
       return HomeLayout(
-        decoded.map(
-          (key, value) => MapEntry(int.parse(key), value as List<List<String>>),
-        ),
+        decoded.map((key, value) {
+          final rows = value as List<dynamic>?;
+          if (rows == null) {
+            return MapEntry(int.parse(key), <List<String>>[]);
+          }
+          final list = rows
+              .map((row) => List<String>.from(row as List))
+              .toList();
+          return MapEntry(int.parse(key), list);
+        }),
       );
     }
     throw Exception('Invalid JSON');

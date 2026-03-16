@@ -186,6 +186,18 @@ class XConfigHelper {
           config.handlers.add(handler.toConfig());
         }
       }
+      for (final fallback in rule.fallbacks) {
+        if (fallback.outboundTag.isNotEmpty &&
+            fallback.outboundTag != directHandlerTag &&
+            fallback.outboundTag != _dnsTag) {
+          final handler = await _outboundRepo.getHandlerById(
+            int.parse(fallback.outboundTag),
+          );
+          if (handler != null) {
+            config.handlers.add(handler.toConfig());
+          }
+        }
+      }
     }
     return config;
   }
@@ -394,38 +406,48 @@ class XConfigHelper {
     }
 
     final selectors = <SelectorConfig>[];
+
+    Future<void> addSelector(String selectorTag) async {
+      SelectorConfig? config;
+      // if the selector is the default proxy selector and the proxy selector mode is manual
+      if (selectorTag == defaultProxySelectorTag &&
+          _persistentStateRepo.proxySelectorMode == ProxySelectorMode.manual) {
+        config = _persistentStateRepo.manualSelectorConfig;
+        selectors.add(config);
+      } else {
+        config = await _databaseProvider.database.getSelectorConfig(
+          selectorTag,
+        );
+        if (config != null) {
+          selectors.add(config);
+        }
+      }
+      // check if all land handlers in the selector are available
+      if (config != null) {
+        final landHandlers = config.landHandlers;
+        for (final landHandler in landHandlers) {
+          final handler = await _outboundRepo.getHandlerById(
+            landHandler.toInt(),
+          );
+          if (handler == null) {
+            throw ConfigException(
+              '${rootLocalizations()?.selectorContainsDeletedLandHandler(config.toLocalString(rootNavigationKey.currentContext))}',
+            );
+          }
+        }
+      }
+    }
+
     for (final rule in routerConfig.rules) {
       // if any rule uses the selector and it has not been added to the selectors, add it
       if (rule.selectorTag.isNotEmpty &&
           !selectors.any((e) => e.tag == rule.selectorTag)) {
-        SelectorConfig? config;
-        // if the selector is the default proxy selector and the proxy selector mode is manual
-        if (rule.selectorTag == defaultProxySelectorTag &&
-            _persistentStateRepo.proxySelectorMode ==
-                ProxySelectorMode.manual) {
-          config = _persistentStateRepo.manualSelectorConfig;
-          selectors.add(config);
-        } else {
-          config = await _databaseProvider.database.getSelectorConfig(
-            rule.selectorTag,
-          );
-          if (config != null) {
-            selectors.add(config);
-          }
-        }
-        // check if all land handlers in the selector are available
-        if (config != null) {
-          final landHandlers = config.landHandlers;
-          for (final landHandler in landHandlers) {
-            final handler = await _outboundRepo.getHandlerById(
-              landHandler.toInt(),
-            );
-            if (handler == null) {
-              throw ConfigException(
-                '${rootLocalizations()?.selectorContainsDeletedLandHandler(config.toLocalString(rootNavigationKey.currentContext))}',
-              );
-            }
-          }
+        await addSelector(rule.selectorTag);
+      }
+      for (final fallback in rule.fallbacks) {
+        if (fallback.selectorTag.isNotEmpty &&
+            !selectors.any((e) => e.tag == fallback.selectorTag)) {
+          await addSelector(fallback.selectorTag);
         }
       }
     }
