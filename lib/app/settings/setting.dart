@@ -524,6 +524,9 @@ class Version extends StatelessWidget {
             child: StatefulBuilder(
               builder: (context, setState) {
                 return GestureDetector(
+                  onLongPress: () {
+                    throw Exception('This is test exception');
+                  },
                   onTap: () async {
                     setState(() {
                       print('count: $count');

@@ -170,53 +170,55 @@ class _DebugLogPageState extends State<DebugLogPage> {
                       if (!Platform.isIOS && !Platform.isMacOS)
                         OutlinedButton(
                           onPressed: () async {
-                            late Directory? downloadsDir;
-                            if (Platform.isAndroid) {
-                              downloadsDir = Directory(
-                                '/storage/emulated/0/Download/',
+                            try {
+                              late Directory? downloadsDir;
+                              if (Platform.isAndroid) {
+                                downloadsDir = Directory(
+                                  '/storage/emulated/0/Download/',
+                                );
+                              } else {
+                                downloadsDir = await getDownloadsDirectory();
+                              }
+                              final debugTunnelLogDir =
+                                  await getDebugTunnelLogDir();
+                              final dstDir = path.join(
+                                downloadsDir!.path,
+                                "vx_debug_logs_${DateTime.now().millisecondsSinceEpoch}",
                               );
-                            } else {
-                              downloadsDir = await getDownloadsDirectory();
-                            }
-                            final debugTunnelLogDir =
-                                await getDebugTunnelLogDir();
-                            final dstDir = path.join(
-                              downloadsDir!.path,
-                              "vx_debug_logs",
-                            );
-                            if (!Directory(dstDir).existsSync()) {
                               Directory(dstDir).createSync(recursive: true);
-                            }
-                            for (final file
-                                in await debugTunnelLogDir.list().toList()) {
-                              if (file is File) {
-                                final fileName = path.basename(file.path);
-                                if (fileName.startsWith(".")) {
-                                  continue;
+                              for (final file
+                                  in await debugTunnelLogDir.list().toList()) {
+                                if (file is File) {
+                                  final fileName = path.basename(file.path);
+                                  if (fileName.startsWith(".")) {
+                                    continue;
+                                  }
+                                  await file.copy(path.join(dstDir, fileName));
                                 }
-                                await file.copy(path.join(dstDir, fileName));
                               }
-                            }
-                            final debugFlutterLogDir =
-                                await getDebugFlutterLogDir();
-                            for (final file
-                                in await debugFlutterLogDir.list().toList()) {
-                              if (file is File) {
-                                final fileName = path.basename(file.path);
-                                if (fileName.startsWith(".")) {
-                                  continue;
+                              final debugFlutterLogDir =
+                                  await getDebugFlutterLogDir();
+                              for (final file
+                                  in await debugFlutterLogDir.list().toList()) {
+                                if (file is File) {
+                                  final fileName = path.basename(file.path);
+                                  if (fileName.startsWith(".")) {
+                                    continue;
+                                  }
+                                  await file.copy(path.join(dstDir, fileName));
                                 }
-                                await file.copy(path.join(dstDir, fileName));
                               }
+                              rootScaffoldMessengerKey.currentState
+                                  ?.showSnackBar(
+                                    SnackBar(
+                                      content: Text("开发者日志已保存至: $dstDir"),
+                                      duration: const Duration(seconds: 10),
+                                    ),
+                                  );
+                            } catch (e) {
+                              logger.e('无法保存日志：$e');
+                              snack('无法保存日志：$e');
                             }
-                            rootScaffoldMessengerKey.currentState?.showSnackBar(
-                              SnackBar(
-                                content: Text("开发者日志已保存至: $dstDir"),
-                                duration: const Duration(seconds: 10),
-                              ),
-                            );
-                            // remove all debug log files
-                            await debugTunnelLogDir.delete(recursive: true);
                           },
                           child: Text(
                             AppLocalizations.of(context)!.saveToDownloadFolder,
