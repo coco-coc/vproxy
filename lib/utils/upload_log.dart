@@ -47,13 +47,13 @@ class LogUploadService {
     required Directory tunnelLogDir,
     required String secret,
     required XApiClient xApiClient,
-    required ValueGetter<bool> shareLog,
+    required ValueGetter<bool> useReportLogger,
   }) : _flutterLogDir = flutterLogDir,
        _tunnelLogDir = tunnelLogDir,
        _uploadUrl = uploadUrl,
        _secret = secret,
        _xApiClient = xApiClient,
-       _shareLog = shareLog;
+       _useReportLogger = useReportLogger;
 
   Timer? _uploadTimer;
   final Directory _flutterLogDir;
@@ -61,7 +61,7 @@ class LogUploadService {
   final String _uploadUrl;
   final String _secret;
   final XApiClient _xApiClient;
-  final ValueGetter<bool> _shareLog;
+  final ValueGetter<bool> _useReportLogger;
 
   /// Initialize the log upload service with configuration
   Future<void> start() async {
@@ -192,7 +192,7 @@ class LogUploadService {
 
   Future<void> _openFlutterLogger() async {
     if (isProduction()) {
-      if (_shareLog()) {
+      if (_useReportLogger()) {
         await setReportLogger();
       }
     } else {

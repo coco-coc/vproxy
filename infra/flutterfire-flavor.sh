@@ -19,6 +19,7 @@ case $1 in
       --macos-bundle-id=com.5vnetwork.x.staging \
       --macos-out=macos/flavors/staging/GoogleService-Info.plist 
     ;;
+    # flutterfire config --project=vproxy-1407e --out=lib/firebase_options_production.dart --ios-bundle-id=com.5vnetwork.x --ios-out=ios/flavors/production/GoogleService-Info.plist --android-package-name=com5vnetwork.vproxy --android-out=android/app/src/production/google-services.json --macos-bundle-id=com.5vnetwork.x --macos-out=macos/flavors/production/GoogleService-Info.plist
   production)
     flutterfire config \
       --project=vproxy-1407e \

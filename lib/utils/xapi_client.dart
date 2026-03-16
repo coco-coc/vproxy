@@ -31,6 +31,7 @@ import 'package:tm/protos/common/geo/geo.pb.dart';
 import 'package:tm/protos/common/log/log.pbenum.dart';
 import 'package:tm/protos/protos/geo.pb.dart';
 import 'package:tm/protos/protos/inbound.pb.dart';
+import 'package:tm/protos/protos/logger.pb.dart';
 import 'package:tm/protos/protos/outbound.pb.dart';
 import 'package:tm/protos/protos/server/server.pb.dart';
 import 'package:tm/protos/protos/sysproxy.pb.dart';
@@ -38,6 +39,7 @@ import 'package:tm/protos/protos/tls/certificate.pb.dart';
 import 'package:tm/tm.dart';
 import 'package:vx/app/server/add_server.dart';
 import 'package:vx/data/ssh_server.dart';
+import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/channel_credentials.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/common/net.dart';
@@ -72,6 +74,29 @@ class XApiClient {
           return true;
         },
       );
+      late LoggerConfig logConfig;
+      if (isProduction()) {
+        if (_pref.enableDebugLog) {
+          logConfig = LoggerConfig(
+            logLevel: Level.DEBUG,
+            consoleWriter: true,
+            showCaller: true,
+            showColor: true,
+            filePath: await getDebugFlutterLogDir().then(
+              (value) => join(value.path, 'vx-go.log'),
+            ),
+          );
+        } else {
+          logConfig = LoggerConfig(logLevel: Level.DISABLED);
+        }
+      } else {
+        logConfig = LoggerConfig(
+          logLevel: Level.DEBUG,
+          consoleWriter: true,
+          showCaller: true,
+          showColor: true,
+        );
+      }
       if (Platform.isMacOS ||
           (Platform.isIOS) ||
           Platform.isAndroid ||
@@ -85,14 +110,9 @@ class XApiClient {
           final dir = (await getApplicationDocumentsDirectory()).path;
           listenAddress = join(dir, 'xapi.sock');
         }
-        late LogLevel logLevel;
-        if (isProduction()) {
-          logLevel = LogLevel.NONE;
-        } else {
-          logLevel = LogLevel.DEBUG;
-        }
+
         final config = ApiServerConfig(
-          logLevel: logLevel.value,
+          logConfig: logConfig,
           dbPath: await getDbPath(_pref),
           listenAddr: listenAddress,
           bindToDefaultNic:
@@ -154,9 +174,7 @@ class XApiClient {
             port = await getUnusedPort();
             listenAddress = '127.0.0.1:$port';
             final config = ApiServerConfig(
-              logLevel: kDebugMode
-                  ? LogLevel.DEBUG.value
-                  : LogLevel.ERROR.value,
+              logConfig: logConfig,
               dbPath: await getDbPath(_pref),
               // bindToDefaultNic: true,
               listenAddr: listenAddress,
@@ -652,6 +670,11 @@ class XApiClient {
   Future<GenerateECHResponse> generateECHResponse(String domain) async {
     await _completer.future;
     return await _xApiClient.generateECH(GenerateECHRequest(domain: domain));
+  }
+
+  Future<void> setLog(LoggerConfig logConfig) async {
+    await _completer.future;
+    await _xApiClient.setLog(logConfig);
   }
 }
 

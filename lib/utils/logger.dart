@@ -16,16 +16,35 @@
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/path.dart';
 import 'package:flutter_common/types/logger.dart' as common;
+
+Future<void> initLogger(SharedPreferences pref) async {
+  if (isProduction()) {
+    if (pref.shareLog == true) {
+      await startShareLog();
+    }
+    if (pref.enableDebugLog) {
+      await setDebugLoggerProduction();
+    }
+  } else {
+    final redirectStdErr = !kDebugMode && (Platform.isIOS || Platform.isMacOS);
+    if (redirectStdErr) {
+      final logDirPath = getFlutterLogDir().path;
+      logger.d("redirectStdErr: $logDirPath");
+      await darwinHostApi!.redirectStdErr(join(logDirPath, "redirect.txt"));
+    }
+    await setDebugLoggerDevlopment();
+  }
+}
 
 class LoggerWrapper implements common.Logger {
   Logger? _logger;
@@ -135,74 +154,89 @@ bool isProduction() {
 }
 
 Future<void> startShareLog() async {
-  // if (Platform.isWindows) {
-  await setReportLogger();
-  // } else {
-  //   FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-  //   // Pass all uncaught "fatal" errors from the framework to Crashlytics
+  if (!enableCrashlytics) {
+    await setReportLogger();
+  } else {
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  }
+  // Pass all uncaught "fatal" errors from the framework to Crashlytics
   FlutterError.onError = (FlutterErrorDetails e) {
     logger.e(
       "FlutterError: ${e.exception}. line: ${e.library}. summary: ${e.summary}.",
       error: e,
       stackTrace: e.stack,
     );
+    if (enableCrashlytics) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(e);
+    }
   };
-  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
-  // PlatformDispatcher.instance.onError = (error, stack) {
-  //   if (error is SqliteException) {
-  //     if (error.extendedResultCode == 5) {
-  //       return false;
-  //     }
-  //   }
-  //   if (error.toString().contains('UUID')) {
-  //     return false;
-  //   }
-  //   reportLogger.e("PlatformDispatcher.instance.onError",
-  //       stackTrace: stack, error: error);
-  //   return true;
-  // };
+  // Pass all uncaught asynchronous errors that aren't handled
+  // by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    if (error.toString().contains('UUID')) {
+      return false;
+    }
+    reportError(
+      "PlatformDispatcher.instance.onError",
+      error,
+      stackTrace: stack,
+    );
+    return true;
+  };
+  // To catch errors that happen outside of the Flutter context,
+  // install an error listener on the current Isolate
   Isolate.current.addErrorListener(
     RawReceivePort((pair) async {
       final List<dynamic> errorAndStacktrace = pair;
-      reportLogger.e(
+      reportError(
         "Isolate.errorListener",
+        errorAndStacktrace.first,
         stackTrace: errorAndStacktrace.last,
-        error: errorAndStacktrace.first,
       );
     }).sendPort,
   );
 }
 
-Future<void> reportError(String message, dynamic error) async {
-  // if (Platform.isWindows) {
-  reportLogger.e(message, error: error);
-  // } else {
-  // await FirebaseCrashlytics.instance.recordError(error, stackTrace);
-  // }
+Future<void> reportError(
+  String message,
+  dynamic error, {
+  StackTrace? stackTrace,
+}) async {
+  if (!enableCrashlytics) {
+    reportLogger.e(message, error: error);
+  } else {
+    await FirebaseCrashlytics.instance.recordError(error, stackTrace);
+  }
 }
 
 Future<void> stopShareLog() async {
-  // if (Platform.isWindows) {
-  reportLogger.logger = null;
-  // } else {
-  // FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
-  // }
+  if (!enableCrashlytics) {
+    reportLogger.logger = null;
+  } else {
+    FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+  }
 }
 
-Future<void> initLogger(SharedPreferences pref) async {
-  if (isProduction()) {
-    if (pref.shareLog == true) {
-      await startShareLog();
-    }
-  } else {
-    final redirectStdErr = !kDebugMode && (Platform.isIOS || Platform.isMacOS);
-    if (redirectStdErr) {
-      final logDirPath = getFlutterLogDir().path;
-      logger.d("redirectStdErr: $logDirPath");
-      await darwinHostApi!.redirectStdErr(join(logDirPath, "redirect.txt"));
-    }
-    await setDebugLoggerDevlopment();
-  }
+Future<void> setDebugLoggerProduction() async {
+  final logDirPath = getFlutterLogDir().path;
+
+  final l = Logger(
+    filter: ProductionFilter(),
+    printer: SimplePrinter(printTime: true),
+    output: AdvancedFileOutput(
+      writeImmediately: [Level.error],
+      path: await getDebugFlutterLogDir().then((value) => value.path),
+      latestFileName: 'latest.txt',
+      fileNameFormatter: (DateTime date) {
+        return '${date.year}-${date.month}-${date.day}.txt';
+      },
+    ),
+    level: Level.debug,
+  );
+  logger.logger = l;
+  logger.d(
+    'Logger initialized in debug mode - output to console and file: $logDirPath',
+  );
 }
 
 Future<void> setDebugLoggerDevlopment() async {
@@ -254,29 +288,4 @@ Future<void> setReportLogger() async {
     ),
   );
   reportLogger.logger = l;
-}
-
-Future<void> setDebugLoggerProduction() async {
-  final logDirPath = getFlutterLogDir().path;
-  final l = Logger(
-    filter: ProductionFilter(),
-    printer: SimplePrinter(printTime: true),
-    output: AdvancedFileOutput(
-      writeImmediately: [Level.error],
-      path: await getDebugFlutterLogDir().then((value) => value.path),
-      latestFileName: 'latest.txt',
-      fileNameFormatter: (DateTime date) {
-        return '${date.year}-${date.month}-${date.day}.txt';
-      },
-    ),
-    level: Level.debug,
-  );
-  logger.logger = l;
-  logger.d(
-    'Logger initialized in debug mode - output to console and file: $logDirPath',
-  );
-}
-
-Future<void> unsetDebugLoggerProduction() async {
-  logger.logger = null;
 }

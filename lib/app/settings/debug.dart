@@ -17,10 +17,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:logger/logger.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tm/protos/protos/logger.pb.dart' as pb;
 import 'package:vx/app/settings/setting.dart';
 import 'package:vx/app/x_controller.dart';
 import 'package:vx/common/common.dart';
@@ -30,6 +32,7 @@ import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
 import 'package:vx/utils/upload_log.dart';
+import 'package:vx/utils/xapi_client.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
 import 'package:vx/widgets/form_dialog.dart';
 
@@ -57,11 +60,24 @@ class _DebugLogPageState extends State<DebugLogPage> {
     setState(() {
       _debugLog = value;
     });
+    final apiClient = context.read<XApiClient>();
     await context.read<XController>().restart();
     if (!value) {
-      await unsetDebugLoggerProduction();
+      logger.logger = null;
+      apiClient.setLog(pb.LoggerConfig(logLevel: pb.Level.DISABLED));
     } else {
       await setDebugLoggerProduction();
+      apiClient.setLog(
+        pb.LoggerConfig(
+          logLevel: pb.Level.DEBUG,
+          consoleWriter: true,
+          showCaller: true,
+          showColor: true,
+          filePath: await getDebugFlutterLogDir().then(
+            (value) => path.join(value.path, 'vx-go.log'),
+          ),
+        ),
+      );
     }
   }
 
@@ -77,16 +93,14 @@ class _DebugLogPageState extends State<DebugLogPage> {
       body: isPkg
           ? Center(
               child: GestureDetector(
-                onTap: () {
+                onTap: () async {
                   count++;
                   if (count >= 10 && count < 20) {
                     snack('debug log enabled');
-                    context.read<SharedPreferences>().setEnableDebugLog(true);
-                    setDebugLoggerProduction();
+                    await _toggleDebugLog(true);
                   } else if (count >= 20) {
                     snack('debug log disabled');
-                    context.read<SharedPreferences>().setEnableDebugLog(false);
-                    unsetDebugLoggerProduction();
+                    await _toggleDebugLog(false);
                   }
                 },
                 child: Text(AppLocalizations.of(context)!.debugLogNotAvailable),

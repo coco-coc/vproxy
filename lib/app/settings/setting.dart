@@ -441,6 +441,12 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
             },
             child: const Text('Verify Sentry Setup'),
           ),
+          ElevatedButton(
+            onPressed: () {
+              throw Exception('This is test exception');
+            },
+            child: const Text('Verify Crashlytics Setup'),
+          ),
         ],
       ),
   ];
