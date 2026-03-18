@@ -18,6 +18,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:drift_flutter/drift_flutter.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Table, Column, RouterConfig;
@@ -132,7 +133,7 @@ class AppDatabase extends _$AppDatabase {
         reportError("Error creating database", e);
         rethrow;
       }
-    });
+    }, openImmediately: true);
   }
 
   Future<void> _insertDefault() async {
