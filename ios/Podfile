@@ -34,6 +34,7 @@ target 'Runner' do
   target 'RunnerTests' do
     inherit! :search_paths
   end
+  pod 'GoogleUtilities'
 end
 
 post_install do |installer|
@@ -45,4 +46,5 @@ end
 target 'ImageNotification' do
   use_frameworks!
   pod 'Firebase/Messaging'
+  pod 'GoogleUtilities'
 end
