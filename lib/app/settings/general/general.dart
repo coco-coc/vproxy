@@ -423,6 +423,8 @@ class GeoFileUpdateSettings extends StatefulWidget {
 class _GeoFileUpdateSettingsState extends State<GeoFileUpdateSettings> {
   bool _autoUpdateGeoFiles = false;
   late final TextEditingController _intervalController;
+  bool _isUpdating = false;
+  bool _isRestoring = false;
 
   @override
   void initState() {
@@ -479,7 +481,6 @@ class _GeoFileUpdateSettingsState extends State<GeoFileUpdateSettings> {
             decoration: InputDecoration(
               labelText: AppLocalizations.of(context)!.geoUpdateInterval,
               suffixText: AppLocalizations.of(context)!.days,
-              helperText: 'Minimum: 1 day',
               border: const OutlineInputBorder(),
             ),
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -499,6 +500,54 @@ class _GeoFileUpdateSettingsState extends State<GeoFileUpdateSettings> {
             },
           ),
         ],
+        const Gap(10),
+        Row(
+          children: [
+            TextButton(
+              onPressed: () async {
+                setState(() {
+                  _isUpdating = true;
+                });
+                try {
+                  await context.read<GeoDataHelper>().downloadAndProcessGeo();
+                  snack(AppLocalizations.of(context)!.geoUpdateSuccess);
+                } catch (e) {
+                  logger.e('Error updating geo files: $e');
+                  snack(e.toString());
+                } finally {
+                  setState(() {
+                    _isUpdating = false;
+                  });
+                }
+              },
+              child: _isUpdating
+                  ? smallCircularProgressIndicator
+                  : Text(AppLocalizations.of(context)!.geoUpdateNow),
+            ),
+            const Gap(10),
+            TextButton(
+              onPressed: () async {
+                setState(() {
+                  _isRestoring = true;
+                });
+                try {
+                  await writeStaticGeo();
+                  snack(AppLocalizations.of(context)!.geoUpdateSuccess);
+                } catch (e) {
+                  logger.e('Error restoring geo files: $e');
+                  snack(e.toString());
+                } finally {
+                  setState(() {
+                    _isRestoring = false;
+                  });
+                }
+              },
+              child: _isRestoring
+                  ? smallCircularProgressIndicator
+                  : Text(AppLocalizations.of(context)!.geoRestoreToDefault),
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -546,6 +595,7 @@ class _NodeTestSettingsState extends State<NodeTestSettings> {
             Switch(
               value: _autoTestNodes,
               onChanged: (value) {
+                context.read<SharedPreferences>().setAutoTestNodes(value);
                 setState(() {
                   _autoTestNodes = value;
                 });
