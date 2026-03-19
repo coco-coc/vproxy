@@ -94,7 +94,7 @@ class StartCloseCubit extends Cubit<XStatus> {
     final canStartError = _canStart();
     if (canStartError != null) {
       snack(
-        rootLocalizations()?.startFailedWithReason(canStartError),
+        rootLocalizations()?.startFailedWithReason(canStartError, ''),
         duration: const Duration(seconds: 60),
       );
       return;
@@ -104,21 +104,35 @@ class StartCloseCubit extends Cubit<XStatus> {
     try {
       await _xController.start();
     } on ConfigException catch (e, s) {
-      snack(rootLocalizations()?.startFailedWithReason(e.message));
+      snack(
+        rootLocalizations()?.startFailedWithReason(e.message, s.toString()),
+        duration: const Duration(seconds: 60),
+      );
       logger.e('start error', error: e, stackTrace: s);
     } on DriftRemoteException catch (e, s) {
       if (e.remoteCause is SqliteException &&
           (e.remoteCause as SqliteException).extendedResultCode == 5) {
-        snack(rootLocalizations()?.dbError(e.remoteCause.toString()));
+        snack(
+          rootLocalizations()?.dbError(e.remoteCause.toString()),
+          duration: const Duration(seconds: 60),
+        );
       } else {
         logger.e('start error', error: e, stackTrace: s);
         snack(
-          rootLocalizations()?.startFailedWithReason(e.remoteCause.toString()),
+          rootLocalizations()?.startFailedWithReason(
+            e.remoteCause.toString(),
+            s.toString(),
+          ),
+          duration: const Duration(seconds: 60),
         );
       }
     } catch (e, s) {
       logger.e('start error', error: e, stackTrace: s);
-      snack(rootLocalizations()?.startFailedWithReason(e.toString()));
+      reportError("start error", e, stackTrace: s);
+      snack(
+        rootLocalizations()?.startFailedWithReason(e.toString(), s.toString()),
+        duration: const Duration(seconds: 60),
+      );
     }
   }
 
