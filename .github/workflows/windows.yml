@@ -411,5 +411,5 @@ jobs:
           curl -X POST "https://api.cloudflare.com/client/v4/zones/f9498905dbe55fade38c7dd8621987cc/purge_cache" \
                 -H "Authorization: Bearer $CLOUDFLARE_TOKEN" \
                 -H "Content-Type: application/json" \
-                --data '{"files":["https://download.5vnetwork.com/*"]}'
+                --data '{"files":["https://download.5vnetwork.com/VXInstaller.exe"]}'
        

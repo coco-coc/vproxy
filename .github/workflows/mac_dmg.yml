@@ -67,7 +67,7 @@ jobs:
           touch ../tm-plugin/tm_linux/assets/x
           mkdir -p assets/google_fonts
           mkdir -p assets/ads
-  
+
       - name: Download geo
         run: |
           mkdir -p assets/geo
@@ -223,4 +223,4 @@ jobs:
           curl -X POST "https://api.cloudflare.com/client/v4/zones/f9498905dbe55fade38c7dd8621987cc/purge_cache" \
                 -H "Authorization: Bearer $CLOUDFLARE_TOKEN" \
                 -H "Content-Type: application/json" \
-                --data '{"files":["https://download.5vnetwork.com/*"]}'
+                --data '{"files":["https://download.5vnetwork.com/VX.dmg", "https://download.5vnetwork.com/appcast.xml"]}'
