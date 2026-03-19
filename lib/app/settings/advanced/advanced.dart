@@ -15,6 +15,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/protos/tun.pb.dart';
@@ -102,6 +103,8 @@ class AdvancedScreen extends StatelessWidget {
             const SystemProxySetting(),
             const Divider(),
             const RejectQuicHysteriaSetting(),
+            const Divider(),
+            const DialerSetting(),
             const SizedBox(height: 100),
           ],
         ),
@@ -167,6 +170,7 @@ class FallbackSetting extends StatefulWidget {
 class _FallbackSettingState extends State<FallbackSetting> {
   bool _changeIpv6ToDomain = false;
   bool _automaticallyAddFallbackDomain = false;
+  late final TextEditingController _fallbackTimeoutController;
 
   @override
   void initState() {
@@ -174,6 +178,15 @@ class _FallbackSettingState extends State<FallbackSetting> {
     final pref = context.read<SharedPreferences>();
     _changeIpv6ToDomain = pref.changeIpv6ToDomain;
     _automaticallyAddFallbackDomain = pref.automaticallyAddFallbackDomain;
+    _fallbackTimeoutController = TextEditingController(
+      text: '${pref.fallbackTimeout}',
+    );
+  }
+
+  @override
+  void dispose() {
+    _fallbackTimeoutController.dispose();
+    super.dispose();
   }
 
   void _toggleAutomaticallyAddFallbackDomain(bool value) async {
@@ -246,6 +259,24 @@ class _FallbackSettingState extends State<FallbackSetting> {
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
+          ),
+          const Gap(16),
+          TextField(
+            controller: _fallbackTimeoutController,
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.fallbackTimeout,
+              helperText: AppLocalizations.of(context)!.fallbackTimeoutDesc,
+              helperMaxLines: 5,
+              suffixText: AppLocalizations.of(context)!.seconds,
+              border: const OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              context.read<SharedPreferences>().setFallbackTimeout(
+                int.parse(value),
+              );
+            },
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
         ],
       ),
@@ -627,6 +658,85 @@ class _RejectQuicHysteriaSettingState extends State<RejectQuicHysteriaSetting> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class DialerSetting extends StatefulWidget {
+  const DialerSetting({super.key});
+
+  @override
+  State<DialerSetting> createState() => _DialerSettingState();
+}
+
+class _DialerSettingState extends State<DialerSetting> {
+  late final SharedPreferences _pref;
+  late final TextEditingController _directDialingTimeoutController;
+  late final TextEditingController _globalDialTimeoutController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pref = context.read<SharedPreferences>();
+    _directDialingTimeoutController = TextEditingController(
+      text: '${_pref.directDialingTimeout}',
+    );
+    _globalDialTimeoutController = TextEditingController(
+      text: '${_pref.globalDialTimeout}',
+    );
+  }
+
+  @override
+  void dispose() {
+    _directDialingTimeoutController.dispose();
+    _globalDialTimeoutController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Gap(10),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: TextField(
+            controller: _directDialingTimeoutController,
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.directDialingTimeout,
+              helperText: AppLocalizations.of(context)!.directDialingTimeoutHint,
+              helperMaxLines: 5,
+              border: const OutlineInputBorder(),
+              suffixText: 's',
+            ),
+            onChanged: (value) {
+              _pref.setDirectDialingTimeout(int.parse(value));
+            },
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          ),
+        ),
+        const Gap(10),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: TextField(
+            controller: _globalDialTimeoutController,
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.globalDialTimeout,
+              helperText: AppLocalizations.of(context)!.globalDialTimeoutHint,
+              suffixText: 's',
+              helperMaxLines: 5,
+              border: const OutlineInputBorder(),
+            ),
+            onChanged: (value) {
+              _pref.setGlobalDialTimeout(int.parse(value));
+            },
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          ),
+        ),
+      ],
     );
   }
 }

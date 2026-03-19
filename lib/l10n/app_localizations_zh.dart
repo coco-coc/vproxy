@@ -786,8 +786,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get startFailed => '启动失败';
 
   @override
-  String startFailedWithReason(String reason) {
-    return '启动失败: $reason';
+  String startFailedWithReason(String reason, String stackTrace) {
+    return '启动失败: $reason. StackTrace: $stackTrace';
   }
 
   @override
@@ -2308,5 +2308,23 @@ class AppLocalizationsZh extends AppLocalizations {
   String get automaticallyAddFallbackDomain => '自动添加回退域名';
 
   @override
-  String get automaticallyAddFallbackDomainDesc => '如果一个连接最初是直连的，但失败了，然后它回退到代理并成功了，自动将域名添加到名为“Fallback”的域名集合中。该集合在GFW模式中被使用';
+  String get automaticallyAddFallbackDomainDesc => '如果一个连接最初是直连，但是失败了，然后它回退到代理并成功，自动将域名添加到名为“Fallback”的域名集合中。该集合在GFW模式中被使用';
+
+  @override
+  String get fallbackTimeout => '回退超时时间';
+
+  @override
+  String get fallbackTimeoutDesc => '在有回退的情况下，如果一个连接在回退超时时间内没有收到任何返回数据，判定此连接失败，开始回退。为0即不启用功能';
+
+  @override
+  String get directDialingTimeout => '直连拨号超时时间';
+
+  @override
+  String get directDialingTimeoutHint => '直连拨号超时时间。如果在拨号超时时间内无法与目的地建立TCP连接，则连接失败。更短的拨号时间意味着更快的回退';
+
+  @override
+  String get globalDialTimeout => '节点拨号超时时间';
+
+  @override
+  String get globalDialTimeoutHint => '代理连接拨号超时时间。如果在拨号超时时间内无法与代理节点建立TCP连接，则连接失败。更短的拨号时间意味着更快的回退';
 }

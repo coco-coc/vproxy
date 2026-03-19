@@ -800,8 +800,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get startFailed => 'Failed to start';
 
   @override
-  String startFailedWithReason(String reason) {
-    return 'Failed to start: $reason';
+  String startFailedWithReason(String reason, String stackTrace) {
+    return 'Failed to start: $reason. StackTrace: $stackTrace';
   }
 
   @override
@@ -2359,4 +2359,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get automaticallyAddFallbackDomainDesc => 'If a connection initially went direct but failed, then it fallbacked to proxy and succeeded, automatically add the domain into a domain set called \"Fallback\"';
+
+  @override
+  String get fallbackTimeout => 'Fallback Timeout';
+
+  @override
+  String get fallbackTimeoutDesc => 'If a connection did not receive any data after the fallback timeout, this connection will start fallbacking and use the next handler to retry.';
+
+  @override
+  String get directDialingTimeout => 'Direct Dialing Timeout';
+
+  @override
+  String get directDialingTimeoutHint => 'The dial timeout for direct connection. If failed to establish TCP connection within this timeout, the connection will fail. Shorter dial timeout means faster fallback.';
+
+  @override
+  String get globalDialTimeout => 'Global Dial Timeout';
+
+  @override
+  String get globalDialTimeoutHint => 'The dial timeout for all nodes. If failed to establish TCP connection within this timeout, the connection will fail. Shorter dial timeout means faster fallback.';
 }

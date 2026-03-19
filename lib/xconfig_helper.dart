@@ -155,6 +155,9 @@ class XConfigHelper {
         logSessionEnd: _persistentStateRepo.showSessionOngoing,
         logRealtimeUsage: _persistentStateRepo.showRealtimeUsage,
       ),
+      dialerFactory: core.DialerFactoryConfig(
+        dialTimeout: _persistentStateRepo.globalDialTimeout,
+      ),
     );
     // redirect std err
     if (!isProduction() ||
@@ -174,7 +177,22 @@ class XConfigHelper {
   }
 
   Future<o.OutboundConfig> _getOutboundConfig(RouterConfig routerConfig) async {
-    final config = o.OutboundConfig(handlers: [freedomHandlerConfig]);
+    final config = o.OutboundConfig(
+      handlers: [
+        o.HandlerConfig(
+          outbound: o.OutboundHandlerConfig(
+            tag: 'direct',
+            protocol: Any.pack(FreedomConfig()),
+            domainStrategy: o.DomainStrategy.Speed,
+            transport: TransportConfig(
+              socket: SocketConfig(
+                dialTimeout: _persistentStateRepo.directDialingTimeout,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
     for (final rule in routerConfig.rules) {
       if (rule.outboundTag.isNotEmpty &&
           rule.outboundTag != directHandlerTag &&
@@ -241,6 +259,7 @@ class XConfigHelper {
     final config = DispatcherConfig(
       ipv6UseDomain: _persistentStateRepo.changeIpv6ToDomain,
       sniff: _persistentStateRepo.sniff,
+      fallbackTimeout: _persistentStateRepo.fallbackTimeout,
     );
     return config;
   }

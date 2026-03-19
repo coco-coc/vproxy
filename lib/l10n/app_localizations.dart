@@ -1606,8 +1606,8 @@ abstract class AppLocalizations {
   /// No description provided for @startFailedWithReason.
   ///
   /// In en, this message translates to:
-  /// **'Failed to start: {reason}'**
-  String startFailedWithReason(String reason);
+  /// **'Failed to start: {reason}. StackTrace: {stackTrace}'**
+  String startFailedWithReason(String reason, String stackTrace);
 
   /// No description provided for @startFailedReasonTunNeedAdmin.
   ///
@@ -4488,6 +4488,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'If a connection initially went direct but failed, then it fallbacked to proxy and succeeded, automatically add the domain into a domain set called \"Fallback\"'**
   String get automaticallyAddFallbackDomainDesc;
+
+  /// No description provided for @fallbackTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Fallback Timeout'**
+  String get fallbackTimeout;
+
+  /// No description provided for @fallbackTimeoutDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'If a connection did not receive any data after the fallback timeout, this connection will start fallbacking and use the next handler to retry.'**
+  String get fallbackTimeoutDesc;
+
+  /// No description provided for @directDialingTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct Dialing Timeout'**
+  String get directDialingTimeout;
+
+  /// No description provided for @directDialingTimeoutHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The dial timeout for direct connection. If failed to establish TCP connection within this timeout, the connection will fail. Shorter dial timeout means faster fallback.'**
+  String get directDialingTimeoutHint;
+
+  /// No description provided for @globalDialTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Global Dial Timeout'**
+  String get globalDialTimeout;
+
+  /// No description provided for @globalDialTimeoutHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The dial timeout for all nodes. If failed to establish TCP connection within this timeout, the connection will fail. Shorter dial timeout means faster fallback.'**
+  String get globalDialTimeoutHint;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

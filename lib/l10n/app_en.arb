@@ -294,10 +294,13 @@
   "upgradeToPermanentPro": "Upgrade to Pro",
   "caseInsensitive": "Case Insensitive",
   "startFailed": "Failed to start",
-  "startFailedWithReason": "Failed to start: {reason}",
+  "startFailedWithReason": "Failed to start: {reason}. StackTrace: {stackTrace}",
   "@startFailedWithReason": {
     "placeholders": {
       "reason": {
+        "type": "String"
+      },
+      "stackTrace": {
         "type": "String"
       }
     }
@@ -955,5 +958,11 @@
   "resultIpSetDesc": "A/AAAA records whose IPs are not in the set will be dropped",
   "inverse": "Inverse",
   "automaticallyAddFallbackDomain": "Automatically Add Fallback Domain",
-  "automaticallyAddFallbackDomainDesc": "If a connection initially went direct but failed, then it fallbacked to proxy and succeeded, automatically add the domain into a domain set called \"Fallback\""
+  "automaticallyAddFallbackDomainDesc": "If a connection initially went direct but failed, then it fallbacked to proxy and succeeded, automatically add the domain into a domain set called \"Fallback\"",
+  "fallbackTimeout": "Fallback Timeout",
+  "fallbackTimeoutDesc": "If a connection did not receive any data after the fallback timeout, this connection will start fallbacking and use the next handler to retry.",
+  "directDialingTimeout": "Direct Dialing Timeout",
+  "directDialingTimeoutHint": "The dial timeout for direct connection. If failed to establish TCP connection within this timeout, the connection will fail. Shorter dial timeout means faster fallback.",
+  "globalDialTimeout": "Global Dial Timeout",
+  "globalDialTimeoutHint": "The dial timeout for all nodes. If failed to establish TCP connection within this timeout, the connection will fail. Shorter dial timeout means faster fallback."
 }
