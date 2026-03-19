@@ -71,13 +71,9 @@ class GeoDataHelper {
 
     logger.d('downloadGeo');
     try {
-      final dir = await resourceDir();
       final tasks = [
-        downloader.downloadProxyFirst(
-          geoSiteUrl,
-          join(dir.path, 'geosite.dat'),
-        ),
-        downloader.downloadProxyFirst(geoIpUrl, join(dir.path, 'geoip.dat')),
+        downloader.downloadProxyFirst(geoSiteUrl, await getGeositePath()),
+        downloader.downloadProxyFirst(geoIpUrl, await getGeoIPPath()),
       ];
       await Future.wait(tasks);
       await xApiClient.processGeoFiles();

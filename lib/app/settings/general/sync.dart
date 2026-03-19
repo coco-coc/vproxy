@@ -254,7 +254,7 @@ class __BackupState extends State<_Backup> {
                         color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     )
-                  : const Text('Export to file'),
+                  : Text(AppLocalizations.of(context)!.exportToFile),
             ),
             const Gap(10),
             FilledButton.tonal(
@@ -291,7 +291,7 @@ class __BackupState extends State<_Backup> {
                         color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     )
-                  : const Text('Import from file'),
+                  : Text(AppLocalizations.of(context)!.selectFromFile),
             ),
             const Gap(10),
           ],

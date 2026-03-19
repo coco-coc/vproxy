@@ -21,7 +21,10 @@ Future<AppDatabase?> _initDatabase(
 }) async {
   try {
     final path = await getDbPath(pref);
-    return AppDatabase(path: path, interceptor: interceptor);
+    final db = AppDatabase(path: path, interceptor: interceptor);
+    // Force the connection to be opened before returning.
+    await db.customSelect('SELECT 1').get();
+    return db;
   } catch (e) {
     logger.e('Error initializing database', error: e);
     reportError("init database", e);

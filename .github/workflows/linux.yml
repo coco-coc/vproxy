@@ -61,9 +61,9 @@ jobs:
       - name: Download geo
         run: |
           mkdir -p assets/geo
-          curl -O "https://github.com/5VNetwork/process-geo/releases/download/latest/simplified_geoip.dat" 
+          curl -O "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geoip.dat" 
           mv simplified_geoip.dat assets/geo/simplified_geoip.dat
-          curl -O "https://github.com/5VNetwork/process-geo/releases/download/latest/simplified_geosite.dat" 
+          curl -O "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geosite.dat" 
           mv simplified_geosite.dat assets/geo/simplified_geosite.dat
 
       - name: Install Linux dependencies
@@ -217,6 +217,15 @@ jobs:
             --profile r2 \
             --endpoint-url https://37c1d94ef4ab81c55c6e7d0158613800.r2.cloudflarestorage.com
 
+      - name: Purge CDN cache
+        env:
+          CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+        run: |
+          curl -X POST "https://api.cloudflare.com/client/v4/zones/f9498905dbe55fade38c7dd8621987cc/purge_cache" \
+                -H "Authorization: Bearer $CLOUDFLARE_TOKEN" \
+                -H "Content-Type: application/json" \
+                --data '{"purge_everything": true}'
+
   build-linux-arm64:
     runs-on: ubuntu-24.04-arm
 
@@ -298,7 +307,7 @@ jobs:
           libjsoncpp-dev \
           libayatana-appindicator3-dev \
           rpm \
-          patchelf 
+          patchelf
 
       - name: Install AWS CLI
         uses: unfor19/install-aws-cli-action@v1
@@ -322,7 +331,7 @@ jobs:
           channel: master
           flutter-version: 3.38.3
           cache: true
-          
+
       - name: Flutter version
         run: flutter --version
 
@@ -455,7 +464,7 @@ jobs:
           curl -X POST "https://api.cloudflare.com/client/v4/zones/f9498905dbe55fade38c7dd8621987cc/purge_cache" \
                 -H "Authorization: Bearer $CLOUDFLARE_TOKEN" \
                 -H "Content-Type: application/json" \
-                --data '{"files":["https://download.5vnetwork.com/*"]}'
+                --data '{"purge_everything": true}'
 
     # steps:
     #   - name: Checkout code

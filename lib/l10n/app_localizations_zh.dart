@@ -440,6 +440,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String min(num value) {
     final intl.NumberFormat valueNumberFormat = intl.NumberFormat.compact(
       locale: localeName,
+      
     );
     final String valueString = valueNumberFormat.format(value);
 
@@ -450,6 +451,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String hour(num value) {
     final intl.NumberFormat valueNumberFormat = intl.NumberFormat.compact(
       locale: localeName,
+      
     );
     final String valueString = valueNumberFormat.format(value);
 
@@ -469,8 +471,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get copy => '复制';
 
   @override
-  String get privacyPolicySummary =>
-      'VX只在下方按钮开启的情况下收集诊断日志，这些日志不包含您的个人数据。详细的隐私政策请点击下方按钮查看。';
+  String get privacyPolicySummary => 'VX只在下方按钮开启的情况下收集诊断日志，这些日志不包含您的个人数据。详细的隐私政策请点击下方按钮查看。';
 
   @override
   String get diagnosticLogDoesNotContainPersonalData => '诊断日志不与您建立关联，也不包含个人数据';
@@ -602,8 +603,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get nodeChain => '代理链';
 
   @override
-  String get nodeChainDesc =>
-      '被该选择器选中的节点将与以下节点成一个代理链。[你的流量] -> [选择器选中的节点] -> [下面的第一个节点] -> ... -> [下面的最后一个节点] -> [最终目的地]';
+  String get nodeChainDesc => '被该选择器选中的节点将与以下节点成一个代理链。[你的流量] -> [选择器选中的节点] -> [下面的第一个节点] -> ... -> [下面的最后一个节点] -> [最终目的地]';
 
   @override
   String get addSelector => '添加选择器';
@@ -786,13 +786,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get startFailed => '启动失败';
 
   @override
-  String startFailedWithReason(String reason) {
-    return '启动失败: $reason';
+  String startFailedWithReason(String reason, String stackTrace) {
+    return '启动失败: $reason. StackTrace: $stackTrace';
   }
 
   @override
-  String get startFailedReasonTunNeedAdmin =>
-      'Tun需要管理员身份。请以管理员身份重新运行VX或更换入站模式。';
+  String get startFailedReasonTunNeedAdmin => 'Tun需要管理员身份。请以管理员身份重新运行VX或更换入站模式。';
 
   @override
   String get startFailedReasonNoNode => '无节点';
@@ -818,10 +817,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String decodeResult(num value1, num value2) {
     final intl.NumberFormat value1NumberFormat = intl.NumberFormat.compact(
       locale: localeName,
+      
     );
     final String value1String = value1NumberFormat.format(value1);
     final intl.NumberFormat value2NumberFormat = intl.NumberFormat.compact(
       locale: localeName,
+      
     );
     final String value2String = value2NumberFormat.format(value2);
 
@@ -832,18 +833,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String updateSubResult(num value1, num value2, num value3, num value4) {
     final intl.NumberFormat value1NumberFormat = intl.NumberFormat.compact(
       locale: localeName,
+      
     );
     final String value1String = value1NumberFormat.format(value1);
     final intl.NumberFormat value2NumberFormat = intl.NumberFormat.compact(
       locale: localeName,
+      
     );
     final String value2String = value2NumberFormat.format(value2);
     final intl.NumberFormat value3NumberFormat = intl.NumberFormat.compact(
       locale: localeName,
+      
     );
     final String value3String = value3NumberFormat.format(value3);
     final intl.NumberFormat value4NumberFormat = intl.NumberFormat.compact(
       locale: localeName,
+      
     );
     final String value4String = value4NumberFormat.format(value4);
 
@@ -1124,12 +1129,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deleteAccountConfirm => '确定要删除账户吗？此操作无法撤销。';
 
   @override
-  String get domainSetDescription =>
-      '以下域名集合使用代理DNS服务器（默认为8.8.8.8和1.1.1.1）解析，其余域名使用直连DNS服务器（默认是物理网卡的DNS服务器，或223.5.5.5和114.114.114.114如果物理网卡的DNS服务器无法获取到）解析';
+  String get domainSetDescription => '以下域名集合使用代理DNS服务器（默认为8.8.8.8和1.1.1.1）解析，其余域名使用直连DNS服务器（默认是物理网卡的DNS服务器，或223.5.5.5和114.114.114.114如果物理网卡的DNS服务器无法获取到）解析';
 
   @override
-  String get routerRuleDescription =>
-      '对于每一个连接，规则由上到下依次进行匹配，一旦匹配成功，后面的规则不会在被考虑。如果没有匹配到规则，此连接将会失败';
+  String get routerRuleDescription => '对于每一个连接，规则由上到下依次进行匹配，一旦匹配成功，后面的规则不会在被考虑。如果没有匹配到规则，此连接将会失败';
 
   @override
   String get dstIpSet => '目标IP集合';
@@ -1219,8 +1222,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sniff => '嗅探';
 
   @override
-  String get proxyShareDesc =>
-      '启动VPN后开启HTTP和SOCKS入站，以使局域网内其他设备通过本机上网。（入站名称为“proxyShare”）';
+  String get proxyShareDesc => '启动VPN后开启HTTP和SOCKS入站，以使局域网内其他设备通过本机上网。（入站名称为“proxyShare”）';
 
   @override
   String get loginSuccess => '登录成功';
@@ -1241,8 +1243,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get rateApp => '评价VX';
 
   @override
-  String get userConsend =>
-      '一旦登录成功，您的邮箱将存储在我们的服务器，直到您删除账户为止。这是为了提供账户登录功能所必需的个人信息。我们不会与任何第三方分享您的邮箱。您是否允许我们存储您的邮箱？';
+  String get userConsend => '一旦登录成功，您的邮箱将存储在我们的服务器，直到您删除账户为止。这是为了提供账户登录功能所必需的个人信息。我们不会与任何第三方分享您的邮箱。您是否允许我们存储您的邮箱？';
 
   @override
   String get okay => '好的';
@@ -1254,12 +1255,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get reject => '拒绝';
 
   @override
-  String get greatSetDescription1 =>
-      '大集合由小集合或大集合组成。当判断一个域名/IP是否在集合中时，首先会考虑排除集合，如果域名在排除的集合中，则域名不在集合中。';
+  String get greatSetDescription1 => '大集合由小集合或大集合组成。当判断一个域名/IP是否在集合中时，首先会考虑排除集合，如果域名在排除的集合中，则域名不在集合中。';
 
   @override
-  String get greatSetDescription2 =>
-      '一个大集合可以有一个互斥集合。如果一个域名/IP在集合A内，则该域名/IP不在集合A的互斥集合内。';
+  String get greatSetDescription2 => '一个大集合可以有一个互斥集合。如果一个域名/IP在集合A内，则该域名/IP不在集合A的互斥集合内。';
 
   @override
   String get pleaseLoginFirst => '请先登录';
@@ -1296,8 +1295,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dependsOnDefaultNicDesc => '如果默认物理网卡支持IPv6，TUN网卡也支持IPv6';
 
   @override
-  String get tunIpv4Desc =>
-      '此设置下，在Windows/Linux上，如果物理网卡支持IPv6，IPv6流量将不会被VX TUN处理，而是会被物理网卡处理，也就是说它们会由物理网卡直接发出；在Android/iOS/macOS上，IPv6流量将被阻止。';
+  String get tunIpv4Desc => '此设置下，在Windows/Linux上，如果物理网卡支持IPv6，IPv6流量将不会被VX TUN处理，而是会被物理网卡处理，也就是说它们会由物理网卡直接发出；在Android/iOS/macOS上，IPv6流量将被阻止。';
 
   @override
   String get tunRejectIpv6 => '拒绝 IPv6（如果节点不支持它）';
@@ -1466,8 +1464,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get routerRules => '路由规则';
 
   @override
-  String get dnsRuleDesc =>
-      '对于每一个DNS请求，DNS规则从上到下依次进行匹配，一旦匹配成功，该规则所指定的DNS服务器将被用来处理该DNS请求。如果没有规则匹配，返回空的DNS结果。';
+  String get dnsRuleDesc => '对于每一个DNS请求，DNS规则从上到下依次进行匹配，一旦匹配成功，该规则所指定的DNS服务器将被用来处理该DNS请求。如果没有规则匹配，返回空的DNS结果。';
 
   @override
   String get dnsServer => 'DNS服务器';
@@ -1494,12 +1491,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get useDefaultDnsServer => '使用物理网卡的DNS服务器。如无法获取到物理网卡的DNS服务器，使用输入的服务器';
 
   @override
-  String get useDefaultNicDnsServer =>
-      '使用物理网卡的DNS服务器。如无法获取到物理网卡的DNS服务器，使用以下服务器：';
+  String get useDefaultNicDnsServer => '使用物理网卡的DNS服务器。如无法获取到物理网卡的DNS服务器，使用以下服务器：';
 
   @override
-  String get addDnsAddressHint =>
-      '该类型支持多地址。使用“,”分隔。每一个DNS请求会被同时发往所有地址，第一个返回的结果将被采用';
+  String get addDnsAddressHint => '该类型支持多地址。使用“,”分隔。每一个DNS请求会被同时发往所有地址，第一个返回的结果将被采用';
 
   @override
   String get invalidUrl => '无效的URL';
@@ -1514,6 +1509,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String enabledConditions(num number) {
     final intl.NumberFormat numberNumberFormat = intl.NumberFormat.compact(
       locale: localeName,
+      
     );
     final String numberString = numberNumberFormat.format(number);
 
@@ -1548,8 +1544,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get saveToDownloadFolderDesc => '将日志转移至下载文件夹';
 
   @override
-  String get debugLogDesc =>
-      '如果你在使用过程中遇到了问题，你可以打开开发者日志，然后等再次遇到问题后，点击上传将开发者日志上传给我们，这将帮助我们发现BUG。（开发者日志不会被自动上传，你需要手动点击上传按钮或者将这些日志通过电报/邮箱给我们。开发者日志会包含您的网络活动, 比如使用了哪些应用和网站。我们在处理完日志后会立刻删除日志。）上传完毕后，请关闭开发者日志并删除日志文件。';
+  String get debugLogDesc => '如果你在使用过程中遇到了问题，你可以打开开发者日志，然后等再次遇到问题后，点击上传将开发者日志上传给我们，这将帮助我们发现BUG。（开发者日志不会被自动上传，你需要手动点击上传按钮或者将这些日志通过电报/邮箱给我们。开发者日志会包含您的网络活动, 比如使用了哪些应用和网站。我们在处理完日志后会立刻删除日志。）上传完毕后，请关闭开发者日志并删除日志文件。';
 
   @override
   String get clashFormatSupported => '支持Clash Rule';
@@ -1564,22 +1559,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get fallbackToProxy => '回退到代理';
 
   @override
-  String get fallbackToProxySetting =>
-      '如果直连失败，使用节点重试。如果“代理选择器”存在，它选择的节点将被使用。如果它不存在，将随机选取一个正在使用的节点。';
+  String get fallbackToProxySetting => '如果直连失败，使用节点重试。如果“代理选择器”存在，它选择的节点将被使用。如果它不存在，将随机选取一个正在使用的节点。';
 
   @override
   String get changeIpv6ToDomain => '将IPv6改为域名';
 
   @override
-  String get changeIpv6ToDomainDesc =>
-      '如果匹配到的节点不支持IPv6，而目标地址是IPv6并且嗅探到了域名，则将目标地址改为域名。';
+  String get changeIpv6ToDomainDesc => '如果匹配到的节点不支持IPv6，而目标地址是IPv6并且嗅探到了域名，则将目标地址改为域名。';
 
   @override
   String get installAsWinService => '添加VX进Windows Service';
 
   @override
-  String get installAsWinServiceDesc =>
-      '在使用TUN前，需要将VX添加进Windows Service，点击“添加”以进行添加。';
+  String get installAsWinServiceDesc => '在使用TUN前，需要将VX添加进Windows Service，点击“添加”以进行添加。';
 
   @override
   String get placeOnTop => '置顶';
@@ -1620,8 +1612,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get noNewVersion => '无更新版本';
 
   @override
-  String get enableSystemExtension =>
-      '请前往[系统设置->通用->登录项与扩展->网络扩展]并开启 VX SystemExtension';
+  String get enableSystemExtension => '请前往[系统设置->通用->登录项与扩展->网络扩展]并开启 VX SystemExtension';
 
   @override
   String get systemProxyPortSetting => '系统代理端口设定';
@@ -1660,8 +1651,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cloudSyncDesc1 => '多设备间同步数据库。';
 
   @override
-  String get cloudSyncDesc2 =>
-      '可以与谷歌FCM服务器正常通信的苹果设备和安卓设备（需装有谷歌服务）可以实现实时同步。其他设备会每5分钟同步一次。您可以点击左上角V图标手动触发同步';
+  String get cloudSyncDesc2 => '可以与谷歌FCM服务器正常通信的苹果设备和安卓设备（需装有谷歌服务）可以实现实时同步。其他设备会每5分钟同步一次。您可以点击左上角V图标手动触发同步';
 
   @override
   String get cloudSyncDesc3 => '同步数据会在同步后自动从云端消除，如果一直没有同步，数据在云端最多保留7天。';
@@ -1685,8 +1675,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sync => '同步';
 
   @override
-  String get conditaionWarn1 =>
-      '多数情况下，域名条件和IP条件不应该同时存在。同时存在时，只有当一个请求既有域名信息，也有IP信息的时候，该规则才有可能命中。';
+  String get conditaionWarn1 => '多数情况下，域名条件和IP条件不应该同时存在。同时存在时，只有当一个请求既有域名信息，也有IP信息的时候，该规则才有可能命中。';
 
   @override
   String get setName => '集合名称';
@@ -1708,6 +1697,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get currentBackup => '当前备份';
+
+  @override
+  String get exportToFile => '导出到文件';
 
   @override
   String get uploadDb => '上传';
@@ -1743,8 +1735,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get fallbackRetryDomain => '回退到域名';
 
   @override
-  String get fallbackRetryDomainDesc =>
-      '如果代理连接使用IP目标，并且由于I/O超时而失败（这可能是因为DNS污染），则使用域名作为目标并重试。连接的嗅探域名将被首先使用，如果它不存在，则使用IP-to-域名。';
+  String get fallbackRetryDomainDesc => '如果代理连接使用IP目标，并且由于I/O超时而失败（这可能是因为DNS污染），则使用域名作为目标并重试。连接的嗅探域名将被首先使用，如果它不存在，则使用IP-to-域名。';
 
   @override
   String get backupPasswordDesc => '用于加密数据库。只有有这个密码的设备才可以恢复备份。密码加密储存在本地。';
@@ -1780,15 +1771,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get doNotShowAgain => '不再显示';
 
   @override
-  String get rpmTunNotice =>
-      'When TUN is on, Reverse Path Forwarding mode will be set to Loose(2) and reset to what it was when disconnect. You can go to the following website to learn about Reverse Path Forwarding';
+  String get rpmTunNotice => 'When TUN is on, Reverse Path Forwarding mode will be set to Loose(2) and reset to what it was when disconnect. You can go to the following website to learn about Reverse Path Forwarding';
 
   @override
   String get internalDnsDesc => '内部DNS服务器主要用于在出站拨号时解析域名，它们会从左到右依次被使用，直到解析成功为止';
 
   @override
-  String get nodeSetDesc =>
-      '\"__node__\"为包含所有节点域名/IP的域名小集合/IP小集合。它主要被用于让VX节点测试走直连。节点域名包括它的地址和SNI';
+  String get nodeSetDesc => '\"__node__\"为包含所有节点域名/IP的域名小集合/IP小集合。它主要被用于让VX节点测试走直连。节点域名包括它的地址和SNI';
 
   @override
   String get dnsNameDesc => 'DNS服务器名称可以在入站条件那里引用，以指定它所使用的节点。';
@@ -1800,15 +1789,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get deleteDebugLogs => '删除日志文件';
 
   @override
-  String get conditionDesc =>
-      '当一个连接没有IP信息时，IP条件不会成立，因此规则不会匹配。同样，当一个连接没有域名信息时，域名条件不会成立，因此规则也不会匹配。';
+  String get conditionDesc => '当一个连接没有IP信息时，IP条件不会成立，因此规则不会匹配。同样，当一个连接没有域名信息时，域名条件不会成立，因此规则也不会匹配。';
 
   @override
   String get lookupEch => '查询ECH';
 
   @override
-  String get lookupEchDesc =>
-      '如果启用且上面的ECH Config为空，则从DNS服务器查找ECH Config, 如果查询成功，使用ECH，否则不使用ECH。';
+  String get lookupEchDesc => '如果启用且上面的ECH Config为空，则从DNS服务器查找ECH Config, 如果查询成功，使用ECH，否则不使用ECH。';
 
   @override
   String get adWanted => '发布广告';
@@ -1820,8 +1807,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get basicQuickDeploySummary => '部署Xray、Hysteria核心和四个常用协议';
 
   @override
-  String get basicQuickDeployDetails =>
-      '安装Xray-core以及Hysteria，并且部署以下四个入站。如果服务器已安装Xray或Hysteria，原有配置将被替换。如果服务器未开启BBR，开启BBR。';
+  String get basicQuickDeployDetails => '安装Xray-core以及Hysteria，并且部署以下四个入站。如果服务器已安装Xray或Hysteria，原有配置将被替换。如果服务器未开启BBR，开启BBR。';
 
   @override
   String get basicQuickDeployContent1 => 'Vmess 五个随机端口';
@@ -1839,12 +1825,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get masqueradeQuickDeployTitle => 'Reality/XHTTP';
 
   @override
-  String get masqueradeQuickDeploySummary =>
-      '安装Xray-core并部署Reality/XHTTP入站。如果服务器已安装Xray，原有配置将被替换。如果服务器未开启BBR，开启BBR。';
+  String get masqueradeQuickDeploySummary => '安装Xray-core并部署Reality/XHTTP入站。如果服务器已安装Xray，原有配置将被替换。如果服务器未开启BBR，开启BBR。';
 
   @override
-  String get masqueradeQuickDeployDetails =>
-      '安装Xray-core，并部署Reality/XHTTP入站。如果服务器已安装Xray，原有配置将被替换。如果服务器未开启BBR，开启BBR。';
+  String get masqueradeQuickDeployDetails => '安装Xray-core，并部署Reality/XHTTP入站。如果服务器已安装Xray，原有配置将被替换。如果服务器未开启BBR，开启BBR。';
 
   @override
   String fatalError(String error) {
@@ -1887,8 +1871,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get addRouteModeNotice => '点击“+”按钮添加路由模式。';
 
   @override
-  String get freeUserCannotUseCustomRoutingMode =>
-      '免费用户无法使用自定义路由模式。请选择一个默认路由模式。您可以在路由界面添加默认路由模式。';
+  String get freeUserCannotUseCustomRoutingMode => '免费用户无法使用自定义路由模式。请选择一个默认路由模式。您可以在路由界面添加默认路由模式。';
 
   @override
   String get defaultRouteModes => '默认路由模式';
@@ -1924,8 +1907,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sniffDomainForIpConnection => '如果连接使用IP目标，嗅探域名';
 
   @override
-  String get resolveDomain =>
-      '对于目标为域名的连接，使用DNS查询IP，当每一个解析出来的IP都在指定的CIDR集合内时，该条件成立';
+  String get resolveDomain => '对于目标为域名的连接，使用DNS查询IP，当每一个解析出来的IP都在指定的CIDR集合内时，该条件成立';
 
   @override
   String get skipSniff => '不嗅探';
@@ -1946,8 +1928,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get useBloomFilter => '在iOS上使用Bloom Filter';
 
   @override
-  String get useBloomFilterDesc =>
-      'Bloom Filter可以减少内存使用，但是会有小概率（1%）的误判：不在集合中的域名可能会被误判为在集合中。';
+  String get useBloomFilterDesc => 'Bloom Filter可以减少内存使用，但是会有小概率（1%）的误判：不在集合中的域名可能会被误判为在集合中。';
 
   @override
   String get addFromClashRuleFiles => '选择Clash规则文件';
@@ -1956,8 +1937,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get selectFromInstalledApps => '选择已安装的应用';
 
   @override
-  String get ipToDomainDesc =>
-      'IP -> Domain是最近DNS历史记录中获取的，由于不同的域名可以解析到相同的IP，无法100%确定该连接使用此域名。';
+  String get ipToDomainDesc => 'IP -> Domain是最近DNS历史记录中获取的，由于不同的域名可以解析到相同的IP，无法100%确定该连接使用此域名。';
 
   @override
   String get followingAiTranslated => '以下语言由AI翻译，可能不准确。';
@@ -1993,23 +1973,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get vxCoreConfig => 'VX内核配置';
 
   @override
-  String get selectorDesc1 =>
-      '选择器用于挑选节点。“代理”选择器为一个特殊的选择器，它支持在节点页面里手动选择节点，其他选择器不支持此选项。';
+  String get selectorDesc1 => '选择器用于挑选节点。“代理”选择器为一个特殊的选择器，它支持在节点页面里手动选择节点，其他选择器不支持此选项。';
 
   @override
-  String get selectorDesc2 =>
-      '如果代理链里有节点，那么被选择器选中的节点将与“代理链”里的节点一起实现链式代理。[你的流量] -> [选择器选中的节点] -> [“代理链”里的第一个节点] -> ... -> [“代理链”里的最后一个节点] -> [最终目的地]';
+  String get selectorDesc2 => '如果代理链里有节点，那么被选择器选中的节点将与“代理链”里的节点一起实现链式代理。[你的流量] -> [选择器选中的节点] -> [“代理链”里的第一个节点] -> ... -> [“代理链”里的最后一个节点] -> [最终目的地]';
 
   @override
-  String get balanceStrategyDesc =>
-      '选择器会根据选择策略挑出来一个或多个节点。策略为“全部”或者“可用”时会挑出多个节点，这些节点都会被同时使用。对于一个连接，具体用哪个节点将由负载均衡决定：如果负载均衡为“随机”，那么会随机选择一个节点；如果负载均衡为“记忆”，那么同一个根域名/应用的连接会用一个节点。';
+  String get balanceStrategyDesc => '选择器会根据选择策略挑出来一个或多个节点。策略为“全部”或者“可用”时会挑出多个节点，这些节点都会被同时使用。对于一个连接，具体用哪个节点将由负载均衡决定：如果负载均衡为“随机”，那么会随机选择一个节点；如果负载均衡为“记忆”，那么同一个根域名/应用的连接会用一个节点。';
 
   @override
   String get inboundDesc1 => 'TUN模式将使所有网络流量由VX处理。此模式不会有DNS泄漏问题';
 
   @override
-  String get inboundDesc2 =>
-      '系统代理模式将设置主机的代理设置。一些应用，比如浏览器，尊重这一设置所以它们的流量将由VX处理，然而，很多应用不尊重这一设置，它们的流量将不会经过VX';
+  String get inboundDesc2 => '系统代理模式将设置主机的代理设置。一些应用，比如浏览器，尊重这一设置所以它们的流量将由VX处理，然而，很多应用不尊重这一设置，它们的流量将不会经过VX';
 
   @override
   String get fakeDnsDesc => 'FakeDNS可以降低延迟';
@@ -2018,16 +1994,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get routeDesc => 'VX会根据设备语言添加一个或多个路由模式。路由模式可以在路由高级配置界面添加/删除';
 
   @override
-  String get transportConditionMatchAllDesc =>
-      '强制入站连接使用此协议。当启用时，入站连接必须使用此协议，否则连接将失败，启用时本Multi入站只可以有一个传输层协议。当禁用时，只有在条件匹配时才会使用传输层协议，如果条件不匹配，则尝试匹配下一个传输层协议，如果没有任何传输层协议匹配，则将入站连接连接交给上一层的代理协议';
+  String get transportConditionMatchAllDesc => '强制入站连接使用此协议。当启用时，入站连接必须使用此协议，否则连接将失败，启用时本Multi入站只可以有一个传输层协议。当禁用时，只有在条件匹配时才会使用传输层协议，如果条件不匹配，则尝试匹配下一个传输层协议，如果没有任何传输层协议匹配，则将入站连接连接交给上一层的代理协议';
 
   @override
-  String get transportConditionH2Desc =>
-      '以http2 preface开头的入站连接。该选项用于匹配h2协议，比如grpc或http';
+  String get transportConditionH2Desc => '以http2 preface开头的入站连接。该选项用于匹配h2协议，比如grpc或http';
 
   @override
-  String get securityConditionMatchAllDesc =>
-      '强制入站连接使用此安全协议。当启用时，入站连接必须使用此安全协议，否则连接将失败，启用时本Multi入站只可以有一个安全层协议。当禁用时，只有在条件匹配时才会使用此安全层协议，如果条件不匹配，则尝试匹配下一个安全层协议，如果没有任何安全层协议匹配，则将入站连接连接交给上一层协议: Transport Protocol层。';
+  String get securityConditionMatchAllDesc => '强制入站连接使用此安全协议。当启用时，入站连接必须使用此安全协议，否则连接将失败，启用时本Multi入站只可以有一个安全层协议。当禁用时，只有在条件匹配时才会使用此安全层协议，如果条件不匹配，则尝试匹配下一个安全层协议，如果没有任何安全层协议匹配，则将入站连接连接交给上一层协议: Transport Protocol层。';
 
   @override
   String get allInOneQuickDeployTitle => '应有尽有';
@@ -2036,8 +2009,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get allInOneQuickDeploySummary => '安装VX核心（开源），部署多种协议';
 
   @override
-  String get allInOneQuickDeployDetails =>
-      '安装VX核心（开源），并部署以下协议组合：(Vmess, Trojan, Anytls)x(Websocket, gRPC)x(TLS, Reality) + Hysteria。如果服务器未开启BBR，开启BBR。';
+  String get allInOneQuickDeployDetails => '安装VX核心（开源），并部署以下协议组合：(Vmess, Trojan, Anytls)x(Websocket, gRPC)x(TLS, Reality) + Hysteria。如果服务器未开启BBR，开启BBR。';
 
   @override
   String get addMulti => '添加Multi入站';
@@ -2046,12 +2018,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get addSingle => '添加普通入站';
 
   @override
-  String get multiDesc =>
-      'Multi入站可以在一个端口使用几乎所有协议。类似于Xray的回落。它支持代理层，传输层，安全层的回落，意味着你可以设置多个代理协议，传输协议和安全协议。目前不支持UDP回落，所以UDP端口只会被一个协议使用，Hysteria会被优选考虑，如果没有它，第一个支持UDP的协议会使用UDP端口。';
+  String get multiDesc => 'Multi入站可以在一个端口使用几乎所有协议。类似于Xray的回落。它支持代理层，传输层，安全层的回落，意味着你可以设置多个代理协议，传输协议和安全协议。目前不支持UDP回落，所以UDP端口只会被一个协议使用，Hysteria会被优选考虑，如果没有它，第一个支持UDP的协议会使用UDP端口。';
 
   @override
-  String get normalInboundDesc =>
-      '普通入站类似于V2ray入站，它支持代理层的回落，可以指定多个代理协议，但它不支持传输层和安全层的回落（Multi入站支持所有层的回落）。';
+  String get normalInboundDesc => '普通入站类似于V2ray入站，它支持代理层的回落，可以指定多个代理协议，但它不支持传输层和安全层的回落（Multi入站支持所有层的回落）。';
 
   @override
   String get optional => '可不填';
@@ -2060,15 +2030,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get allInOneRealityDesc => '可不填。如果不填，将不添加Reality入站';
 
   @override
-  String get allInOneCdnDesc =>
-      '可不填。CDN的SSL/TLS加密可以是灵活/完全。推荐使用完全，因为它会加密CDN与你的服务器之间的流量';
+  String get allInOneCdnDesc => '可不填。CDN的SSL/TLS加密可以是灵活/完全。推荐使用完全，因为它会加密CDN与你的服务器之间的流量';
 
   @override
   String get disableOSFirewall => '禁用OS防火墙';
 
   @override
-  String get disableOSFirewallDesc =>
-      'VPS通常有两个防火墙，一个是OS防火墙，另一个是VPS提供商提供的防火墙。该选项只会禁用OS防火墙。很多云提供商（比如谷歌云）会默认禁用OS防火墙，但一些不会。对于那些不默认禁用OS防火墙的VPS，如果你不开启这个选项并且OS防火墙禁止以上端口的入站的话，部署的节点将无法使用，因为OS防火墙会阻止入站流量。';
+  String get disableOSFirewallDesc => 'VPS通常有两个防火墙，一个是OS防火墙，另一个是VPS提供商提供的防火墙。该选项只会禁用OS防火墙。很多云提供商（比如谷歌云）会默认禁用OS防火墙，但一些不会。对于那些不默认禁用OS防火墙的VPS，如果你不开启这个选项并且OS防火墙禁止以上端口的入站的话，部署的节点将无法使用，因为OS防火墙会阻止入站流量。';
 
   @override
   String get vxNotRunning => 'VX内核未运行';
@@ -2116,8 +2084,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get clientOnly => '仅客户端';
 
   @override
-  String get visionDesc =>
-      'Vision会减少连接的特征。提高性能，特别是在 Linux上。如果你启用它，服务器也必须启用它，（该功能源自VLESS的Vision-RPRX-XTLS，和基础版Vision-RPRX-XTLS大致相同）';
+  String get visionDesc => 'Vision会减少连接的特征。提高性能，特别是在 Linux上。如果你启用它，服务器也必须启用它，（该功能源自VLESS的Vision-RPRX-XTLS，和基础版Vision-RPRX-XTLS大致相同）';
 
   @override
   String get activeNodes => '活跃节点';
@@ -2171,6 +2138,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get geoUpdateInterval => '更新间隔';
 
   @override
+  String get geoUpdateNow => '立即更新';
+
+  @override
+  String get geoRestoreToDefault => '恢复默认';
+
+  @override
+  String get geoUpdateSuccess => '地理文件更新成功';
+
+  @override
   String get interval => '间隔';
 
   @override
@@ -2189,8 +2165,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get homeEditCustomizableLayout => '可自定义主页';
 
   @override
-  String get domainStrategyDesc =>
-      '影响拨号时如何解析域名。PreferIPv4: 同时查寻A和AAAA，然后尝试先IPv4，如果失败，尝试IPv6。PreferIPv6: 同时查寻A和AAAA，然后尝试先IPv6，如果失败，尝试IPv4。IPv4Only: 只查寻IPv4。IPv6Only: 只查寻IPv6。Speed: 同时查寻A和AAAA，哪个先返回结果就用哪个（可能是IPv4s或IPv6s），如果失败，则使用另一个组结果。';
+  String get domainStrategyDesc => '影响拨号时如何解析域名。PreferIPv4: 同时查寻A和AAAA，然后尝试先IPv4，如果失败，尝试IPv6。PreferIPv6: 同时查寻A和AAAA，然后尝试先IPv6，如果失败，尝试IPv4。IPv4Only: 只查寻IPv4。IPv6Only: 只查寻IPv6。Speed: 同时查寻A和AAAA，哪个先返回结果就用哪个（可能是IPv4s或IPv6s），如果失败，则使用另一个组结果。';
 
   @override
   String get uotDesc => '使用TCP传输UDP（Sagernet UDP over TCP v2 协议）。服务端也必须支持它';
@@ -2220,8 +2195,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get vxCoreSourceCode => 'VX内核源代码';
 
   @override
-  String get windowsUpdateNotice1 =>
-      '如果您从2.x.x版本更新到此应用，为了保留您的数据库和偏好设置，请关闭应用，重命名以下文件夹：';
+  String get windowsUpdateNotice1 => '如果您从2.x.x版本更新到此应用，为了保留您的数据库和偏好设置，请关闭应用，重命名以下文件夹：';
 
   @override
   String get windowsUpdateNotice2 => '然后启动应用';
@@ -2245,8 +2219,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get activate => '激活此设备';
 
   @override
-  String get activateDesc =>
-      '激活后，无需登录便可使用绝大多数Pro功能（仅云同步与云备份无法使用）。每个账号每年最多激活十台设备。';
+  String get activateDesc => '激活后，无需登录便可使用绝大多数Pro功能（仅云同步与云备份无法使用）。每个账号每年最多激活十台设备。';
 
   @override
   String get activated => '已激活';
@@ -2314,15 +2287,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get fallback => '回退';
 
   @override
-  String get fallbackDesc =>
-      '如果此规则所使用的节点失败，使用以下回退。每个回退都有一些条件，只有当所有条件都成立时，回退才会被使用。';
+  String get fallbackDesc => '如果此规则所使用的节点失败，使用以下回退。每个回退都有一些条件，只有当所有条件都成立时，回退才会被使用。';
 
   @override
   String get rewriteIpToDomain => '将IP重写为域名';
 
   @override
-  String get rewriteIpToDomainDesc =>
-      '如果请求地址是IP，并且有嗅探域名，则使用嗅探域名作为请求地址。为了应对由DNS污染而导致的失败';
+  String get rewriteIpToDomainDesc => '如果请求地址是IP，并且有嗅探域名，则使用嗅探域名作为请求地址。为了应对由DNS污染而导致的失败';
 
   @override
   String get resultIpSet => '结果IP集合';
@@ -2337,6 +2308,23 @@ class AppLocalizationsZh extends AppLocalizations {
   String get automaticallyAddFallbackDomain => '自动添加回退域名';
 
   @override
-  String get automaticallyAddFallbackDomainDesc =>
-      '如果一个连接最初是直连的，但失败了，然后它回退到代理并成功了，自动将域名添加到名为“Fallback”的域名集合中。该集合在GFW模式中被使用';
+  String get automaticallyAddFallbackDomainDesc => '如果一个连接最初是直连，但是失败了，然后它回退到代理并成功，自动将域名添加到名为“Fallback”的域名集合中。该集合在GFW模式中被使用';
+
+  @override
+  String get fallbackTimeout => '回退超时时间';
+
+  @override
+  String get fallbackTimeoutDesc => '在有回退的情况下，如果一个连接在回退超时时间内没有收到任何返回数据，判定此连接失败，开始回退。为0即不启用功能';
+
+  @override
+  String get directDialingTimeout => '直连拨号超时时间';
+
+  @override
+  String get directDialingTimeoutHint => '直连拨号超时时间。如果在拨号超时时间内无法与目的地建立TCP连接，则连接失败。更短的拨号时间意味着更快的回退';
+
+  @override
+  String get globalDialTimeout => '节点拨号超时时间';
+
+  @override
+  String get globalDialTimeoutHint => '代理连接拨号超时时间。如果在拨号超时时间内无法与代理节点建立TCP连接，则连接失败。更短的拨号时间意味着更快的回退';
 }

@@ -732,6 +732,14 @@ extension PrefHelperExtension on SharedPreferences {
     setBool('changeIpv6ToDomain', enable);
   }
 
+  int get fallbackTimeout {
+    return getInt('fallbackTimeout') ?? 6;
+  }
+
+  void setFallbackTimeout(int timeout) {
+    setInt('fallbackTimeout', timeout);
+  }
+
   PingMode get pingMode {
     final mode = getInt('pingMode');
     if (mode == null) return PingMode.Real;
@@ -1061,5 +1069,21 @@ extension PrefHelperExtension on SharedPreferences {
     // Store for future use
     setString(key, deviceId);
     return deviceId;
+  }
+
+  int get directDialingTimeout {
+    return getInt('directDialingTimeout') ?? 4;
+  }
+
+  void setDirectDialingTimeout(int timeout) {
+    setInt('directDialingTimeout', timeout);
+  }
+
+  int get globalDialTimeout {
+    return getInt('globalDialTimeout') ?? 8;
+  }
+
+  void setGlobalDialTimeout(int timeout) {
+    setInt('globalDialTimeout', timeout);
   }
 }

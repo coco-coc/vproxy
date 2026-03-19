@@ -23,6 +23,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vx/app/routing/default.dart';
 import 'package:vx/data/database_provider.dart';
+import 'package:vx/utils/geodata.dart';
 import 'package:vx/utils/os.dart';
 import 'package:vx/utils/process.dart';
 import 'package:vx/utils/system_proxy.dart';
@@ -399,6 +400,18 @@ class XController implements MessageFlutterApi {
           builder: (context) => AlertDialog(
             title: Text(rootLocalizations()!.enableSystemExtension),
           ),
+        );
+      } else if (e.toString().contains('failed to UpdateGeo')) {
+        await writeStaticGeo();
+        await _tm.start(
+          config: config,
+          onSelfShutdown: (String e) {
+            logger.e('onSelfShutdown', error: e);
+          },
+          configPath: Platform.isWindows || Platform.isMacOS || Platform.isLinux
+              ? await configFilePath()
+              : null,
+          sudoPassword: sudoPassword,
         );
       } else {
         rethrow;
