@@ -990,6 +990,7 @@ class XConfigHelper {
             });
         // futures.add();
       }
+      atomicDomainSet.clashFiles.clear();
     }
     for (final atomicIpSet in geoConfig.atomicIpSets) {
       if (atomicIpSet.hasGeoip()) {
@@ -1007,6 +1008,7 @@ class XConfigHelper {
             });
         // futures.add();
       }
+      atomicIpSet.clashFiles.clear();
     }
     for (final appSet in geoConfig.appSets) {
       for (final clashFilePath in appSet.clashFiles) {
@@ -1017,6 +1019,7 @@ class XConfigHelper {
             });
         // futures.add();
       }
+      appSet.clashFiles.clear();
     }
     // await Future.wait(futures);
   }
