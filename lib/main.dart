@@ -61,6 +61,7 @@ import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/auth/auth_provider.dart';
 import 'package:vx/common/bloc_observer.dart';
 import 'package:vx/common/common.dart';
+import 'package:vx/common/config.dart';
 import 'package:vx/common/const.dart';
 import 'package:vx/common/extension.dart';
 import 'package:vx/data/database_provider.dart';

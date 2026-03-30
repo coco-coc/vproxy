@@ -16,50 +16,110 @@
 import 'package:flutter/material.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart';
-import 'package:tm/protos/common/net/net.pb.dart';
-import 'package:tm/protos/protos/proxy/anytls.pb.dart';
-import 'package:tm/protos/protos/proxy/dokodemo.pb.dart';
-import 'package:tm/protos/protos/proxy/http.pb.dart';
-import 'package:tm/protos/protos/proxy/shadowsocks.pb.dart';
-import 'package:tm/protos/protos/proxy/shadowsocks_2022.pb.dart';
-import 'package:tm/protos/protos/proxy/socks.pb.dart';
-import 'package:tm/protos/protos/proxy/trojan.pb.dart';
-import 'package:tm/protos/protos/proxy/vless.pb.dart';
-import 'package:tm/protos/protos/proxy/vmess.pb.dart';
+import 'package:tm/protos/vx/common/net/net.pb.dart';
+import 'package:tm/protos/vx/proxy/anytls/anytls.pb.dart';
+import 'package:tm/protos/vx/proxy/dokodemo/dokodemo.pb.dart';
+import 'package:tm/protos/vx/proxy/http/http.pb.dart';
+import 'package:tm/protos/vx/proxy/shadowsocks/shadowsocks.pb.dart';
+import 'package:tm/protos/vx/proxy/shadowsocks2022/shadowsocks2022.pb.dart';
+import 'package:tm/protos/vx/proxy/socks/socks.pb.dart';
+import 'package:tm/protos/vx/proxy/trojan/trojan.pb.dart';
+import 'package:tm/protos/vx/proxy/vless/vless.pb.dart';
+import 'package:tm/protos/vx/proxy/vmess/vmess.pb.dart';
 import 'package:vx/theme.dart';
 import 'package:vx/widgets/outbound_handler_form/outbound_handler_form.dart';
+
+final oldTypeUrlToNewTypeUrl = {
+  'type.googleapis.com/x.proxy.Shadowsocks2022ClientConfig':
+      'type.googleapis.com/vx.proxy.shadowsocks2022.Shadowsocks2022ClientConfig',
+  'type.googleapis.com/x.proxy.Shadowsocks2022ServerConfig':
+      'type.googleapis.com/vx.proxy.shadowsocks2022.Shadowsocks2022ServerConfig',
+  'type.googleapis.com/x.proxy.ShadowsocksClientConfig':
+      'type.googleapis.com/vx.proxy.shadowsocks.ShadowsocksClientConfig',
+  'type.googleapis.com/x.proxy.ShadowsocksServerConfig':
+      'type.googleapis.com/vx.proxy.shadowsocks.ShadowsocksServerConfig',
+  'type.googleapis.com/x.proxy.VmessClientConfig':
+      'type.googleapis.com/vx.proxy.vmess.VmessClientConfig',
+  'type.googleapis.com/x.proxy.VmessServerConfig':
+      'type.googleapis.com/vx.proxy.vmess.VmessServerConfig',
+  'type.googleapis.com/x.proxy.TrojanClientConfig':
+      'type.googleapis.com/vx.proxy.trojan.TrojanClientConfig',
+  'type.googleapis.com/x.proxy.TrojanServerConfig':
+      'type.googleapis.com/vx.proxy.trojan.TrojanServerConfig',
+  'type.googleapis.com/x.proxy.SocksClientConfig':
+      'type.googleapis.com/vx.proxy.socks.SocksClientConfig',
+  'type.googleapis.com/x.proxy.SocksServerConfig':
+      'type.googleapis.com/vx.proxy.socks.SocksServerConfig',
+  'type.googleapis.com/x.proxy.VlessClientConfig':
+      'type.googleapis.com/vx.proxy.vless.VlessClientConfig',
+  'type.googleapis.com/x.proxy.VlessServerConfig':
+      'type.googleapis.com/vx.proxy.vless.VlessServerConfig',
+  'type.googleapis.com/x.proxy.Hysteria2ClientConfig':
+      'type.googleapis.com/vx.proxy.hysteria.Hysteria2ClientConfig',
+  'type.googleapis.com/x.proxy.Hysteria2ServerConfig':
+      'type.googleapis.com/vx.proxy.hysteria.Hysteria2ServerConfig',
+  'type.googleapis.com/x.proxy.AnytlsClientConfig':
+      'type.googleapis.com/vx.proxy.anytls.AnytlsClientConfig',
+  'type.googleapis.com/x.proxy.AnytlsServerConfig':
+      'type.googleapis.com/vx.proxy.anytls.AnytlsServerConfig',
+  'type.googleapis.com/x.proxy.DokodemoConfig':
+      'type.googleapis.com/vx.proxy.dokodemo.DokodemoConfig',
+  'type.googleapis.com/x.proxy.HttpClientConfig':
+      'type.googleapis.com/vx.proxy.http.HttpClientConfig',
+  'type.googleapis.com/x.proxy.HttpServerConfig':
+      'type.googleapis.com/vx.proxy.http.HttpServerConfig',
+};
 
 ProxyProtocolLabel getProtocolTypeFromAny(Any any) {
   // unpack the any to the specific config type
   switch (any.typeUrl) {
     case 'type.googleapis.com/x.proxy.Shadowsocks2022ClientConfig' ||
-        'type.googleapis.com/x.proxy.Shadowsocks2022ServerConfig':
+        'type.googleapis.com/x.proxy.Shadowsocks2022ServerConfig' ||
+        'type.googleapis.com/vx.proxy.shadowsocks2022.Shadowsocks2022ClientConfig' ||
+        'type.googleapis.com/vx.proxy.shadowsocks2022.Shadowsocks2022ServerConfig':
       return ProxyProtocolLabel.shadowsocks2022;
     case 'type.googleapis.com/x.proxy.ShadowsocksClientConfig' ||
-        'type.googleapis.com/x.proxy.ShadowsocksServerConfig':
+        'type.googleapis.com/x.proxy.ShadowsocksServerConfig' ||
+        'type.googleapis.com/vx.proxy.shadowsocks.ShadowsocksClientConfig' ||
+        'type.googleapis.com/vx.proxy.shadowsocks.ShadowsocksServerConfig':
       return ProxyProtocolLabel.shadowsocks;
     case 'type.googleapis.com/x.proxy.VmessClientConfig' ||
-        'type.googleapis.com/x.proxy.VmessServerConfig':
+        'type.googleapis.com/x.proxy.VmessServerConfig' ||
+        'type.googleapis.com/vx.proxy.vmess.VmessClientConfig' ||
+        'type.googleapis.com/vx.proxy.vmess.VmessServerConfig':
       return ProxyProtocolLabel.vmess;
     case 'type.googleapis.com/x.proxy.TrojanClientConfig' ||
-        'type.googleapis.com/x.proxy.TrojanServerConfig':
+        'type.googleapis.com/x.proxy.TrojanServerConfig' ||
+        'type.googleapis.com/vx.proxy.trojan.TrojanClientConfig' ||
+        'type.googleapis.com/vx.proxy.trojan.TrojanServerConfig':
       return ProxyProtocolLabel.trojan;
     case 'type.googleapis.com/x.proxy.SocksClientConfig' ||
-        'type.googleapis.com/x.proxy.SocksServerConfig':
+        'type.googleapis.com/x.proxy.SocksServerConfig' ||
+        'type.googleapis.com/vx.proxy.socks.SocksClientConfig' ||
+        'type.googleapis.com/vx.proxy.socks.SocksServerConfig':
       return ProxyProtocolLabel.socks;
     case 'type.googleapis.com/x.proxy.VlessClientConfig' ||
-        'type.googleapis.com/x.proxy.VlessServerConfig':
+        'type.googleapis.com/x.proxy.VlessServerConfig' ||
+        'type.googleapis.com/vx.proxy.vless.VlessClientConfig' ||
+        'type.googleapis.com/vx.proxy.vless.VlessServerConfig':
       return ProxyProtocolLabel.vless;
     case 'type.googleapis.com/x.proxy.Hysteria2ClientConfig' ||
-        'type.googleapis.com/x.proxy.Hysteria2ServerConfig':
+        'type.googleapis.com/x.proxy.Hysteria2ServerConfig' ||
+        'type.googleapis.com/vx.proxy.hysteria.Hysteria2ClientConfig' ||
+        'type.googleapis.com/vx.proxy.hysteria.Hysteria2ServerConfig':
       return ProxyProtocolLabel.hysteria2;
     case 'type.googleapis.com/x.proxy.AnytlsClientConfig' ||
-        'type.googleapis.com/x.proxy.AnytlsServerConfig':
+        'type.googleapis.com/x.proxy.AnytlsServerConfig' ||
+        'type.googleapis.com/vx.proxy.anytls.AnytlsClientConfig' ||
+        'type.googleapis.com/vx.proxy.anytls.AnytlsServerConfig':
       return ProxyProtocolLabel.anytls;
-    case 'type.googleapis.com/x.proxy.DokodemoConfig':
+    case 'type.googleapis.com/x.proxy.DokodemoConfig' ||
+        'type.googleapis.com/vx.proxy.dokodemo.DokodemoConfig':
       return ProxyProtocolLabel.dokodemo;
     case 'type.googleapis.com/x.proxy.HttpClientConfig' ||
-        'type.googleapis.com/x.proxy.HttpServerConfig':
+        'type.googleapis.com/x.proxy.HttpServerConfig' ||
+        'type.googleapis.com/vx.proxy.http.HttpClientConfig' ||
+        'type.googleapis.com/vx.proxy.http.HttpServerConfig':
       return ProxyProtocolLabel.http;
     default:
       throw Exception('unknown protocol: ${any.typeUrl}');

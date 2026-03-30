@@ -11,7 +11,7 @@ void main() {
       tester,
     ) async {
       // Load app widget.
-      await tester.pumpWidget(const MyApp());
+      await tester.pumpWidget(const App());
 
       // Verify the counter starts at 0.
       expect(find.text('0'), findsOneWidget);

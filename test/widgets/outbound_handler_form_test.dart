@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tm/protos/protos/outbound.pb.dart';
-import 'package:tm/protos/protos/proxy/vmess.pb.dart';
-import 'package:tm/protos/google/protobuf/any.pb.dart';
+import 'package:tm/protos/vx/outbound/outbound.pb.dart';
+import 'package:tm/protos/vx/proxy/vmess/vmess.pb.dart';
+import 'package:tm/protos/vx/google/protobuf/any.pb.dart';
 import 'package:vx/widgets/outbound_handler_form/outbound_handler_form.dart';
 import 'package:vx/data/database.dart';
 

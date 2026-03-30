@@ -21,8 +21,8 @@ import 'dart:math';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tm/protos/protos/router.pb.dart';
-import 'package:tm/protos/protos/tun.pb.dart';
+import 'package:tm/protos/vx/router/router.pb.dart';
+import 'package:tm/protos/vx/tun/tun.pb.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vx/app/control.dart';
 import 'package:vx/app/home/home.dart';
@@ -1086,4 +1086,5 @@ extension PrefHelperExtension on SharedPreferences {
   void setGlobalDialTimeout(int timeout) {
     setInt('globalDialTimeout', timeout);
   }
+
 }

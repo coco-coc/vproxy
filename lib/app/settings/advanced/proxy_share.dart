@@ -20,7 +20,7 @@ import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/x_controller.dart';
-import 'package:vx/common/net.dart';
+import 'package:flutter_common/util/net.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/pref_helper.dart';
 

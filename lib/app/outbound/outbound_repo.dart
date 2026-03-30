@@ -17,7 +17,7 @@ import 'dart:async';
 
 import 'package:drift/drift.dart';
 import 'package:lru_cache/lru_cache.dart';
-import 'package:tm/protos/protos/outbound.pb.dart';
+import 'package:tm/protos/vx/outbound/outbound.pb.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/app/outbound/subscription.dart';
 import 'package:vx/app/routing/routing_page.dart';

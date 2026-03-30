@@ -23,7 +23,7 @@ import 'package:vx/app/x_controller.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
-import 'package:tm/protos/protos/router.pb.dart';
+import 'package:tm/protos/vx/router/router.pb.dart';
 import 'package:vx/app/control.dart';
 import 'package:vx/app/outbound/outbound_page.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';

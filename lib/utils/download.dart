@@ -20,7 +20,7 @@ import 'dart:typed_data';
 import 'package:archive/archive_io.dart';
 import 'package:http/http.dart' as http;
 import 'package:tm/protos/app/api/api.pbgrpc.dart';
-import 'package:tm/protos/protos/outbound.pb.dart';
+import 'package:tm/protos/vx/outbound/outbound.pb.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';

@@ -24,7 +24,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image/image.dart' as img;
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:pasteboard/pasteboard.dart';
-import 'package:tm/protos/protos/outbound.pb.dart';
+import 'package:tm/protos/vx/outbound/outbound.pb.dart';
 import 'package:vx/app/outbound/add_chain_handler.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/utils/xapi_client.dart';

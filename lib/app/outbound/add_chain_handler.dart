@@ -22,7 +22,7 @@ import 'package:vx/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:tm/protos/protos/outbound.pb.dart';
+import 'package:tm/protos/vx/outbound/outbound.pb.dart';
 import 'package:vx/widgets/outbound_handler_form/outbound_handler_form.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/data/database.dart';

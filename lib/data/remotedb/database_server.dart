@@ -15,8 +15,8 @@
 
 import 'package:fixnum/fixnum.dart';
 import 'package:grpc/service_api.dart';
-import 'package:tm/protos/common/geo/geo.pb.dart';
-import 'package:tm/protos/protos/db/db.pbgrpc.dart';
+import 'package:tm/protos/vx/common/geo/geo.pb.dart';
+import 'package:vx/data/remotedb/db.pbgrpc.dart';
 import 'package:vx/data/database.dart';
 import 'package:drift/drift.dart';
 import 'package:vx/utils/logger.dart';

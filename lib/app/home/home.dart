@@ -47,7 +47,7 @@ import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/common/circuler_buffer.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/common/extension.dart';
-import 'package:vx/common/net.dart';
+import 'package:flutter_common/util/net.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/theme.dart';

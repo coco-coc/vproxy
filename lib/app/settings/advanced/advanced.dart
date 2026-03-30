@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tm/protos/protos/tun.pb.dart';
+import 'package:tm/protos/vx/tun/tun.pb.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/app/settings/advanced/system_proxy.dart';
 import 'package:vx/app/x_controller.dart';

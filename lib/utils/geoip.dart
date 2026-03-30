@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:vector_graphics/vector_graphics_compat.dart';
-import 'package:vx/common/net.dart';
+import 'package:flutter_common/util/net.dart';
 import 'package:vx/utils/logger.dart';
 
 Future<String?> getCountryCode(String address, [http.Client? client]) async {

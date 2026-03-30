@@ -15,9 +15,9 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:tm/protos/protos/dns.pb.dart';
-import 'package:tm/protos/protos/geo.pb.dart';
-import 'package:tm/protos/protos/router.pb.dart';
+import 'package:tm/protos/vx/dns/dns.pb.dart';
+import 'package:tm/protos/vx/geo/geo.pb.dart';
+import 'package:tm/protos/vx/router/router.pb.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/common/const.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tm/protos/common/net/net.pb.dart';
-import 'package:vx/common/net.dart';
+import 'package:tm/protos/vx/common/net/net.pb.dart';
+import 'package:flutter_common/util/net.dart';
 
 void main() {
   test('test portRangesToString', () async {

@@ -21,7 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/app/api/api.pbgrpc.dart';
-import 'package:tm/protos/protos/outbound.pb.dart';
+import 'package:tm/protos/vx/outbound/outbound.pb.dart';
 import 'package:tm/tm.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';

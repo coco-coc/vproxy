@@ -31,7 +31,7 @@ import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/app/x_controller.dart';
 import 'package:vx/common/circuler_buffer.dart';
 import 'package:tm/tm.dart';
-import 'package:vx/common/net.dart';
+import 'package:flutter_common/util/net.dart';
 import 'package:vx/main.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/logger.dart';

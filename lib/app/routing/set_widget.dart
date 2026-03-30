@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:tm/protos/protos/geo.pb.dart';
+import 'package:tm/protos/vx/geo/geo.pb.dart';
 import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/routing/repo.dart';
