@@ -235,7 +235,7 @@ class XApiClient {
         //TODO: recreate database
       }
       if (rootNavigationKey.currentContext != null) {
-        dialog(
+        fatalMessageDialog(
           rootLocalizations()?.fatalError(
                 rootLocalizations()?.failedToInitGrpcClient(e.toString()) ??
                     e.toString(),

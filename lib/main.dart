@@ -593,7 +593,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     syncService = context.read<SyncService>();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       if (fatalErrorMessage != null) {
-        dialog(fatalErrorMessage!);
+        fatalMessageDialog(fatalErrorMessage!);
         fatalErrorMessage = null;
       } else {
         try {
@@ -868,7 +868,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
 String? fatalErrorMessage;
 
-void dialog(String message) {
+void fatalMessageDialog(String message) {
   if (rootNavigationKey.currentContext == null) {
     return;
   }

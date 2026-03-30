@@ -1758,7 +1758,7 @@ Future<void> insertDefault(
     }
   } catch (e, stackTrace) {
     logger.e("Error inserting default data", error: e, stackTrace: stackTrace);
-    dialog(al.insertDefaultError(e.toString()));
+    fatalMessageDialog(al.insertDefaultError(e.toString()));
   }
 }
 
