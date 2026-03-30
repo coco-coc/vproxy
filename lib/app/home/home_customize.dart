@@ -230,6 +230,12 @@ class _HomeEditDialog extends StatefulWidget {
 class _HomeEditDialogState extends State<_HomeEditDialog> {
   late HomeLayoutPreset _selectedPreset;
 
+  bool _hideInboundOnThisPlatform(BuildContext context) {
+    final platform = Theme.of(context).platform;
+    return platform == TargetPlatform.android ||
+        platform == TargetPlatform.iOS;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -241,6 +247,7 @@ class _HomeEditDialogState extends State<_HomeEditDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final hideInbound = _hideInboundOnThisPlatform(context);
     return Consumer<CustomizeHomeWidgetNotifier>(
       builder: (context, visibility, child) {
         final layout = visibility.layoutFor(_selectedPreset);
@@ -337,6 +344,10 @@ class _HomeEditDialogState extends State<_HomeEditDialog> {
                                       if (enumId == HomeWidgetId.subscription) {
                                         return const SizedBox.shrink();
                                       }
+                                      if (hideInbound &&
+                                          enumId == HomeWidgetId.inbound) {
+                                        return const SizedBox.shrink();
+                                      }
                                       if (enumId != null) {
                                         return Padding(
                                           padding: const EdgeInsets.only(
@@ -398,6 +409,9 @@ class _HomeEditDialogState extends State<_HomeEditDialog> {
                         // Also hide the built-in subscription tile from the
                         // hidden section when editing the customizable home.
                         .where((id) => id != HomeWidgetId.subscription)
+                        .where(
+                          (id) => !(hideInbound && id == HomeWidgetId.inbound),
+                        )
                         .map(
                           (id) => SizedBox(
                             width: _previewWidthForPreset(_selectedPreset),
