@@ -111,6 +111,11 @@ jobs:
       run: 
         flutter build ipa --flavor production --dart-define=LOG_KEY=$LOG_KEY --release   --split-debug-info=symbols/darwin
 
+    - name: Upload debug symbols (iOS)
+      env:
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      run: flutter pub run sentry_dart_plugin
+
     - name: Set version
       id: get_version
       run: |
