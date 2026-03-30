@@ -116,7 +116,7 @@ enum DefaultRouteMode {
         name: al.dnsServerProxy,
         plainDnsServer: PlainDnsServer(addresses: ['1.1.1.1:53']),
         cacheDuration: 3600,
-        ipTags: [publicIpTag],
+        // ipTags: [publicIpTag],
       ),
       DnsServerConfig(
         name: al.dnsServerDirect,
@@ -124,7 +124,7 @@ enum DefaultRouteMode {
           addresses: ['1.1.1.1:53', ...(countryDnsServers[country] ?? [])],
           useDefaultDns: true,
         ),
-        ipTags: [publicIpTag],
+        // ipTags: [publicIpTag],
       ),
     ];
   }
