@@ -284,14 +284,18 @@ class VXBloc extends Bloc<VXEvent, VXState> {
       if (s.config == null) {
         try {
           _originalConfig = await _xapiClient.serverConfig(_server);
-          emit(
-            (state as VXInstalledState).copyWith(config: () => _originalConfig),
-          );
+          final currentState = state;
+          if (currentState is! VXInstalledState) {
+            return;
+          }
+          emit(currentState.copyWith(config: () => _originalConfig));
         } catch (e) {
           logger.e('Failed to fetch server config: $e');
-          emit(
-            (state as VXInstalledState).copyWith(config: () => ServerConfig()),
-          );
+          final currentState = state;
+          if (currentState is! VXInstalledState) {
+            return;
+          }
+          emit(currentState.copyWith(config: () => ServerConfig()));
         }
       }
     } else {
