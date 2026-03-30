@@ -123,7 +123,7 @@ class _OutboundPageState extends State<OutboundPage> {
   }
 }
 
-final outboundTableKey = GlobalKey();
+final outboundTableKey = GlobalKey<OutboundTableState>();
 
 class OutboundTable extends StatefulWidget {
   const OutboundTable({super.key});
