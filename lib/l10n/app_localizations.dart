@@ -4231,6 +4231,12 @@ abstract class AppLocalizations {
   /// **'VX-core is not installed'**
   String get vxNotInstalled;
 
+  /// No description provided for @vxVersionTooLow.
+  ///
+  /// In en, this message translates to:
+  /// **'VX-core version is too low, please update to the latest version'**
+  String get vxVersionTooLow;
+
   /// No description provided for @howToUseVX.
   ///
   /// In en, this message translates to:

@@ -912,6 +912,7 @@
   "maxConcurrency": "最大并发数",
   "maxConnection": "最大连接数",
   "vxNotInstalled": "VX-core未安装",
+  "vxVersionTooLow": "VX-core版本过低，请更新到最新版本",
   "howToUseVX": "关于VX的使用方法，请查看我们的YouTube频道",
   "welcome": "欢迎使用VX",
   "sourceCodeAvailable": "VX客户端已开源，并且它由Github Actions自动构建与发布",

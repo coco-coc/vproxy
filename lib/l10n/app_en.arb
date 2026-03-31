@@ -908,6 +908,7 @@
   "maxConcurrency": "Max Concurrency",
   "maxConnection": "Max Connection",
   "vxNotInstalled": "VX-core is not installed",
+  "vxVersionTooLow": "VX-core version is too low, please update to the latest version",
   "howToUseVX": "For instructions, check our YouTube channel",
   "welcome": "Welcome to VX",
   "sourceCodeAvailable": "VX is a open-source proxy client powered by vx-core.",

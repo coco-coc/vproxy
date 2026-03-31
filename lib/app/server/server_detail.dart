@@ -26,6 +26,7 @@ import 'package:vx/app/server/vx_bloc.dart';
 import 'package:vx/app/server/vx_config.dart';
 import 'package:vx/app/server/vx_status.dart';
 import 'package:vx/common/extension.dart';
+import 'package:vx/common/version.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
@@ -142,68 +143,107 @@ class _Overview extends StatefulWidget {
 
 class _OverviewState extends State<_Overview> {
   final GlobalKey _serverStatusKey = GlobalKey();
+  bool _shownOldVersionDialog = false;
 
   @override
   Widget build(BuildContext context) {
     final isCompact = MediaQuery.of(context).size.isCompact;
-    return Column(
-      children: [
-        if (isCompact)
-          Container(
-            height: 174,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ScrollConfiguration(
-              behavior: ScrollConfiguration.of(context).copyWith(
-                dragDevices: {
-                  PointerDeviceKind.touch,
-                  PointerDeviceKind.mouse,
-                  PointerDeviceKind.trackpad,
-                },
+    return BlocListener<VXBloc, VXState>(
+      listenWhen: (previous, current) =>
+          !_shownOldVersionDialog && current is VXInstalledState,
+      listener: (context, state) {
+        if (state is VXInstalledState &&
+            !versionNewerThan(state.version, "1.1.1") &&
+            !_shownOldVersionDialog) {
+          _shownOldVersionDialog = true;
+          final l10n = AppLocalizations.of(context);
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              content: Text(
+                l10n?.vxVersionTooLow ??
+                    'This version is too low, please update.',
               ),
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  SizedBox(
-                    width: 290,
-                    child: Hero(
-                      tag: 'server${widget.server.id}',
-                      child: ServerCard(
-                        server: widget.server,
-                        showStatus: true,
-                        serverStatusKey: _serverStatusKey,
+              actions: [
+                FilledButton.tonal(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: Text(AppLocalizations.of(ctx)!.close),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    context.read<VXBloc>().add(VXUpdateEvent());
+                    Navigator.of(ctx).pop();
+                  },
+                  child: Text(AppLocalizations.of(ctx)!.update),
+                ),
+              ],
+            ),
+          );
+        }
+      },
+      child: Column(
+        children: [
+          if (isCompact)
+            Container(
+              height: 174,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ScrollConfiguration(
+                behavior: ScrollConfiguration.of(context).copyWith(
+                  dragDevices: {
+                    PointerDeviceKind.touch,
+                    PointerDeviceKind.mouse,
+                    PointerDeviceKind.trackpad,
+                  },
+                ),
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    SizedBox(
+                      width: 290,
+                      child: Hero(
+                        tag: 'server${widget.server.id}',
+                        child: ServerCard(
+                          server: widget.server,
+                          showStatus: true,
+                          serverStatusKey: _serverStatusKey,
+                        ),
                       ),
                     ),
-                  ),
-                  const Gap(10),
-                  const SizedBox(width: 290, child: VXServiceStatus()),
-                ],
-              ),
-            ),
-          )
-        else
-          Row(
-            children: [
-              const Spacer(),
-              SizedBox(
-                width: 290,
-                height: 174,
-                child: Hero(
-                  tag: 'server${widget.server.id}',
-                  child: ServerCard(
-                    server: widget.server,
-                    showStatus: true,
-                    serverStatusKey: _serverStatusKey,
-                  ),
+                    const Gap(10),
+                    const SizedBox(width: 290, child: VXServiceStatus()),
+                  ],
                 ),
               ),
-              const Gap(10),
-              const SizedBox(width: 290, height: 174, child: VXServiceStatus()),
-              const Spacer(),
-            ],
-          ),
-        const Gap(10),
-        Expanded(child: QuickDeploy(server: widget.server)),
-      ],
+            )
+          else
+            Row(
+              children: [
+                const Spacer(),
+                SizedBox(
+                  width: 290,
+                  height: 174,
+                  child: Hero(
+                    tag: 'server${widget.server.id}',
+                    child: ServerCard(
+                      server: widget.server,
+                      showStatus: true,
+                      serverStatusKey: _serverStatusKey,
+                    ),
+                  ),
+                ),
+                const Gap(10),
+                const SizedBox(
+                  width: 290,
+                  height: 174,
+                  child: VXServiceStatus(),
+                ),
+                const Spacer(),
+              ],
+            ),
+          const Gap(10),
+          Expanded(child: QuickDeploy(server: widget.server)),
+        ],
+      ),
     );
   }
 }

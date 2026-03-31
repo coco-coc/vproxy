@@ -2230,6 +2230,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get vxNotInstalled => 'VX-core is not installed';
 
   @override
+  String get vxVersionTooLow => 'VX-core version is too low, please update to the latest version';
+
+  @override
   String get howToUseVX => 'For instructions, check our YouTube channel';
 
   @override
