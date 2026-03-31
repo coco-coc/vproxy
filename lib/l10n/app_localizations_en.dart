@@ -2400,4 +2400,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String resetFailed(String error) {
     return 'Failed to reset: $error';
   }
+
+  @override
+  String get tutorial => 'Tutorial';
 }

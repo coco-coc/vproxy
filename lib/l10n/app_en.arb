@@ -978,5 +978,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "tutorial": "Tutorial"
 }

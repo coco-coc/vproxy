@@ -986,5 +986,6 @@
         "type": "String"
       }
     }
-  }
+  },
+  "tutorial": "教程"
 }

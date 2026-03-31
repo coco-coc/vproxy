@@ -402,6 +402,17 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
       ],
     ),
     const SizedBox(height: 5),
+    Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: OutlinedButton.icon(
+        onPressed: () {
+          launchUrl(Uri.parse('https://www.youtube.com/@vproxy5vnetwork'));
+        },
+        label: Text(AppLocalizations.of(context)!.tutorial),
+        icon: Image.asset('assets/icons/youtube.png', width: 24, height: 24),
+      ),
+    ),
+    const SizedBox(height: 5),
     Row(
       children: [
         if ((!useStripe && (user == null || (user.lifetimePro == false))))

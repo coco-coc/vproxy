@@ -2350,4 +2350,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String resetFailed(String error) {
     return '重置失败: $error';
   }
+
+  @override
+  String get tutorial => '教程';
 }

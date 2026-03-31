@@ -4566,6 +4566,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to reset: {error}'**
   String resetFailed(String error);
+
+  /// No description provided for @tutorial.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutorial'**
+  String get tutorial;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
