@@ -112,7 +112,7 @@ class XApiClient {
 
         final config = ApiServerConfig(
           logConfig: logConfig,
-          dbPath: await getDbPath(_pref),
+          // dbPath: await getDbPath(_pref),
           listenAddr: listenAddress,
           bindToDefaultNic:
               (Platform.isIOS || Platform.isMacOS || Platform.isLinux),
@@ -174,7 +174,7 @@ class XApiClient {
             listenAddress = '127.0.0.1:$port';
             final config = ApiServerConfig(
               logConfig: logConfig,
-              dbPath: await getDbPath(_pref),
+              // dbPath: await getDbPath(_pref),
               // bindToDefaultNic: true,
               listenAddr: listenAddress,
               tunName: XConfigHelper.tunName,
@@ -504,6 +504,13 @@ class XApiClient {
     // return await _xApiClient.updateSubscription(req);
   }
 
+  Future<FetchSubscriptionContentResponse> fetchSubscriptionContent(
+    FetchSubscriptionContentRequest request,
+  ) async {
+    await _completer.future;
+    return await _xApiClient.fetchSubscriptionContent(request);
+  }
+
   //TODO: simplify more for category-games:cn
   Future<void> processGeoFiles() async {
     await _completer.future;
@@ -649,13 +656,13 @@ class XApiClient {
   }
 
   Future<void> closeDb() async {
-    await _completer.future;
-    await _xApiClient.closeDb(CloseDbRequest());
+    // await _completer.future;
+    // await _xApiClient.closeDb(CloseDbRequest());
   }
 
   Future<void> openDb() async {
-    await _completer.future;
-    await _xApiClient.openDb(OpenDbRequest(path: await getDbPath(_pref)));
+    // await _completer.future;
+    // await _xApiClient.openDb(OpenDbRequest(path: await getDbPath(_pref)));
   }
 
   Future<ToUrlResponse> toUrl(List<OutboundHandlerConfig> configs) async {
