@@ -100,13 +100,9 @@ class ProPromotion extends StatelessWidget {
 
   void _onPressed(BuildContext context) {
     final user = context.read<AuthBloc>().state.user;
-    final uri = Uri.parse(proPaymentLink);
-    if (user != null) {
-      uri.queryParameters.addAll({
-        'prefilled_email': user.email,
-        'client_reference_id': user.id,
-      });
-    }
+    final uri = user != null
+        ? getProPaymentLink(user.email, user.id)
+        : Uri.parse(proPaymentLink);
     launchUrl(uri);
   }
 
