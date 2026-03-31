@@ -2327,4 +2327,24 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get globalDialTimeoutHint => '代理连接拨号超时时间。如果在拨号超时时间内无法与代理节点建立TCP连接，则连接失败。更短的拨号时间意味着更快的回退';
+
+  @override
+  String get reset => '重置';
+
+  @override
+  String get resetConfirmMessage => '这将重置当前数据库和偏好设置。您的现有数据将丢失。此操作无法撤销。';
+
+  @override
+  String get resetAction => 'Reset';
+
+  @override
+  String get resetCompletedTitle => '重置完成';
+
+  @override
+  String get resetCompletedMessage => '数据库和偏好设置已重置。请重启 VX 继续使用。';
+
+  @override
+  String resetFailed(String error) {
+    return '重置失败: $error';
+  }
 }

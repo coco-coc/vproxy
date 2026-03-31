@@ -964,5 +964,18 @@
   "directDialingTimeout": "Direct Dialing Timeout",
   "directDialingTimeoutHint": "The dial timeout for direct connection. If failed to establish TCP connection within this timeout, the connection will fail. Shorter dial timeout means faster fallback.",
   "globalDialTimeout": "Global Dial Timeout",
-  "globalDialTimeoutHint": "The dial timeout for all nodes. If failed to establish TCP connection within this timeout, the connection will fail. Shorter dial timeout means faster fallback."
+  "globalDialTimeoutHint": "The dial timeout for all nodes. If failed to establish TCP connection within this timeout, the connection will fail. Shorter dial timeout means faster fallback.",
+  "reset": "Reset",
+  "resetConfirmMessage": "This will reset your preferences and database. Your existing data will be lost. This action cannot be undone.",
+  "resetAction": "Reset",
+  "resetCompletedTitle": "Reset complete",
+  "resetCompletedMessage": "Database and preferences have been reset. Restart VX to continue.",
+  "resetFailed": "Failed to reset: {error}",
+  "@resetFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -13,11 +13,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:ads/ad.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_common/common.dart';
 import 'package:flutter_common/services/auto_update.dart';
@@ -27,10 +29,14 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vx/app/home/home.dart';
+import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/app/settings/ads.dart';
 import 'package:vx/app/settings/debug.dart';
 import 'package:vx/app/settings/general/general.dart';
+import 'package:vx/app/x_controller.dart';
 import 'package:vx/common/common.dart';
+import 'package:vx/data/database.dart' as db;
+import 'package:vx/data/database_provider.dart';
 import 'package:vx/iap/pro.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/app/settings/account.dart';
@@ -43,9 +49,12 @@ import 'package:vx/auth/user.dart';
 import 'package:vx/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:vx/pref_helper.dart';
+import 'package:vx/utils/backup_service.dart';
 import 'package:vx/utils/debug.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
+import 'package:vx/utils/xapi_client.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
 import 'package:vx/widgets/pro_icon.dart';
 import 'package:vx/widgets/pro_promotion.dart';
@@ -153,6 +162,84 @@ enum SettingItem {
 }
 
 const String websiteUrl = 'https://vx.5vnetwork.com';
+
+Future<void> _reset(BuildContext context) async {
+  final pref = context.read<SharedPreferences>();
+  await pref.clear();
+  await _resetDatabaseFromCleanAsset(context);
+}
+
+Future<void> _resetDatabaseFromCleanAsset(BuildContext context) async {
+  final pref = context.read<SharedPreferences>();
+  final backupService = context.read<BackupSerevice>();
+
+  final l10n = AppLocalizations.of(context)!;
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(l10n.reset),
+      content: Text(l10n.resetConfirmMessage),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(AppLocalizations.of(context)!.close),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+          onPressed: () => Navigator.of(context).pop(true),
+          child: Text(l10n.resetAction),
+        ),
+      ],
+    ),
+  );
+  if (confirmed != true) {
+    return;
+  }
+
+  try {
+    final blob = await rootBundle.load('assets/clean.db');
+    final buffer = blob.buffer;
+    final tempDbPath = await tempFilePath();
+    await File(
+      tempDbPath,
+    ).writeAsBytes(buffer.asUint8List(blob.offsetInBytes, blob.lengthInBytes));
+    pref.setDatabaseInitialized(false);
+    await backupService.restoreFromLocalBackup(tempDbPath);
+
+    if (context.mounted) {
+      await showDialog(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(l10n.resetCompletedTitle),
+          content: Text(l10n.resetCompletedMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(AppLocalizations.of(dialogContext)!.close),
+            ),
+            FilledButton(
+              onPressed: () async {
+                exitCurrentApp(context.read<XController>());
+              },
+              child: Text(AppLocalizations.of(dialogContext)!.exit),
+            ),
+          ],
+        ),
+      );
+    } else {
+      snack(l10n.resetCompletedMessage);
+    }
+  } catch (e, stackTrace) {
+    logger.e(
+      'Failed to reset database from clean asset',
+      error: e,
+      stackTrace: stackTrace,
+    );
+    snack(l10n.resetFailed(e.toString()));
+  }
+}
 
 class LargeSettingSreen extends StatefulWidget {
   const LargeSettingSreen({super.key, this.settingItem});
@@ -390,6 +477,15 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
           ),
         ),
       ),
+    const Gap(5),
+    Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5),
+      child: OutlinedButton.icon(
+        onPressed: () => _reset(context),
+        icon: Icon(Icons.restart_alt_rounded),
+        label: Text(AppLocalizations.of(context)!.reset),
+      ),
+    ),
     const Gap(5),
     const Version(),
     const Gap(5),

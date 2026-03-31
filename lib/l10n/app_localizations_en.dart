@@ -2377,4 +2377,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get globalDialTimeoutHint => 'The dial timeout for all nodes. If failed to establish TCP connection within this timeout, the connection will fail. Shorter dial timeout means faster fallback.';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get resetConfirmMessage => 'This will reset your preferences and database. Your existing data will be lost. This action cannot be undone.';
+
+  @override
+  String get resetAction => 'Reset';
+
+  @override
+  String get resetCompletedTitle => 'Reset complete';
+
+  @override
+  String get resetCompletedMessage => 'Database and preferences have been reset. Restart VX to continue.';
+
+  @override
+  String resetFailed(String error) {
+    return 'Failed to reset: $error';
+  }
 }
