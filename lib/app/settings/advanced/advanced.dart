@@ -705,7 +705,9 @@ class _DialerSettingState extends State<DialerSetting> {
             controller: _directDialingTimeoutController,
             decoration: InputDecoration(
               labelText: AppLocalizations.of(context)!.directDialingTimeout,
-              helperText: AppLocalizations.of(context)!.directDialingTimeoutHint,
+              helperText: AppLocalizations.of(
+                context,
+              )!.directDialingTimeoutHint,
               helperMaxLines: 5,
               border: const OutlineInputBorder(),
               suffixText: 's',
@@ -730,6 +732,10 @@ class _DialerSettingState extends State<DialerSetting> {
               border: const OutlineInputBorder(),
             ),
             onChanged: (value) {
+              if (value.isEmpty) {
+                _pref.setGlobalDialTimeout(0);
+                return;
+              }
               _pref.setGlobalDialTimeout(int.parse(value));
             },
             keyboardType: TextInputType.number,
