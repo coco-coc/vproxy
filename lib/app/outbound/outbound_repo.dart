@@ -576,41 +576,61 @@ class OutboundRepo {
   /// This includes selector relations pointing at the subscription itself and
   /// at handlers owned by the subscription.
   Future<void> removeSubscription(int id) async {
+    final db = databaseProvider.database;
     try {
-      await databaseProvider.database.deleteById(
-        databaseProvider.database.subscriptions,
-        [id],
-      );
+      await db.deleteById(db.subscriptions, [id]);
+      return;
     } catch (e) {
-      logger.e('removeSubscription', error: e);
-      // likely due to foreign key constraint. try to delete manually
-      final db = databaseProvider.database;
+      logger.e('removeSubscription: direct delete failed, trying fallback', error: e);
+    }
+
+    try {
       await db.transaction(() async {
-        // 1. Remove selector–subscription links (references subscriptions.id)
+        // 1. Remove selector-subscription links (references subscriptions.id)
         await (db.delete(
           db.selectorSubscriptionRelations,
         )..where((t) => t.subscriptionId.equals(id))).go();
+
         // 2. Get handler ids for this subscription before deleting handlers
         final handlerRows = await (db.select(
           db.outboundHandlers,
         )..where((t) => t.subId.equals(id))).get();
         final handlerIds = handlerRows.map((r) => r.id).toList();
+
         if (handlerIds.isNotEmpty) {
           // 3. Remove selector links for those handlers.
           await (db.delete(
             db.selectorHandlerRelations,
           )..where((r) => r.handlerId.isIn(handlerIds))).go();
-          // 4. Remove group relations for those handlers (references outbound_handlers.id)
+          // 4. Remove group relations for those handlers.
           await (db.delete(
             db.outboundHandlerGroupRelations,
           )..where((r) => r.handlerId.isIn(handlerIds))).go();
         }
-        // 5. Remove handlers that belong to this subscription (references subscriptions.id)
-        await (db.delete(
-          db.outboundHandlers,
-        )..where((t) => t.subId.equals(id))).go();
+
+        // 5. Try deleting handlers that belong to this subscription.
+        // If old FK schemas still block this, detach handlers from sub instead,
+        // so deleting the subscription can still succeed.
+        try {
+          await (db.delete(
+            db.outboundHandlers,
+          )..where((t) => t.subId.equals(id))).go();
+        } catch (e) {
+          logger.e(
+            'removeSubscription: deleting handlers failed, detaching handlers',
+            error: e,
+          );
+          await (db.update(db.outboundHandlers)..where(
+            (t) => t.subId.equals(id),
+          )).write(const OutboundHandlersCompanion(subId: Value(null)));
+        }
+
+        // 6. Delete subscription record.
         await db.deleteById(db.subscriptions, [id]);
       });
+    } catch (e) {
+      logger.e('removeSubscription', error: e);
+      rethrow;
     }
   }
 }
