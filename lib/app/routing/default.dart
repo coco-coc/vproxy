@@ -228,8 +228,8 @@ enum DefaultRouteMode {
           privateSet,
           AtomicDomainSet(
             name: ruBlock,
-            useBloomFilter: false,
-            geoUrl: ruGeositeUrl,
+            useBloomFilter: true,
+            geoUrl: ruGeoSiteSimplifiedUrl,
             geositeConfig: GeositeConfig(codes: ['ru-blocked']),
           ),
         ];
@@ -287,7 +287,7 @@ enum DefaultRouteMode {
         ];
       case DefaultRouteMode.proxyAll:
         return [privateSet, customDirectSet, customProxySet, publicSet];
-      case DefaultRouteMode.ruBlocked:
+      case DefaultRouteMode.ruBlocked || DefaultRouteMode.ruBlockedAll:
         return [
           customDirectSet,
           customProxySet,
@@ -295,19 +295,6 @@ enum DefaultRouteMode {
           publicSet,
           AtomicIpSet(
             name: ruBlock,
-            inverse: false,
-            geoUrl: ruGeoIpUrl,
-            geoIpConfig: GeoIPConfig(codes: ['ru-blocked']),
-          ),
-        ];
-      case DefaultRouteMode.ruBlockedAll:
-        return [
-          customDirectSet,
-          customProxySet,
-          privateSet,
-          publicSet,
-          AtomicIpSet(
-            name: ruBlockAll,
             inverse: false,
             geoUrl: ruGeoIpUrl,
             geoIpConfig: GeoIPConfig(codes: ['ru-blocked']),
