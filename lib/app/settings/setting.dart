@@ -457,6 +457,9 @@ List<Widget> _getBottomButtons(BuildContext context, User? user) {
             padding: const EdgeInsets.symmetric(horizontal: 5),
             child: OutlinedButton.icon(
               onPressed: () async {
+                context.read<SharedPreferences>().setReviewAutoPromptDisabled(
+                  true,
+                );
                 if (await inAppReview.isAvailable()) {
                   inAppReview.requestReview();
                 } else {

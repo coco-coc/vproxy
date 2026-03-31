@@ -1087,4 +1087,48 @@ extension PrefHelperExtension on SharedPreferences {
     setInt('globalDialTimeout', timeout);
   }
 
+  DateTime? get reviewFirstUseAt {
+    final value = getInt('reviewFirstUseAt');
+    if (value == null) return null;
+    return DateTime.fromMillisecondsSinceEpoch(value);
+  }
+
+  void setReviewFirstUseAt(DateTime time) {
+    setInt('reviewFirstUseAt', time.millisecondsSinceEpoch);
+  }
+
+  int get reviewAppOpenCount {
+    return getInt('reviewAppOpenCount') ?? 0;
+  }
+
+  void setReviewAppOpenCount(int count) {
+    setInt('reviewAppOpenCount', count);
+  }
+
+  DateTime? get reviewLastPromptAt {
+    final value = getInt('reviewLastPromptAt');
+    if (value == null) return null;
+    return DateTime.fromMillisecondsSinceEpoch(value);
+  }
+
+  void setReviewLastPromptAt(DateTime time) {
+    setInt('reviewLastPromptAt', time.millisecondsSinceEpoch);
+  }
+
+  int get reviewPromptCount {
+    return getInt('reviewPromptCount') ?? 0;
+  }
+
+  void setReviewPromptCount(int count) {
+    setInt('reviewPromptCount', count);
+  }
+
+  bool get reviewAutoPromptDisabled {
+    return getBool('reviewAutoPromptDisabled') ?? false;
+  }
+
+  void setReviewAutoPromptDisabled(bool disabled) {
+    setBool('reviewAutoPromptDisabled', disabled);
+  }
+
 }
