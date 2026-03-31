@@ -35,9 +35,9 @@ jobs:
       - name: Download geo
         run: |
           mkdir -p assets/geo
-          curl -O "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geoip.dat" 
+          curl -OL "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geoip.dat" 
           mv simplified_geoip.dat assets/geo/simplified_geoip.dat
-          curl -O "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geosite.dat" 
+          curl -OL "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geosite.dat" 
           mv simplified_geosite.dat assets/geo/simplified_geosite.dat
 
       - name: Download library from release
@@ -98,6 +98,11 @@ jobs:
             --build-name ${{ steps.get_version.outputs.version }} \
           --build-number ${{ steps.get_version.outputs.build_number }}
 
+      - name: Upload debug symbols (AAB)
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: flutter pub run sentry_dart_plugin
+
       - name: upload to play store
         env:
           FASTLANE_PLAY_STORE: ${{ secrets.FASTLANE_PLAY_STORE }}
@@ -117,6 +122,11 @@ jobs:
           mv build/app/outputs/flutter-apk/app-apk-release.apk releases/vx-universal.apk
           zip -j releases/vx-universal.apk.zip releases/vx-universal.apk
           rm releases/vx-universal.apk
+
+      - name: Upload debug symbols (APK)
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: flutter pub run sentry_dart_plugin
 
       - name: upload apks to github release
         env:

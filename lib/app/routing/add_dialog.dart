@@ -18,8 +18,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
-import 'package:tm/protos/common/geo/geo.pb.dart';
-import 'package:vx/common/net.dart';
+import 'package:tm/protos/vx/common/geo/geo.pb.dart';
+import 'package:flutter_common/util/net.dart';
 import 'package:vx/widgets/circular_progress_indicator.dart';
 
 class AddDialog extends StatefulWidget {

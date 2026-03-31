@@ -4400,6 +4400,331 @@ class Shape61 extends i0.VersionedTable {
       columnsByName['opposite_name']! as i1.GeneratedColumn<String>;
 }
 
+final class Schema11 extends i0.VersionedSchema {
+  Schema11({required super.database}) : super(version: 11);
+  @override
+  late final List<i1.DatabaseSchemaEntity> entities = [
+    subscriptions,
+    outboundHandlers,
+    outboundHandlerGroups,
+    outboundHandlerGroupRelations,
+    dnsRecords,
+    atomicDomainSets,
+    geoDomains,
+    greatDomainSets,
+    atomicIpSets,
+    greatIpSets,
+    appSets,
+    apps,
+    cidrs,
+    sshServers,
+    commonSshKeys,
+    customRouteModes,
+    handlerSelectors,
+    selectorHandlerRelations,
+    selectorHandlerGroupRelations,
+    selectorSubscriptionRelations,
+    dnsServers,
+  ];
+  late final Shape49 subscriptions = Shape49(
+    source: i0.VersionedTable(
+      entityName: 'subscriptions',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_64,
+        _column_65,
+        _column_66,
+        _column_67,
+        _column_68,
+        _column_69,
+        _column_70,
+        _column_71,
+        _column_72,
+        _column_73,
+        _column_74,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape50 outboundHandlers = Shape50(
+    source: i0.VersionedTable(
+      entityName: 'outbound_handlers',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_64,
+        _column_65,
+        _column_75,
+        _column_76,
+        _column_77,
+        _column_78,
+        _column_79,
+        _column_80,
+        _column_81,
+        _column_82,
+        _column_83,
+        _column_84,
+        _column_85,
+        _column_86,
+        _column_87,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape51 outboundHandlerGroups = Shape51(
+    source: i0.VersionedTable(
+      entityName: 'outbound_handler_groups',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(name)'],
+      columns: [_column_64, _column_66, _column_74],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape11 outboundHandlerGroupRelations = Shape11(
+    source: i0.VersionedTable(
+      entityName: 'outbound_handler_group_relations',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(group_name, handler_id)'],
+      columns: [_column_88, _column_89],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape2 dnsRecords = Shape2(
+    source: i0.VersionedTable(
+      entityName: 'dns_records',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_90, _column_91],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape52 atomicDomainSets = Shape52(
+    source: i0.VersionedTable(
+      entityName: 'atomic_domain_sets',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(name)'],
+      columns: [
+        _column_64,
+        _column_66,
+        _column_92,
+        _column_93,
+        _column_94,
+        _column_95,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape13 geoDomains = Shape13(
+    source: i0.VersionedTable(
+      entityName: 'geo_domains',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['UNIQUE(geo_domain, domain_set_name)'],
+      columns: [_column_90, _column_96, _column_97],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape53 greatDomainSets = Shape53(
+    source: i0.VersionedTable(
+      entityName: 'great_domain_sets',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(name)'],
+      columns: [_column_64, _column_66, _column_98, _column_99],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape54 atomicIpSets = Shape54(
+    source: i0.VersionedTable(
+      entityName: 'atomic_ip_sets',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(name)'],
+      columns: [
+        _column_64,
+        _column_66,
+        _column_100,
+        _column_101,
+        _column_94,
+        _column_95,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape61 greatIpSets = Shape61(
+    source: i0.VersionedTable(
+      entityName: 'great_ip_sets',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(name)'],
+      columns: [_column_64, _column_66, _column_102, _column_98],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape56 appSets = Shape56(
+    source: i0.VersionedTable(
+      entityName: 'app_sets',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(name)'],
+      columns: [_column_64, _column_66, _column_94],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape17 apps = Shape17(
+    source: i0.VersionedTable(
+      entityName: 'apps',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['UNIQUE(app_id, app_set_name)'],
+      columns: [_column_90, _column_103, _column_104, _column_105],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape18 cidrs = Shape18(
+    source: i0.VersionedTable(
+      entityName: 'cidrs',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['UNIQUE(cidr, ip_set_name)'],
+      columns: [_column_90, _column_106, _column_107],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape57 sshServers = Shape57(
+    source: i0.VersionedTable(
+      entityName: 'ssh_servers',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_64,
+        _column_90,
+        _column_66,
+        _column_108,
+        _column_109,
+        _column_110,
+        _column_111,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape7 commonSshKeys = Shape7(
+    source: i0.VersionedTable(
+      entityName: 'common_ssh_keys',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_90, _column_112, _column_113],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape58 customRouteModes = Shape58(
+    source: i0.VersionedTable(
+      entityName: 'custom_route_modes',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [
+        _column_64,
+        _column_65,
+        _column_112,
+        _column_114,
+        _column_115,
+        _column_116,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape59 handlerSelectors = Shape59(
+    source: i0.VersionedTable(
+      entityName: 'handler_selectors',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(name)'],
+      columns: [_column_64, _column_66, _column_84],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape43 selectorHandlerRelations = Shape43(
+    source: i0.VersionedTable(
+      entityName: 'selector_handler_relations',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [
+        'PRIMARY KEY(id)',
+        'UNIQUE(selector_name, handler_id)',
+      ],
+      columns: [_column_65, _column_117, _column_89],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape44 selectorHandlerGroupRelations = Shape44(
+    source: i0.VersionedTable(
+      entityName: 'selector_handler_group_relations',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [
+        'PRIMARY KEY(id)',
+        'UNIQUE(selector_name, group_name)',
+      ],
+      columns: [_column_65, _column_117, _column_88],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape45 selectorSubscriptionRelations = Shape45(
+    source: i0.VersionedTable(
+      entityName: 'selector_subscription_relations',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [
+        'PRIMARY KEY(id)',
+        'UNIQUE(selector_name, subscription_id)',
+      ],
+      columns: [_column_65, _column_117, _column_118],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape60 dnsServers = Shape60(
+    source: i0.VersionedTable(
+      entityName: 'dns_servers',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(id)'],
+      columns: [_column_64, _column_65, _column_112, _column_119],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+}
+
 i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
   required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
@@ -4410,6 +4735,7 @@ i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema8 schema) from7To8,
   required Future<void> Function(i1.Migrator m, Schema9 schema) from8To9,
   required Future<void> Function(i1.Migrator m, Schema10 schema) from9To10,
+  required Future<void> Function(i1.Migrator m, Schema11 schema) from10To11,
 }) {
   return (currentVersion, database) async {
     switch (currentVersion) {
@@ -4458,6 +4784,11 @@ i0.MigrationStepWithVersion migrationSteps({
         final migrator = i1.Migrator(database, schema);
         await from9To10(migrator, schema);
         return 10;
+      case 10:
+        final schema = Schema11(database: database);
+        final migrator = i1.Migrator(database, schema);
+        await from10To11(migrator, schema);
+        return 11;
       default:
         throw ArgumentError.value('Unknown migration from $currentVersion');
     }
@@ -4474,6 +4805,7 @@ i1.OnUpgrade stepByStep({
   required Future<void> Function(i1.Migrator m, Schema8 schema) from7To8,
   required Future<void> Function(i1.Migrator m, Schema9 schema) from8To9,
   required Future<void> Function(i1.Migrator m, Schema10 schema) from9To10,
+  required Future<void> Function(i1.Migrator m, Schema11 schema) from10To11,
 }) => i0.VersionedSchema.stepByStepHelper(
   step: migrationSteps(
     from1To2: from1To2,
@@ -4485,5 +4817,6 @@ i1.OnUpgrade stepByStep({
     from7To8: from7To8,
     from8To9: from8To9,
     from9To10: from9To10,
+    from10To11: from10To11,
   ),
 );

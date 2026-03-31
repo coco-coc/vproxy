@@ -28,6 +28,7 @@ Future<AppDatabase?> _initDatabase(
   } catch (e) {
     logger.e('Error initializing database', error: e);
     reportError("init database", e);
+    fatalErrorMessage = "Failed to initialize database: $e";
   }
 
   logger.d('Database initialized');

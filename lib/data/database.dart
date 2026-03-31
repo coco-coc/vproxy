@@ -25,11 +25,11 @@ import 'package:flutter/material.dart' hide Table, Column, RouterConfig;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tm/protos/common/net/net.pb.dart';
-import 'package:tm/protos/protos/geo.pb.dart';
-import 'package:tm/protos/protos/outbound.pb.dart';
-import 'package:tm/protos/protos/proxy/hysteria.pb.dart';
-import 'package:tm/protos/protos/transport.pb.dart';
+import 'package:tm/protos/vx/common/net/net.pb.dart';
+import 'package:tm/protos/vx/geo/geo.pb.dart';
+import 'package:tm/protos/vx/outbound/outbound.pb.dart';
+import 'package:tm/protos/vx/proxy/hysteria/hysteria.pb.dart';
+import 'package:tm/protos/vx/transport/transport.pb.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/routing/routing_page.dart';
@@ -37,14 +37,15 @@ import 'package:vx/app/server/add_server.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/common/config.dart';
+import 'package:flutter_common/util/net.dart';
 import 'package:vx/common/net.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:vector_graphics/vector_graphics.dart';
 import 'package:drift_dev/api/migrations_native.dart';
-import 'package:tm/protos/protos/router.pb.dart';
-import 'package:tm/protos/common/geo/geo.pb.dart';
-import 'package:tm/protos/protos/dns.pb.dart' as dns;
+import 'package:tm/protos/vx/router/router.pb.dart';
+import 'package:tm/protos/vx/common/geo/geo.pb.dart';
+import 'package:tm/protos/vx/dns/dns.pb.dart' as dns;
 import 'package:vx/data/database.steps.dart';
 import 'package:vx/data/sync.dart';
 import 'package:vx/data/sync.pb.dart';
@@ -92,7 +93,7 @@ class AppDatabase extends _$AppDatabase {
   }) : super(executor ?? _openConnection(path, interceptor));
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   static QueryExecutor _openConnection(
     String path,
@@ -265,6 +266,36 @@ class AppDatabase extends _$AppDatabase {
               from: from,
               to: to,
               steps: migrationSteps(
+                from10To11: (m, schema) async {
+                  final allHandlers = await managers.outboundHandlers.get();
+                  for (final handler in allHandlers) {
+                    final config = handler.config;
+                    if (config.hasOutbound() &&
+                        oldTypeUrlToNewTypeUrl.containsKey(
+                          config.outbound.protocol.typeUrl,
+                        )) {
+                      config.outbound.protocol.typeUrl =
+                          oldTypeUrlToNewTypeUrl[config
+                              .outbound
+                              .protocol
+                              .typeUrl]!;
+                    } else {
+                      for (final config in config.chain.handlers) {
+                        if (oldTypeUrlToNewTypeUrl.containsKey(
+                          config.protocol.typeUrl,
+                        )) {
+                          config.protocol.typeUrl =
+                              oldTypeUrlToNewTypeUrl[config.protocol.typeUrl]!;
+                        }
+                      }
+                    }
+                    await ((update(
+                      outboundHandlers,
+                    ))..where((e) => e.id.equals(handler.id))).write(
+                      OutboundHandlersCompanion(config: Value(config)),
+                    );
+                  }
+                },
                 from9To10: (m, schema) async {
                   await m.addColumn(
                     schema.greatIpSets,
@@ -1130,7 +1161,10 @@ class OutboundConverter extends TypeConverter<HandlerConfig, Uint8List> {
   const OutboundConverter();
 
   @override
-  HandlerConfig fromSql(Uint8List fromSql) => HandlerConfig.fromBuffer(fromSql);
+  HandlerConfig fromSql(Uint8List fromSql) {
+    final config = HandlerConfig.fromBuffer(fromSql);
+    return config;
+  }
 
   @override
   Uint8List toSql(HandlerConfig fromDart) => fromDart.writeToBuffer();
@@ -1724,7 +1758,7 @@ Future<void> insertDefault(
     }
   } catch (e, stackTrace) {
     logger.e("Error inserting default data", error: e, stackTrace: stackTrace);
-    dialog(al.insertDefaultError(e.toString()));
+    fatalMessageDialog(al.insertDefaultError(e.toString()));
   }
 }
 

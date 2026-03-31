@@ -4231,6 +4231,12 @@ abstract class AppLocalizations {
   /// **'VX-core is not installed'**
   String get vxNotInstalled;
 
+  /// No description provided for @vxVersionTooLow.
+  ///
+  /// In en, this message translates to:
+  /// **'VX-core version is too low, please update to the latest version'**
+  String get vxVersionTooLow;
+
   /// No description provided for @howToUseVX.
   ///
   /// In en, this message translates to:
@@ -4524,6 +4530,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The dial timeout for all nodes. If failed to establish TCP connection within this timeout, the connection will fail. Shorter dial timeout means faster fallback.'**
   String get globalDialTimeoutHint;
+
+  /// No description provided for @reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
+
+  /// No description provided for @resetConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will reset your preferences and database. Your existing data will be lost. This action cannot be undone.'**
+  String get resetConfirmMessage;
+
+  /// No description provided for @resetAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get resetAction;
+
+  /// No description provided for @resetCompletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset complete'**
+  String get resetCompletedTitle;
+
+  /// No description provided for @resetCompletedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Database and preferences have been reset. Restart VX to continue.'**
+  String get resetCompletedMessage;
+
+  /// No description provided for @resetFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to reset: {error}'**
+  String resetFailed(String error);
+
+  /// No description provided for @tutorial.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutorial'**
+  String get tutorial;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

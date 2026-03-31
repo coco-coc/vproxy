@@ -61,11 +61,6 @@ class _TransportInputState extends State<_TransportInput>
             (_protocolWidgetKey.currentState as TransportProtocolConfigGetter)
                     .transportProtocolConfig
                 as HttpConfig;
-      case TransportConfig_Protocol.quic:
-        ret.quic =
-            (_protocolWidgetKey.currentState as TransportProtocolConfigGetter)
-                    .transportProtocolConfig
-                as quic.QuicConfig;
       case TransportConfig_Protocol.grpc:
         ret.grpc =
             (_protocolWidgetKey.currentState as TransportProtocolConfigGetter)
@@ -92,11 +87,7 @@ class _TransportInputState extends State<_TransportInput>
   }
 
   final _dropdownMenuProtocolEntries = TransportConfig_Protocol.values
-      .where(
-        (e) =>
-            e != TransportConfig_Protocol.http &&
-            e != TransportConfig_Protocol.quic,
-      )
+      .where((e) => e != TransportConfig_Protocol.http)
       .map<DropdownMenuEntry<TransportConfig_Protocol>>((
         TransportConfig_Protocol p,
       ) {
@@ -230,8 +221,6 @@ extension TransportProtocolLabelExtension on TransportConfig_Protocol {
         return 'WebSocket';
       case TransportConfig_Protocol.http:
         return 'HTTP';
-      case TransportConfig_Protocol.quic:
-        return 'QUIC';
       case TransportConfig_Protocol.grpc:
         return 'gRPC';
       case TransportConfig_Protocol.httpupgrade:

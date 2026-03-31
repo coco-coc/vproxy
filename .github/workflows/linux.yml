@@ -61,9 +61,9 @@ jobs:
       - name: Download geo
         run: |
           mkdir -p assets/geo
-          curl -O "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geoip.dat" 
+          curl -OL "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geoip.dat" 
           mv simplified_geoip.dat assets/geo/simplified_geoip.dat
-          curl -O "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geosite.dat" 
+          curl -OL "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geosite.dat" 
           mv simplified_geosite.dat assets/geo/simplified_geosite.dat
 
       - name: Install Linux dependencies
@@ -132,6 +132,11 @@ jobs:
           fastforge package --platform linux --build-dart-define=LOG_KEY=$LOG_KEY \
           --targets deb
 
+      - name: Upload debug symbols (Linux x64 DEB)
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: flutter pub run sentry_dart_plugin
+
       - name: Rename DEB file
         run: |
           DEB_FILE=$(find dist -name "*.deb" -type f | head -n 1)
@@ -195,6 +200,11 @@ jobs:
         run: |
           fastforge package --platform linux --build-dart-define=LOG_KEY=$LOG_KEY \
           --build-dart-define=RPM=true --targets rpm
+
+      - name: Upload debug symbols (Linux x64 RPM)
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: flutter pub run sentry_dart_plugin
 
       - name: Rename RPM file
         run: |
@@ -368,6 +378,11 @@ jobs:
           fastforge package --platform linux --build-dart-define=LOG_KEY=$LOG_KEY \
           --targets deb
 
+      - name: Upload debug symbols (Linux arm64 DEB)
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: flutter pub run sentry_dart_plugin
+
       - name: Rename DEB file
         run: |
           DEB_FILE=$(find dist -name "*.deb" -type f | head -n 1)
@@ -431,6 +446,11 @@ jobs:
         run: |
           fastforge package --platform linux --build-dart-define=LOG_KEY=$LOG_KEY \
           --build-dart-define=RPM=true --targets rpm
+
+      - name: Upload debug symbols (Linux arm64 RPM)
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: flutter pub run sentry_dart_plugin
 
       - name: Rename RPM file
         run: |

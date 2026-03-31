@@ -20,12 +20,14 @@ import 'package:drift/native.dart';
 import 'package:drift/remote.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vx/common/net.dart';
+import 'package:flutter_common/util/net.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:pasteboard/pasteboard.dart';
 import 'package:provider/provider.dart';
-import 'package:tm/protos/common/geo/geo.pb.dart';
-import 'package:tm/protos/protos/router.pb.dart';
+import 'package:tm/protos/vx/common/geo/geo.pb.dart';
+import 'package:tm/protos/vx/router/router.pb.dart';
 import 'package:vx/app/layout_provider.dart';
 import 'package:vx/app/log/log_bloc.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
@@ -37,7 +39,7 @@ import 'package:vx/app/x_controller.dart';
 import 'package:vx/common/common.dart';
 import 'package:vx/common/config.dart';
 import 'package:vx/l10n/app_localizations.dart';
-import 'package:vx/common/net.dart';
+import 'package:flutter_common/util/net.dart';
 import 'package:vx/theme.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/main.dart';
@@ -1005,22 +1007,31 @@ class _LogListState extends State<LogList> {
                       ? null
                       : () async {
                           final xController = context.read<XController>();
-                          // check if dst is an ip
-                          final d = Domain(
-                            type: Domain_Type.Full,
-                            value: domain,
-                          );
-                          final setName = isDirect
-                              ? getCustomProxy(context)
-                              : getCustomDirect(context);
-                          await Provider.of<SetRepo>(
-                            context,
-                            listen: false,
-                          ).addGeoDomain(setName, d);
-                          setState(() {
-                            domainAdded = true;
-                          });
-                          xController.addGeoDomain(setName, d);
+                          List<String> domains = [];
+                          if (domain.contains(',')) {
+                            domains = domain.split(',');
+                          } else {
+                            domains.add(domain);
+                          }
+                          for (var domain in domains) {
+                            if (isDomain(domain)) {
+                              final d = Domain(
+                                type: Domain_Type.RootDomain,
+                                value: domain,
+                              );
+                              final setName = isDirect
+                                  ? getCustomProxy(context)
+                                  : getCustomDirect(context);
+                              await Provider.of<SetRepo>(
+                                context,
+                                listen: false,
+                              ).addGeoDomain(setName, d);
+                              setState(() {
+                                domainAdded = true;
+                              });
+                              xController.addGeoDomain(setName, d);
+                            }
+                          }
                         },
                   icon: domainAdded
                       ? const Icon(Icons.check_rounded, size: 18)
@@ -1096,7 +1107,8 @@ class _LogListState extends State<LogList> {
                               ).addGeoDomain(setName, d);
                               xController.addGeoDomain(setName, d);
                             } else {
-                              if (isValidIp(destination)) {
+                              final normalizedIp = normalizeIp(destination);
+                              if (isValidIp(normalizedIp)) {
                                 await Provider.of<SetRepo>(
                                   context,
                                   listen: false,
@@ -1104,7 +1116,7 @@ class _LogListState extends State<LogList> {
                                   isDirect
                                       ? getCustomProxy(context)
                                       : getCustomDirect(context),
-                                  ipToCidr(destination),
+                                  ipToCidr(normalizedIp),
                                 );
                               }
                             }

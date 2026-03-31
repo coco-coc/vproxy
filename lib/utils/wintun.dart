@@ -14,15 +14,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vx/utils/download.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/common/os.dart';
+import 'package:vx/main.dart';
 import 'package:vx/utils/path.dart';
 import 'package:archive/archive_io.dart';
 
@@ -39,23 +38,36 @@ Future<void> makeWinTunAvailable(Downloader downloader) async {
   final dllPath = join(wintunDir.path, arch, "wintun.dll");
   // Get CPU architecture
   if (!File(dllPath).existsSync()) {
-    // delete existing dir
-    final eistingWintunDir = Directory(
-      join((await resourceDir()).path, 'wintun'),
-    );
-    if (eistingWintunDir.existsSync()) {
-      eistingWintunDir.deleteSync(recursive: true);
+    try {
+      // delete existing dir
+      final eistingWintunDir = Directory(
+        join((await resourceDir()).path, 'wintun'),
+      );
+      if (eistingWintunDir.existsSync()) {
+        eistingWintunDir.deleteSync(recursive: true);
+      }
+      final zipPath = join(
+        (await getApplicationCacheDirectory()).path,
+        'wintun-zip',
+      );
+      await downloader.download(wintunDownloadLink, zipPath);
+      // Extract the zip file
+      await extractFileToDisk(zipPath, (await resourceDir()).path);
+      // Clean up zip file after extraction
+      await File(zipPath).delete();
+      logger.d('Wintun DLL downloaded and extracted to $dllPath');
+    } catch (e, s) {
+      logger.e('Failed to prepare Wintun DLL', error: e, stackTrace: s);
+      final errorMessage =
+          rootLocalizations()?.fatalError('Failed to prepare Wintun DLL: $e') ??
+          'Failed to prepare Wintun DLL: $e';
+      if (rootNavigationKey.currentContext != null) {
+        fatalMessageDialog(errorMessage);
+      } else {
+        fatalErrorMessage = errorMessage;
+      }
+      rethrow;
     }
-    final zipPath = join(
-      (await getApplicationCacheDirectory()).path,
-      'wintun-zip',
-    );
-    await downloader.download(wintunDownloadLink, zipPath);
-    // Extract the zip file
-    await extractFileToDisk(zipPath, (await resourceDir()).path);
-    // Clean up zip file after extraction
-    await File(zipPath).delete();
-    logger.d('Wintun DLL downloaded and extracted to $dllPath');
   }
 }
 

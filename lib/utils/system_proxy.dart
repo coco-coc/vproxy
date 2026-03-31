@@ -14,7 +14,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'dart:io';
-import 'package:tm/protos/protos/sysproxy.pb.dart';
+import 'package:tm/protos/vx/sysproxy/sysproxy.pb.dart';
 
 class LinuxSystemProxy {
   static Future<void> setSystemProxy(SysProxyConfig settings) async {

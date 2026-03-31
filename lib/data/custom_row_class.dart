@@ -277,8 +277,6 @@ extension TransportConfigExtension on TransportConfig {
       return 'GRPC';
     } else if (hasHttp()) {
       return 'HTTP';
-    } else if (hasQuic()) {
-      return 'QUIC';
     } else if (hasKcp()) {
       return 'KCP';
     } else if (hasSplithttp()) {

@@ -16,12 +16,12 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
-import 'package:tm/protos/common/geo/geo.pb.dart';
-import 'package:tm/protos/protos/geo.pb.dart';
+import 'package:tm/protos/vx/common/geo/geo.pb.dart';
+import 'package:tm/protos/vx/geo/geo.pb.dart';
 import 'package:vx/app/routing/mode_widget.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/app/routing/mode_form.dart';
-import 'package:vx/common/net.dart';
+import 'package:flutter_common/util/net.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/data/database_provider.dart';
 import 'package:vx/widgets/form_dialog.dart';

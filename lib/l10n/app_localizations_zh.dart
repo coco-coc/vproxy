@@ -1111,7 +1111,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get logout => '登出';
 
   @override
-  String get geoSiteOrGeoIPFileNotFound => '正在Geo文件...';
+  String get geoSiteOrGeoIPFileNotFound => '正在下载Geo文件...';
 
   @override
   String get createIpSmallSet => '创建IP小集合';
@@ -2180,6 +2180,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get vxNotInstalled => 'VX-core未安装';
 
   @override
+  String get vxVersionTooLow => 'VX-core版本过低，请更新到最新版本';
+
+  @override
   String get howToUseVX => '关于VX的使用方法，请查看我们的YouTube频道';
 
   @override
@@ -2327,4 +2330,27 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get globalDialTimeoutHint => '代理连接拨号超时时间。如果在拨号超时时间内无法与代理节点建立TCP连接，则连接失败。更短的拨号时间意味着更快的回退';
+
+  @override
+  String get reset => '重置';
+
+  @override
+  String get resetConfirmMessage => '这将重置当前数据库和偏好设置。您的现有数据将丢失。此操作无法撤销。';
+
+  @override
+  String get resetAction => '重置';
+
+  @override
+  String get resetCompletedTitle => '重置完成';
+
+  @override
+  String get resetCompletedMessage => '数据库和偏好设置已重置。请重启 VX 继续使用。';
+
+  @override
+  String resetFailed(String error) {
+    return '重置失败: $error';
+  }
+
+  @override
+  String get tutorial => '教程';
 }

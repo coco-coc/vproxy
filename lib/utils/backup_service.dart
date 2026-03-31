@@ -80,14 +80,11 @@ class BackupSerevice extends ChangeNotifier {
   /// Create a local backup of the current database at [destinationPath].
   ///
   /// [destinationPath] should be a full file path (e.g. selected by user).
-  /// The backup content is identical to cloud backups and will be encrypted
-  /// when a backup password is set.
   Future<void> saveLocalBackup(String destinationPath) async {
     uploading = true;
     notifyListeners();
 
     final dst = await dbVacuumDest();
-    File? encryptedFile;
 
     try {
       if (await File(dst).exists()) {
@@ -97,19 +94,7 @@ class BackupSerevice extends ChangeNotifier {
       // Create a compact, standalone copy of the current database
       await databaseProvider.database.customStatement('VACUUM INTO ?', [dst]);
 
-      // Get backup password from secure storage
-      final password = await _storage.read(key: 'backupPassword');
-
       File fileToSave = File(dst);
-
-      // Encrypt the database file if password is set
-      if (password != null && password.isNotEmpty) {
-        encryptedFile = await encryptFile(File(dst), password);
-        fileToSave = encryptedFile;
-        logger.i('Database encrypted for local backup');
-      } else {
-        logger.w('No backup password set, saving unencrypted local backup');
-      }
 
       final destFile = File(destinationPath);
       if (!await destFile.parent.exists()) {
@@ -127,9 +112,6 @@ class BackupSerevice extends ChangeNotifier {
       // Clean up temporary files
       if (await File(dst).exists()) {
         await File(dst).delete();
-      }
-      if (encryptedFile != null && await encryptedFile.exists()) {
-        await encryptedFile.delete();
       }
     }
   }
@@ -331,10 +313,16 @@ class BackupSerevice extends ChangeNotifier {
           // remove old db
           // get all files ended with .sqlite
           final currentDbPath = await getDbPath(_prefHelper);
+          final currentDbWalPath = '${currentDbPath.split('.')[0]}.sqlite-wal';
+          final currentDbShmPath = '${currentDbPath.split('.')[0]}.sqlite-shm';
           final sqliteFiles = resourceDirectory
               .listSync()
               .where((e) {
-                return e.path.endsWith('.sqlite') && e.path != currentDbPath;
+                return e.path.endsWith('.sqlite') && e.path != currentDbPath ||
+                    (e.path.endsWith('.sqlite-wal') &&
+                        e.path != currentDbWalPath) ||
+                    (e.path.endsWith('.sqlite-shm') &&
+                        e.path != currentDbShmPath);
               })
               .map((e) => File(e.path));
           filesToDelete.addAll(sqliteFiles);
@@ -375,25 +363,6 @@ class BackupSerevice extends ChangeNotifier {
       filesToDelete.add(tmpFile);
 
       File dbFileToRestore = tmpFile;
-
-      // Try to decrypt the file if password is set
-      final password = await _storage.read(key: 'backupPassword');
-      if (password != null && password.isNotEmpty) {
-        try {
-          final decryptedFile = await decryptFile(tmpFile, password);
-          filesToDelete.add(decryptedFile);
-          dbFileToRestore = decryptedFile;
-          logger.i('Local backup decrypted successfully');
-        } catch (e) {
-          logger.e('Failed to decrypt local backup', error: e);
-          throw Exception(
-            'Failed to decrypt backup. Please check your password.',
-          );
-        }
-      } else {
-        logger.w('No backup password set, assuming unencrypted local backup');
-      }
-
       // Open the database and vacuum it into a clean file
       final backupDb = sqlite3.open(dbFileToRestore.path);
       final tmpDb = '$tmpLocation.db';
@@ -444,10 +413,16 @@ class BackupSerevice extends ChangeNotifier {
           // remove old db
           // get all files ended with .sqlite
           final currentDbPath = await getDbPath(_prefHelper);
+          final currentDbWalPath = '${currentDbPath.split('.')[0]}.sqlite-wal';
+          final currentDbShmPath = '${currentDbPath.split('.')[0]}.sqlite-shm';
           final sqliteFiles = resourceDirectory
               .listSync()
               .where((e) {
-                return e.path.endsWith('.sqlite') && e.path != currentDbPath;
+                return e.path.endsWith('.sqlite') && e.path != currentDbPath ||
+                    (e.path.endsWith('.sqlite-wal') &&
+                        e.path != currentDbWalPath) ||
+                    (e.path.endsWith('.sqlite-shm') &&
+                        e.path != currentDbShmPath);
               })
               .map((e) => File(e.path));
           filesToDelete.addAll(sqliteFiles);

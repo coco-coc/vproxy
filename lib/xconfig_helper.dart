@@ -20,25 +20,29 @@ import 'package:installed_apps/index.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tm/protos/common/geo/geo.pb.dart';
-import 'package:tm/protos/common/net/net.pb.dart';
-import 'package:tm/protos/protos/dispatcher.pb.dart';
-import 'package:tm/protos/protos/dlhelper.pb.dart';
-import 'package:tm/protos/protos/dns.pb.dart';
-import 'package:tm/protos/protos/geo.pb.dart';
-import 'package:tm/protos/protos/grpc_service.pb.dart';
-import 'package:tm/protos/protos/inbound.pb.dart';
-import 'package:tm/protos/protos/logger.pb.dart' as l;
-import 'package:tm/protos/protos/client.pb.dart' as core;
-import 'package:tm/protos/protos/proxy/freedom.pb.dart';
-import 'package:tm/protos/protos/proxy/http.pb.dart';
-import 'package:tm/protos/protos/proxy/socks.pb.dart';
-import 'package:tm/protos/protos/outbound.pb.dart' as o;
-import 'package:tm/protos/protos/policy.pb.dart';
-import 'package:tm/protos/protos/router.pb.dart';
-import 'package:tm/protos/protos/sysproxy.pb.dart';
-import 'package:tm/protos/protos/transport.pb.dart';
-import 'package:tm/protos/protos/tun.pb.dart';
+import 'package:tm/protos/vx/common/geo/geo.pb.dart';
+import 'package:tm/protos/vx/common/net/net.pb.dart';
+import 'package:tm/protos/vx/dispatcher/dispatcher.pb.dart';
+import 'package:tm/protos/vx/transport/dlhelper.pb.dart';
+import 'package:tm/protos/vx/dns/dns.pb.dart';
+import 'package:tm/protos/vx/geo/geo.pb.dart';
+import 'package:tm/protos/vx/grpc/grpc_service.pb.dart';
+import 'package:tm/protos/vx/inbound/inbound.pb.dart';
+import 'package:tm/protos/vx/log/logger.pb.dart' as l;
+import 'package:tm/protos/vx/client.pb.dart' as core;
+import 'package:tm/protos/vx/proxy/freedom/freedom.pb.dart';
+import 'package:tm/protos/vx/proxy/http/http.pb.dart';
+import 'package:tm/protos/vx/proxy/socks/socks.pb.dart';
+import 'package:tm/protos/vx/outbound/outbound.pb.dart' as o;
+import 'package:tm/protos/vx/policy.pb.dart';
+import 'package:tm/protos/vx/router/router.pb.dart';
+import 'package:tm/protos/vx/sysproxy/sysproxy.pb.dart';
+import 'package:tm/protos/vx/transport/transport.pb.dart';
+import 'package:tm/protos/vx/dialerfactory/dialerfactory.pb.dart';
+import 'package:tm/protos/vx/tun/tun.pb.dart';
+import 'package:tm/protos/vx/subscription/subscription.pb.dart';
+import 'package:tm/protos/vx/fallbackmon/fallbackmon.pb.dart';
+import 'package:tm/protos/vx/grpc/grpc_server.pb.dart';
 import 'package:vx/app/control.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/routing/default.dart';
@@ -55,6 +59,7 @@ import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/path.dart';
 import 'package:vx/app/blocs/proxy_selector/proxy_selector_bloc.dart';
 import 'package:vx/common/file.dart';
+import 'package:flutter_common/util/net.dart';
 import 'package:vx/common/net.dart';
 import 'package:vx/utils/permission.dart';
 import 'package:vx/utils/wintun.dart';
@@ -147,7 +152,7 @@ class XConfigHelper {
         updateLatency: _persistentStateRepo.pingMode == PingMode.Real,
       ),
       fallbackMon: _persistentStateRepo.automaticallyAddFallbackDomain
-          ? core.FallbackMonConfig(domainSetName: 'Fallback')
+          ? FallbackMonConfig(domainSetName: 'Fallback')
           : null,
       userLog: l.UserLoggerConfig(
         enable: _persistentStateRepo.enableLog,
@@ -155,7 +160,7 @@ class XConfigHelper {
         logSessionEnd: _persistentStateRepo.showSessionOngoing,
         logRealtimeUsage: _persistentStateRepo.showRealtimeUsage,
       ),
-      dialerFactory: core.DialerFactoryConfig(
+      dialerFactory: DialerFactoryConfig(
         dialTimeout: _persistentStateRepo.globalDialTimeout,
       ),
     );
@@ -264,8 +269,8 @@ class XConfigHelper {
     return config;
   }
 
-  Future<core.SubscriptionConfig> _getSubscriptionConfig() async {
-    final config = core.SubscriptionConfig(
+  Future<SubscriptionConfig> _getSubscriptionConfig() async {
+    final config = SubscriptionConfig(
       interval: _persistentStateRepo.updateInterval,
       periodicUpdate: _persistentStateRepo.autoUpdate,
     );
@@ -1234,16 +1239,12 @@ class XConfigHelper {
     );
   }
 
-  Future<core.GrpcConfig> _getGrpcConfig({Uint8List? certBytes}) async {
+  Future<GrpcConfig> _getGrpcConfig({Uint8List? certBytes}) async {
     if (useTcpForGrpc) {
       final p = await getUnusedPort();
-      return core.GrpcConfig(
-        address: '127.0.0.1',
-        port: p,
-        clientCert: certBytes,
-      );
+      return GrpcConfig(address: '127.0.0.1', port: p, clientCert: certBytes);
     }
-    final config = core.GrpcConfig(address: await grpcListenAddrUnix());
+    final config = GrpcConfig(address: await grpcListenAddrUnix());
     if (Platform.isLinux) {
       final uid = await userId();
       final gid = await groupId();

@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tm/protos/protos/tun.pb.dart';
+import 'package:tm/protos/vx/tun/tun.pb.dart';
 import 'package:vx/app/routing/repo.dart';
 import 'package:vx/app/settings/advanced/system_proxy.dart';
 import 'package:vx/app/x_controller.dart';
@@ -705,7 +705,9 @@ class _DialerSettingState extends State<DialerSetting> {
             controller: _directDialingTimeoutController,
             decoration: InputDecoration(
               labelText: AppLocalizations.of(context)!.directDialingTimeout,
-              helperText: AppLocalizations.of(context)!.directDialingTimeoutHint,
+              helperText: AppLocalizations.of(
+                context,
+              )!.directDialingTimeoutHint,
               helperMaxLines: 5,
               border: const OutlineInputBorder(),
               suffixText: 's',
@@ -730,6 +732,10 @@ class _DialerSettingState extends State<DialerSetting> {
               border: const OutlineInputBorder(),
             ),
             onChanged: (value) {
+              if (value.isEmpty) {
+                _pref.setGlobalDialTimeout(0);
+                return;
+              }
               _pref.setGlobalDialTimeout(int.parse(value));
             },
             keyboardType: TextInputType.number,

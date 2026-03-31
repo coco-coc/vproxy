@@ -4,11 +4,11 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:drift_dev/api/migrations_native.dart';
-import 'package:tm/protos/common/geo/geo.pb.dart';
-import 'package:tm/protos/protos/dns.pb.dart';
-import 'package:tm/protos/protos/geo.pb.dart';
-import 'package:tm/protos/protos/outbound.pb.dart';
-import 'package:tm/protos/protos/router.pb.dart';
+import 'package:tm/protos/vx/common/geo/geo.pb.dart';
+import 'package:tm/protos/vx/dns/dns.pb.dart';
+import 'package:tm/protos/vx/geo/geo.pb.dart';
+import 'package:tm/protos/vx/outbound/outbound.pb.dart';
+import 'package:tm/protos/vx/router/router.pb.dart';
 import 'package:vx/app/routing/default.dart';
 import 'package:vx/app/routing/routing_page.dart';
 import 'package:vx/data/database.dart';

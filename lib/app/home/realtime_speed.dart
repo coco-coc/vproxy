@@ -1460,8 +1460,7 @@ class _NodeCardState extends State<NodeCard> {
                 SelectedGroupChangeEvent(allGroup),
               );
               GoRouter.of(context).go('/node');
-              final tableState =
-                  outboundTableKey.currentState as OutboundTableState?;
+              final tableState = outboundTableKey.currentState;
               if (tableState != null) {
                 int? handlerId;
                 if (widget.nodeInfo.id.contains('-')) {

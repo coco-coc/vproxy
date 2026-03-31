@@ -14,6 +14,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,6 +49,9 @@ class _SystemProxySettingState extends State<SystemProxySetting> {
   }
 
   void _toggleSocksPort(String value) {
+    if (value.isEmpty) {
+      return;
+    }
     context.read<SharedPreferences>().setSocksPort(int.parse(value));
     setState(() {
       _socksPortController.text = value;
@@ -55,6 +59,9 @@ class _SystemProxySettingState extends State<SystemProxySetting> {
   }
 
   void _toggleHttpPort(String value) {
+    if (value.isEmpty) {
+      return;
+    }
     context.read<SharedPreferences>().setHttpPort(int.parse(value));
     setState(() {
       _httpPortController.text = value;
@@ -104,25 +111,43 @@ class _SystemProxySettingState extends State<SystemProxySetting> {
             Row(
               children: [
                 Expanded(
-                  child: TextField(
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return AppLocalizations.of(context)?.empty ??
+                            'Required';
+                      }
+                      return null;
+                    },
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'SOCKS',
                     ),
                     keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     controller: _socksPortController,
                     onChanged: _toggleSocksPort,
                   ),
                 ),
                 const Gap(10),
                 Expanded(
-                  child: TextField(
+                  child: TextFormField(
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'HTTP',
                     ),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     keyboardType: TextInputType.number,
                     controller: _httpPortController,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return AppLocalizations.of(context)?.empty ??
+                            'Required';
+                      }
+                      return null;
+                    },
                     onChanged: _toggleHttpPort,
                   ),
                 ),

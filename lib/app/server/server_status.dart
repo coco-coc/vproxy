@@ -19,7 +19,7 @@ import 'package:gap/gap.dart';
 import 'package:grpc/grpc.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:tm/protos/app/api/api.pb.dart';
-import 'package:vx/common/net.dart';
+import 'package:flutter_common/util/net.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/theme.dart';
 import 'package:vx/l10n/app_localizations.dart';

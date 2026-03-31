@@ -30,6 +30,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_api_availability/google_api_availability.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:macos_window_utils/macos/ns_window_button_type.dart';
 import 'package:macos_window_utils/window_manipulator.dart';
@@ -61,6 +62,7 @@ import 'package:vx/auth/auth_bloc.dart';
 import 'package:vx/auth/auth_provider.dart';
 import 'package:vx/common/bloc_observer.dart';
 import 'package:vx/common/common.dart';
+import 'package:vx/common/config.dart';
 import 'package:vx/common/const.dart';
 import 'package:vx/common/extension.dart';
 import 'package:vx/data/database_provider.dart';
@@ -199,7 +201,9 @@ void main() async {
   final app = MultiProvider(
     providers: [
       ChangeNotifierProvider(
-        create: (context) => DatabaseProvider(database: database!),
+        create: (context) => DatabaseProvider(
+          database: database ?? AppDatabase(path: '', interceptor: null),
+        ),
       ),
       Provider(create: (ctx) => XApiClient(pref, storage)..init(), lazy: false),
       ChangeNotifierProvider.value(value: proPurchases),
@@ -550,6 +554,10 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> with WidgetsBindingObserver {
+  static const int _reviewMinOpenCount = 8;
+  static const int _reviewMinDaysSinceFirstUse = 7;
+  static const int _reviewPromptMaxTimes = 1;
+
   Locale? _locale;
   ThemeMode? _themeMode;
   // AppLifecycleListener must be kept alive to receive lifecycle events
@@ -557,6 +565,8 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   late final AppLifecycleListener _listener;
   final appLinks = AppLinks();
   late final SyncService syncService;
+  final InAppReview _inAppReview = InAppReview.instance;
+  bool _reviewPromptInProgress = false;
 
   void setLocale(Locale? value) async {
     setState(() {
@@ -592,7 +602,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     syncService = context.read<SyncService>();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       if (fatalErrorMessage != null) {
-        dialog(fatalErrorMessage!);
+        fatalMessageDialog(fatalErrorMessage!);
         fatalErrorMessage = null;
       } else {
         try {
@@ -613,6 +623,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
       pref.setInitialLaunch();
       androidHostApi?.requestAddTile();
     }
+    _recordUsageAndScheduleReview(pref);
     _locale = pref.language?.locale;
     _themeMode = pref.themeMode;
     WidgetsBinding.instance.addObserver(this);
@@ -726,11 +737,67 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     logger.d(state);
     if (state == AppLifecycleState.resumed) {
-      if (context.read<SharedPreferences>().getBool('shouldSync') ?? false) {
+      final pref = context.read<SharedPreferences>();
+      if (pref.getBool('shouldSync') ?? false) {
         syncService.sync();
       }
+      _recordUsageAndScheduleReview(pref);
     }
     super.didChangeAppLifecycleState(state);
+  }
+
+  void _recordUsageAndScheduleReview(SharedPreferences pref) {
+    final now = DateTime.now();
+    pref.setReviewFirstUseAt(pref.reviewFirstUseAt ?? now);
+    pref.setReviewAppOpenCount(pref.reviewAppOpenCount + 1);
+    _scheduleReviewPrompt(pref);
+  }
+
+  void _scheduleReviewPrompt(SharedPreferences pref) {
+    Future<void>.delayed(const Duration(seconds: 12), () async {
+      await _maybePromptForReview(pref);
+    });
+  }
+
+  Future<void> _maybePromptForReview(SharedPreferences pref) async {
+    if (!mounted || _reviewPromptInProgress) return;
+    if (pref.reviewAutoPromptDisabled) return;
+    if (pref.reviewPromptCount >= _reviewPromptMaxTimes) return;
+
+    final firstUseAt = pref.reviewFirstUseAt;
+    if (firstUseAt == null ||
+        DateTime.now().difference(firstUseAt).inDays <
+            _reviewMinDaysSinceFirstUse) {
+      return;
+    }
+
+    if (pref.reviewAppOpenCount < _reviewMinOpenCount) {
+      return;
+    }
+
+    final lastPromptAt = pref.reviewLastPromptAt;
+    if (lastPromptAt != null) {
+      return;
+    }
+
+    final lifecycleState = WidgetsBinding.instance.lifecycleState;
+    if (lifecycleState != AppLifecycleState.resumed) {
+      return;
+    }
+
+    _reviewPromptInProgress = true;
+    try {
+      if (await _inAppReview.isAvailable()) {
+        await _inAppReview.requestReview();
+        pref.setReviewLastPromptAt(DateTime.now());
+        pref.setReviewPromptCount(pref.reviewPromptCount + 1);
+        pref.setReviewAutoPromptDisabled(true);
+      }
+    } catch (e, stackTrace) {
+      logger.e('Auto review prompt failed', error: e, stackTrace: stackTrace);
+    } finally {
+      _reviewPromptInProgress = false;
+    }
   }
 
   void handlerAppLinks(Uri uri) {
@@ -867,7 +934,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
 String? fatalErrorMessage;
 
-void dialog(String message) {
+void fatalMessageDialog(String message) {
   if (rootNavigationKey.currentContext == null) {
     return;
   }

@@ -19,16 +19,16 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tm/protos/app/api/api.pbgrpc.dart';
-import 'package:tm/protos/protos/inbound.pb.dart';
-import 'package:tm/protos/protos/logger.pb.dart';
-import 'package:tm/protos/protos/outbound.pb.dart';
+import 'package:tm/protos/vx/inbound/inbound.pb.dart';
+import 'package:tm/protos/vx/log/logger.pb.dart';
+import 'package:tm/protos/vx/outbound/outbound.pb.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
 import 'package:vx/utils/xapi_client.dart';
-import 'package:tm/protos/protos/server/server.pb.dart';
+import 'package:tm/protos/vx/server.pb.dart';
 
 abstract class VXEvent {}
 
@@ -284,14 +284,18 @@ class VXBloc extends Bloc<VXEvent, VXState> {
       if (s.config == null) {
         try {
           _originalConfig = await _xapiClient.serverConfig(_server);
-          emit(
-            (state as VXInstalledState).copyWith(config: () => _originalConfig),
-          );
+          final currentState = state;
+          if (currentState is! VXInstalledState) {
+            return;
+          }
+          emit(currentState.copyWith(config: () => _originalConfig));
         } catch (e) {
           logger.e('Failed to fetch server config: $e');
-          emit(
-            (state as VXInstalledState).copyWith(config: () => ServerConfig()),
-          );
+          final currentState = state;
+          if (currentState is! VXInstalledState) {
+            return;
+          }
+          emit(currentState.copyWith(config: () => ServerConfig()));
         }
       }
     } else {

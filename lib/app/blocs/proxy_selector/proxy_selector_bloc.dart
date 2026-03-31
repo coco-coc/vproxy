@@ -19,7 +19,7 @@ import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tm/protos/protos/router.pb.dart';
+import 'package:tm/protos/vx/router/router.pb.dart';
 import 'package:tm/tm.dart';
 import 'package:vx/app/control.dart';
 import 'package:vx/app/routing/default.dart';

@@ -22,7 +22,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tm/protos/protos/logger.pb.dart' as pb;
+import 'package:tm/protos/vx/log/logger.pb.dart' as pb;
 import 'package:vx/app/settings/setting.dart';
 import 'package:vx/app/x_controller.dart';
 import 'package:vx/common/common.dart';

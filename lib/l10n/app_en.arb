@@ -908,6 +908,7 @@
   "maxConcurrency": "Max Concurrency",
   "maxConnection": "Max Connection",
   "vxNotInstalled": "VX-core is not installed",
+  "vxVersionTooLow": "VX-core version is too low, please update to the latest version",
   "howToUseVX": "For instructions, check our YouTube channel",
   "welcome": "Welcome to VX",
   "sourceCodeAvailable": "VX is a open-source proxy client powered by vx-core.",
@@ -964,5 +965,19 @@
   "directDialingTimeout": "Direct Dialing Timeout",
   "directDialingTimeoutHint": "The dial timeout for direct connection. If failed to establish TCP connection within this timeout, the connection will fail. Shorter dial timeout means faster fallback.",
   "globalDialTimeout": "Global Dial Timeout",
-  "globalDialTimeoutHint": "The dial timeout for all nodes. If failed to establish TCP connection within this timeout, the connection will fail. Shorter dial timeout means faster fallback."
+  "globalDialTimeoutHint": "The dial timeout for all nodes. If failed to establish TCP connection within this timeout, the connection will fail. Shorter dial timeout means faster fallback.",
+  "reset": "Reset",
+  "resetConfirmMessage": "This will reset your preferences and database. Your existing data will be lost. This action cannot be undone.",
+  "resetAction": "Reset",
+  "resetCompletedTitle": "Reset complete",
+  "resetCompletedMessage": "Database and preferences have been reset. Restart VX to continue.",
+  "resetFailed": "Failed to reset: {error}",
+  "@resetFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "tutorial": "Tutorial"
 }

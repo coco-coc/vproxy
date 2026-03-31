@@ -70,8 +70,7 @@ class CurrentNodes extends StatelessWidget {
                         const SortHandlersEvent((Col.active, -1)),
                       );
                       GoRouter.of(context).go('/node');
-                      (outboundTableKey.currentState as OutboundTableState)
-                          .scrollToTop();
+                      outboundTableKey.currentState?.scrollToTop();
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(right: 8.0),

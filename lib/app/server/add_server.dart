@@ -26,7 +26,7 @@ import 'package:vx/data/database_provider.dart';
 import 'package:vx/data/sync.dart';
 import 'package:vx/l10n/app_localizations.dart';
 import 'package:gap/gap.dart';
-import 'package:vx/common/net.dart';
+import 'package:flutter_common/util/net.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/data/ssh_server.dart';
 import 'package:vx/utils/geoip.dart';

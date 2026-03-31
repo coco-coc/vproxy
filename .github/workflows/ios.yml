@@ -34,9 +34,9 @@ jobs:
     - name: Download geo
       run: |
         mkdir -p assets/geo
-        curl -O "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geoip.dat" 
+        curl -OL "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geoip.dat" 
         mv simplified_geoip.dat assets/geo/simplified_geoip.dat
-        curl -O "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geosite.dat" 
+        curl -OL "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geosite.dat" 
         mv simplified_geosite.dat assets/geo/simplified_geosite.dat
 
 
@@ -110,6 +110,11 @@ jobs:
         LOG_KEY: ${{ secrets.LOG_KEY }}
       run: 
         flutter build ipa --flavor production --dart-define=LOG_KEY=$LOG_KEY --release   --split-debug-info=symbols/darwin
+
+    - name: Upload debug symbols (iOS)
+      env:
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      run: flutter pub run sentry_dart_plugin
 
     - name: Set version
       id: get_version

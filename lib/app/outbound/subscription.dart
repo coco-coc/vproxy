@@ -16,18 +16,18 @@
 import 'dart:async';
 
 import 'package:drift/drift.dart' hide Column;
-import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/app/api/api.pbgrpc.dart';
-import 'package:tm/protos/protos/outbound.pb.dart';
+import 'package:tm/protos/vx/outbound/outbound.pb.dart';
 import 'package:tm/tm.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
 import 'package:vx/data/database_provider.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/logger.dart';
+import 'package:vx/utils/random.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/xapi_client.dart';
@@ -129,15 +129,95 @@ class AutoSubscriptionUpdater with ChangeNotifier {
     await _updateSub(false, id);
   }
 
+  Future<UpdateSubscriptionResponse> _updateSingleSub(
+    Subscription sub,
+    List<HandlerConfig> handlers,
+  ) async {
+    final db = _databaseProvider.database;
+    final now = DateTime.now().millisecondsSinceEpoch;
+    try {
+      await db.updateById(
+        db.subscriptions,
+        sub.id,
+        SubscriptionsCompanion(lastUpdate: Value(now)),
+      );
+
+      final fetchRes = await _apiClient.fetchSubscriptionContent(
+        FetchSubscriptionContentRequest(link: sub.link, handlers: handlers),
+      );
+      await db.transaction(() async {
+        final existingHandlers = await _outRepo.getHandlers(subId: sub.id);
+        final existingByTag = <String, OutboundHandler>{};
+        for (final handler in existingHandlers) {
+          if (handler.config.hasOutbound() &&
+              handler.config.outbound.tag.isNotEmpty) {
+            existingByTag[handler.config.outbound.tag] = handler;
+          }
+        }
+        final updatedIds = <int>{};
+        for (final config in fetchRes.handlers) {
+          final existing = existingByTag[config.tag];
+          final nextConfig = OutboundHandlerConfig()..mergeFromMessage(config);
+          if (existing != null && existing.config.hasOutbound()) {
+            nextConfig.enableMux = existing.config.outbound.enableMux;
+            nextConfig.uot = existing.config.outbound.uot;
+            nextConfig.domainStrategy = existing.config.outbound.domainStrategy;
+            await _outRepo.replaceHandler(
+              existing.copyWith(config: HandlerConfig(outbound: nextConfig)),
+            );
+            updatedIds.add(existing.id);
+          } else {
+            final inserted = await db.insertReturning(
+              db.outboundHandlers,
+              OutboundHandlersCompanion(
+                id: Value(SnowflakeId.generate()),
+                config: Value(HandlerConfig(outbound: nextConfig)),
+                subId: Value(sub.id),
+              ),
+            );
+            updatedIds.add(inserted.id);
+          }
+        }
+        final toDelete = existingHandlers
+            .where((h) => !updatedIds.contains(h.id))
+            .map((h) => h.id)
+            .toList();
+        if (toDelete.isNotEmpty) {
+          await _outRepo.removeHandlersByIds(toDelete);
+        }
+        await db.updateById(
+          db.subscriptions,
+          sub.id,
+          SubscriptionsCompanion(
+            lastSuccessUpdate: Value(now),
+            description: Value(
+              fetchRes.description.isNotEmpty
+                  ? fetchRes.description
+                  : sub.description,
+            ),
+          ),
+        );
+      });
+      return UpdateSubscriptionResponse(
+        success: 1,
+        fail: 0,
+        successNodes: fetchRes.handlers.length,
+        failedNodes: fetchRes.failedNodes,
+      );
+    } catch (e) {
+      final response = UpdateSubscriptionResponse(
+        success: 0,
+        fail: 1,
+        successNodes: 0,
+      );
+      response.errorReasons[sub.name] = e.toString();
+      return response;
+    }
+  }
+
   /// notify users about the result
   /// TODO: improve update experience
   Future<void> _updateSub(bool all, int id) async {
-    final request = UpdateSubscriptionRequest();
-    if (all) {
-      request.all = true;
-    } else {
-      request.id = Int64(id);
-    }
     final handlers = <HandlerConfig>[freedomHandlerConfig];
     handlers.addAll(
       (await _outRepo.getHandlers(
@@ -146,9 +226,39 @@ class AutoSubscriptionUpdater with ChangeNotifier {
         orderBySpeed1MBDesc: true,
       )).map((e) => e.toConfig()),
     );
-    request.handlers.addAll(handlers);
-
-    final res = await _apiClient.updateSubscriptions(request);
+    late final UpdateSubscriptionResponse res;
+    if (all) {
+      final subs = await _outRepo.getAllSubs();
+      int success = 0;
+      int fail = 0;
+      int successNodes = 0;
+      final failedNodes = <String>[];
+      final errorReasons = <String, String>{};
+      for (final sub in subs) {
+        final r = await _updateSingleSub(sub, handlers);
+        success += r.success;
+        fail += r.fail;
+        successNodes += r.successNodes;
+        failedNodes.addAll(r.failedNodes);
+        errorReasons.addAll(r.errorReasons);
+      }
+      res = UpdateSubscriptionResponse(
+        success: success,
+        fail: fail,
+        successNodes: successNodes,
+        failedNodes: failedNodes,
+      );
+      res.errorReasons.addEntries(errorReasons.entries);
+    } else {
+      final sub = await _outRepo.getSubById(id);
+      if (sub == null) {
+        final response = UpdateSubscriptionResponse(success: 0, fail: 1);
+        response.errorReasons['$id'] = 'subscription not found';
+        res = response;
+      } else {
+        res = await _updateSingleSub(sub, handlers);
+      }
+    }
 
     rootScaffoldMessengerKey.currentState?.removeCurrentSnackBar();
     rootScaffoldMessengerKey.currentState?.showSnackBar(
@@ -220,12 +330,6 @@ class AutoSubscriptionUpdater with ChangeNotifier {
 
   void onSubscriptionUpdated() {
     notifyListeners();
-    // since write to database happens on the golang side. Without this,
-    // watch stream on the subscriptions table will not be updated.
-    final database = _databaseProvider.database;
-    database.notifyUpdates({
-      TableUpdate.onTable(database.subscriptions, kind: UpdateKind.update),
-    });
   }
 
   /// update all subscriptons and schedule the next update

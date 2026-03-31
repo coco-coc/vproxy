@@ -27,22 +27,21 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/app/api/api.pbgrpc.dart';
-import 'package:tm/protos/common/geo/geo.pb.dart';
-import 'package:tm/protos/common/log/log.pbenum.dart';
-import 'package:tm/protos/protos/geo.pb.dart';
-import 'package:tm/protos/protos/inbound.pb.dart';
-import 'package:tm/protos/protos/logger.pb.dart';
-import 'package:tm/protos/protos/outbound.pb.dart';
-import 'package:tm/protos/protos/server/server.pb.dart';
-import 'package:tm/protos/protos/sysproxy.pb.dart';
-import 'package:tm/protos/protos/tls/certificate.pb.dart';
+import 'package:tm/protos/vx/common/geo/geo.pb.dart';
+import 'package:tm/protos/vx/geo/geo.pb.dart';
+import 'package:tm/protos/vx/inbound/inbound.pb.dart';
+import 'package:tm/protos/vx/log/logger.pb.dart';
+import 'package:tm/protos/vx/outbound/outbound.pb.dart';
+import 'package:tm/protos/vx/server.pb.dart';
+import 'package:tm/protos/vx/sysproxy/sysproxy.pb.dart';
+import 'package:tm/protos/vx/transport/security/tls/certificate.pb.dart';
 import 'package:tm/tm.dart';
 import 'package:vx/app/server/add_server.dart';
 import 'package:vx/data/ssh_server.dart';
 import 'package:vx/pref_helper.dart';
 import 'package:vx/utils/channel_credentials.dart';
 import 'package:vx/utils/logger.dart';
-import 'package:vx/common/net.dart';
+import 'package:flutter_common/util/net.dart';
 import 'package:vx/data/database.dart';
 import 'package:vx/main.dart';
 import 'package:vx/utils/path.dart';
@@ -113,7 +112,7 @@ class XApiClient {
 
         final config = ApiServerConfig(
           logConfig: logConfig,
-          dbPath: await getDbPath(_pref),
+          // dbPath: await getDbPath(_pref),
           listenAddr: listenAddress,
           bindToDefaultNic:
               (Platform.isIOS || Platform.isMacOS || Platform.isLinux),
@@ -175,7 +174,7 @@ class XApiClient {
             listenAddress = '127.0.0.1:$port';
             final config = ApiServerConfig(
               logConfig: logConfig,
-              dbPath: await getDbPath(_pref),
+              // dbPath: await getDbPath(_pref),
               // bindToDefaultNic: true,
               listenAddr: listenAddress,
               tunName: XConfigHelper.tunName,
@@ -236,7 +235,7 @@ class XApiClient {
         //TODO: recreate database
       }
       if (rootNavigationKey.currentContext != null) {
-        dialog(
+        fatalMessageDialog(
           rootLocalizations()?.fatalError(
                 rootLocalizations()?.failedToInitGrpcClient(e.toString()) ??
                     e.toString(),
@@ -505,6 +504,13 @@ class XApiClient {
     // return await _xApiClient.updateSubscription(req);
   }
 
+  Future<FetchSubscriptionContentResponse> fetchSubscriptionContent(
+    FetchSubscriptionContentRequest request,
+  ) async {
+    await _completer.future;
+    return await _xApiClient.fetchSubscriptionContent(request);
+  }
+
   //TODO: simplify more for category-games:cn
   Future<void> processGeoFiles() async {
     await _completer.future;
@@ -650,13 +656,13 @@ class XApiClient {
   }
 
   Future<void> closeDb() async {
-    await _completer.future;
-    await _xApiClient.closeDb(CloseDbRequest());
+    // await _completer.future;
+    // await _xApiClient.closeDb(CloseDbRequest());
   }
 
   Future<void> openDb() async {
-    await _completer.future;
-    await _xApiClient.openDb(OpenDbRequest(path: await getDbPath(_pref)));
+    // await _completer.future;
+    // await _xApiClient.openDb(OpenDbRequest(path: await getDbPath(_pref)));
   }
 
   Future<ToUrlResponse> toUrl(List<OutboundHandlerConfig> configs) async {

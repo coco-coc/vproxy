@@ -46,27 +46,7 @@ Name: "chinese_simp"; MessagesFile: "compiler:Languages\Chinese.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\app_links_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\bitsdojo_window_windows_plugin.lib"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\file_saver_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\firebase_core_plugin.lib"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\flutter_local_notifications_windows.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\flutter_secure_storage_windows_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\flutter_windows.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\pasteboard_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\screen_retriever_windows_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\sqlite3.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\sqlite3_flutter_libs_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\system_proxy_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\tm_windows_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\tray_manager_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\url_launcher_windows_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\vx.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\vx.exp"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\vx.lib"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\window_manager_plugin.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\a\vx\vx\build\windows\x64\runner\Release\data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "D:\a\vx\vx\build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "D:\a\vx\vx\service_install.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\a\vx\vx\vx_service.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files

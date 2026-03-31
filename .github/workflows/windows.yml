@@ -66,9 +66,9 @@ jobs:
       - name: Download geo
         shell: bash
         run: |
-          curl -O "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geoip.dat"
+          curl -OL "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geoip.dat"
           mv simplified_geoip.dat assets/geo/simplified_geoip.dat
-          curl -O "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geosite.dat"
+          curl -OL "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geosite.dat"
           mv simplified_geosite.dat assets/geo/simplified_geosite.dat
 
       - name: Download from release
@@ -134,7 +134,12 @@ jobs:
       - name: Build Windows
         env:
           LOG_KEY: ${{ secrets.LOG_KEY }}
-        run: flutter build windows --dart-define=LOG_KEY=$env:LOG_KEY --release   --split-debug-info=symbols
+        run: flutter build windows --dart-define=LOG_KEY=$env:LOG_KEY --release --split-debug-info=symbols
+
+      - name: Upload debug symbols (Windows installer)
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: flutter pub run sentry_dart_plugin
 
       - name: Compile .ISS to .EXE Installer
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
@@ -171,6 +176,11 @@ jobs:
           LOG_KEY: ${{ secrets.LOG_KEY }}
         run: |
           dart run msix:create --store --windows-build-args "  --split-debug-info=symbols --dart-define=STORE=true --dart-define=LOG_KEY=$env:LOG_KEY" -n store
+
+      - name: Upload debug symbols (Windows Store)
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: flutter pub run sentry_dart_plugin
 
       - name: Publish MSIX to the Microsoft Store
         run: msstore publish -v
@@ -242,9 +252,9 @@ jobs:
   #       if: steps.cache-geo.outputs.cache-hit != 'true'
   #       shell: bash
   #       run: |
-  #         curl -O "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geoip.dat"
+  #         curl -OL "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geoip.dat"
   #         mv simplified_geoip.dat assets/geo/simplified_geoip.dat
-  #         curl -O "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geosite.dat"
+  #         curl -OL "https://github.com/5VNetwork/process-geo/releases/latest/download/simplified_geosite.dat"
   #         mv simplified_geosite.dat assets/geo/simplified_geosite.dat
 
   #     - name: Download from release
