@@ -200,7 +200,9 @@ void main() async {
   final app = MultiProvider(
     providers: [
       ChangeNotifierProvider(
-        create: (context) => DatabaseProvider(database: database!),
+        create: (context) => DatabaseProvider(
+          database: database ?? AppDatabase(path: '', interceptor: null),
+        ),
       ),
       Provider(create: (ctx) => XApiClient(pref, storage)..init(), lazy: false),
       ChangeNotifierProvider.value(value: proPurchases),
