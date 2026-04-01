@@ -1,4 +1,4 @@
-name: Sync Release Assets to R2
+name: Sync Latest Prerelease Assets to R2
 
 on:
   workflow_dispatch:
@@ -27,31 +27,26 @@ jobs:
           aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile r2
           aws configure set region auto --profile r2
 
-      - name: Resolve latest release tag
-        id: latest_release
+      - name: Resolve most recent prerelease tag
+        id: latest_prerelease
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          TAG_NAME=$(gh release list \
-            --repo "${{ github.repository }}" \
-            --exclude-drafts \
-            --exclude-pre-releases \
-            --limit 1 \
-            --json tagName \
-            --jq '.[0].tagName')
+          TAG_NAME=$(gh api "repos/${{ github.repository }}/releases" \
+            --jq 'map(select(.draft == false and .prerelease == true)) | .[0].tag_name')
           if [ -z "$TAG_NAME" ] || [ "$TAG_NAME" = "null" ]; then
-            echo "No release found to sync."
+            echo "No prerelease found to sync."
             exit 1
           fi
           echo "tag=$TAG_NAME" >> "$GITHUB_OUTPUT"
-          echo "Latest release tag: $TAG_NAME"
+          echo "Most recent prerelease tag: $TAG_NAME"
 
-      - name: Download all assets from latest release
+      - name: Download all assets from most recent prerelease
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           mkdir -p release-assets
-          gh release download "${{ steps.latest_release.outputs.tag }}" \
+          gh release download "${{ steps.latest_prerelease.outputs.tag }}" \
             --repo "${{ github.repository }}" \
             --dir release-assets
           ls -lah release-assets
@@ -71,3 +66,11 @@ jobs:
                 -H "Authorization: Bearer $CLOUDFLARE_TOKEN" \
                 -H "Content-Type: application/json" \
                 --data '{"purge_everything": true}'
+
+      - name: Promote prerelease to latest release
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          gh release edit "${{ steps.latest_prerelease.outputs.tag }}" \
+            --prerelease=false \
+            --latest
