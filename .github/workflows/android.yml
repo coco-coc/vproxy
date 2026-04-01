@@ -98,11 +98,6 @@ jobs:
             --build-name ${{ steps.get_version.outputs.version }} \
           --build-number ${{ steps.get_version.outputs.build_number }}
 
-      - name: Upload debug symbols (AAB)
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        run: flutter pub run sentry_dart_plugin
-
       - name: upload to play store
         env:
           FASTLANE_PLAY_STORE: ${{ secrets.FASTLANE_PLAY_STORE }}
@@ -122,11 +117,6 @@ jobs:
           mv build/app/outputs/flutter-apk/app-apk-release.apk releases/vx-universal.apk
           zip -j releases/vx-universal.apk.zip releases/vx-universal.apk
           rm releases/vx-universal.apk
-
-      - name: Upload debug symbols (APK)
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        run: flutter pub run sentry_dart_plugin
 
       - name: upload apks to github release
         env:
