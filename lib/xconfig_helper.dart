@@ -66,6 +66,7 @@ import 'package:vx/utils/wintun.dart';
 import 'package:vx/utils/xapi_client.dart';
 import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart';
 
+
 class ConfigException implements Exception {
   ConfigException(this.message);
   final String message;

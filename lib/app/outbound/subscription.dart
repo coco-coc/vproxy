@@ -18,9 +18,13 @@ import 'dart:async';
 import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tm/protos/app/api/api.pbgrpc.dart';
 import 'package:tm/protos/vx/outbound/outbound.pb.dart';
+import 'package:tm/protos/vx/proxy/freedom/freedom.pb.dart';
+import 'package:tm/protos/vx/transport/dlhelper.pb.dart';
+import 'package:tm/protos/vx/transport/transport.pb.dart';
 import 'package:tm/tm.dart';
 import 'package:vx/app/outbound/outbound_repo.dart';
 import 'package:vx/app/outbound/outbounds_bloc.dart';
@@ -218,7 +222,16 @@ class AutoSubscriptionUpdater with ChangeNotifier {
   /// notify users about the result
   /// TODO: improve update experience
   Future<void> _updateSub(bool all, int id) async {
-    final handlers = <HandlerConfig>[freedomHandlerConfig];
+    final handlers = <HandlerConfig>[
+      HandlerConfig(
+        outbound: OutboundHandlerConfig(
+          tag: 'direct',
+          protocol: Any.pack(FreedomConfig()),
+          domainStrategy: DomainStrategy.Speed,
+          transport: TransportConfig(socket: SocketConfig()),
+        ),
+      ),
+    ];
     handlers.addAll(
       (await _outRepo.getHandlers(
         usable: true,
