@@ -28,6 +28,9 @@ const ruGeoIpUrl =
     'https://raw.githubusercontent.com/runetfreedom/russia-v2ray-rules-dat/release/geoip.dat';
 const ruGeositeUrl =
     'https://raw.githubusercontent.com/runetfreedom/russia-v2ray-rules-dat/release/geosite.dat';
+const ruGeoSiteSimplifiedUrl =
+    'https://cdn.jsdelivr.net/gh/5VNetwork/process-geo@release/simplified_geosite_ru.dat';
+
 const geoIPPathDebug = '../../../../temp/geoip.dat';
 const geositePathDebug = '../../../../temp/geosite.dat';
 

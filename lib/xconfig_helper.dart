@@ -66,14 +66,6 @@ import 'package:vx/utils/wintun.dart';
 import 'package:vx/utils/xapi_client.dart';
 import 'package:protobuf/well_known_types/google/protobuf/any.pb.dart';
 
-final freedomHandlerConfig = o.HandlerConfig(
-  outbound: o.OutboundHandlerConfig(
-    tag: 'direct',
-    protocol: Any.pack(FreedomConfig()),
-    domainStrategy: o.DomainStrategy.Speed,
-    transport: TransportConfig(socket: SocketConfig(dialTimeout: 4)),
-  ),
-);
 
 class ConfigException implements Exception {
   ConfigException(this.message);

@@ -142,11 +142,6 @@ jobs:
           --split-debug-info=symbols/darwin --build-name ${{ steps.get_version.outputs.version }} \
           --build-number ${{ steps.get_version.outputs.build_number }}
 
-      - name: Upload debug symbols (macOS Store)
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        run: flutter pub run sentry_dart_plugin
-
       # - name: Set version
       #   run: |
       #     BUILD_NUMBER=$(grep '^version:' pubspec.yaml | sed 's/version: .*+\(.*\)/\1/')

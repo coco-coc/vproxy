@@ -22,10 +22,6 @@
 	<true/>
 	<key>com.apple.security.network.server</key>
 	<true/>
-	<key>keychain-access-groups</key>
-	<array>
-		<string>$(AppIdentifierPrefix)com.google.GIDSignIn</string>
-	</array>
 	<key>com.apple.security.temporary-exception.files.absolute-path.read-write</key>
 	<array>
 		<string>/Library/Application Support/com.5vnetwork.vx/</string>
@@ -34,6 +30,11 @@
 	<array>
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER)-spks</string>
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER)-spki</string>
+	</array>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)com.google.GIDSignIn</string>
+		<string>$(AppIdentifierPrefix)com.5vnetwork.x.system</string>
 	</array>
 </dict>
 </plist>

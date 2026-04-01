@@ -1072,7 +1072,7 @@ extension PrefHelperExtension on SharedPreferences {
   }
 
   int get directDialingTimeout {
-    return getInt('directDialingTimeout') ?? 4;
+    return getInt('directDialingTimeout') ?? 6;
   }
 
   void setDirectDialingTimeout(int timeout) {

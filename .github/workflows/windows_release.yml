@@ -185,8 +185,8 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: flutter pub run sentry_dart_plugin
 
-      - name: Upload MSIX draft to the Microsoft Store (no certification submit)
-        run: msstore publish --noCommit -v
+      - name: Publish MSIX to the Microsoft Store
+        run: msstore publish -v
 
   # build-windows-arm64:
   #   runs-on: windows-11-arm
