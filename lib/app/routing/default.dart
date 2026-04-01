@@ -653,9 +653,9 @@ enum DefaultRouteMode {
         return [
           DnsRuleConfig(
             dnsServerName: dnsServerFake,
-            ruleName: /* al.dnsRuleNameGfwProxyFake */ 'A/AAAA',
+            ruleName: al.dnsRuleNameGfwProxyFake,
             includedTypes: [DnsType.DnsType_A, DnsType.DnsType_AAAA],
-            domainTags: [/* al.gfwModeProxyDomains */],
+            domainTags: [al.gfwModeProxyDomains],
           ),
           DnsRuleConfig(
             ruleName: al.dnsRuleNameGfwProxy,
@@ -671,9 +671,9 @@ enum DefaultRouteMode {
         return [
           DnsRuleConfig(
             dnsServerName: dnsServerFake,
-            ruleName: /* al.dnsRuleNameRuBlockProxyFake */ 'A/AAAA',
+            ruleName: al.dnsRuleNameRuBlockProxyFake,
             includedTypes: [DnsType.DnsType_A, DnsType.DnsType_AAAA],
-            domainTags: [/* al.ruBlockModeProxyDomains */],
+            domainTags: [al.ruBlockModeProxyDomains],
           ),
           DnsRuleConfig(
             ruleName: al.dnsRuleNameRuBlockProxy,
@@ -689,9 +689,9 @@ enum DefaultRouteMode {
         return [
           DnsRuleConfig(
             dnsServerName: dnsServerFake,
-            ruleName: /* al.dnsRuleNameRuBlockAllProxyFake */ 'A/AAAA',
+            ruleName: al.dnsRuleNameRuBlockAllProxyFake,
             includedTypes: [DnsType.DnsType_A, DnsType.DnsType_AAAA],
-            domainTags: [/* al.ruBlockAllModeProxyDomains */],
+            domainTags: [al.ruBlockAllModeProxyDomains],
           ),
           DnsRuleConfig(
             ruleName: al.dnsRuleNameRuBlockAllProxy,
@@ -707,9 +707,9 @@ enum DefaultRouteMode {
         return [
           DnsRuleConfig(
             dnsServerName: dnsServerFake,
-            ruleName: /* al.dnsRuleNameCnProxyFake */ 'A/AAAA',
+            ruleName: al.dnsRuleNameCnProxyFake,
             includedTypes: [DnsType.DnsType_A, DnsType.DnsType_AAAA],
-            domainTags: [/* al.cnModeProxyDomains */],
+            domainTags: [al.cnModeProxyDomains],
           ),
           DnsRuleConfig(
             ruleName: al.dnsRuleNameCnProxy,
@@ -725,9 +725,9 @@ enum DefaultRouteMode {
         return [
           DnsRuleConfig(
             dnsServerName: dnsServerFake,
-            ruleName: /* al.dnsRuleNameProxyAllProxyFake */ 'A/AAAA',
+            ruleName: al.dnsRuleNameProxyAllProxyFake,
             includedTypes: [DnsType.DnsType_A, DnsType.DnsType_AAAA],
-            domainTags: [/* al.proxyAllModeProxyDomains */],
+            domainTags: [al.proxyAllModeProxyDomains],
           ),
           DnsRuleConfig(
             ruleName: al.dnsRuleNameProxyAllProxy,
